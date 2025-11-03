@@ -5,6 +5,9 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.web.SecurityFilterChain
+import org.springframework.web.cors.CorsConfiguration
+import org.springframework.web.cors.CorsConfigurationSource
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 
 @Configuration
 @EnableWebSecurity
@@ -12,6 +15,7 @@ open class SecurityConfig {
     @Bean
     open fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http
+            .cors { it.configurationSource(corsConfigurationSource()) }
             .authorizeHttpRequests { auth ->
                 auth
                     .requestMatchers(
@@ -27,5 +31,25 @@ open class SecurityConfig {
             }.csrf { it.disable() }
 
         return http.build()
+    }
+
+    @Bean
+    open fun corsConfigurationSource(): CorsConfigurationSource {
+        val configuration = CorsConfiguration()
+
+        configuration.allowedOrigins = listOf(
+            "https://gjenlevende-bs-sak.intern.dev.nav.no",
+            "https://gjenlevende-bs-sak.dev.intern.nav.no",
+            "http://localhost:8080", // TODO: Er kun med for testing.
+            "http://localhost:8081", // TODO: Er kun med for testing.
+        )
+        configuration.allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
+        configuration.allowedHeaders = listOf("*") // TODO: Fiks denne, gå gjennom.
+        configuration.allowCredentials = true
+        configuration.maxAge = 3600L
+
+        val source = UrlBasedCorsConfigurationSource()
+        source.registerCorsConfiguration("/**", configuration)
+        return source
     }
 }

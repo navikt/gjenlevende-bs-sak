@@ -24,7 +24,8 @@ open class OpenApiConfig {
                     ),
             ).servers(
                 listOf(
-                    Server().url("https://gjenlevende-bs-sak.dev.intern.nav.no").description("Kjører i pre-prod miljø."),
+                    Server().url("/").description("Samme server som Swagger UI"),
+                    Server().url("https://gjenlevende-bs-sak.intern.dev.nav.no").description("Kjører i pre-prod miljø"),
                 ),
             )
 }

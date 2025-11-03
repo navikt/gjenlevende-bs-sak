@@ -43,7 +43,7 @@ class InfotrygdTestController(
             ResponseEntity.ok(
                 TestResponse(
                     success = true,
-                    message = "Successfully communicated with infotrygd",
+                    message = "Klarte å gjøre kall mot gjenlevende-bs-infotrygd!",
                 ),
             )
         } catch (e: Exception) {

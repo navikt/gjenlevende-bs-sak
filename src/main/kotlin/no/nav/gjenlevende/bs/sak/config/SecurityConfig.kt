@@ -17,6 +17,7 @@ open class SecurityConfig {
                     .requestMatchers(
                         "/internal/**",
                         "/actuator/**",
+                        "/api/**",
                         "/swagger-ui/**",
                         "/v3/api-docs/**",
                         "/swagger-ui.html",

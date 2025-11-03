@@ -8,14 +8,19 @@ import org.springframework.security.web.SecurityFilterChain
 
 @Configuration
 @EnableWebSecurity
-class SecurityConfig {
+open class SecurityConfig {
     @Bean
-    fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
+    open fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http
             .authorizeHttpRequests { auth ->
                 auth
-                    .requestMatchers("/internal/**", "/actuator/**")
-                    .permitAll()
+                    .requestMatchers(
+                        "/internal/**",
+                        "/actuator/**",
+                        "/swagger-ui/**",
+                        "/v3/api-docs/**",
+                        "/swagger-ui.html",
+                    ).permitAll()
                     .anyRequest()
                     .authenticated()
             }.csrf { it.disable() }

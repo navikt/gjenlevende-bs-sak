@@ -24,7 +24,6 @@ open class OpenApiConfig {
                     ),
             ).servers(
                 listOf(
-                    Server().url("http://localhost:8080").description("Lokal kjøring"),
                     Server().url("https://gjenlevende-bs-sak.dev.intern.nav.no").description("Kjører i pre-prod miljø."),
                 ),
             )

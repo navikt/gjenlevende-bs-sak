@@ -26,8 +26,8 @@ spec:
       rules:
         - application: gjenlevende-bs-infotrygd
     outbound:
-      rules:
-        - application: gjenlevende-bs-infotrygd
+      external:
+        - host: gjenlevende-bs-infotrygd.dev-fss-pub.nais.io
 
   # Helse
   liveness:

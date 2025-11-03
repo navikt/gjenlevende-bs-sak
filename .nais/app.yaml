@@ -3,11 +3,33 @@ kind: Application
 metadata:
   name: gjenlevende-bs-sak
   namespace: etterlatte
+
 spec:
-  ingresses:
-    - https://gjenlevende-bs-sak.intern.dev.nav.no
+  # Applikasjon konfigurasjon
   image: {{ image }}
   port: 8080
+  replicas:
+    min: 1
+    max: 1
+  resources:
+    requests:
+      cpu: 20m
+      memory: 256Mi
+    limits:
+      memory: 512Mi
+
+  # Nettverk
+  ingresses:
+    - https://gjenlevende-bs-sak.intern.dev.nav.no
+  accessPolicy:
+    inbound:
+      rules:
+        - application: gjenlevende-bs-infotrygd
+    outbound:
+      rules:
+        - application: gjenlevende-bs-infotrygd
+
+  # Helse
   liveness:
     path: /internal/health/liveness
     initialDelay: 30
@@ -16,16 +38,18 @@ spec:
     path: /internal/health/readiness
     initialDelay: 30
     failureThreshold: 10
+
+  # Logging
   prometheus:
     enabled: true
     path: /internal/prometheus
-  ttl: 3h
-  replicas:
-    max: 1
-    min: 1
-  resources:
-    requests:
-      cpu: 50m
-      memory: 512Mi
-    limits:
-      memory: 1024Mi
+  observability:
+    autoInstrumentation:
+      enabled: true
+      runtime: java
+    logging:
+      destinations:
+        - id: loki
+        - id: elastic
+  secureLogs:
+    enabled: true

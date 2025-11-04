@@ -4,8 +4,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
 @SpringBootApplication
-open class GjenlevendeBsSakApplication
+open class Application
 
 fun main(args: Array<String>) {
-    runApplication<GjenlevendeBsSakApplication>(*args)
+    runApplication<Application>(*args)
 }

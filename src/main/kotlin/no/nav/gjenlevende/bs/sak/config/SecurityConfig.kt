@@ -39,9 +39,8 @@ open class SecurityConfig {
 
         configuration.allowedOrigins =
             listOf(
-                "https://gjenlevende-bs-sak-frontend.intern.dev.nav.no",
-                "https://gjenlevende-bs-sak-frontend.dev.intern.nav.no",
-                "http://localhost:3000",
+                "https://gjenlevende-bs.intern.dev.nav.no",
+                "https://gjenlevende-bs.ansatt.dev.nav.no",
             )
         configuration.allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
         configuration.allowedHeaders =

@@ -9,8 +9,7 @@ import org.springframework.web.reactive.function.client.WebClient
 open class WebClientConfig {
     @Bean
     open fun infotrygdWebClient(
-        // TODO: Denne skal endres. Usikker på om dette blir riktig.
-        @Value("\${infotrygd.url:http://localhost:8081}")
+        @Value("\${infotrygd.url}")
         infotrygdUrl: String,
     ): WebClient =
         WebClient

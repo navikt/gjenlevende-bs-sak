@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration
 
 @Configuration
 open class SwaggerOpenApiConfig {
-    private val preprodServer: Server = Server().url("https://gjenlevende-bs-sak.intern.dev.nav.no").description("Pre-prod")
+    private val preprodServer: Server = Server().description("Pre-prod")
 
     @Bean
     open fun swaggerApiConfig(): OpenAPI =

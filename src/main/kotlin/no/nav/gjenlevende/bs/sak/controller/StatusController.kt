@@ -21,15 +21,6 @@ class StatusController {
         summary = "Hent applikasjon status",
         description = "Returnerer status for applikasjonen, samt versjon og oppetid.",
     )
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "200",
-                description = "Klarte å hente status.",
-                content = [Content(schema = Schema(implementation = StatusResponse::class))],
-            ),
-        ],
-    )
     fun getStatus(): ResponseEntity<StatusResponse> =
         ResponseEntity.ok(
             StatusResponse(
@@ -44,15 +35,6 @@ class StatusController {
     @Operation(
         summary = "Ping endepunkt",
         description = "Enkel ping endepunkt som sjekker om applikasjonen lever.",
-    )
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "200",
-                description = "Applikasjonen lever!",
-                content = [Content(schema = Schema(implementation = String::class))],
-            ),
-        ],
     )
     fun ping(): ResponseEntity<String> = ResponseEntity.ok("pong")
 }

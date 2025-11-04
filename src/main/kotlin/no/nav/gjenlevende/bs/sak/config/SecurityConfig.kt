@@ -37,14 +37,23 @@ open class SecurityConfig {
     open fun corsConfigurationSource(): CorsConfigurationSource {
         val configuration = CorsConfiguration()
 
-        configuration.allowedOrigins = listOf(
-            "https://gjenlevende-bs-sak.intern.dev.nav.no",
-            "https://gjenlevende-bs-sak.dev.intern.nav.no",
-            "http://localhost:8080", // TODO: Er kun med for testing.
-            "http://localhost:8081", // TODO: Er kun med for testing.
-        )
+        configuration.allowedOrigins =
+            listOf(
+                "https://gjenlevende-bs-sak.intern.dev.nav.no",
+                "https://gjenlevende-bs-sak.dev.intern.nav.no",
+                "http://localhost:8080", // TODO: Er kun med for testing.
+                "http://localhost:8081", // TODO: Er kun med for testing.
+            )
         configuration.allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
-        configuration.allowedHeaders = listOf("*") // TODO: Fiks denne, gå gjennom.
+        configuration.allowedHeaders =
+            listOf(
+                "Content-Type",
+                "Accept",
+                "Authorization",
+                "Origin",
+                "Access-Control-Request-Method",
+                "Access-Control-Request-Headers",
+            )
         configuration.allowCredentials = true
         configuration.maxAge = 3600L
 

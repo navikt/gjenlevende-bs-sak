@@ -9,6 +9,8 @@ import org.springframework.context.annotation.Configuration
 
 @Configuration
 open class OpenApiConfig {
+    private val preprodServer: Server = Server().url("https://gjenlevende-bs-sak.intern.dev.nav.no").description("Pre-prod")
+
     @Bean
     open fun apiConfig(): OpenAPI =
         OpenAPI()
@@ -23,9 +25,6 @@ open class OpenApiConfig {
                             .url("https://github.com/navikt/gjenlevende-bs-sak"),
                     ),
             ).servers(
-                listOf(
-                    Server().url("/").description("Samme server som Swagger UI"),
-                    Server().url("https://gjenlevende-bs-sak.intern.dev.nav.no").description("Kjører i pre-prod miljø"),
-                ),
+                listOf(preprodServer),
             )
 }

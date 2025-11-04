@@ -1,10 +1,6 @@
 package no.nav.gjenlevende.bs.sak.controller
 
 import io.swagger.v3.oas.annotations.Operation
-import io.swagger.v3.oas.annotations.media.Content
-import io.swagger.v3.oas.annotations.media.Schema
-import io.swagger.v3.oas.annotations.responses.ApiResponse
-import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import no.nav.gjenlevende.bs.sak.service.InfotrygdClient
 import org.springframework.http.ResponseEntity
@@ -23,42 +19,16 @@ class InfotrygdTestController(
         summary = "Ping gjenlevende-bs-infotrygd",
         description = "Enkel ping for å verifisere at kall mot gjenlevende-bs-infotrygd fungerer.",
     )
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "200",
-                description = "Bink! Vi snakket med gjenlvende-bs-infotrygd!",
-                content = [Content(schema = Schema(implementation = String::class))],
-            ),
-            ApiResponse(
-                responseCode = "500",
-                description = "Bonk! Klarte ikke å nå gjenlevende-bs-infotrygd!",
-            ),
-        ],
-    )
-    fun testPing(): ResponseEntity<TestResponse> =
+    fun testPing(): ResponseEntity<String> =
         try {
             val response = infotrygdClient.pingSync()
 
             ResponseEntity.ok(
-                TestResponse(
-                    success = true,
-                    message = "Klarte å gjøre kall mot gjenlevende-bs-infotrygd!",
-                ),
+                response,
             )
         } catch (e: Exception) {
             ResponseEntity.internalServerError().body(
-                TestResponse(
-                    success = false,
-                    message = "Feilet å kalle gjenlvende-bs-infotrygd med melding: ${e.message}",
-                ),
+                "Feilet kall mot gjenlevende-bs-infotrygd: ${e.message}",
             )
         }
 }
-
-data class TestResponse(
-    @Schema(description = "Om testen var vellykket", example = "true")
-    val success: Boolean,
-    @Schema(description = "Beskrivelse av resultatet")
-    val message: String,
-)

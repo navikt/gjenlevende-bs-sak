@@ -32,8 +32,7 @@ spec:
             databases:
                 - name: gjenlevende-bs-sak
                   envVarPrefix: DB
-  flyway:
-      enabled: true
+
 
 
   # Nettverk

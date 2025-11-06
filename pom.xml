@@ -32,6 +32,7 @@
         <kotlin.jvm.target>21</kotlin.jvm.target>
         <ktlint.version>1.7.1</ktlint.version>
         <springdoc.version>3.0.0-M1</springdoc.version>
+        <flyway.version>11.15.0</flyway.version>
     </properties>
     <dependencies>
         <dependency>
@@ -72,6 +73,14 @@
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-test-junit5</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-database-postgresql</artifactId>
         </dependency>
     </dependencies>
 

@@ -22,8 +22,16 @@ spec:
           - name: gjenlevende-bs-sak
             type: POSTGRES_17
             tier: db-g1-small
+            diskAutoresize: true
+            cascadingDelete: false
+            highAvailability: false
+            pointInTimeRecovery: true
+            maintenance:
+                day: 7
+                hour: 23
             databases:
                 - name: gjenlevende-bs-sak
+                  envVarPrefix: DB
 
 
   # Nettverk

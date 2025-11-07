@@ -1,55 +1,71 @@
 apiVersion: nais.io/v1alpha1
 kind: Application
 metadata:
-  name: gjenlevende-bs-sak
-  namespace: etterlatte
+    name: gjenlevende-bs-sak
+    namespace: etterlatte
 
 spec:
-  # Applikasjon konfigurasjon
-  image: {{ image }}
-  port: 8080
-  replicas:
-    min: 1
-    max: 1
-  resources:
-    requests:
-      cpu: 20m
-      memory: 256Mi
-    limits:
-      memory: 512Mi
+    # Applikasjon konfigurasjon
+    image: {{ image }}
+    port: 8080
+    replicas:
+        min: 1
+        max: 1
+    resources:
+        requests:
+            cpu: 20m
+            memory: 256Mi
+        limits:
+            memory: 512Mi
 
-  # Nettverk
-  ingresses:
-    - https://gjenlevende-bs-sak.intern.dev.nav.no
-  accessPolicy:
-    inbound:
-      rules:
-        - application: gjenlevende-bs-infotrygd
-    outbound:
-      external:
-        - host: gjenlevende-bs-infotrygd.dev-fss-pub.nais.io
+    # Nettverk
+    ingresses:
+        - https://gjenlevende-bs-sak.intern.dev.nav.no
+    accessPolicy:
+        inbound:
+            rules:
+                -   application: gjenlevende-bs-infotrygd
+        outbound:
+            external:
+                -   host: gjenlevende-bs-infotrygd.dev-fss-pub.nais.io
 
-  # Helse
-  liveness:
-    path: /internal/health/liveness
-    initialDelay: 30
-    failureThreshold: 10
-  readiness:
-    path: /internal/health/readiness
-    initialDelay: 30
-    failureThreshold: 10
+    # Helse
+    liveness:
+        path: /internal/health/liveness
+        initialDelay: 30
+        failureThreshold: 10
+    readiness:
+        path: /internal/health/readiness
+        initialDelay: 30
+        failureThreshold: 10
 
-  # Logging
-  prometheus:
-    enabled: true
-    path: /internal/prometheus
-  observability:
-    autoInstrumentation:
-      enabled: true
-      runtime: java
-    logging:
-      destinations:
-        - id: loki
-        - id: elastic
-  secureLogs:
-    enabled: true
+    # Logging
+    prometheus:
+        enabled: true
+        path: /internal/prometheus
+    observability:
+        autoInstrumentation:
+            enabled: true
+            runtime: java
+        logging:
+            destinations:
+                -   id: loki
+                -   id: elastic
+    secureLogs:
+        enabled: true
+
+    #Autentisering
+    azure:
+        application:
+            enabled: true
+            tenant: trygdeetaten.no
+            claims:
+                groups:
+                    -   id: ee5e0b5e-454c-4612-b931-1fe363df7c2c # TODO: Brukes kun for testing, skal bestille egne tilganger. 0000-GA-Enslig-Forsorger-Saksbehandler
+                    -   id: 59865891-62a0-4fe3-b282-2e38210d1fbb # TODO: Brukes kun for testing, skal bestille egne tilganger. teamfamilie-ef-forvaltning
+                extra:
+                    - "NAVident"
+                    - "azp_name"
+            replyURLs:
+                - https://gjenlevende-bs-sak.intern.dev.nav.no/swagger-ui/oauth2-redirect.html
+            singlePageApplication: true

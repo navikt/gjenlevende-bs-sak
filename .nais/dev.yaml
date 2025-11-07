@@ -6,7 +6,7 @@ metadata:
 
 spec:
     # Applikasjon konfigurasjon
-    image: {{ image }}
+    image: { { image } }
     port: 8080
     replicas:
         min: 1
@@ -25,11 +25,9 @@ spec:
         inbound:
             rules:
                 -   application: gjenlevende-bs-sak-frontend
-                -   application: gjenlevende-bs-infotrygd
         outbound:
-            outbound:
-                rules:
-                    -   application: gjenlevende-bs-sak-frontend
+            rules:
+                -   application: gjenlevende-bs-sak-frontend
             external:
                 -   host: gjenlevende-bs-infotrygd.dev-fss-pub.nais.io
 

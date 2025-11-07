@@ -25,11 +25,9 @@ spec:
         inbound:
             rules:
                 -   application: gjenlevende-bs-sak-frontend
-                -   application: gjenlevende-bs-infotrygd
         outbound:
-            outbound:
-                rules:
-                    -   application: gjenlevende-bs-sak-frontend
+            rules:
+                -   application: gjenlevende-bs-sak-frontend
             external:
                 -   host: gjenlevende-bs-infotrygd.dev-fss-pub.nais.io
 

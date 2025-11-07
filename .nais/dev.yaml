@@ -86,8 +86,3 @@ spec:
             replyURLs:
                 - https://gjenlevende-bs-sak.intern.dev.nav.no/swagger-ui/oauth2-redirect.html
             singlePageApplication: true
-
-    # Environment variabler
-    env:
-        - name: AZURE_APP_APPLICATION_ID_URI
-          value: api://dev-gcp.etterlatte.gjenlevende-bs-sak

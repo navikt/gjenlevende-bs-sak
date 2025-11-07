@@ -72,3 +72,19 @@ spec:
                 -   id: elastic
     secureLogs:
         enabled: true
+
+    #Autentisering
+    azure:
+        application:
+            enabled: true
+            tenant: trygdeetaten.no
+            claims:
+                groups:
+                    -   id: ee5e0b5e-454c-4612-b931-1fe363df7c2c # TODO: Brukes kun for testing, skal bestille egne tilganger. 0000-GA-Enslig-Forsorger-Saksbehandler
+                    -   id: 59865891-62a0-4fe3-b282-2e38210d1fbb # TODO: Brukes kun for testing, skal bestille egne tilganger. teamfamilie-ef-forvaltning
+                extra:
+                    - "NAVident"
+                    - "azp_name"
+            replyURLs:
+                - https://gjenlevende-bs-sak.intern.dev.nav.no/swagger-ui/oauth2-redirect.html
+            singlePageApplication: true

@@ -21,14 +21,18 @@ open class SecurityConfig {
                     .requestMatchers(
                         "/internal/**",
                         "/actuator/**",
-                        "/api/**",
                         "/swagger-ui/**",
                         "/v3/api-docs/**",
                         "/swagger-ui.html",
+                        "/api/test/infotrygd/uautentisert",
                     ).permitAll()
                     .anyRequest()
                     .authenticated()
-            }.csrf { it.disable() }
+            }
+            .oauth2ResourceServer { oauth2 ->
+                oauth2.jwt { }
+            }
+            .csrf { it.disable() }
 
         return http.build()
     }

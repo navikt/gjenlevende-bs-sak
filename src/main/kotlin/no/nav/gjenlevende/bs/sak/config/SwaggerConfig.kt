@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-open class SwaggerOpenApiConfig {
+open class SwaggerConfig {
     private val preprodServer: Server = Server().description("Pre-prod")
 
     @Bean

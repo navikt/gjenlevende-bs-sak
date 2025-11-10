@@ -1,0 +1,14 @@
+package no.nav.gjenlevende.bs.sak.repository
+
+import org.springframework.data.jdbc.repository.query.Query
+import org.springframework.data.repository.CrudRepository
+import org.springframework.stereotype.Repository
+import java.util.UUID
+
+@Repository
+interface TestRepository : CrudRepository<TestData, UUID> {
+    @Query(
+        "SELECT test_string FROM TestData WHERE id = testId",
+    )
+    fun findTestStringMedId(testId: Int): List<String>
+}

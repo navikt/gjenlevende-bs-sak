@@ -12,7 +12,7 @@ enum class Rolle(
 ) {
     SAKSBEHANDLER("Kan saksbehandle i saksbehandler-løsningen"),
     BESLUTTER("Kan fatte beslutninger i på saker i saksbehandling-løsningen"),
-    FORVALTER("Kan gjøre forvalter ting idk")
+    FORVALTER("Kan gjøre forvalter ting idk"),
     ;
 
     /**
@@ -28,9 +28,9 @@ enum class Rolle(
          * Merk: En gruppe kan gi flere roller hvis nødvendig.
          * Brukere som skal ha både SAKSBEHANDLER og BESLUTTER må være medlem
          * av minst én gruppe som gir hver av rollene.
+         *
+         * TODO: Husk å injecte disse basert på miljø.
          */
-
-        // TODO: Husk å injecte disse basert på miljø.
         val AZURE_GRUPPE_TIL_ROLLE: Map<String, Set<Rolle>> =
             mapOf(
                 "ee5e0b5e-454c-4612-b931-1fe363df7c2c" to setOf(SAKSBEHANDLER),

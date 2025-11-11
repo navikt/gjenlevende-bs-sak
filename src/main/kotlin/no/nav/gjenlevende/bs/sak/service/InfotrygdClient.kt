@@ -25,7 +25,7 @@ class InfotrygdClient(
     fun ping(brukerToken: String): Mono<String> {
         val oboToken = texasClient.hentOboToken(
             brukerToken = brukerToken,
-            targetAudience = gjenlevendeBsInfotrygdAudience
+            targetAudience = gjenlevendeBsInfotrygdAudience,
         )
 
         return infotrygdWebClient
@@ -35,8 +35,8 @@ class InfotrygdClient(
             .retrieve()
             .bodyToMono<String>()
             .timeout(Duration.ofSeconds(TIMEOUT_SEKUNDER))
-            .doOnSuccess { logger.info("Klarte å pinge gjenlevende-bs-infotrygd med melding: {}", it) }
-            .doOnError { logger.error("Feilet å pinge gjenlevende-bs-infotrygd med melding: ", it) }
+            .doOnSuccess { logger.info("Klarte å pinge gjenlevende-bs-infotrygd med melding: $it") }
+            .doOnError { logger.error("Feilet å pinge gjenlevende-bs-infotrygd med melding: $it") }
     }
 
     fun pingSync(brukerToken: String): String = ping(brukerToken).block() ?: throw RuntimeException("Klarte ikke å pinge gjenlevene-bs-infotrygd")

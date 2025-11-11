@@ -40,9 +40,11 @@ spec:
         inbound:
             rules:
                 -   application: gjenlevende-bs-sak-frontend
+                -   application: gjenlevende-bs-sak-frontend-lokal
         outbound:
             rules:
                 -   application: gjenlevende-bs-sak-frontend
+                -   application: gjenlevende-bs-sak-frontend-lokal
             external:
                 -   host: gjenlevende-bs-infotrygd.dev-fss-pub.nais.io
 
@@ -79,6 +81,7 @@ spec:
             claims:
                 groups:
                     -   id: ee5e0b5e-454c-4612-b931-1fe363df7c2c # TODO: Brukes kun for testing, skal bestille egne tilganger. 0000-GA-Enslig-Forsorger-Saksbehandler
+                    -   id: 01166863-22f1-4e16-9785-d7a05a22df74 # TODO: Brukes kun for testing, skal bestille egne tilganger. 0000-GA-Enslig-Forsorger-Beslutter
                     -   id: 59865891-62a0-4fe3-b282-2e38210d1fbb # TODO: Brukes kun for testing, skal bestille egne tilganger. teamfamilie-ef-forvaltning
                 extra:
                     - "NAVident"

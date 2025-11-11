@@ -31,13 +31,14 @@ class TexasClient(
 
         return try {
             val formData: MultiValueMap<String, String> = LinkedMultiValueMap()
+            formData.add("identity_provider", "azuread")
             formData.add("target", targetAudience)
+            formData.add("user_token", brukerToken)
 
             val response =
                 webClient
                     .post()
                     .uri(tokenExchangeEndpoint)
-                    .header("Authorization", "Bearer $brukerToken")
                     .body(BodyInserters.fromFormData(formData))
                     .retrieve()
                     .bodyToMono<TexasOboResponse>()
@@ -63,4 +64,8 @@ class TexasClient(
 data class TexasOboResponse(
     @JsonProperty("access_token")
     val accessToken: String,
+    @JsonProperty("expires_in")
+    val utløperOm: Int,
+    @JsonProperty("token_type")
+    val tokenType: String,
 )

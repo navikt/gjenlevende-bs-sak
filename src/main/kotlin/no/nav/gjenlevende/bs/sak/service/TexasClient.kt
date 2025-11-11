@@ -1,5 +1,6 @@
 package no.nav.gjenlevende.bs.sak.service
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
@@ -43,9 +44,7 @@ class TexasClient(
     }
 }
 
-/**
- * Response fra Texas OBO endpoint.
- */
 data class TexasOboResponse(
+    @JsonProperty("access_token")
     val accessToken: String,
 )

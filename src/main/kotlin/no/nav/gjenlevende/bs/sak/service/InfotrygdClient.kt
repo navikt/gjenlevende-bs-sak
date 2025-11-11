@@ -13,7 +13,7 @@ class InfotrygdClient(
     private val infotrygdWebClient: WebClient,
     private val texasClient: TexasClient,
     @Value("\${gjenlevende-bs-infotrygd.audience}")
-    private val infotrygdAudience: String,
+    private val gjenlevendeBsInfotrygdAudience: String,
 ) {
     private val logger = LoggerFactory.getLogger(InfotrygdClient::class.java)
 
@@ -25,7 +25,7 @@ class InfotrygdClient(
     fun ping(brukerToken: String): Mono<String> {
         val oboToken = texasClient.hentOboToken(
             brukerToken = brukerToken,
-            targetAudience = infotrygdAudience
+            targetAudience = gjenlevendeBsInfotrygdAudience
         )
 
         return infotrygdWebClient

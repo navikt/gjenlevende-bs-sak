@@ -26,9 +26,11 @@ class InfotrygdTestController(
             "Enkel ping for å verifisere at kall mot gjenlevende-bs-infotrygd fungerer. Krever kun SAKSBEHANDLER-rolle.",
         security = [SecurityRequirement(name = "oauth2")],
     )
-    fun testPing(): ResponseEntity<String> =
+    fun testPing(
+        @AuthenticationPrincipal jwt: Jwt,
+    ): ResponseEntity<String> =
         try {
-            val response = infotrygdClient.pingSync()
+            val response = infotrygdClient.pingSync(jwt.tokenValue)
 
             ResponseEntity.ok(
                 response,

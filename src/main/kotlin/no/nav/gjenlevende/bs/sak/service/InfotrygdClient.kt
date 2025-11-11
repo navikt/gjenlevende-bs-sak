@@ -18,15 +18,16 @@ class InfotrygdClient(
         private const val API_BASE_URL = "/api/infotrygd"
     }
 
-    fun ping(): Mono<String> =
+    fun ping(bearerToken: String): Mono<String> =
         infotrygdWebClient
             .get()
             .uri("$API_BASE_URL/ping")
+            .header("Authorization", "Bearer $bearerToken")
             .retrieve()
             .bodyToMono<String>()
             .timeout(Duration.ofSeconds(TIMEOUT_SEKUNDER))
             .doOnSuccess { logger.info("Klarte å pinge gjenlevende-bs-infotrygd med melding: {}", it) }
             .doOnError { logger.error("Feilet å pinge gjenlevende-bs-infotrygd med melding: ", it) }
 
-    fun pingSync(): String = ping().block() ?: throw RuntimeException("Klarte ikke å pinge gjenlevene-bs-infotrygd")
+    fun pingSync(bearerToken: String): String = ping(bearerToken).block() ?: throw RuntimeException("Klarte ikke å pinge gjenlevene-bs-infotrygd")
 }

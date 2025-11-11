@@ -9,15 +9,6 @@ import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.stereotype.Component
 
-/**
- * Konverterer JWT fra Azure AD til Spring Security Authentication med roller.
- *
- * Validerer:
- * - NAVident claim er tilstede
- * - Bruker har minst én gyldig Azure AD gruppe
- *
- * Mapper Azure AD grupper til applikasjonsroller som kan brukes med @PreAuthorize.
- */
 @Component
 class AzureJwtAuthenticationConverter : Converter<Jwt, AbstractAuthenticationToken> {
     private val logger = LoggerFactory.getLogger(javaClass)
@@ -37,7 +28,6 @@ class AzureJwtAuthenticationConverter : Converter<Jwt, AbstractAuthenticationTok
             throw ManglendeClaimException("Token mangler påkrevd claim: $NAVIDENT_CLAIM")
         }
 
-        // Hent grupper fra JWT
         val grupper = jwt.getClaimAsStringList(GROUPS_CLAIM) ?: emptyList()
 
         // Map Azure AD grupper til applikasjonsroller

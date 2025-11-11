@@ -8,6 +8,6 @@ fun main(args: Array<String>) {
     SpringApplicationBuilder(ApplicationLocal::class.java)
         .initializers(DbContainerInitializer())
         .profiles(
-            "local",
+            "integrasjonstest",
         ).run(*args)
 }

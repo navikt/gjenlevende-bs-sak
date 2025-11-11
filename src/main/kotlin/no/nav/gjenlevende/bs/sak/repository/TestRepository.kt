@@ -8,7 +8,7 @@ import java.util.UUID
 @Repository
 interface TestRepository : CrudRepository<TestData, UUID> {
     @Query(
-        "SELECT test_string FROM TestData WHERE id = testId",
+        "SELECT test_string FROM test_table WHERE id = testId",
     )
     fun findTestStringMedId(testId: Int): List<String>
 }

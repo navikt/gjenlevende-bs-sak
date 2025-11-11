@@ -1,0 +1,6 @@
+spring:
+    datasource:
+        url: ${DATASOURCE_URL:jdbc:postgresql://localhost:5432/gjenlevende-bs-sak}
+        username: ${DATASOURCE_USERNAME:postgres}
+        password: ${DATASOURCE_PASSWORD:test}
+        driver-class-name: org.postgresql.Driver

@@ -62,8 +62,7 @@ class InfotrygdTestController(
     @Operation(
         summary = "Test med autentisering",
         description =
-            "Endepunkt som krever gyldig JWT token og kun SAKSBEHANDLER-rolle. " +
-                "Returnerer informasjon om innlogget bruker.",
+            "Endepunkt som krever gyldig JWT token og kun SAKSBEHANDLER-rolle. Returnerer informasjon om innlogget bruker.",
         security = [SecurityRequirement(name = "oauth2")],
     )
     fun testMedAuth(
@@ -114,8 +113,7 @@ class InfotrygdTestController(
     @Operation(
         summary = "Test med begge roller",
         description =
-            "Endepunkt som krever BÅDE SAKSBEHANDLER og BESLUTTER roller. " +
-                "Demonstrerer separation of duties - brukeren må ha begge tilganger.",
+            "Endepunkt som krever BÅDE SAKSBEHANDLER og BESLUTTER roller.",
         security = [SecurityRequirement(name = "oauth2")],
     )
     fun testBeggeRoller(

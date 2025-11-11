@@ -23,7 +23,10 @@ class InfotrygdClient(
     }
 
     fun ping(brukerToken: String): Mono<String> {
-        val oboToken = texasClient.hentOboToken(brukerToken = brukerToken, targetAudience = infotrygdAudience)
+        val oboToken = texasClient.hentOboToken(
+            brukerToken = brukerToken,
+            targetAudience = infotrygdAudience
+        )
 
         return infotrygdWebClient
             .get()

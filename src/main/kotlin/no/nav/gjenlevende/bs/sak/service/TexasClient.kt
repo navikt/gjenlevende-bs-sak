@@ -47,12 +47,7 @@ class TexasClient(
             response?.accessToken
                 ?: throw RuntimeException("Texas returnerte tomt access_token")
         } catch (e: WebClientResponseException) {
-            logger.error(
-                "Texas API feilet med status ${e.statusCode}. " +
-                    "Response body: ${e.responseBodyAsString}. " +
-                    "Request URL: $tokenExchangeEndpoint, target: $targetAudience",
-                e,
-            )
+            logger.error("Texas API feilet med status ${e.statusCode} og response body: ${e.responseBodyAsString}")
             throw RuntimeException("Kunne ikke bytte token via Texas OBO: HTTP ${e.statusCode}", e)
         } catch (e: Exception) {
             logger.error("Uventet feil ved henting av OBO token fra Texas: ${e.message}", e)

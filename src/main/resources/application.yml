@@ -18,10 +18,13 @@ spring:
   #   locations: classpath:db/migration
 
   # DB konfig
-  # datasource:
-  #   url: ${NAIS_DATABASE_TEST_URL}
-  #   username: ${NAIS_DATABASE_TEST_USERNAME}
-  #   password: ${NAIS_DATABASE_TEST_PASSWORD}
+  datasource:
+    url: ${DB_JDBC_URL}
+    hikari:
+        maximum-pool-size: 20
+        connection-test-query: "select 1"
+        max-lifetime: 90000
+        minimum-idle: 1
 
 management:
   endpoint:

@@ -8,9 +8,6 @@ enum class Rolle(
     FORVALTER("Kan gjøre forvalter ting idk"),
     ;
 
-    /**
-     * Returnerer rollen som Spring Security authority (med ROLE_ prefix).
-     */
     fun authority(): String = "ROLE_$name"
 
     companion object {

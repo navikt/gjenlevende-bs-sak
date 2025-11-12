@@ -19,8 +19,6 @@ class AzureJwtAuthenticationConverter : Converter<Jwt, AbstractAuthenticationTok
     }
 
     override fun convert(jwt: Jwt): AbstractAuthenticationToken {
-        // Valider at NAVident finnes
-        // TODO: Sjekk om dette er påkrevd, mistenker det er det, men kan være det går fint uten.
         val navIdent = jwt.getClaimAsString(NAVIDENT_CLAIM)
 
         if (navIdent.isNullOrBlank()) {
@@ -30,7 +28,6 @@ class AzureJwtAuthenticationConverter : Converter<Jwt, AbstractAuthenticationTok
 
         val grupper = jwt.getClaimAsStringList(GROUPS_CLAIM) ?: emptyList()
 
-        // Map Azure AD grupper til applikasjonsroller
         val roller = Rolle.fraAzureGrupper(grupper)
 
         if (roller.isEmpty()) {
@@ -42,13 +39,9 @@ class AzureJwtAuthenticationConverter : Converter<Jwt, AbstractAuthenticationTok
             )
         }
 
-        // Konverter roller til Spring Security authorities
         val authorities = roller.map { SimpleGrantedAuthority(it.authority()) }
 
-        // TODO: Fjern denne, husk.
-        logger.info(
-            "Autentisert bruker $navIdent med roller: ${roller.joinToString(", ")}",
-        )
+        logger.info("Autentisert bruker $navIdent med roller: ${roller.joinToString(", ")}")
 
         return JwtAuthenticationToken(jwt, authorities)
     }

@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
+import org.springframework.util.LinkedMultiValueMap
+import org.springframework.util.MultiValueMap
+import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import org.springframework.web.reactive.function.client.bodyToMono
@@ -24,15 +27,19 @@ class TexasClient(
         brukerToken: String,
         targetAudience: String,
     ): String {
-        logger.info("Henter OBO token fra Texas. Endpoint: $tokenExchangeEndpoint, scope: $targetAudience")
+        logger.info("Henter OBO token fra Texas. Endpoint: $tokenExchangeEndpoint, target: $targetAudience")
 
         return try {
+            val formData: MultiValueMap<String, String> = LinkedMultiValueMap()
+            formData.add("identity_provider", "azuread")
+            formData.add("target", targetAudience)
+            formData.add("user_token", brukerToken)
+
             val response =
                 webClient
                     .post()
-                    .uri("$tokenExchangeEndpoint?scope=$targetAudience")
-                    .header("Authorization", "Bearer $brukerToken")
-                    .header("Content-Type", "application/x-www-form-urlencoded")
+                    .uri(tokenExchangeEndpoint)
+                    .body(BodyInserters.fromFormData(formData))
                     .retrieve()
                     .bodyToMono<TexasOboResponse>()
                     .block()
@@ -40,12 +47,7 @@ class TexasClient(
             response?.accessToken
                 ?: throw RuntimeException("Texas returnerte tomt access_token")
         } catch (e: WebClientResponseException) {
-            logger.error(
-                "Texas API feilet med status ${e.statusCode}. " +
-                    "Response body: ${e.responseBodyAsString}. " +
-                    "Request URL: $tokenExchangeEndpoint?scope=$targetAudience",
-                e,
-            )
+            logger.error("Texas API feilet med status ${e.statusCode} og response body: ${e.responseBodyAsString}")
             throw RuntimeException("Kunne ikke bytte token via Texas OBO: HTTP ${e.statusCode}", e)
         } catch (e: Exception) {
             logger.error("Uventet feil ved henting av OBO token fra Texas: ${e.message}", e)
@@ -57,4 +59,8 @@ class TexasClient(
 data class TexasOboResponse(
     @JsonProperty("access_token")
     val accessToken: String,
+    @JsonProperty("expires_in")
+    val utløperOm: Int,
+    @JsonProperty("token_type")
+    val tokenType: String,
 )

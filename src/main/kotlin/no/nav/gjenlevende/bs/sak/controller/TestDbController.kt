@@ -18,5 +18,5 @@ class TestDbController(
         summary = "Hent testdata fra db",
         description = "Skal hente test streng fra db",
     )
-    fun hentTestData(): List<String> = testRepository.findTestStringMedId(1)
+    fun hentTestData(testId: Int): List<String> = testRepository.findTestStringMedId(testId)
 }

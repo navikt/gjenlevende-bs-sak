@@ -13,9 +13,9 @@ enum class Rolle(
     companion object {
         val AZURE_GRUPPE_TIL_ROLLE: Map<String, Set<Rolle>> =
             mapOf(
-                "ee5e0b5e-454c-4612-b931-1fe363df7c2c" to setOf(SAKSBEHANDLER),
-                "01166863-22f1-4e16-9785-d7a05a22df74" to setOf(BESLUTTER),
-                "59865891-62a0-4fe3-b282-2e38210d1fbb" to setOf(FORVALTER),
+                "5357fbfa-de25-4d23-86a6-f67caf8ddd63" to setOf(SAKSBEHANDLER),
+                "fda781b0-b82c-4049-919d-3b05623f05fb" to setOf(BESLUTTER),
+                "0291bb72-71fa-4a35-9947-ea7b73f09ab8" to setOf(FORVALTER),
             )
 
         fun fraAzureGrupper(gruppeIder: List<String>): Set<Rolle> =

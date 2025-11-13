@@ -36,8 +36,11 @@ class InfotrygdClient(
             .retrieve()
             .bodyToMono<String>()
             .timeout(Duration.ofSeconds(TIMEOUT_SEKUNDER))
-            .doOnSuccess { logger.info("Klarte å pinge gjenlevende-bs-infotrygd med melding: $it") }
-            .doOnError { logger.error("Feilet å pinge gjenlevende-bs-infotrygd med melding: $it") }
+            .doOnSuccess { response: String? ->
+                response?.let {
+                    logger.info("Klarte å pinge gjenlevende-bs-infotrygd med melding: $it")
+                }
+            }.doOnError { logger.error("Feilet å pinge gjenlevende-bs-infotrygd med melding: $it") }
     }
 
     fun pingSync(brukerToken: String): String = ping(brukerToken).block() ?: throw RuntimeException("Klarte ikke å pinge gjenlevene-bs-infotrygd")

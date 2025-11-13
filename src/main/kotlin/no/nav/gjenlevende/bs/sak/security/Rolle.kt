@@ -5,7 +5,7 @@ enum class Rolle(
 ) {
     SAKSBEHANDLER("Kan saksbehandle i saksbehandler-løsningen"),
     BESLUTTER("Kan fatte beslutninger i på saker i saksbehandling-løsningen"),
-    FORVALTER("Kan gjøre forvalter ting idk"),
+    VEILEDER("Kan veilede og gi støtte i saksbehandling-løsningen"),
     ;
 
     fun authority(): String = "ROLE_$name"
@@ -15,7 +15,7 @@ enum class Rolle(
             mapOf(
                 "5357fbfa-de25-4d23-86a6-f67caf8ddd63" to setOf(SAKSBEHANDLER),
                 "fda781b0-b82c-4049-919d-3b05623f05fb" to setOf(BESLUTTER),
-                "0291bb72-71fa-4a35-9947-ea7b73f09ab8" to setOf(FORVALTER),
+                "0291bb72-71fa-4a35-9947-ea7b73f09ab8" to setOf(VEILEDER),
             )
 
         fun fraAzureGrupper(gruppeIder: List<String>): Set<Rolle> =

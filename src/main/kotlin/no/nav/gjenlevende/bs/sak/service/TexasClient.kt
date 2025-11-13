@@ -29,13 +29,13 @@ class TexasClient(
     ): String {
         logger.info("Henter OBO token fra Texas. Endpoint: $tokenExchangeEndpoint, target: $targetAudience")
 
-        return try {
-            val formData: MultiValueMap<String, String> = LinkedMultiValueMap()
-            formData.add("identity_provider", "azuread")
-            formData.add("target", targetAudience)
-            formData.add("user_token", brukerToken)
+        val response =
+            try {
+                val formData: MultiValueMap<String, String> = LinkedMultiValueMap()
+                formData.add("identity_provider", "azuread")
+                formData.add("target", targetAudience)
+                formData.add("user_token", brukerToken)
 
-            val response =
                 webClient
                     .post()
                     .uri(tokenExchangeEndpoint)
@@ -43,16 +43,20 @@ class TexasClient(
                     .retrieve()
                     .bodyToMono<TexasOboResponse>()
                     .block()
+            } catch (e: WebClientResponseException) {
+                logger.error("Texas API feilet med status ${e.statusCode} og response body: ${e.responseBodyAsString}")
+                throw RuntimeException("Kunne ikke bytte token via Texas OBO: HTTP ${e.statusCode}", e)
+            } catch (e: Exception) {
+                logger.error("Uventet feil ved henting av OBO token fra Texas: ${e.message}", e)
+                throw RuntimeException("Kunne ikke bytte token via Texas OBO", e)
+            }
 
-            response?.accessToken
-                ?: throw RuntimeException("Texas returnerte tomt access_token")
-        } catch (e: WebClientResponseException) {
-            logger.error("Texas API feilet med status ${e.statusCode} og response body: ${e.responseBodyAsString}")
-            throw RuntimeException("Kunne ikke bytte token via Texas OBO: HTTP ${e.statusCode}", e)
-        } catch (e: Exception) {
-            logger.error("Uventet feil ved henting av OBO token fra Texas: ${e.message}", e)
-            throw RuntimeException("Kunne ikke bytte token via Texas OBO", e)
+        val token = response?.accessToken
+        if (token.isNullOrBlank()) {
+            throw RuntimeException("Texas returnerte tomt access_token")
         }
+
+        return token
     }
 }
 

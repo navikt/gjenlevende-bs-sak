@@ -16,8 +16,6 @@ spring:
   flyway:
     enabled: true
     locations: classpath:db/migration
-    baseline-on-migrate: true
-    baseline-version: 0
 
   # DB konfig
   datasource:

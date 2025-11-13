@@ -26,6 +26,10 @@ spring:
         max-lifetime: 90000
         minimum-idle: 1
 
+logging:
+    level:
+        org.flywaydb: DEBUG
+
 management:
   endpoint:
     health:

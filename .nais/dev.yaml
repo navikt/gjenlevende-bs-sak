@@ -17,6 +17,9 @@ spec:
             memory: 448Mi
         limits:
             memory: 512Mi
+    env:
+        -   name: SPRING_PROFILES_ACTIVE
+            value: dev
     gcp:
         sqlInstances:
             -   name: gjenlevende-bs-sak

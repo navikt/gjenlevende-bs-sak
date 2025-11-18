@@ -13,7 +13,12 @@ class UnleashService(
     fun getAllToggles(): Map<String, Boolean> {
         val toggleNames = unleash.more().getFeatureToggleNames()
         logger.info("Henter alle toggles. Antall funnet: ${toggleNames.size}")
-        logger.debug("Toggle-navn: $toggleNames")
+
+        if (toggleNames.isEmpty()) {
+            logger.warn("Ingen toggles funnet")
+        } else {
+            logger.info("Toggle-navn: $toggleNames")
+        }
 
         return toggleNames.associateWith { toggleName ->
             val enabled = unleash.isEnabled(toggleName)
@@ -24,7 +29,13 @@ class UnleashService(
 
     fun isEnabled(toggleName: String): Boolean {
         val enabled = unleash.isEnabled(toggleName)
-        logger.debug("Sjekker toggle '$toggleName': $enabled")
+        logger.info("Sjekker toggle '$toggleName': $enabled")
+
+        val allToggles = unleash.more().getFeatureToggleNames()
+        if (!allToggles.contains(toggleName)) {
+            logger.warn("Toggle '$toggleName' finnes ikke i Unleash. Tilgjengelige toggles: $allToggles")
+        }
+
         return enabled
     }
 

@@ -55,10 +55,6 @@ AZUREAD_TOKEN_ENDPOINT_URL: https://login.microsoftonline.com/${azure.app.tenant
 AUTHORIZATION_URL: https://login.microsoftonline.com/${azure.app.tenant.id}/oauth2/v2.0/authorize
 API_SCOPE: api://${azure.app.client.id}/.default
 
-# Unleash konfigurasjon
-unleash:
-    enabled: true
-
 # Swagger/OpenAPI konfigurasjon
 springdoc:
   api-docs:

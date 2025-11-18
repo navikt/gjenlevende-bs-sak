@@ -50,6 +50,7 @@ spec:
                 -   application: gjenlevende-bs-sak-frontend-lokal
             external:
                 -   host: gjenlevende-bs-infotrygd.dev-fss-pub.nais.io
+                -   host: etterlatte-unleash-api.nav.cloud.nais.io
 
     #Toggle
     envFrom:

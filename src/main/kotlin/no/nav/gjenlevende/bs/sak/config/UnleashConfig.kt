@@ -36,12 +36,12 @@ open class UnleashConfig {
                 .unleashAPI(unleashUrl)
                 .apiKey(unleashToken)
                 .environment(environment)
-                .synchronousFetchOnInitialisation(true)
+                .synchronousFetchOnInitialisation(false)
                 .build()
 
         val unleash = DefaultUnleash(config)
 
-        logger.info("Unleash initialisert. Antall toggles: ${unleash.more().getFeatureToggleNames().size}")
+        logger.info("Unleash initialisert. Klienten vil hente toggles i bakgrunnen.")
 
         return unleash
     }

@@ -1,6 +1,8 @@
 package no.nav.gjenlevende.bs.sak.service
 
-enum class FeatureToggle(val toggleName: String) {
+enum class FeatureToggle(
+    val toggleName: String,
+) {
     TEST_SETUP("gjenlevende_frontend__test_setup"),
     ;
 
@@ -8,4 +10,3 @@ enum class FeatureToggle(val toggleName: String) {
         fun getAllToggleNames(): List<String> = entries.map { it.toggleName }
     }
 }
-

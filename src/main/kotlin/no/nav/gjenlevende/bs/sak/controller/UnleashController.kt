@@ -20,7 +20,7 @@ class UnleashController(
     @GetMapping("/toggles")
     @Operation(
         summary = "Hent alle feature toggles",
-        description = "Returnerer en map med alle definerte feature toggles og deres status"
+        description = "Returnerer en map med alle definerte feature toggles og deres status",
     )
     fun getFeatureToggles(): ResponseEntity<Map<String, Boolean>> {
         val toggles = unleashService.getFeatureToggles()

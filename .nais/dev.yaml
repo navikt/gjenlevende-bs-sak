@@ -51,6 +51,10 @@ spec:
             external:
                 -   host: gjenlevende-bs-infotrygd.dev-fss-pub.nais.io
 
+    #Toggle
+    envFrom:
+        -   secret: gjenlevende-bs-sak-unleash-api-token
+
     # Helse
     liveness:
         path: /internal/health/liveness

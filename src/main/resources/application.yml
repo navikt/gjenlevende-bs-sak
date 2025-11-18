@@ -55,6 +55,13 @@ AZUREAD_TOKEN_ENDPOINT_URL: https://login.microsoftonline.com/${azure.app.tenant
 AUTHORIZATION_URL: https://login.microsoftonline.com/${azure.app.tenant.id}/oauth2/v2.0/authorize
 API_SCOPE: api://${azure.app.client.id}/.default
 
+# Unleash konfigurasjon
+unleash:
+  url: ${UNLEASH_SERVER_API_URL:https://unleash.nais.io/api/}
+  token: ${UNLEASH_SERVER_API_TOKEN:default:development.unleash-insecure-api-token}
+  app-name: ${spring.application.name}
+  environment: ${NAIS_CLUSTER_NAME:local}
+
 # Swagger/OpenAPI konfigurasjon
 springdoc:
   api-docs:

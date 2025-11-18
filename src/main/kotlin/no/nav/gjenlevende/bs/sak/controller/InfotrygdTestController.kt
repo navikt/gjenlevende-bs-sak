@@ -3,6 +3,7 @@ package no.nav.gjenlevende.bs.sak.controller
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
+import no.nav.gjenlevende.bs.sak.dto.StønadTypeStatistikkResponse
 import no.nav.gjenlevende.bs.sak.service.InfotrygdClient
 import org.springframework.context.annotation.Profile
 import org.springframework.http.ResponseEntity
@@ -134,6 +135,30 @@ class InfotrygdTestController(
             ),
         )
     }
+
+    @GetMapping("/stonadtyper")
+    @PreAuthorize("hasRole('SAKSBEHANDLER') and hasRole('BESLUTTER') and hasRole('VEILEDER')")
+    @Operation(
+        summary = "Hent stønadtype statistikk fra Infotrygd",
+        description =
+            "Henter oversikt over antall stønader per type (GB, GU, GF) fra Infotrygd. Krever ALLE tre roller: SAKSBEHANDLER, BESLUTTER og VEILEDER.",
+        security = [SecurityRequirement(name = "oauth2")],
+    )
+    fun hentStønadTypeStatistikk(
+        @AuthenticationPrincipal jwt: Jwt,
+    ): ResponseEntity<StønadTypeStatistikkResponse> =
+        try {
+            val response = infotrygdClient.hentStønadTypeStatistikkSync(jwt.tokenValue)
+
+            ResponseEntity.ok(response)
+        } catch (e: Exception) {
+            ResponseEntity.internalServerError().body(
+                StønadTypeStatistikkResponse(
+                    stønadtyper = emptyList(),
+                    totaltAntall = 0,
+                ),
+            )
+        }
 }
 
 data class BrukerInfo(

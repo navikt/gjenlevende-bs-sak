@@ -12,16 +12,16 @@ import org.springframework.context.annotation.Configuration
 open class UnleashConfig {
     private val logger = LoggerFactory.getLogger(javaClass)
 
-    @Value("\${unleash.url}")
+    @Value("\${UNLEASH_SERVER_API_URL}")
     private lateinit var unleashUrl: String
 
-    @Value("\${unleash.token}")
+    @Value("\${UNLEASH_SERVER_API_TOKEN}")
     private lateinit var unleashToken: String
 
-    @Value("\${unleash.app-name}")
+    @Value("\${NAIS_APP_NAME}")
     private lateinit var appName: String
 
-    @Value("\${unleash.environment}")
+    @Value("\${UNLEASH_SERVER_API_ENV}")
     private lateinit var environment: String
 
     @Bean
@@ -33,11 +33,10 @@ open class UnleashConfig {
                 .builder()
                 .appName(appName)
                 .instanceId(appName)
-                .unleashAPI(unleashUrl)
+                .unleashAPI("$unleashUrl/api")
                 .apiKey(unleashToken)
-                .environment(environment)
-                .synchronousFetchOnInitialisation(false)
                 .build()
+//                .environment(environment)
 
         val unleash = DefaultUnleash(config)
 

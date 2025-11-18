@@ -22,8 +22,8 @@ class UnleashController(
         summary = "Hent alle feature toggles",
         description = "Returnerer en map med alle definerte feature toggles og deres status",
     )
-    fun getFeatureToggles(): ResponseEntity<Map<String, Boolean>> {
-        val toggles = unleashService.getFeatureToggles()
+    fun hentFeatureToggles(): ResponseEntity<Map<String, Boolean>> {
+        val toggles = unleashService.hentFeatureToggles()
         logger.info("Returnerer ${toggles.size} feature toggles til frontend")
         return ResponseEntity.ok(toggles)
     }

@@ -7,6 +7,6 @@ enum class FeatureToggle(
     ;
 
     companion object {
-        fun getAllToggleNames(): List<String> = entries.map { it.toggleName }
+        fun hentAlleFeatureToggleNavn(): List<String> = entries.map { it.toggleName }
     }
 }

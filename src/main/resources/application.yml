@@ -60,7 +60,7 @@ unleash:
   url: ${UNLEASH_SERVER_API_URL:https://unleash.nais.io/api/}
   token: ${UNLEASH_SERVER_API_TOKEN:default:development.unleash-insecure-api-token}
   app-name: ${spring.application.name}
-  environment: ${NAIS_CLUSTER_NAME:local}
+  environment: ${UNLEASH_SERVER_API_ENV:development}
 
 # Swagger/OpenAPI konfigurasjon
 springdoc:

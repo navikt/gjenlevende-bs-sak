@@ -36,11 +36,8 @@ open class UnleashConfig {
                 .unleashAPI("$unleashUrl/api")
                 .apiKey(unleashToken)
                 .build()
-//                .environment(environment)
 
         val unleash = DefaultUnleash(config)
-
-        logger.info("Unleash initialisert. Klienten vil hente toggles i bakgrunnen.")
 
         return unleash
     }

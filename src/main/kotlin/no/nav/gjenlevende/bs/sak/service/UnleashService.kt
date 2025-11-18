@@ -10,15 +10,9 @@ class UnleashService(
 ) {
     private val logger = LoggerFactory.getLogger(javaClass)
 
-    fun getAllToggles(): Map<String, Boolean> {
-        val toggleNames = unleash.more().getFeatureToggleNames()
-        logger.info("Henter alle toggles. Antall funnet: ${toggleNames.size}")
-
-        if (toggleNames.isEmpty()) {
-            logger.warn("Ingen toggles funnet")
-        } else {
-            logger.info("Toggle-navn: $toggleNames")
-        }
+    fun getFeatureToggles(): Map<String, Boolean> {
+        val toggleNames = FeatureToggle.getAllToggleNames()
+        logger.info("Henter ${toggleNames.size} feature toggles fra Unleash")
 
         return toggleNames.associateWith { toggleName ->
             val enabled = unleash.isEnabled(toggleName)
@@ -27,17 +21,4 @@ class UnleashService(
         }
     }
 
-    fun isEnabled(toggleName: String): Boolean {
-        val enabled = unleash.isEnabled(toggleName)
-        logger.info("Sjekker toggle '$toggleName': $enabled")
-
-        val allToggles = unleash.more().getFeatureToggleNames()
-        if (!allToggles.contains(toggleName)) {
-            logger.warn("Toggle '$toggleName' finnes ikke i Unleash. Tilgjengelige toggles: $allToggles")
-        }
-
-        return enabled
-    }
-
-    fun getTestSetupToggle(): Boolean = isEnabled("gjenlevende_frontend__test_setup")
 }

@@ -1,5 +1,6 @@
 package no.nav.gjenlevende.bs.sak.service
 
+import no.nav.gjenlevende.bs.sak.dto.PersonPerioderResponse
 import no.nav.gjenlevende.bs.sak.dto.StønadTypeStatistikkResponse
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -68,4 +69,33 @@ class InfotrygdClient(
     fun hentStønadTypeStatistikkSync(brukerToken: String): StønadTypeStatistikkResponse =
         hentStønadTypeStatistikk(brukerToken).block()
             ?: throw RuntimeException("Klarte ikke å hente stønadtype statistikk fra gjenlevende-bs-infotrygd")
+
+    fun hentPerioderForPerson(
+        brukerToken: String,
+        personIdent: String,
+    ): Mono<PersonPerioderResponse> {
+        val oboToken =
+            texasClient.hentOboToken(
+                brukerToken = brukerToken,
+                targetAudience = gjenlevendeBsInfotrygdAudience,
+            )
+
+        return infotrygdWebClient
+            .get()
+            .uri("$API_BASE_URL/perioder/$personIdent")
+            .header("Authorization", "Bearer $oboToken")
+            .retrieve()
+            .bodyToMono<PersonPerioderResponse>()
+            .timeout(Duration.ofSeconds(TIMEOUT_SEKUNDER))
+            .doOnSuccess { response ->
+                logger.info("Hentet perioder for person: ${response.barnetilsyn.size} barnetilsyn, ${response.skolepenger.size} skolepenger")
+            }.doOnError { logger.error("Feilet å hente perioder for person: $it") }
+    }
+
+    fun hentPerioderForPersonSync(
+        brukerToken: String,
+        personIdent: String,
+    ): PersonPerioderResponse =
+        hentPerioderForPerson(brukerToken, personIdent).block()
+            ?: throw RuntimeException("Klarte ikke å hente perioder for person fra gjenlevende-bs-infotrygd")
 }

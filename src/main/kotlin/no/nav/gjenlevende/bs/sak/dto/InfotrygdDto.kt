@@ -2,18 +2,13 @@ package no.nav.gjenlevende.bs.sak.dto
 
 import java.time.LocalDate
 
-enum class StønadType(
-    val kodeRutine: String,
-) {
-    BARNETILSYN("GB"),
-    SKOLEPENGER("GU"),
-}
+data class PersonPerioderRequest(
+    val personident: String,
+)
 
 data class PeriodeResponse(
-    val stønadType: StønadType,
     val fom: LocalDate,
     val tom: LocalDate?,
-    val beløp: Int? = null,
     val vedtakId: Long,
     val stønadId: Long,
     val barn: List<BarnInfo> = emptyList(),

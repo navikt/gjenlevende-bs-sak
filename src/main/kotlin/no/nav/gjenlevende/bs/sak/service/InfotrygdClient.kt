@@ -1,5 +1,6 @@
 package no.nav.gjenlevende.bs.sak.service
 
+import no.nav.gjenlevende.bs.sak.dto.PersonPerioderRequest
 import no.nav.gjenlevende.bs.sak.dto.PersonPerioderResponse
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -33,10 +34,13 @@ class InfotrygdClient(
                 targetAudience = gjenlevendeBsInfotrygdAudience,
             )
 
+        val request = PersonPerioderRequest(personident = personident)
+
         return infotrygdWebClient
-            .get()
-            .uri("$API_BASE_URL/perioder/$personident")
+            .post()
+            .uri("$API_BASE_URL/perioder")
             .header("Authorization", "Bearer $oboToken")
+            .bodyValue(request)
             .retrieve()
             .bodyToMono<PersonPerioderResponse>()
             .timeout(Duration.ofSeconds(TIMEOUT_SEKUNDER))

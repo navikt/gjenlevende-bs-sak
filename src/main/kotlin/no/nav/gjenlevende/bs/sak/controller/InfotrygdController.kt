@@ -26,8 +26,7 @@ class InfotrygdController(
     @PreAuthorize("hasRole('SAKSBEHANDLER') and hasRole('BESLUTTER') and hasRole('VEILEDER')")
     @Operation(
         summary = "Hent vedtaksperioder for person fra Infotrygd",
-        description =
-            "Henter alle vedtaksperioder for en gitt person basert på personIdent.",
+        description = "Henter alle vedtaksperioder for en gitt person basert på personIdent.",
         security = [SecurityRequirement(name = "oauth2")],
     )
     fun hentPerioderForPerson(

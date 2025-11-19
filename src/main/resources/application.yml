@@ -70,3 +70,5 @@ springdoc:
       use-pkce-with-authorization-code-grant: true
       client-id: ${azure.app.client.id}
       scope-separator: ","
+
+prosessering.rolle: "87190cf3-b278-457d-8ab7-1a5c55a9edd7" # Gruppen teamfamilie TODO FIKS

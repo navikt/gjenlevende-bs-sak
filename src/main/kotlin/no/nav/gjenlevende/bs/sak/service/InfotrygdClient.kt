@@ -1,5 +1,6 @@
 package no.nav.gjenlevende.bs.sak.service
 
+import no.nav.gjenlevende.bs.sak.dto.PersonPerioderResponse
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
@@ -22,7 +23,10 @@ class InfotrygdClient(
         private const val API_BASE_URL = "/api/infotrygd"
     }
 
-    fun ping(brukerToken: String): Mono<String> {
+    fun hentPerioderForPerson(
+        brukerToken: String,
+        personident: String,
+    ): Mono<PersonPerioderResponse> {
         val oboToken =
             texasClient.hentOboToken(
                 brukerToken = brukerToken,
@@ -31,17 +35,22 @@ class InfotrygdClient(
 
         return infotrygdWebClient
             .get()
-            .uri("$API_BASE_URL/ping")
+            .uri("$API_BASE_URL/perioder/$personident")
             .header("Authorization", "Bearer $oboToken")
             .retrieve()
-            .bodyToMono<String>()
+            .bodyToMono<PersonPerioderResponse>()
             .timeout(Duration.ofSeconds(TIMEOUT_SEKUNDER))
-            .doOnSuccess { response: String? ->
-                response?.let {
-                    logger.info("Klarte å pinge gjenlevende-bs-infotrygd med melding: $it")
-                }
-            }.doOnError { logger.error("Feilet å pinge gjenlevende-bs-infotrygd med melding: $it") }
+            .doOnSuccess { response ->
+                logger.info("Hentet perioder for person: ${response.barnetilsyn.size} barnetilsyn, ${response.skolepenger.size} skolepenger")
+            }.doOnError { logger.error("Feilet å hente perioder for person: $it") }
     }
 
-    fun pingSync(brukerToken: String): String = ping(brukerToken).block() ?: throw RuntimeException("Klarte ikke å pinge gjenlevene-bs-infotrygd")
+    fun hentPerioderForPersonSync(
+        brukerToken: String,
+        personident: String,
+    ): PersonPerioderResponse =
+        hentPerioderForPerson(
+            brukerToken = brukerToken,
+            personident = personident,
+        ).block() ?: throw RuntimeException("Klarte ikke å hente perioder for person fra gjenlevende-bs-infotrygd")
 }

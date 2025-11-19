@@ -1,7 +1,6 @@
 package no.nav.gjenlevende.bs.sak.service
 
 import no.nav.gjenlevende.bs.sak.dto.PersonPerioderResponse
-import no.nav.gjenlevende.bs.sak.dto.StønadTypeStatistikkResponse
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
@@ -23,52 +22,6 @@ class InfotrygdClient(
         private const val TIMEOUT_SEKUNDER = 10L
         private const val API_BASE_URL = "/api/infotrygd"
     }
-
-    fun ping(brukerToken: String): Mono<String> {
-        val oboToken =
-            texasClient.hentOboToken(
-                brukerToken = brukerToken,
-                targetAudience = gjenlevendeBsInfotrygdAudience,
-            )
-
-        return infotrygdWebClient
-            .get()
-            .uri("$API_BASE_URL/ping")
-            .header("Authorization", "Bearer $oboToken")
-            .retrieve()
-            .bodyToMono<String>()
-            .timeout(Duration.ofSeconds(TIMEOUT_SEKUNDER))
-            .doOnSuccess { response: String? ->
-                response?.let {
-                    logger.info("Klarte å pinge gjenlevende-bs-infotrygd med melding: $it")
-                }
-            }.doOnError { logger.error("Feilet å pinge gjenlevende-bs-infotrygd med melding: $it") }
-    }
-
-    fun pingSync(brukerToken: String): String = ping(brukerToken).block() ?: throw RuntimeException("Klarte ikke å pinge gjenlevene-bs-infotrygd")
-
-    fun hentStønadTypeStatistikk(brukerToken: String): Mono<StønadTypeStatistikkResponse> {
-        val oboToken =
-            texasClient.hentOboToken(
-                brukerToken = brukerToken,
-                targetAudience = gjenlevendeBsInfotrygdAudience,
-            )
-
-        return infotrygdWebClient
-            .get()
-            .uri("$API_BASE_URL/stonadtyper")
-            .header("Authorization", "Bearer $oboToken")
-            .retrieve()
-            .bodyToMono<StønadTypeStatistikkResponse>()
-            .timeout(Duration.ofSeconds(TIMEOUT_SEKUNDER))
-            .doOnSuccess { response ->
-                logger.info("Hentet stønadtype statistikk: ${response.totaltAntall} stønader totalt")
-            }.doOnError { logger.error("Feilet å hente stønadtype statistikk: $it") }
-    }
-
-    fun hentStønadTypeStatistikkSync(brukerToken: String): StønadTypeStatistikkResponse =
-        hentStønadTypeStatistikk(brukerToken).block()
-            ?: throw RuntimeException("Klarte ikke å hente stønadtype statistikk fra gjenlevende-bs-infotrygd")
 
     fun hentPerioderForPerson(
         brukerToken: String,

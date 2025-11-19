@@ -45,7 +45,7 @@ class InfotrygdController(
     } catch (e: Exception) {
         ResponseEntity.internalServerError().body(
             PersonPerioderResponse(
-                personIdent = personIdent,
+                personident = personIdent,
                 barnetilsyn = emptyList(),
                 skolepenger = emptyList(),
             ),

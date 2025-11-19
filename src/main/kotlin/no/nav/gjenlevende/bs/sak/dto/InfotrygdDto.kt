@@ -20,13 +20,13 @@ data class PeriodeResponse(
 )
 
 data class BarnInfo(
-    val personLopenr: Long,
+    val personLøpenummer: Long,
     val fom: LocalDate,
     val tom: LocalDate?,
 )
 
 data class PersonPerioderResponse(
-    val personIdent: String,
+    val personident: String,
     val barnetilsyn: List<PeriodeResponse> = emptyList(),
     val skolepenger: List<PeriodeResponse> = emptyList(),
 ) {

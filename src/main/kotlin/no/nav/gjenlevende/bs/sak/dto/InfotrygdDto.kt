@@ -11,7 +11,8 @@ data class PeriodeResponse(
     val tom: LocalDate?,
     val vedtakId: Long,
     val stønadId: Long,
-    val barn: List<BarnInfo> = emptyList(),
+    val barnPersonLøpenummer: List<Long> = emptyList(),
+    val barnDetaljer: List<BarnInfo>? = null,
 )
 
 data class BarnInfo(

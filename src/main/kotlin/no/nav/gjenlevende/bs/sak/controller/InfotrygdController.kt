@@ -18,7 +18,10 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/test/infotrygd")
 @Profile("dev")
-@Tag(name = "Infotrygd integrasjon test", description = "Endepunkter for å teste integrasjon mot gjenlevende-bs-infotrygd")
+@Tag(
+    name = "Infotrygd integrasjon test",
+    description = "Endepunkter for å teste integrasjon mot gjenlevende-bs-infotrygd",
+)
 class InfotrygdController(
     private val infotrygdClient: InfotrygdClient,
 ) {
@@ -32,18 +35,20 @@ class InfotrygdController(
     fun hentPerioderForPerson(
         @PathVariable personIdent: String,
         @AuthenticationPrincipal jwt: Jwt,
-    ): ResponseEntity<PersonPerioderResponse> =
-        try {
-            val response = infotrygdClient.hentPerioderForPersonSync(brukerToken = jwt.tokenValue, personIdent = personIdent)
+    ): ResponseEntity<PersonPerioderResponse> = try {
+        val response = infotrygdClient.hentPerioderForPersonSync(
+            brukerToken = jwt.tokenValue,
+            personIdent = personIdent,
+        )
 
-            ResponseEntity.ok(response)
-        } catch (e: Exception) {
-            ResponseEntity.internalServerError().body(
-                PersonPerioderResponse(
-                    personIdent = personIdent,
-                    barnetilsyn = emptyList(),
-                    skolepenger = emptyList(),
-                ),
-            )
-        }
+        ResponseEntity.ok(response)
+    } catch (e: Exception) {
+        ResponseEntity.internalServerError().body(
+            PersonPerioderResponse(
+                personIdent = personIdent,
+                barnetilsyn = emptyList(),
+                skolepenger = emptyList(),
+            ),
+        )
+    }
 }

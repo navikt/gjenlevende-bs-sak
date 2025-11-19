@@ -49,6 +49,8 @@ class InfotrygdClient(
         brukerToken: String,
         personIdent: String,
     ): PersonPerioderResponse =
-        hentPerioderForPerson(brukerToken, personIdent).block()
-            ?: throw RuntimeException("Klarte ikke å hente perioder for person fra gjenlevende-bs-infotrygd")
+        hentPerioderForPerson(
+            brukerToken = brukerToken,
+            personIdent = personIdent,
+        ).block() ?: throw RuntimeException("Klarte ikke å hente perioder for person fra gjenlevende-bs-infotrygd")
 }

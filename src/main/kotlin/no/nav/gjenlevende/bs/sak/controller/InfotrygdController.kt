@@ -35,20 +35,22 @@ class InfotrygdController(
     fun hentPerioderForPerson(
         @PathVariable personIdent: String,
         @AuthenticationPrincipal jwt: Jwt,
-    ): ResponseEntity<PersonPerioderResponse> = try {
-        val response = infotrygdClient.hentPerioderForPersonSync(
-            brukerToken = jwt.tokenValue,
-            personIdent = personIdent,
-        )
+    ): ResponseEntity<PersonPerioderResponse> =
+        try {
+            val response =
+                infotrygdClient.hentPerioderForPersonSync(
+                    brukerToken = jwt.tokenValue,
+                    personIdent = personIdent,
+                )
 
-        ResponseEntity.ok(response)
-    } catch (e: Exception) {
-        ResponseEntity.internalServerError().body(
-            PersonPerioderResponse(
-                personident = personIdent,
-                barnetilsyn = emptyList(),
-                skolepenger = emptyList(),
-            ),
-        )
-    }
+            ResponseEntity.ok(response)
+        } catch (e: Exception) {
+            ResponseEntity.internalServerError().body(
+                PersonPerioderResponse(
+                    personident = personIdent,
+                    barnetilsyn = emptyList(),
+                    skolepenger = emptyList(),
+                ),
+            )
+        }
 }

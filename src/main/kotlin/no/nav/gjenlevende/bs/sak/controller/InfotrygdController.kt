@@ -25,29 +25,29 @@ import org.springframework.web.bind.annotation.RestController
 class InfotrygdController(
     private val infotrygdClient: InfotrygdClient,
 ) {
-    @GetMapping("/perioder/{personIdent}")
+    @GetMapping("/perioder/{personident}")
     @PreAuthorize("hasRole('SAKSBEHANDLER') and hasRole('BESLUTTER') and hasRole('VEILEDER')")
     @Operation(
         summary = "Hent vedtaksperioder for person fra Infotrygd",
-        description = "Henter alle vedtaksperioder for en gitt person basert på personIdent.",
+        description = "Henter alle vedtaksperioder for en gitt person basert på personident.",
         security = [SecurityRequirement(name = "oauth2")],
     )
     fun hentPerioderForPerson(
-        @PathVariable personIdent: String,
+        @PathVariable personident: String,
         @AuthenticationPrincipal jwt: Jwt,
     ): ResponseEntity<PersonPerioderResponse> =
         try {
             val response =
                 infotrygdClient.hentPerioderForPersonSync(
                     brukerToken = jwt.tokenValue,
-                    personIdent = personIdent,
+                    personident = personident,
                 )
 
             ResponseEntity.ok(response)
         } catch (e: Exception) {
             ResponseEntity.internalServerError().body(
                 PersonPerioderResponse(
-                    personident = personIdent,
+                    personident = personident,
                     barnetilsyn = emptyList(),
                     skolepenger = emptyList(),
                 ),

@@ -25,7 +25,7 @@ class InfotrygdClient(
 
     fun hentPerioderForPerson(
         brukerToken: String,
-        personIdent: String,
+        personident: String,
     ): Mono<PersonPerioderResponse> {
         val oboToken =
             texasClient.hentOboToken(
@@ -35,7 +35,7 @@ class InfotrygdClient(
 
         return infotrygdWebClient
             .get()
-            .uri("$API_BASE_URL/perioder/$personIdent")
+            .uri("$API_BASE_URL/perioder/$personident")
             .header("Authorization", "Bearer $oboToken")
             .retrieve()
             .bodyToMono<PersonPerioderResponse>()
@@ -47,10 +47,10 @@ class InfotrygdClient(
 
     fun hentPerioderForPersonSync(
         brukerToken: String,
-        personIdent: String,
+        personident: String,
     ): PersonPerioderResponse =
         hentPerioderForPerson(
             brukerToken = brukerToken,
-            personIdent = personIdent,
+            personident = personident,
         ).block() ?: throw RuntimeException("Klarte ikke å hente perioder for person fra gjenlevende-bs-infotrygd")
 }

@@ -1,8 +1,7 @@
-package no.nav.gjenlevende.bs.sak.controller
+package no.nav.gjenlevende.bs.sak.unleash
 
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
-import no.nav.gjenlevende.bs.sak.service.UnleashService
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Profile
 import org.springframework.http.ResponseEntity

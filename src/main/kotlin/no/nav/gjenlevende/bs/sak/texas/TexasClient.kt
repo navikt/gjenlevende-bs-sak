@@ -1,4 +1,4 @@
-package no.nav.gjenlevende.bs.sak.service
+package no.nav.gjenlevende.bs.sak.texas
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import org.slf4j.LoggerFactory

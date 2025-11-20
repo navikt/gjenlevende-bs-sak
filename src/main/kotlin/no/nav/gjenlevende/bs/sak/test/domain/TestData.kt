@@ -1,4 +1,4 @@
-package no.nav.gjenlevende.bs.sak.repository
+package no.nav.gjenlevende.bs.sak.test.domain
 
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column

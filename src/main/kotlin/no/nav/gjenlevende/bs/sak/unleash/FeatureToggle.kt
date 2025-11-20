@@ -1,4 +1,4 @@
-package no.nav.gjenlevende.bs.sak.service
+package no.nav.gjenlevende.bs.sak.unleash
 
 enum class FeatureToggle(
     val toggleName: String,

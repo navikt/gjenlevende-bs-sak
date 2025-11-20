@@ -2,6 +2,10 @@ package no.nav.gjenlevende.bs.sak.dto
 
 import java.time.LocalDate
 
+data class PersonidentRequest(
+    val personident: String,
+)
+
 enum class StønadType(
     val kodeRutine: String,
 ) {

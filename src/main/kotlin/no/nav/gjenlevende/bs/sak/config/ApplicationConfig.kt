@@ -13,14 +13,12 @@ import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories
     "no.nav.familie.prosessering",
 )
 open class ApplicationConfig {
-
-    //TODO
+    // TODO
     @Bean
     open fun prosesseringInfoProvider(
         @Value("\${prosessering.rolle}") prosesseringRolle: String,
     ) = object : ProsesseringInfoProvider {
-        override fun hentBrukernavn(): String =
-            "Dummy"
+        override fun hentBrukernavn(): String = "Dummy"
 
         override fun harTilgang(): Boolean = true
     }

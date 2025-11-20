@@ -151,4 +151,55 @@ object JwtTestHelper {
                     AZURE_GROUP_ID_VEILEDER,
                 ),
         )
+
+    fun opprettM2MToken(
+        azpNavn: String = "gjenlevende-bs-frontend",
+        clientId: String = "test-client-id-123",
+        utløperOm: Long = 3600,
+    ): Jwt {
+        val nå = Instant.now()
+        val utløper = nå.plus(utløperOm, ChronoUnit.SECONDS)
+
+        val headers =
+            mapOf(
+                "alg" to "RS256",
+                "typ" to "JWT",
+                "kid" to "test-key-id",
+            )
+
+        return Jwt
+            .withTokenValue("test-m2m-token-value")
+            .headers { h -> h.putAll(headers) }
+            .issuedAt(nå)
+            .expiresAt(utløper)
+            .notBefore(nå)
+            .issuer(TEST_ISSUER)
+            .subject(clientId)
+            .audience(listOf(TEST_AUDIENCE))
+            .claim("azp_name", azpNavn)
+            .claim("azp", clientId)
+            .build()
+    }
+
+    fun opprettM2MTokenUtenAzp(): Jwt {
+        val nå = Instant.now()
+        val utløper = nå.plus(3600, ChronoUnit.SECONDS)
+
+        val headers =
+            mapOf(
+                "alg" to "RS256",
+                "typ" to "JWT",
+            )
+
+        return Jwt
+            .withTokenValue("test-m2m-token-value")
+            .headers { h -> h.putAll(headers) }
+            .issuedAt(nå)
+            .expiresAt(utløper)
+            .issuer(TEST_ISSUER)
+            .subject("test-client-id")
+            .audience(listOf(TEST_AUDIENCE))
+            .claim("azp_name", "gjenlevende-bs-frontend")
+            .build()
+    }
 }

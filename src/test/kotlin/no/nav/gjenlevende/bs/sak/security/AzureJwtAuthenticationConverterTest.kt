@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 
 class AzureJwtAuthenticationConverterTest {
     private val converter = AzureJwtAuthenticationConverter()
@@ -17,10 +16,13 @@ class AzureJwtAuthenticationConverterTest {
         val resultat = converter.convert(jwt)
 
         assertNotNull(resultat)
-        assertTrue(resultat is JwtAuthenticationToken)
+        assertTrue(resultat is GjenlevendeJwtAuthenticationToken)
 
-        val authToken = resultat as JwtAuthenticationToken
-        assertEquals(jwt, authToken.token)
+        val authToken = resultat as GjenlevendeJwtAuthenticationToken
+
+        val principal = authToken.principal
+        assertTrue(principal is TokenPrincipal.Bruker)
+        assertEquals("A123456", (principal as TokenPrincipal.Bruker).navIdent)
 
         val authorities = authToken.authorities.map { it.authority }
 
@@ -35,7 +37,11 @@ class AzureJwtAuthenticationConverterTest {
         val resultat = converter.convert(jwt)
 
         assertNotNull(resultat)
-        val authToken = resultat as JwtAuthenticationToken
+        val authToken = resultat as GjenlevendeJwtAuthenticationToken
+
+        val principal = authToken.principal
+        assertTrue(principal is TokenPrincipal.Bruker)
+        assertEquals("B123456", (principal as TokenPrincipal.Bruker).navIdent)
 
         val authorities = authToken.authorities.map { it.authority }
 
@@ -50,7 +56,11 @@ class AzureJwtAuthenticationConverterTest {
         val resultat = converter.convert(jwt)
 
         assertNotNull(resultat)
-        val authToken = resultat as JwtAuthenticationToken
+        val authToken = resultat as GjenlevendeJwtAuthenticationToken
+
+        val principal = authToken.principal
+        assertTrue(principal is TokenPrincipal.Bruker)
+        assertEquals("V123456", (principal as TokenPrincipal.Bruker).navIdent)
 
         val authorities = authToken.authorities.map { it.authority }
 
@@ -65,7 +75,11 @@ class AzureJwtAuthenticationConverterTest {
         val resultat = converter.convert(jwt)
 
         assertNotNull(resultat)
-        val authToken = resultat as JwtAuthenticationToken
+        val authToken = resultat as GjenlevendeJwtAuthenticationToken
+
+        val principal = authToken.principal
+        assertTrue(principal is TokenPrincipal.Bruker)
+        assertEquals("AB12345", (principal as TokenPrincipal.Bruker).navIdent)
 
         val authorities = authToken.authorities.map { it.authority }
 
@@ -81,7 +95,11 @@ class AzureJwtAuthenticationConverterTest {
         val resultat = converter.convert(jwt)
 
         assertNotNull(resultat)
-        val authToken = resultat as JwtAuthenticationToken
+        val authToken = resultat as GjenlevendeJwtAuthenticationToken
+
+        val principal = authToken.principal
+        assertTrue(principal is TokenPrincipal.Bruker)
+        assertEquals("ADMIN123", (principal as TokenPrincipal.Bruker).navIdent)
 
         val authorities = authToken.authorities.map { it.authority }
 
@@ -92,12 +110,13 @@ class AzureJwtAuthenticationConverterTest {
     }
 
     @Test
-    fun `skal kaste exception når NAVident claim mangler`() {
+    fun `skal kaste exception når både NAVident og azp_name mangler`() {
         val jwt = JwtTestHelper.opprettTokenUtenNavIdent()
 
         val exception = assertThrows<ManglendeClaimException> { converter.convert(jwt) }
 
-        assertEquals("Token mangler påkrevd claim: NAVident", exception.message)
+        assertTrue(exception.message!!.contains("NAVident"))
+        assertTrue(exception.message!!.contains("azp_name"))
     }
 
     @Test
@@ -125,7 +144,7 @@ class AzureJwtAuthenticationConverterTest {
     }
 
     @Test
-    fun `skal bevare JWT token i resulterende authentication token`() {
+    fun `skal bevare JWT token og ekstrahere brukerinfo korrekt`() {
         val jwt =
             JwtTestHelper.opprettGyldigToken(
                 navIdent = "TEST123",
@@ -133,12 +152,15 @@ class AzureJwtAuthenticationConverterTest {
                 epost = "test.bruker@nav.no",
             )
 
-        val resultat = converter.convert(jwt) as JwtAuthenticationToken
+        val resultat = converter.convert(jwt) as GjenlevendeJwtAuthenticationToken
 
-        assertEquals(jwt, resultat.token)
-        assertEquals("TEST123", resultat.token.getClaimAsString("NAVident"))
-        assertEquals("Test Bruker", resultat.token.getClaimAsString("name"))
-        assertEquals("test.bruker@nav.no", resultat.token.getClaimAsString("preferred_username"))
+        val principal = resultat.principal
+        assertTrue(principal is TokenPrincipal.Bruker)
+        val bruker = principal as TokenPrincipal.Bruker
+
+        assertEquals("TEST123", bruker.navIdent)
+        assertEquals("Test Bruker", bruker.navn)
+        assertEquals("test.bruker@nav.no", bruker.epost)
     }
 
     @Test
@@ -154,12 +176,68 @@ class AzureJwtAuthenticationConverterTest {
                     ),
             )
 
-        val resultat = converter.convert(jwt) as JwtAuthenticationToken
+        val resultat = converter.convert(jwt) as GjenlevendeJwtAuthenticationToken
 
         val authorities = resultat.authorities.map { it.authority }
 
         assertEquals(2, authorities.size)
         assertTrue(authorities.contains("ROLE_SAKSBEHANDLER"))
         assertTrue(authorities.contains("ROLE_BESLUTTER"))
+    }
+
+    // M2M Token Tests
+
+    @Test
+    fun `skal konvertere gyldig M2M token`() {
+        val jwt =
+            JwtTestHelper.opprettM2MToken(
+                azpNavn = "gjenlevende-bs-frontend",
+                clientId = "test-client-123",
+            )
+
+        val resultat = converter.convert(jwt)
+
+        assertNotNull(resultat)
+        assertTrue(resultat is GjenlevendeJwtAuthenticationToken)
+
+        val authToken = resultat as GjenlevendeJwtAuthenticationToken
+
+        val principal = authToken.principal
+        assertTrue(principal is TokenPrincipal.Applikasjon)
+        val app = principal as TokenPrincipal.Applikasjon
+
+        assertEquals("gjenlevende-bs-frontend", app.azpNavn)
+        assertEquals("test-client-123", app.clientId)
+
+        val authorities = authToken.authorities.map { it.authority }
+        assertEquals(1, authorities.size)
+        assertTrue(authorities.contains("ROLE_APPLICATION"))
+    }
+
+    @Test
+    fun `skal kaste exception når M2M token mangler azp claim`() {
+        val jwt = JwtTestHelper.opprettM2MTokenUtenAzp()
+
+        val exception = assertThrows<ManglendeClaimException> { converter.convert(jwt) }
+
+        assertTrue(exception.message!!.contains("azp"))
+    }
+
+    @Test
+    fun `getName skal returnere azpNavn for M2M token`() {
+        val jwt = JwtTestHelper.opprettM2MToken(azpNavn = "test-app")
+
+        val resultat = converter.convert(jwt) as GjenlevendeJwtAuthenticationToken
+
+        assertEquals("test-app", resultat.name)
+    }
+
+    @Test
+    fun `getName skal returnere navIdent for brukertoken`() {
+        val jwt = JwtTestHelper.opprettSaksbehandlerToken(navIdent = "TEST123")
+
+        val resultat = converter.convert(jwt) as GjenlevendeJwtAuthenticationToken
+
+        assertEquals("TEST123", resultat.name)
     }
 }

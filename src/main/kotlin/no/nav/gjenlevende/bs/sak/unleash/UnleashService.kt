@@ -1,4 +1,4 @@
-package no.nav.gjenlevende.bs.sak.service
+package no.nav.gjenlevende.bs.sak.unleash
 
 import io.getunleash.Unleash
 import org.slf4j.LoggerFactory

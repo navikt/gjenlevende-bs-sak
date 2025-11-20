@@ -1,5 +1,6 @@
-package no.nav.gjenlevende.bs.sak.repository
+package no.nav.gjenlevende.bs.sak.test.repository
 
+import no.nav.gjenlevende.bs.sak.test.domain.TestData
 import org.springframework.data.jdbc.repository.query.Query
 import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository

@@ -1,4 +1,4 @@
-package no.nav.gjenlevende.bs.sak.controller
+package no.nav.gjenlevende.bs.sak.task
 
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag

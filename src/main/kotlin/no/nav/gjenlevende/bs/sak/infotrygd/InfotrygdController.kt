@@ -1,11 +1,10 @@
-package no.nav.gjenlevende.bs.sak.controller
+package no.nav.gjenlevende.bs.sak.infotrygd
 
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
-import no.nav.gjenlevende.bs.sak.dto.PersonPerioderResponse
-import no.nav.gjenlevende.bs.sak.dto.PersonidentRequest
-import no.nav.gjenlevende.bs.sak.service.InfotrygdClient
+import no.nav.gjenlevende.bs.sak.infotrygd.dto.PersonPerioderResponse
+import no.nav.gjenlevende.bs.sak.infotrygd.dto.PersonidentRequest
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Profile
 import org.springframework.http.ResponseEntity

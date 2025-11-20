@@ -2,8 +2,6 @@ package no.nav.gjenlevende.bs.sak.task
 
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
-import no.nav.gjenlevende.bs.sak.service.DummyTaskService
-import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -12,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/test/task")
 @Tag(name = "Lag dummy task med gitt payload", description = "Lag dummy task med gitt payload")
-open class DummyTaskController(
+class DummyTaskController(
     private val dummyTaskService: DummyTaskService,
 ) {
     @GetMapping("/task")
@@ -20,8 +18,7 @@ open class DummyTaskController(
         summary = "Lag dummytask med gitt payload",
         description = "Lager en dummy task med gitt payload",
     )
-    @Transactional
-    open fun lagDummyTask(
+    fun lagDummyTask(
         @RequestParam payload: String,
     ) {
         dummyTaskService.opprettDummyTask(payload)

@@ -1,7 +1,6 @@
-package no.nav.gjenlevende.bs.sak.service
+package no.nav.gjenlevende.bs.sak.task
 
 import no.nav.familie.prosessering.internal.TaskService
-import no.nav.gjenlevende.bs.sak.task.DummyTask
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 

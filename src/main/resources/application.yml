@@ -71,7 +71,7 @@ springdoc:
       client-id: ${azure.app.client.id}
       scope-separator: ","
 
-prosessering.rolle: "87190cf3-b278-457d-8ab7-1a5c55a9edd7" # Gruppen teamfamilie TODO FIKS
+prosessering.rolle: "928636f4-fd0d-4149-978e-a6fb68bb19de" # 0000-GA-STDAPPS 928636f4-fd0d-4149-978e-a6fb68bb19de
 
 prosessering:
     continuousRunning.enabled: true

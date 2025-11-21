@@ -12,7 +12,6 @@ import org.springframework.test.context.ActiveProfiles
     "integrasjonstest",
 )
 open class SpringContextTest {
-
     @Autowired
     private lateinit var applicationContext: ApplicationContext
 

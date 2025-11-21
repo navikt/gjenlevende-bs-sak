@@ -3,8 +3,8 @@ package no.nav.gjenlevende.bs.sak.task
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -19,7 +19,7 @@ class DummyTaskController(
         description = "Lager en dummy task med gitt payload",
     )
     fun lagDummyTask(
-        @RequestParam payload: String,
+        @RequestBody payload: String,
     ) {
         dummyTaskService.opprettDummyTask(payload)
     }

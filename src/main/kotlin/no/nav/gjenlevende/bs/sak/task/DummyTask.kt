@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service
     settTilManuellOppfølgning = true,
     beskrivelse = "Dummy task",
 )
-class DummyTask : AsyncTaskStep {
+open class DummyTask : AsyncTaskStep {
     override fun doTask(task: Task) {
         println("Dummy task: ${task.payload}")
     }

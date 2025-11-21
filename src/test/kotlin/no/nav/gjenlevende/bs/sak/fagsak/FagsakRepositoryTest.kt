@@ -15,6 +15,9 @@ class FagsakRepositoryTest : SpringContextTest() {
     fun `insert fagsak`() {
         fagsakRepository.insert(FagsakDomain(fagsakPersonId = UUID.randomUUID(), stønadstype = StønadType.BARNETILSYN))
         val alleFagsaker = fagsakRepository.findAll()
+
         assertThat(alleFagsaker).hasSize(1)
+        val fagsak = alleFagsaker.first()
+        assertThat(fagsak.id).isEqualTo(fagsak.id)
     }
 }

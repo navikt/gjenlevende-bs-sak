@@ -90,7 +90,7 @@ spec:
                 groups:
                     -   id: 8df38a8c-6b34-49d7-b837-cefb153a03e8 # 0000-CA-Gjenlevende-BS-Saksbehandler
                     -   id: f9837eec-8d85-4f61-b89e-677e168fdf2f # 0000-CA-Gjenlevende-BS-Beslutter
-                    -   id: 8c98e41f-4370-46e6-998a-2190c7f935bc # 0000-GA-Gjenlevende-BS-Veileder
+                    -   id: 8c98e41f-4370-46e6-998a-2190c7f935bc # 0000-CA-Gjenlevende-BS-Veileder
                 extra:
                     - "NAVident"
                     - "azp_name"

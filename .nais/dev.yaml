@@ -44,8 +44,8 @@ spec:
             rules:
                 -   application: gjenlevende-bs-sak-frontend
                 -   application: gjenlevende-bs-sak-frontend-lokal
-                -   application: familie-prosessering
-                -   application: familie-prosessering-lokal
+                -   application: etterlatte-prosessering
+                -   application: etterlatte-prosessering-lokal
         outbound:
             rules:
                 -   application: gjenlevende-bs-sak-frontend

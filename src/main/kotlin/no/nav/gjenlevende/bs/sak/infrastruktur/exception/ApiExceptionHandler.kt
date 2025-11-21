@@ -12,7 +12,7 @@ class ApiExceptionHandler {
 
     @ExceptionHandler(ApiFeil::class)
     fun handleApiFeil(feil: ApiFeil): ResponseEntity<FeilResponse> {
-        logger.warn("ApiFeil kastet: ${feil.feilmelding}", feil)
+        logger.warn("ApiFeil: ${feil.feilmelding}", feil)
         return ResponseEntity
             .status(feil.httpStatus)
             .body(FeilResponse(feil.feilmelding, feil.httpStatus.value()))
@@ -20,7 +20,7 @@ class ApiExceptionHandler {
 
     @ExceptionHandler(IllegalArgumentException::class)
     fun handleIllegalArgumentException(e: IllegalArgumentException): ResponseEntity<FeilResponse> {
-        logger.warn("IllegalArgumentException kastet: ${e.message}", e)
+        logger.warn("IllegalArgumentException: ${e.message}", e)
         return ResponseEntity
             .status(HttpStatus.BAD_REQUEST)
             .body(FeilResponse(e.message ?: "Ugyldig forespørsel", HttpStatus.BAD_REQUEST.value()))

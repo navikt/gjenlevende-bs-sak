@@ -8,7 +8,6 @@ import org.springframework.context.annotation.ComponentScan
 import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories
 
 @SpringBootConfiguration
-@EnableJdbcRepositories("no.nav.familie", "no.nav.gjenlevende")
 @ComponentScan(
     "no.nav.familie.prosessering",
 )

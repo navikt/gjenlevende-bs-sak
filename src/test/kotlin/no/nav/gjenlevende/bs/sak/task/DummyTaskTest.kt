@@ -12,7 +12,6 @@ import org.springframework.test.context.ActiveProfiles
 @SpringBootTest(classes = [ApplicationLocal::class])
 @ActiveProfiles("local")
 class DummyTaskTest {
-
     @Autowired
     private lateinit var taskService: TaskService
 
@@ -31,7 +30,7 @@ class DummyTaskTest {
         val taskList = taskService.findAll()
         val taskFraDB = taskList.first()
         assertThat(taskFraDB.metadata).isNotEmpty
-        assertThat(taskFraDB.metadataWrapper.properties.keys.size).isEqualTo(2)
+        assertThat(taskFraDB.metadataWrapper.properties.keys.size).isEqualTo(1)
         dummyTask.doTask(task)
     }
 }

@@ -9,9 +9,9 @@ object JwtTestHelper {
     private const val TEST_SUBJECT = "test-subject-123"
     private const val TEST_AUDIENCE = "test-client-id"
 
-    private const val AZURE_GROUP_ID_SAKSBEHANDLER = "5357fbfa-de25-4d23-86a6-f67caf8ddd63"
-    private const val AZURE_GROUP_ID_BESLUTTER = "fda781b0-b82c-4049-919d-3b05623f05fb"
-    private const val AZURE_GROUP_ID_VEILEDER = "0291bb72-71fa-4a35-9947-ea7b73f09ab8"
+    private const val AZURE_GROUP_ID_SAKSBEHANDLER = "8df38a8c-6b34-49d7-b837-cefb153a03e8"
+    private const val AZURE_GROUP_ID_BESLUTTER = "f9837eec-8d85-4f61-b89e-677e168fdf2f"
+    private const val AZURE_GROUP_ID_VEILEDER = "8c98e41f-4370-46e6-998a-2190c7f935bc"
 
     fun opprettGyldigToken(
         navIdent: String = "A123456",

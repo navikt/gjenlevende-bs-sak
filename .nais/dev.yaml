@@ -50,6 +50,10 @@ spec:
             rules:
                 -   application: gjenlevende-bs-sak-frontend
                 -   application: gjenlevende-bs-sak-frontend-lokal
+
+                    # Team logs
+                -   application: logging
+                    namespace: nais-system
             external:
                 -   host: gjenlevende-bs-infotrygd.dev-fss-pub.nais.io
                 -   host: etterlatte-unleash-api.nav.cloud.nais.io

@@ -2,8 +2,10 @@ package no.nav.gjenlevende.bs.sak.unleash
 
 import io.getunleash.Unleash
 import org.slf4j.LoggerFactory
+import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
 
+@Profile("dev")
 @Service
 class UnleashService(
     private val unleash: Unleash,

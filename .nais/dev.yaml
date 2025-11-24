@@ -94,9 +94,9 @@ spec:
             tenant: trygdeetaten.no
             claims:
                 groups:
-                    -   id: 5357fbfa-de25-4d23-86a6-f67caf8ddd63 # 0000-GA-Gjenlevende-BS-Saksbehandler
-                    -   id: fda781b0-b82c-4049-919d-3b05623f05fb # 0000-GA-Gjenlevende-BS-Beslutter
-                    -   id: 0291bb72-71fa-4a35-9947-ea7b73f09ab8 # 0000-GA-Gjenlevende-BS-Veileder
+                    -   id: 8df38a8c-6b34-49d7-b837-cefb153a03e8 # 0000-CA-Gjenlevende-BS-Saksbehandler
+                    -   id: f9837eec-8d85-4f61-b89e-677e168fdf2f # 0000-CA-Gjenlevende-BS-Beslutter
+                    -   id: 8c98e41f-4370-46e6-998a-2190c7f935bc # 0000-CA-Gjenlevende-BS-Veileder
                     -   id: 928636f4-fd0d-4149-978e-a6fb68bb19de # prosessering.rolle - (0000-GA-STDAPPS)
                 extra:
                     - "NAVident"

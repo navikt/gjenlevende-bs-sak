@@ -148,9 +148,9 @@ class AzureJwtAuthenticationConverterTest {
                 navIdent = "MIKSED123",
                 azureGrupper =
                     listOf(
-                        "5357fbfa-de25-4d23-86a6-f67caf8ddd63", // SAKSBEHANDLER
+                        "8df38a8c-6b34-49d7-b837-cefb153a03e8", // SAKSBEHANDLER
                         "00000000-0000-0000-0000-000000000000", // Ukjent gruppe
-                        "fda781b0-b82c-4049-919d-3b05623f05fb", // BESLUTTER
+                        "f9837eec-8d85-4f61-b89e-677e168fdf2f", // BESLUTTER
                     ),
             )
 

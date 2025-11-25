@@ -5,7 +5,6 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
 import no.nav.gjenlevende.bs.sak.infotrygd.dto.PersonPerioderResponse
 import no.nav.gjenlevende.bs.sak.infotrygd.dto.PersonidentRequest
-import no.nav.gjenlevende.bs.sak.util.PersonidentValidator
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Profile
 import org.springframework.http.ResponseEntity
@@ -43,8 +42,6 @@ class InfotrygdController(
         logger.info("Henter perioder for person fra gjenlevende-bs-infotrygd")
 
         return try {
-            PersonidentValidator.validerPersonident(request.personident)
-
             val response =
                 infotrygdClient.hentPerioderForPersonSync(
                     brukerToken = jwt.tokenValue,

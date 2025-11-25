@@ -28,9 +28,8 @@ class PdlClient(
         val headers =
             HttpHeaders().apply {
                 contentType = MediaType.APPLICATION_JSON
-//                Behandlingsnummer finnes i Behandlingskatalogen, kanksje B373
                 set("Tema", "EYO")
-                set("behandlingsnummer", "")
+                set("behandlingsnummer", "B373")
             }
 
         val entity = HttpEntity(request, headers)

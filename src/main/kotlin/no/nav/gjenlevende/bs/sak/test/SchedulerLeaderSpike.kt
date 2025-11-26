@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component
  */
 @Component
 class SchedulerLeaderSpike {
-
     private val logger = LoggerFactory.getLogger(javaClass)
 
     @Scheduled(fixedRate = 30000)

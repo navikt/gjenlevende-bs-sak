@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
+import org.springframework.web.reactive.function.client.WebClientResponseException
 import org.springframework.web.servlet.resource.NoResourceFoundException
 
 @ControllerAdvice
@@ -25,6 +26,21 @@ class ApiExceptionHandler {
         return ResponseEntity
             .status(HttpStatus.BAD_REQUEST)
             .body(FeilResponse(e.message ?: "Ugyldig request", HttpStatus.BAD_REQUEST.value()))
+    }
+
+    @ExceptionHandler(WebClientResponseException::class)
+    fun handleWebClientResponseException(e: WebClientResponseException): ResponseEntity<FeilResponse> {
+        val feilmelding =
+            try {
+                e.responseBodyAsString
+            } catch (ex: Exception) {
+                "Feil fra downstream tjeneste"
+            }
+
+        logger.warn("WebClientResponseException: ${e.statusCode} - $feilmelding")
+        return ResponseEntity
+            .status(e.statusCode)
+            .body(FeilResponse(feilmelding, e.statusCode.value()))
     }
 
     @ExceptionHandler(NoResourceFoundException::class)

@@ -24,5 +24,6 @@ fun main(args: Array<String>) {
         .initializers(DbContainerInitializer())
         .profiles(
             "local",
+            "dev",
         ).run(*args)
 }

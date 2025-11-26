@@ -42,7 +42,7 @@ open class WebClientConfig {
     open fun pdlClientRegistration(
         @Value("\${azure.app.client.id}")
         clientId: String,
-        @Value("\${azure.app.registration.pdl.authentication.client-secret}")
+        @Value("\${azure.app.registration.pdl-clientcredentials.authentication.client-secret}")
         clientSecret: String,
         @Value("\${azure.app.registration.pdl-clientcredentials.token-endpoint-url}")
         tokenEndpointUrl: String,

@@ -40,3 +40,8 @@ data class Navn(
     val mellomnavn: String?,
     val etternavn: String,
 )
+
+data class HentNavnRequest(
+    val ident: String,
+)
+

@@ -13,10 +13,10 @@ class PdlController(
 ) {
     @PostMapping("/navn")
     fun hentNavn(
-        @RequestBody ident: String,
+        @RequestBody request: HentNavnRequest,
     ): ResponseEntity<Navn> {
         val navn =
-            pdlClient.hentNavn(ident)
+            pdlClient.hentNavn(request.ident)
                 ?: return ResponseEntity.notFound().build()
 
         return ResponseEntity.ok(navn)

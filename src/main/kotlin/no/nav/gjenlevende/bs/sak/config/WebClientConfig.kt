@@ -8,7 +8,6 @@ import org.springframework.http.HttpRequest
 import org.springframework.http.client.ClientHttpRequestExecution
 import org.springframework.http.client.ClientHttpRequestInterceptor
 import org.springframework.http.client.ClientHttpResponse
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.oauth2.client.AuthorizedClientServiceOAuth2AuthorizedClientManager
 import org.springframework.security.oauth2.client.InMemoryOAuth2AuthorizedClientService
 import org.springframework.security.oauth2.client.OAuth2AuthorizeRequest
@@ -42,11 +41,11 @@ open class WebClientConfig {
     open fun pdlClientRegistration(
         @Value("\${azure.app.client.id}")
         clientId: String,
-        @Value("\${azure.app.registration.pdl-clientcredentials.authentication.client-secret}")
+        @Value("\${azure.app.client.secret}")
         clientSecret: String,
-        @Value("\${azure.app.registration.pdl-clientcredentials.token-endpoint-url}")
+        @Value("\${AZUREAD_TOKEN_ENDPOINT_URL}")
         tokenEndpointUrl: String,
-        @Value("\${azure.app.registration.pdl-clientcredentials.scope}")
+        @Value("\${PDL_SCOPE}")
         scope: String,
     ): ClientRegistration {
         val scopes =
@@ -104,7 +103,6 @@ internal class PdlBearerTokenInterceptor(
     private val authorizedClientManager: OAuth2AuthorizedClientManager,
 ) : ClientHttpRequestInterceptor {
     private val logger = LoggerFactory.getLogger(PdlBearerTokenInterceptor::class.java)
-    private val principal = UsernamePasswordAuthenticationToken("gjenlevende-bs-sak", "N/A", emptyList())
 
     override fun intercept(
         request: HttpRequest,
@@ -116,7 +114,7 @@ internal class PdlBearerTokenInterceptor(
                 .authorize(
                     OAuth2AuthorizeRequest
                         .withClientRegistrationId(PDL_CLIENT_REGISTRATION_ID)
-                        .principal(principal)
+                        .principal("gjenlevende-bs-sak")
                         .build(),
                 )?.accessToken
                 ?.tokenValue

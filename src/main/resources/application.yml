@@ -50,6 +50,7 @@ azure:
       id: ${AZURE_APP_TENANT_ID:navq.onmicrosoft.com}
     client:
       id: ${AZURE_APP_CLIENT_ID:local-client-id}
+      secret: ${AZURE_APP_CLIENT_SECRET:local-client-secret}
       registration:
           pdl:
               resource-url: ${PDL_URL}

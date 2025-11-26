@@ -28,6 +28,7 @@ azure:
             id: test-tenant-id
         client:
             id: test-client-id
+            secret: test-client-secret
         registration:
             pdl:
                 resource-url: http://localhost:8080/pdl
@@ -49,7 +50,6 @@ azure:
 PDL_URL: http://localhost:8080/pdl
 PDL_SCOPE: test-scope
 AZURE_APP_CLIENT_ID: test-client-id
-AZURE_APP_CLIENT_SECRET: test-client-secret
 AZURE_APP_TENANT_ID: test-tenant-id
 AZUREAD_TOKEN_ENDPOINT_URL: http://localhost:8080/token
 DB_JDBC_URL: jdbc:tc:postgresql:17:///testdb

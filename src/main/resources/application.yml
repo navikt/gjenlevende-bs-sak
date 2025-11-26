@@ -51,23 +51,6 @@ azure:
     client:
       id: ${AZURE_APP_CLIENT_ID:local-client-id}
       secret: ${AZURE_APP_CLIENT_SECRET:local-client-secret}
-      registration:
-          pdl:
-              resource-url: ${PDL_URL}
-              token-endpoint-url: ${AZUREAD_TOKEN_ENDPOINT_URL}
-              grant-type: urn:ietf:params:oauth:grant-type:jwt-bearer
-              scope: ${PDL_SCOPE}
-              authentication:
-                  client-id: ${AZURE_APP_CLIENT_ID}
-                  client-secret: ${AZURE_APP_CLIENT_SECRET}
-                  client-auth-method: client_secret_basic
-          pdl-clientcredentials:
-              resource-url: ${PDL_URL}
-              token-endpoint-url: ${AZUREAD_TOKEN_ENDPOINT_URL}
-              grant-type: client_credentials
-              scope: ${PDL_SCOPE}
-              authentication:
-                  client-secret: ${AZURE_APP_CLIENT_SECRET}
 
 AZUREAD_TOKEN_ENDPOINT_URL: https://login.microsoftonline.com/${azure.app.tenant.id}/oauth2/v2.0/token
 AUTHORIZATION_URL: https://login.microsoftonline.com/${azure.app.tenant.id}/oauth2/v2.0/authorize

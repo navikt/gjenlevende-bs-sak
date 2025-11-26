@@ -35,23 +35,6 @@ azure:
         client:
             id: test-client-id
             secret: test-client-secret
-        registration:
-            pdl:
-                resource-url: http://localhost:8080/pdl
-                token-endpoint-url: http://localhost:8080/token
-                grant-type: urn:ietf:params:oauth:grant-type:jwt-bearer
-                scope: test-scope
-                authentication:
-                    client-id: test-client-id
-                    client-secret: test-client-secret
-                    client-auth-method: client_secret_basic
-            pdl-clientcredentials:
-                resource-url: http://localhost:8080/pdl
-                token-endpoint-url: http://localhost:8080/token
-                grant-type: client_credentials
-                scope: test-scope
-                authentication:
-                    client-secret: test-client-secret
 
 PDL_URL: http://localhost:8080/pdl
 PDL_SCOPE: test-scope

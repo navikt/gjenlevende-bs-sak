@@ -1,12 +1,10 @@
 package no.nav.gjenlevende.bs.sak.pdl
 
-// Request models
 data class PdlRequest(
     val query: String,
     val variables: Map<String, String>,
 )
 
-// Response models
 data class PdlResponse<T>(
     val data: T?,
     val errors: List<PdlError>? = null,
@@ -29,7 +27,6 @@ data class PdlErrorExtension(
     val classification: String? = null,
 )
 
-// Navn query response
 data class HentPersonData(
     val hentPerson: HentPerson?,
 )
@@ -42,11 +39,4 @@ data class Navn(
     val fornavn: String,
     val mellomnavn: String?,
     val etternavn: String,
-) {
-    fun fulltNavn(): String =
-        if (mellomnavn != null) {
-            "$fornavn $mellomnavn $etternavn"
-        } else {
-            "$fornavn $etternavn"
-        }
-}
+)

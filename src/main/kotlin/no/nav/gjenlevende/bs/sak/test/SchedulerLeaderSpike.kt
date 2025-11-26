@@ -17,7 +17,7 @@ class SchedulerLeaderSpike {
     fun runEvery30Seconds() {
         println("SchedulerLeaderSpike kjører hvert 30 sekund...")
         when (LeaderClient.isLeader()) {
-            true -> logger.info("Leder: Utfører kun leder-oppgave.")
+            true -> logger.info("Leder: Utfører leder-oppgave.")
             false -> logger.info("Ikke leder: gjør ikke noe.")
             null -> logger.warn("LeaderClient.isLeader() returnerte null")
         }

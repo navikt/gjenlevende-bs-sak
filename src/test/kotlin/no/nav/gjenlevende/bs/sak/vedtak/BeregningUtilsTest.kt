@@ -8,7 +8,7 @@ import java.time.YearMonth
 
 class BeregningUtilsTest {
     @Test
-    fun beregnPeriodeBelop_skalReturnereRiktigBelopFor2BarnI2024() {
+    fun `Sjekk at man bruker beregnet dersom mindre enn maks sats, at makssats blir brukt dersom større og null dersom beregnet er mindre enn 0`() {
         val utgift = BigDecimal(1000)
         val barnetilsynPeriodeBelop = BeregningUtils.beregnPeriodeBeløp(utgift, 2, YearMonth.of(2024, 2))
 

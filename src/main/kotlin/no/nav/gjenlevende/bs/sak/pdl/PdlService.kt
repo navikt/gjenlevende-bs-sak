@@ -15,7 +15,7 @@ class PdlService(
         val data =
             pdlClient.utførQuery(
                 query = PdlConfig.hentNavnQuery,
-                variabler = mapOf("ident" to ident),
+                variables = mapOf("ident" to ident),
                 responstype = object : ParameterizedTypeReference<PdlResponse<HentPersonData>>() {},
                 operasjon = "hentNavn",
             ) ?: throw PdlException("Fant ingen person i PDL for ident")

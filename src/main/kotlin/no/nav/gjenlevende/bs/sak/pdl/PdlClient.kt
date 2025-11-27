@@ -20,14 +20,14 @@ class PdlClient(
 
     fun <T> utførQuery(
         query: String,
-        variabler: Map<String, String>,
+        variables: Map<String, String>,
         responstype: ParameterizedTypeReference<PdlResponse<T>>,
         operasjon: String,
     ): T? {
         val request =
             PdlRequest(
                 query = query,
-                variabler = variabler,
+                variables = variables,
             )
 
         val headers = lagPdlHeaders()

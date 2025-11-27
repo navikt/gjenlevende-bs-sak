@@ -2,7 +2,7 @@ package no.nav.gjenlevende.bs.sak.pdl
 
 data class PdlRequest(
     val query: String,
-    val variabler: Map<String, String>,
+    val variables: Map<String, String>,
 )
 
 data class PdlResponse<T>(

@@ -2,7 +2,7 @@
 #!/bin/bash
 
 # Start-up script for gjenlevende-bs-sak lokal utvikling
-# Dette scriptet starter alle services (Texas, Unleash, database)
+# Dette scriptet starter alle services (Texas)
 
 set -e
 
@@ -41,24 +41,6 @@ docker-compose up -d
 echo ""
 echo "Venter på at services skal være ferdig..."
 
-# Vent på Unleash-database
-echo -n "Venter på Unleash-database..."
-sleep 3
-echo "Bonk, ferdig!"
-
-# Vent på Unleash
-echo -n "Venter på Unleash (http://localhost:4242)..."
-for i in {1..30}; do
-    if curl -s http://localhost:4242/health > /dev/null 2>&1; then
-        echo "Bink, ferdig!"
-        break
-    fi
-    if [ $i -eq 30 ]; then
-        echo "Timeout (fortsetter uansett)"
-    fi
-    sleep 1
-done
-
 # Vent på Texas
 echo -n "Venter på Texas (http://localhost:7575)..."
 for i in {1..30}; do
@@ -79,7 +61,6 @@ echo "Servicestatus:"
 docker-compose ps
 echo ""
 echo "Tilgjengelige tjenester:"
-echo "   • Unleash:  http://localhost:4242"
 echo "   • Texas:    http://localhost:7575"
 echo ""
 echo "Miljøvariabler er satt i din shell-session."

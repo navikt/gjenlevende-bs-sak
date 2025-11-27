@@ -57,8 +57,8 @@ gjenlevende-bs-infotrygd:
     audience: ${GJENLEVENDE_BS_INFOTRYGD_SCOPE}
 
 # PDL (Persondataløsningen)
-PDL_URL: ${PDL_URL}
-PDL_SCOPE: ${PDL_SCOPE}
+PDL_URL: https://pdl-api.dev-fss-pub.nais.io
+PDL_SCOPE: api://dev-fss.pdl.pdl-api/.default
 
 # ============================================================================
 # Database konfigurasjon

@@ -21,5 +21,20 @@ UNLEASH_SERVER_API_ENV: server-env
 
 NAIS_APP_NAME: gjenlevende-bs-sak
 
+# Azure AD og PDL konfigurasjon for tester
+azure:
+    app:
+        tenant:
+            id: test-tenant-id
+        client:
+            id: test-client-id
+            secret: test-client-secret
+
+PDL_URL: http://localhost:8080/pdl
+PDL_SCOPE: test-scope
+AZURE_APP_CLIENT_ID: test-client-id
+AZURE_APP_TENANT_ID: test-tenant-id
+AZUREAD_TOKEN_ENDPOINT_URL: http://localhost:8080/token
+DB_JDBC_URL: jdbc:tc:postgresql:17:///testdb
 
 prosessering.rolle: "928636f4-fd0d-4149-978e-a6fb68bb19de" # 0000-GA-STDAPPS

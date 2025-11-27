@@ -14,7 +14,7 @@ class RolleTest {
 
     @Test
     fun `fraAzureGrupper skal mappe SAKSBEHANDLER Azure gruppe til SAKSBEHANDLER rolle`() {
-        val azureGrupper = listOf("5357fbfa-de25-4d23-86a6-f67caf8ddd63")
+        val azureGrupper = listOf("8df38a8c-6b34-49d7-b837-cefb153a03e8")
 
         val roller = Rolle.fraAzureGrupper(azureGrupper)
 
@@ -24,7 +24,7 @@ class RolleTest {
 
     @Test
     fun `fraAzureGrupper skal mappe BESLUTTER Azure gruppe til BESLUTTER rolle`() {
-        val azureGrupper = listOf("fda781b0-b82c-4049-919d-3b05623f05fb")
+        val azureGrupper = listOf("f9837eec-8d85-4f61-b89e-677e168fdf2f")
 
         val roller = Rolle.fraAzureGrupper(azureGrupper)
 
@@ -34,7 +34,7 @@ class RolleTest {
 
     @Test
     fun `fraAzureGrupper skal mappe VEILEDER Azure gruppe til VEILEDER rolle`() {
-        val azureGrupper = listOf("0291bb72-71fa-4a35-9947-ea7b73f09ab8")
+        val azureGrupper = listOf("8c98e41f-4370-46e6-998a-2190c7f935bc")
 
         val roller = Rolle.fraAzureGrupper(azureGrupper)
 
@@ -46,8 +46,8 @@ class RolleTest {
     fun `fraAzureGrupper skal mappe flere Azure grupper til flere roller`() {
         val azureGrupper =
             listOf(
-                "5357fbfa-de25-4d23-86a6-f67caf8ddd63", // SAKSBEHANDLER
-                "fda781b0-b82c-4049-919d-3b05623f05fb", // BESLUTTER
+                "8df38a8c-6b34-49d7-b837-cefb153a03e8", // SAKSBEHANDLER
+                "f9837eec-8d85-4f61-b89e-677e168fdf2f", // BESLUTTER
             )
 
         val roller = Rolle.fraAzureGrupper(azureGrupper)
@@ -61,9 +61,9 @@ class RolleTest {
     fun `fraAzureGrupper skal mappe alle Azure grupper til alle roller`() {
         val azureGrupper =
             listOf(
-                "5357fbfa-de25-4d23-86a6-f67caf8ddd63", // SAKSBEHANDLER
-                "fda781b0-b82c-4049-919d-3b05623f05fb", // BESLUTTER
-                "0291bb72-71fa-4a35-9947-ea7b73f09ab8", // VEILEDER
+                "8df38a8c-6b34-49d7-b837-cefb153a03e8", // SAKSBEHANDLER
+                "f9837eec-8d85-4f61-b89e-677e168fdf2f", // BESLUTTER
+                "8c98e41f-4370-46e6-998a-2190c7f935bc", // VEILEDER
             )
 
         val roller = Rolle.fraAzureGrupper(azureGrupper)
@@ -97,9 +97,9 @@ class RolleTest {
         val azureGrupper =
             listOf(
                 "00000000-0000-0000-0000-000000000000", // Ukjent
-                "5357fbfa-de25-4d23-86a6-f67caf8ddd63", // SAKSBEHANDLER
+                "8df38a8c-6b34-49d7-b837-cefb153a03e8", // SAKSBEHANDLER
                 "11111111-1111-1111-1111-111111111111", // Ukjent
-                "fda781b0-b82c-4049-919d-3b05623f05fb", // BESLUTTER
+                "f9837eec-8d85-4f61-b89e-677e168fdf2f", // BESLUTTER
             )
 
         val roller = Rolle.fraAzureGrupper(azureGrupper)
@@ -113,9 +113,9 @@ class RolleTest {
     fun `fraAzureGrupper skal returnere unikt sett selv om samme gruppe oppgis flere ganger`() {
         val azureGrupper =
             listOf(
-                "5357fbfa-de25-4d23-86a6-f67caf8ddd63", // SAKSBEHANDLER
-                "5357fbfa-de25-4d23-86a6-f67caf8ddd63", // SAKSBEHANDLER (duplikat)
-                "5357fbfa-de25-4d23-86a6-f67caf8ddd63", // SAKSBEHANDLER (duplikat)
+                "8df38a8c-6b34-49d7-b837-cefb153a03e8", // SAKSBEHANDLER
+                "8df38a8c-6b34-49d7-b837-cefb153a03e8", // SAKSBEHANDLER (duplikat)
+                "8df38a8c-6b34-49d7-b837-cefb153a03e8", // SAKSBEHANDLER (duplikat)
             )
 
         val roller = Rolle.fraAzureGrupper(azureGrupper)

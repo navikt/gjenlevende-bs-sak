@@ -50,6 +50,7 @@ azure:
       id: ${AZURE_APP_TENANT_ID:navq.onmicrosoft.com}
     client:
       id: ${AZURE_APP_CLIENT_ID:local-client-id}
+      secret: ${AZURE_APP_CLIENT_SECRET:local-client-secret}
 
 AZUREAD_TOKEN_ENDPOINT_URL: https://login.microsoftonline.com/${azure.app.tenant.id}/oauth2/v2.0/token
 AUTHORIZATION_URL: https://login.microsoftonline.com/${azure.app.tenant.id}/oauth2/v2.0/authorize
@@ -81,3 +82,7 @@ prosessering:
     delete:
         after:
             weeks: 16
+
+# PDL
+PDL_URL: https://pdl-api.dev-fss-pub.nais.io
+PDL_SCOPE: api://dev-fss.pdl.pdl-api/.default

@@ -17,7 +17,6 @@ data class PeriodeResponse(
     val stønadType: StønadType,
     val fom: LocalDate,
     val tom: LocalDate?,
-    val beløp: Int? = null,
     val vedtakId: Long,
     val stønadId: Long,
     val barn: List<BarnInfo> = emptyList(),

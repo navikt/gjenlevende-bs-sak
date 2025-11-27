@@ -15,12 +15,6 @@ import org.springframework.web.reactive.function.client.bodyToMono
 class TexasClient(
     @Value("\${NAIS_TOKEN_EXCHANGE_ENDPOINT:http://localhost:7575/api/v1/token/exchange}")
     private val tokenExchangeEndpoint: String,
-    @Value("\${AZUREAD_TOKEN_ENDPOINT_URL:}")
-    private val azureTokenEndpoint: String,
-    @Value("\${AZURE_APP_CLIENT_ID:}")
-    private val clientId: String,
-    @Value("\${AZURE_APP_CLIENT_SECRET:}")
-    private val clientSecret: String,
 ) {
     private val logger = LoggerFactory.getLogger(TexasClient::class.java)
 
@@ -29,64 +23,12 @@ class TexasClient(
             .builder()
             .build()
 
-    private val useDirectAzureObo = tokenExchangeEndpoint.contains("localhost") && azureTokenEndpoint.isNotEmpty()
-
     fun hentOboToken(
         brukerToken: String,
         targetAudience: String,
     ): String {
-        return if (useDirectAzureObo) {
-            logger.info("Henter OBO token direkte fra Azure AD. Target: $targetAudience")
-            hentOboTokenFraAzureAD(brukerToken, targetAudience)
-        } else {
-            logger.info("Henter OBO token fra Texas. Endpoint: $tokenExchangeEndpoint, target: $targetAudience")
-            hentOboTokenFraTexas(brukerToken, targetAudience)
-        }
-    }
+        logger.info("Henter OBO token fra Texas. Endpoint: $tokenExchangeEndpoint, target: $targetAudience")
 
-    private fun hentOboTokenFraAzureAD(
-        brukerToken: String,
-        targetAudience: String,
-    ): String {
-        val formData: MultiValueMap<String, String> = LinkedMultiValueMap()
-        formData.add("grant_type", "urn:ietf:params:oauth:grant-type:jwt-bearer")
-        formData.add("client_id", clientId)
-        formData.add("client_secret", clientSecret)
-        formData.add("assertion", brukerToken)
-        formData.add("scope", targetAudience)
-        formData.add("requested_token_use", "on_behalf_of")
-
-        val response =
-            try {
-                webClient
-                    .post()
-                    .uri(azureTokenEndpoint)
-                    .header("Content-Type", "application/x-www-form-urlencoded")
-                    .body(BodyInserters.fromFormData(formData))
-                    .retrieve()
-                    .bodyToMono<AzureOboResponse>()
-                    .block()
-            } catch (e: WebClientResponseException) {
-                logger.error("Azure AD OBO feilet med status ${e.statusCode} og response body: ${e.responseBodyAsString}")
-                logger.error("Request detaljer - Client ID: $clientId, Target audience: $targetAudience")
-                throw RuntimeException("Kunne ikke bytte token via Azure AD OBO: HTTP ${e.statusCode}. Response: ${e.responseBodyAsString}", e)
-            } catch (e: Exception) {
-                logger.error("Uventet feil ved henting av OBO token fra Azure AD: ${e.message}", e)
-                throw RuntimeException("Kunne ikke bytte token via Azure AD OBO", e)
-            }
-
-        val token = response?.accessToken
-        if (token.isNullOrBlank()) {
-            throw RuntimeException("Azure AD returnerte tomt access_token")
-        }
-
-        return token
-    }
-
-    fun hentOboTokenFraTexas(
-        brukerToken: String,
-        targetAudience: String,
-    ): String {
         val response =
             try {
                 val formData: MultiValueMap<String, String> = LinkedMultiValueMap()
@@ -124,15 +66,6 @@ data class TexasOboResponse(
     val accessToken: String,
     @JsonProperty("expires_in")
     val utløperOm: Int,
-    @JsonProperty("token_type")
-    val tokenType: String,
-)
-
-data class AzureOboResponse(
-    @JsonProperty("access_token")
-    val accessToken: String,
-    @JsonProperty("expires_in")
-    val expiresIn: Int,
     @JsonProperty("token_type")
     val tokenType: String,
 )

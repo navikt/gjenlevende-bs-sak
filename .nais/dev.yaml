@@ -59,7 +59,7 @@ spec:
                 -   host: gjenlevende-bs-infotrygd.dev-fss-pub.nais.io
                 -   host: etterlatte-unleash-api.nav.cloud.nais.io
 
-    #Toggle
+    # Toggle
     envFrom:
         -   secret: gjenlevende-bs-sak-unleash-api-token
 
@@ -86,7 +86,7 @@ spec:
                 -   id: loki
                 -   id: elastic
 
-    #Autentisering
+    # Autentisering
     azure:
         application:
             enabled: true

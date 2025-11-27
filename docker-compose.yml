@@ -14,6 +14,7 @@ services:
             AZURE_APP_CLIENT_ID: ${AZURE_APP_CLIENT_ID}
             AZURE_APP_CLIENT_SECRET: ${AZURE_APP_CLIENT_SECRET}
             AZURE_APP_TENANT_ID: ${AZURE_APP_TENANT_ID}
+            AZURE_APP_JWK: ${AZURE_APP_JWK}
             AZURE_OPENID_CONFIG_ISSUER: https://login.microsoftonline.com/${AZURE_APP_TENANT_ID}/v2.0
             AZURE_OPENID_CONFIG_TOKEN_ENDPOINT: https://login.microsoftonline.com/${AZURE_APP_TENANT_ID}/oauth2/v2.0/token
             AZURE_OPENID_CONFIG_JWKS_URI: https://login.microsoftonline.com/${AZURE_APP_TENANT_ID}/discovery/v2.0/keys

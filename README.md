@@ -4,7 +4,35 @@ Saksbehandler app som tar for seg barnetilsyn og skolepenger for etterlatte/gjen
 
 ## Kjøring lokalt
 
-### Autentisering lokalt mot pre-prod
+### Quick Start (anbefalt)
+
+For å starte alle tjenester med ett kommando:
+
+1. Sørg for at du er pålogget Naisdevice og Google
+2. Kjør oppstartscriptet:
+   ```bash
+   ./start-local.sh
+   ```
+   Dette vil:
+   - Hente miljøvariabler fra dev-gcp (hvis ikke allerede gjort)
+   - Starte Texas (token exchange service)
+   - Starte Unleash (feature toggle service)
+   - Starte nødvendige databaser
+   
+3. Konfigurer miljøvariabler i IntelliJ:
+   - Gå til **Run** → **Edit Configurations**
+   - Velg **ApplicationLocal**
+   - **Anbefalt:** Installer **EnvFile** plugin og pek til `.env.local`
+   - **Alternativt:** Kopier miljøvariabler manuelt fra `.env.local`
+   
+4. Kjør applikasjonen med `ApplicationLocal`
+
+For å stoppe alle tjenester:
+```bash
+docker-compose down
+```
+
+### Autentisering lokalt mot pre-prod (manuell oppsett)
 
 For å kjøre applikasjonen lokalt med autentisering mot pre-prod, må du først hente secrets fra dev-gcp:
 
@@ -37,11 +65,6 @@ For å kjøre applikasjonen lokalt med autentisering mot pre-prod, må du først
    - Alternativt: Installer **EnvFile** plugin og pek til `.env.local`
 6. Kjør applikasjonen med `ApplicationLocal`
 
-#### Stoppe Texas
-```bash
-docker-compose down
-```
-
 #### Client id & client secret
 Secrets kan hentes fra cluster med:
 ```bash
@@ -59,6 +82,17 @@ Variablene som settes opp:
 For å kjøre opp appen lokalt, kan en kjøre `ApplicationLocal`.
 
 Appen starter da opp med en testcontainer postgres-database og er tilgjengelig under `localhost:8080`.
+
+**Docker Desktop:** Testcontainers vil automatisk grupperes under `gjenlevende-bs-sak` i Docker Desktop for bedre organisering.
+
+## Tester
+
+Integrasjonstester bruker Testcontainers for å starte opp nødvendige databaser. Disse vil automatisk vises under `gjenlevende-bs-sak` i Docker Desktop.
+
+For å kjøre tester:
+```bash
+./gradlew test
+```
 
 ## Swagger
 Du når Swagger lokalt ved å gå til:

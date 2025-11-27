@@ -23,7 +23,7 @@ spring:
         oauth2:
             resourceserver:
                 jwt:
-                    issuer-uri: https://login.microsoftonline.com/test-tenant/v2.0
+                    issuer-uri: https://login.microsoftonline.com/test-tenant-id/v2.0
                     audiences: test-client-id
 
 # ============================================================================
@@ -38,13 +38,26 @@ scheduling:
 azure:
     app:
         tenant:
-            id: test-tenant
+            id: test-tenant-id
         client:
             id: test-client-id
+            secret: test-client-secret
 
-AZURE_OPENID_CONFIG_ISSUER: https://login.microsoftonline.com/test-tenant/v2.0
+AZURE_OPENID_CONFIG_ISSUER: https://login.microsoftonline.com/test-tenant-id/v2.0
+AZUREAD_TOKEN_ENDPOINT_URL: https://login.microsoftonline.com/test-tenant-id/oauth2/v2.0/token
 AZURE_APP_CLIENT_ID: test-client-id
-AZURE_APP_TENANT_ID: test-tenant
+AZURE_APP_TENANT_ID: test-tenant-id
+
+# ============================================================================
+# Ekstern tjeneste konfigurasjon (Mock-verdier for tester)
+# ============================================================================
+PDL_URL: http://localhost:8080/pdl
+PDL_SCOPE: test-scope
+
+# ============================================================================
+# Database konfigurasjon
+# ============================================================================
+DB_JDBC_URL: jdbc:tc:postgresql:17:///testdb
 
 # ============================================================================
 # Unleash konfigurasjon (Feature Toggles)

@@ -40,6 +40,7 @@ azure:
             id: ${AZURE_APP_TENANT_ID}
         client:
             id: ${AZURE_APP_CLIENT_ID}
+            secret: ${AZURE_APP_CLIENT_SECRET}
 
 # ============================================================================
 # Azure AD miljøvariabler (For SwaggerConfig.kt)
@@ -54,6 +55,15 @@ API_SCOPE: api://${azure.app.client.id}/.default
 gjenlevende-bs-infotrygd:
     url: https://gjenlevende-bs-infotrygd.dev-fss-pub.nais.io
     audience: ${GJENLEVENDE_BS_INFOTRYGD_SCOPE}
+
+# PDL (Persondataløsningen)
+PDL_URL: ${PDL_URL}
+PDL_SCOPE: ${PDL_SCOPE}
+
+# ============================================================================
+# Database konfigurasjon
+# ============================================================================
+DB_JDBC_URL: jdbc:tc:postgresql:17:///testdb
 
 # ============================================================================
 # Swagger/OpenAPI konfigurasjon

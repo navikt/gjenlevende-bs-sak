@@ -13,7 +13,7 @@ import org.springframework.web.reactive.function.client.bodyToMono
 
 @Service
 class TexasClient(
-    @Value("\${NAIS_TOKEN_EXCHANGE_ENDPOINT:http://localhost:7575/obo}")
+    @Value("\${NAIS_TOKEN_EXCHANGE_ENDPOINT:http://localhost:7575/api/v1/token/exchange}")
     private val tokenExchangeEndpoint: String,
     @Value("\${AZUREAD_TOKEN_ENDPOINT_URL:}")
     private val azureTokenEndpoint: String,
@@ -110,6 +110,7 @@ class TexasClient(
             }
 
         val token = response?.accessToken
+
         if (token.isNullOrBlank()) {
             throw RuntimeException("Texas returnerte tomt access_token")
         }

@@ -40,6 +40,12 @@ export API_SCOPE='api://$GJENLEVENDE_BS_SAK_CLIENT_ID/.default'
 # Scope for tjenester
 export GJENLEVENDE_BS_INFOTRYGD_SCOPE='api://dev-fss.etterlatte.gjenlevende-bs-infotrygd/.default'
 
+# Unleash konfigurasjon (mock for lokal kjøring)
+export UNLEASH_SERVER_API_URL='http://localhost:4242'
+export UNLEASH_SERVER_API_TOKEN='*:*.unleash-insecure-api-token'
+export NAIS_APP_NAME='gjenlevende-bs-sak'
+export UNLEASH_SERVER_API_ENV='development'
+
 EOF
 
 echo ".env.local fil er opprettet med miljøvariabler fra dev-gcp"

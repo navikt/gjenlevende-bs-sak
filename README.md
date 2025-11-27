@@ -17,7 +17,17 @@ For å kjøre applikasjonen lokalt med autentisering mot pre-prod, må du først
    ```bash
    source .env.local
    ```
-4. Konfigurer miljøvariabler i IntelliJ:
+4. Start Texas (token exchange service) med Docker:
+   ```bash
+   docker-compose up -d texas
+   ```
+   
+   Valgfritt: Start Unleash (feature toggle service) for full lokal utvikling:
+   ```bash
+   docker-compose up -d unleash unleash-db
+   ```
+   **Merk:** Applikasjonen vil logge advarsler om Unleash-tilkobling hvis den ikke kjører, men vil fortsatt fungere.
+5. Konfigurer miljøvariabler i IntelliJ:
    - Gå til **Run** → **Edit Configurations**
    - Velg **ApplicationLocal**
    - I **Environment variables** feltet, legg til:
@@ -25,7 +35,12 @@ For å kjøre applikasjonen lokalt med autentisering mot pre-prod, må du først
      - `AZURE_APP_CLIENT_SECRET` (fra `.env.local`)
      - `AZURE_APP_TENANT_ID` (fra `.env.local`)
    - Alternativt: Installer **EnvFile** plugin og pek til `.env.local`
-5. Kjør applikasjonen med `ApplicationLocal`
+6. Kjør applikasjonen med `ApplicationLocal`
+
+#### Stoppe Texas
+```bash
+docker-compose down
+```
 
 #### Client id & client secret
 Secrets kan hentes fra cluster med:

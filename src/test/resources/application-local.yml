@@ -1,6 +1,16 @@
+# Lokal utviklings-konfigurasjon
+# Trekker in miljøvariabler fra .env.local-filen
+# Kjør ./start-local.sh for å sette opp lokalt miljø
+
+# ============================================================================
+# Server konfigurasjon
+# ============================================================================
 server:
     port: 8080
 
+# ============================================================================
+# Spring konfigurasjon
+# ============================================================================
 spring:
     datasource:
         driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
@@ -18,32 +28,44 @@ spring:
         oauth2:
             resourceserver:
                 jwt:
-                    issuer-uri: ${AZURE_OPENID_CONFIG_ISSUER:https://login.microsoftonline.com/navq.onmicrosoft.com/v2.0}
-                    audiences: ${AZURE_APP_CLIENT_ID:local-client-id}
+                    issuer-uri: ${AZURE_OPENID_CONFIG_ISSUER}
+                    audiences: ${AZURE_APP_CLIENT_ID}
 
+# ============================================================================
 # Azure AD konfigurasjon
+# ============================================================================
 azure:
     app:
         tenant:
-            id: ${AZURE_APP_TENANT_ID:navq.onmicrosoft.com}
+            id: ${AZURE_APP_TENANT_ID}
         client:
-            id: ${AZURE_APP_CLIENT_ID:local-client-id}
+            id: ${AZURE_APP_CLIENT_ID}
 
+# ============================================================================
+# Azure AD miljøvariabler (For SwaggerConfig.kt)
+# ============================================================================
 AZUREAD_TOKEN_ENDPOINT_URL: https://login.microsoftonline.com/${azure.app.tenant.id}/oauth2/v2.0/token
 AUTHORIZATION_URL: https://login.microsoftonline.com/${azure.app.tenant.id}/oauth2/v2.0/authorize
 API_SCOPE: api://${azure.app.client.id}/.default
 
-# Gjenlevende-bs-infotrygd konfigurasjon
+# ============================================================================
+# Ekstern tjeneste konfigurasjon
+# ============================================================================
 gjenlevende-bs-infotrygd:
     url: https://gjenlevende-bs-infotrygd.dev-fss-pub.nais.io
-    audience: ${GJENLEVENDE_BS_INFOTRYGD_SCOPE:api://dev-fss.etterlatte.gjenlevende-bs-infotrygd/.default}
+    audience: ${GJENLEVENDE_BS_INFOTRYGD_SCOPE}
 
+# ============================================================================
 # Swagger/OpenAPI konfigurasjon
+# ============================================================================
 springdoc:
     swagger-ui:
         oauth:
-            client-id: ${AZURE_APP_CLIENT_ID:local-client-id}
+            client-id: ${AZURE_APP_CLIENT_ID}
 
+# ============================================================================
+# Unleash konfigurasjon (Feature Toggles - for UnleashConfig.kt)
+# ============================================================================
 unleash:
     enabled: false
 
@@ -52,12 +74,18 @@ UNLEASH_SERVER_API_TOKEN: token
 UNLEASH_SERVER_API_ENV: server-env
 
 NAIS_APP_NAME: gjenlevende-bs-sak
+
+# ============================================================================
+# NAIS miljøvariabler
+# ============================================================================
 NAIS_NAMESPACE: etterlatte
 NAIS_CLUSTER_NAME: local
 
-prosessering.rolle: "928636f4-fd0d-4149-978e-a6fb68bb19de" # 0000-GA-STDAPPS
-
+# ============================================================================
+# Task prosessering konfigurasjon
+# ============================================================================
 prosessering:
+    rolle: 928636f4-fd0d-4149-978e-a6fb68bb19de # 0000-GA-STDAPPS
     fixedDelayString:
         in:
             milliseconds: 3000

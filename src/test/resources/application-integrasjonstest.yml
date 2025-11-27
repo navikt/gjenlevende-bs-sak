@@ -1,3 +1,9 @@
+# Integrasjonstest konfigurasjon
+# Minimal konfig for integrasjonstester - kun datasource og Unleash greier
+
+# ============================================================================
+# Spring konfigurasjon
+# ============================================================================
 spring:
     datasource:
         driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
@@ -13,11 +19,36 @@ spring:
                 sslmode: disable
     lifecycle:
         timeout-per-shutdown-phase: 3s
+    security:
+        oauth2:
+            resourceserver:
+                jwt:
+                    issuer-uri: https://login.microsoftonline.com/test-tenant/v2.0
+                    audiences: test-client-id
 
+# ============================================================================
+# Scheduling konfigurasjon
+# ============================================================================
 scheduling:
     enabled: false
 
+# ============================================================================
+# Azure AD konfigurasjon (Mock-verdier for tester)
+# ============================================================================
+azure:
+    app:
+        tenant:
+            id: test-tenant
+        client:
+            id: test-client-id
 
+AZURE_OPENID_CONFIG_ISSUER: https://login.microsoftonline.com/test-tenant/v2.0
+AZURE_APP_CLIENT_ID: test-client-id
+AZURE_APP_TENANT_ID: test-tenant
+
+# ============================================================================
+# Unleash konfigurasjon (Feature Toggles)
+# ============================================================================
 unleash:
     enabled: false
 

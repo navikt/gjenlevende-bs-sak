@@ -30,3 +30,7 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Local environment ###
+.env.local
+.env

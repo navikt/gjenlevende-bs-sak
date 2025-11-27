@@ -1,0 +1,30 @@
+# Denne er brukt til å gjøre det mulig å bruke tokens lokalt. Secret kan hentes fra cluster med:
+# "kubectl -n etterlatte get secret azuread-gjenlevende-bs-sak-lokal -o json | jq '.data | map_values(@base64d)'"
+#
+# Kjøres en gang eller ved endringer med:
+# kubectl apply -f .nais/azure-ad-app-lokal.yaml
+
+apiVersion: nais.io/v1
+kind: AzureAdApplication
+
+metadata:
+    name: gjenlevende-bs-sak-lokal
+    namespace: etterlatte
+    labels:
+        team: etterlatte
+
+spec:
+    secretName: azuread-gjenlevende-bs-sak-lokal
+    logoutUrl: "http://localhost:8080"
+    tenant: trygdeetaten.no
+    singlePageApplication: true
+    replyUrls:
+        -   url: "http://localhost:8080/oauth2/callback"
+        -   url: "http://localhost:8080/swagger-ui/oauth2-redirect.html"
+    claims:
+        extra:
+            -   "NAVident"
+        groups:
+            -   id: 8df38a8c-6b34-49d7-b837-cefb153a03e8 # 0000-CA-Gjenlevende-BS-Saksbehandler
+            -   id: f9837eec-8d85-4f61-b89e-677e168fdf2f # 0000-CA-Gjenlevende-BS-Beslutter
+            -   id: 8c98e41f-4370-46e6-998a-2190c7f935bc # 0000-CA-Gjenlevende-BS-Veileder

@@ -50,6 +50,8 @@ open class SecurityConfig(
             listOf(
                 "https://gjenlevende-bs.intern.dev.nav.no",
                 "https://gjenlevende-bs.ansatt.dev.nav.no",
+                "http://localhost:8080",
+                "http://localhost:3000",
             )
         configuration.allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
         configuration.allowedHeaders =

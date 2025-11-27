@@ -33,7 +33,7 @@ open class SwaggerConfig(
             .info(
                 Info()
                     .title("Gjenlevende BS Sak")
-                    .description("Swagger for gjenlevende-bs-sak som holder forvaltning og test kall.")
+                    .description("Swagger for Gjenlevende-BS-Sak")
                     .version("1.0.0")
                     .contact(
                         Contact()

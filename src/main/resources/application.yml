@@ -1,88 +1,93 @@
+# Server konfigurasjon
 server:
-  port: 8080
+    port: 8080
 
+# Spring konfigurasjon
 spring:
-  application:
-    name: gjenlevende-bs-sak
+    application:
+        name: gjenlevende-bs-sak
 
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: ${AZURE_OPENID_CONFIG_ISSUER:https://login.microsoftonline.com/${azure.app.tenant.id}/v2.0}
-          audiences: ${AZURE_APP_CLIENT_ID:local-client-id}
+    security:
+        oauth2:
+            resourceserver:
+                jwt:
+                    issuer-uri: ${AZURE_OPENID_CONFIG_ISSUER}
+                    audiences: ${AZURE_APP_CLIENT_ID}
 
-  # Flyway
-  flyway:
-    enabled: true
-    locations: classpath:db/migration
-
-  # DB konfig
-  datasource:
-    url: ${DB_JDBC_URL}
-    hikari:
-        maximum-pool-size: 20
-        connection-test-query: "select 1"
-        max-lifetime: 90000
-        minimum-idle: 1
-
-management:
-  endpoint:
-    health:
-      show-details: always
-      probes:
+    # Flyway database migrering
+    flyway:
         enabled: true
-  endpoints:
-    web:
-      exposure:
-        include: health,prometheus
-      base-path: /internal
+        locations: classpath:db/migration
 
-# Gjenlevende-bs-infotrygd konfigurasjon
-gjenlevende-bs-infotrygd:
-  url: https://gjenlevende-bs-infotrygd.dev-fss-pub.nais.io
-  audience: api://dev-fss.etterlatte.gjenlevende-bs-infotrygd/.default
+    # Database konfigurasjon
+    datasource:
+        url: ${DB_JDBC_URL}
+        hikari:
+            maximum-pool-size: 20
+            connection-test-query: "select 1"
+            max-lifetime: 90000
+            minimum-idle: 1
 
-# Azure AD konfigurasjon for Swagger OAuth2
+# Management og health endepunkter
+management:
+    endpoint:
+        health:
+            show-details: always
+            probes:
+                enabled: true
+    endpoints:
+        web:
+            exposure:
+                include: health,prometheus
+            base-path: /internal
+
+# Azure AD konfigurasjon
 azure:
-  app:
-    tenant:
-      id: ${AZURE_APP_TENANT_ID:navq.onmicrosoft.com}
-    client:
-      id: ${AZURE_APP_CLIENT_ID:local-client-id}
-      secret: ${AZURE_APP_CLIENT_SECRET:local-client-secret}
+    app:
+        tenant:
+            id: ${AZURE_APP_TENANT_ID}
+        client:
+            id: ${AZURE_APP_CLIENT_ID}
+            secret: ${AZURE_APP_CLIENT_SECRET}
 
+# Azure AD miljøvariabler (for SwaggerConfig.kt)
 AZUREAD_TOKEN_ENDPOINT_URL: https://login.microsoftonline.com/${azure.app.tenant.id}/oauth2/v2.0/token
 AUTHORIZATION_URL: https://login.microsoftonline.com/${azure.app.tenant.id}/oauth2/v2.0/authorize
 API_SCOPE: api://${azure.app.client.id}/.default
 
+# Ekstern tjeneste konfigurasjon
+gjenlevende-bs-infotrygd:
+    url: https://gjenlevende-bs-infotrygd.dev-fss-pub.nais.io
+    audience: api://dev-fss.etterlatte.gjenlevende-bs-infotrygd/.default
+
+# PDL (Persondataløsningen)
+PDL_URL: https://pdl-api.dev-fss-pub.nais.io
+PDL_SCOPE: api://dev-fss.pdl.pdl-api/.default
+
 # Swagger/OpenAPI konfigurasjon
 springdoc:
-  api-docs:
-    path: /v3/api-docs
-  swagger-ui:
-    path: /swagger-ui.html
-    operations-sorter: method
-    tags-sorter: alpha
-    try-it-out-enabled: true
-    disable-swagger-default-url: true
-    persist-authorization: true
-    oauth:
-      use-pkce-with-authorization-code-grant: true
-      client-id: ${azure.app.client.id}
-      scope-separator: ","
+    api-docs:
+        path: /v3/api-docs
+    swagger-ui:
+        path: /swagger-ui.html
+        operations-sorter: method
+        tags-sorter: alpha
+        try-it-out-enabled: true
+        disable-swagger-default-url: true
+        persist-authorization: true
+        oauth:
+            use-pkce-with-authorization-code-grant: true
+            client-id: ${azure.app.client.id}
+            scope-separator: ","
 
-prosessering.rolle: "928636f4-fd0d-4149-978e-a6fb68bb19de" # 0000-GA-STDAPPS 928636f4-fd0d-4149-978e-a6fb68bb19de
-
+# Task prosessering konfigurasjon
 prosessering:
-    continuousRunning.enabled: true
+    rolle: 928636f4-fd0d-4149-978e-a6fb68bb19de # 0000-GA-STDAPPS
+    continuousRunning:
+        enabled: true
     fixedDelayString:
         in:
             milliseconds: 15000
     delete:
         after:
             weeks: 16
-
-# PDL
-PDL_URL: https://pdl-api.dev-fss-pub.nais.io
-PDL_SCOPE: api://dev-fss.pdl.pdl-api/.default

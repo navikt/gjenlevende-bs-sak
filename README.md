@@ -94,8 +94,3 @@ Du når Swagger lokalt ved å gå til:
 - http://localhost:8080/swagger-ui.html
 - Or: http://localhost:8080/swagger-ui/index.html
 
-## Roller
-Applikasjonen bruker følgende Azure AD grupper:
-- `8df38a8c-6b34-49d7-b837-cefb153a03e8` - 0000-CA-Gjenlevende-BS-Saksbehandler
-- `f9837eec-8d85-4f61-b89e-677e168fdf2f` - 0000-CA-Gjenlevende-BS-Beslutter
-- `8c98e41f-4370-46e6-998a-2190c7f935bc` - 0000-CA-Gjenlevende-BS-Veileder

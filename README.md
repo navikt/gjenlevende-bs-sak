@@ -18,13 +18,13 @@ For å starte alle tjenester med ett kommando:
    - Starte Texas (token exchange service)
    - Starte Unleash (feature toggle service)
    - Starte nødvendige databaser
-   
+
 3. Konfigurer miljøvariabler i IntelliJ:
    - Gå til **Run** → **Edit Configurations**
    - Velg **ApplicationLocal**
    - **Anbefalt:** Installer **EnvFile** plugin og pek til `.env.local`
    - **Alternativt:** Kopier miljøvariabler manuelt fra `.env.local`
-   
+
 4. Kjør applikasjonen med `ApplicationLocal`
 
 For å stoppe alle tjenester:
@@ -49,7 +49,7 @@ For å kjøre applikasjonen lokalt med autentisering mot pre-prod, må du først
    ```bash
    docker-compose up -d texas
    ```
-   
+
    Valgfritt: Start Unleash (feature toggle service) for full lokal utvikling:
    ```bash
    docker-compose up -d unleash unleash-db
@@ -88,11 +88,6 @@ Appen starter da opp med en testcontainer postgres-database og er tilgjengelig u
 ## Tester
 
 Integrasjonstester bruker Testcontainers for å starte opp nødvendige databaser. Disse vil automatisk vises under `gjenlevende-bs-sak` i Docker Desktop.
-
-For å kjøre tester:
-```bash
-./gradlew test
-```
 
 ## Swagger
 Du når Swagger lokalt ved å gå til:

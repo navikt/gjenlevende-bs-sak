@@ -2,15 +2,11 @@
 # Trekker in miljøvariabler fra .env.local-filen
 # Kjør ./start-local.sh for å sette opp lokalt miljø
 
-# ============================================================================
 # Server konfigurasjon
-# ============================================================================
 server:
     port: 8082
 
-# ============================================================================
 # Spring konfigurasjon
-# ============================================================================
 spring:
     datasource:
         driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
@@ -31,9 +27,7 @@ spring:
                     issuer-uri: ${AZURE_OPENID_CONFIG_ISSUER}
                     audiences: ${AZURE_APP_CLIENT_ID}
 
-# ============================================================================
 # Azure AD konfigurasjon
-# ============================================================================
 azure:
     app:
         tenant:
@@ -42,16 +36,12 @@ azure:
             id: ${AZURE_APP_CLIENT_ID}
             secret: ${AZURE_APP_CLIENT_SECRET}
 
-# ============================================================================
 # Azure AD miljøvariabler (For SwaggerConfig.kt)
-# ============================================================================
 AZUREAD_TOKEN_ENDPOINT_URL: https://login.microsoftonline.com/${azure.app.tenant.id}/oauth2/v2.0/token
 AUTHORIZATION_URL: https://login.microsoftonline.com/${azure.app.tenant.id}/oauth2/v2.0/authorize
 API_SCOPE: api://${azure.app.client.id}/.default
 
-# ============================================================================
 # Ekstern tjeneste konfigurasjon
-# ============================================================================
 gjenlevende-bs-infotrygd:
     url: https://gjenlevende-bs-infotrygd.dev-fss-pub.nais.io
     audience: ${GJENLEVENDE_BS_INFOTRYGD_SCOPE}
@@ -60,28 +50,20 @@ gjenlevende-bs-infotrygd:
 PDL_URL: https://pdl-api.dev-fss-pub.nais.io
 PDL_SCOPE: api://dev-fss.pdl.pdl-api/.default
 
-# ============================================================================
 # Database konfigurasjon
-# ============================================================================
 DB_JDBC_URL: jdbc:tc:postgresql:17:///testdb
 
-# ============================================================================
 # Swagger/OpenAPI konfigurasjon
-# ============================================================================
 springdoc:
     swagger-ui:
         oauth:
             client-id: ${AZURE_APP_CLIENT_ID}
 
-# ============================================================================
 # NAIS miljøvariabler
-# ============================================================================
 NAIS_NAMESPACE: etterlatte
 NAIS_CLUSTER_NAME: local
 
-# ============================================================================
 # Task prosessering konfigurasjon
-# ============================================================================
 prosessering:
     rolle: 928636f4-fd0d-4149-978e-a6fb68bb19de # 0000-GA-STDAPPS
     fixedDelayString:

@@ -1,9 +1,7 @@
 # Integrasjonstest konfigurasjon
 # Minimal konfig for integrasjonstester - kun datasource og Unleash greier
 
-# ============================================================================
 # Spring konfigurasjon
-# ============================================================================
 spring:
     datasource:
         driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
@@ -26,15 +24,11 @@ spring:
                     issuer-uri: https://login.microsoftonline.com/test-tenant-id/v2.0
                     audiences: test-client-id
 
-# ============================================================================
 # Scheduling konfigurasjon
-# ============================================================================
 scheduling:
     enabled: false
 
-# ============================================================================
 # Azure AD konfigurasjon (Mock-verdier for tester)
-# ============================================================================
 azure:
     app:
         tenant:
@@ -48,20 +42,14 @@ AZUREAD_TOKEN_ENDPOINT_URL: https://login.microsoftonline.com/test-tenant-id/oau
 AZURE_APP_CLIENT_ID: test-client-id
 AZURE_APP_TENANT_ID: test-tenant-id
 
-# ============================================================================
 # Ekstern tjeneste konfigurasjon (Mock-verdier for tester)
-# ============================================================================
 PDL_URL: http://localhost:8080/pdl
 PDL_SCOPE: test-scope
 
-# ============================================================================
 # Database konfigurasjon
-# ============================================================================
 DB_JDBC_URL: jdbc:tc:postgresql:17:///testdb
 
-# ============================================================================
 # Unleash konfigurasjon (Feature Toggles)
-# ============================================================================
 unleash:
     enabled: false
 

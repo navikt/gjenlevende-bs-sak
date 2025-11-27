@@ -48,8 +48,7 @@ sealed class Periode<T> : Comparable<Periode<T>> where T : Comparable<T>, T : Te
 
     abstract fun lengdeIHeleMåneder(): Long
 
-    override fun compareTo(other: Periode<T>): Int =
-        Comparator.comparing(Periode<T>::fom).thenComparing(Periode<T>::tom).compare(this, other)
+    override fun compareTo(other: Periode<T>): Int = Comparator.comparing(Periode<T>::fom).thenComparing(Periode<T>::tom).compare(this, other)
 
     abstract fun lagPeriode(
         fom: T,

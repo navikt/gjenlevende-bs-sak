@@ -7,7 +7,6 @@ import java.math.BigDecimal
 import java.time.YearMonth
 
 class BeregningUtilsTest {
-
     @Test
     fun beregnPeriodeBelop_skalReturnereRiktigBelopFor2BarnI2024() {
         val utgift = BigDecimal(1000)
@@ -125,5 +124,4 @@ class BeregningUtilsTest {
             assertThat(satserForBarnetilsyn.hentSatsFor(antallBarn = 0, årMåned = år)).isEqualTo(0)
         }
     }
-
 }

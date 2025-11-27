@@ -9,14 +9,14 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/pdl")
 class PdlController(
-    private val pdlClient: PdlClient,
+    private val pdlService: PdlService,
 ) {
     @PostMapping("/navn")
     fun hentNavn(
         @RequestBody request: HentNavnRequest,
     ): ResponseEntity<Navn> {
         val navn =
-            pdlClient.hentNavn(request.ident)
+            pdlService.hentNavn(request.ident)
                 ?: return ResponseEntity.notFound().build()
 
         return ResponseEntity.ok(navn)

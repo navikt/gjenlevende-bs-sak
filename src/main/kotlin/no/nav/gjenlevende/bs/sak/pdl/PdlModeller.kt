@@ -2,7 +2,7 @@ package no.nav.gjenlevende.bs.sak.pdl
 
 data class PdlRequest(
     val query: String,
-    val variables: Map<String, String>,
+    val variabler: Map<String, String>,
 )
 
 data class PdlResponse<T>(
@@ -44,4 +44,3 @@ data class Navn(
 data class HentNavnRequest(
     val ident: String,
 )
-

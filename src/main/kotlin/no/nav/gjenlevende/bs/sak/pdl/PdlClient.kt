@@ -8,33 +8,32 @@ import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.http.MediaType
-import org.springframework.stereotype.Service
+import org.springframework.stereotype.Component
 import org.springframework.web.client.RestOperations
 
-@Service
+@Component
 class PdlClient(
     val pdlConfig: PdlConfig,
     @Qualifier("azureClientCredential") private val restTemplate: RestOperations,
 ) {
     private val logger = LoggerFactory.getLogger(PdlClient::class.java)
 
-    fun hentNavn(ident: String): Navn? {
+    fun <T> utførQuery(
+        query: String,
+        variabler: Map<String, String>,
+        responstype: ParameterizedTypeReference<PdlResponse<T>>,
+        operasjon: String,
+    ): T? {
         val request =
             PdlRequest(
-                query = PdlConfig.hentNavnQuery,
-                variables = mapOf("ident" to ident),
+                query = query,
+                variabler = variabler,
             )
 
-        val headers =
-            HttpHeaders().apply {
-                contentType = MediaType.APPLICATION_JSON
-                set("Tema", "EYO")
-                set("behandlingsnummer", "B373")
-            }
-
+        val headers = lagPdlHeaders()
         val entity = HttpEntity(request, headers)
 
-        logger.info("Henter navn fra PDL for person")
+        logger.info("Utfører PDL-operasjon: $operasjon")
 
         return try {
             val response =
@@ -42,28 +41,16 @@ class PdlClient(
                     pdlConfig.pdlUri,
                     HttpMethod.POST,
                     entity,
-                    object : ParameterizedTypeReference<PdlResponse<HentPersonData>>() {},
+                    responstype,
                 )
 
             val pdlResponse =
                 response.body
-                    ?: throw PdlException("Ingen respons fra PDL")
+                    ?: throw PdlException("Ingen respons fra PDL for $operasjon")
 
-            if (pdlResponse.errors != null && pdlResponse.errors.isNotEmpty()) {
-                logger.error("Feil fra PDL: ${pdlResponse.errors}")
-                throw PdlException("Feil ved henting av navn fra PDL: ${pdlResponse.errors.firstOrNull()?.message}")
-            }
+            håndterPdlErrors(pdlResponse.errors, operasjon)
 
-            val hentPerson =
-                pdlResponse.data?.hentPerson
-                    ?: throw PdlException("Fant ingen person i PDL")
-
-            val navnListe = hentPerson.navn
-            if (navnListe.isEmpty()) {
-                throw PdlException("Personen har ingen navn registrert i PDL")
-            }
-
-            navnListe.first()
+            pdlResponse.data
         } catch (e: Exception) {
             when (e) {
                 is PdlException -> {
@@ -71,10 +58,30 @@ class PdlClient(
                 }
 
                 else -> {
-                    logger.error("Feil ved kall til PDL", e)
-                    throw PdlException("Teknisk feil ved henting av navn fra PDL", e)
+                    logger.error("Teknisk feil ved PDL-operasjon: $operasjon", e)
+                    throw PdlException("Teknisk feil ved $operasjon", e)
                 }
             }
+        }
+    }
+
+    private fun lagPdlHeaders(): HttpHeaders =
+        HttpHeaders().apply {
+            contentType = MediaType.APPLICATION_JSON
+            set("Tema", "EYO")
+            set("behandlingsnummer", "B373")
+        }
+
+    private fun håndterPdlErrors(
+        errors: List<PdlError>?,
+        operasjon: String,
+    ) {
+        if (errors != null && errors.isNotEmpty()) {
+            logger.error("Feil fra PDL ved $operasjon: $errors")
+            val firstError = errors.firstOrNull()
+            throw PdlException(
+                "Feil ved $operasjon: ${firstError?.message ?: "Ukjent feil"}",
+            )
         }
     }
 }

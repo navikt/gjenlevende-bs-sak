@@ -1,20 +1,29 @@
 version: 2
 
 updates:
-    - package-ecosystem: maven
-      directory: "/"
-      schedule:
-          interval: weekly
-          day: "sunday"
-          time: "04:00"
-      open-pull-requests-limit: 10
-      groups:
-          all-dependencies:
-              patterns:
-                  - "*"
-    - package-ecosystem: github-actions
-      directory: "/"
-      schedule:
-          interval: weekly
-          day: "sunday"
-          time: "04:00"
+    -   package-ecosystem: maven
+        directory: "/"
+        schedule:
+            interval: weekly
+            day: "sunday"
+            time: "04:00"
+        cooldown:
+            default-days: 4
+        open-pull-requests-limit: 10
+        groups:
+            all-dependencies:
+                patterns:
+                    - "*"
+
+    -   package-ecosystem: github-actions
+        directory: "/"
+        schedule:
+            interval: weekly
+            day: "sunday"
+            time: "04:00"
+        cooldown:
+            default-days: 4
+        groups:
+            workflows:
+                patterns:
+                    - "*"

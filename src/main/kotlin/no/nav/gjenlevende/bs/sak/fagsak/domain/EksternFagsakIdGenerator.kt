@@ -13,8 +13,12 @@ class EksternFagsakIdGenerator(
         if (fagsak.eksternId == 0L) {
             val id =
                 jdbcTemplate.queryForObject<Long>("SELECT nextval('fagsak_ekstern_id_seq')")
-            return fagsak.copy(eksternId = id)
+
+            if (id != null) {
+                return fagsak.copy(eksternId = id)
+            }
         }
+
         return fagsak
     }
 }

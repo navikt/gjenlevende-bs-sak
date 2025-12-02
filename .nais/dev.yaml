@@ -51,6 +51,8 @@ spec:
             rules:
                 -   application: gjenlevende-bs-sak-frontend
                 -   application: gjenlevende-bs-sak-frontend-lokal
+                -   application: populasjonstilgangskontroll
+                    namespace: tilgangsmaskin
 
                     # Team Logs
                 -   application: logging

@@ -15,7 +15,9 @@ data class Fagsak(
     val eksternId: Long,
     val stønadstype: StønadType,
     val sporbar: Sporbar,
-)
+) {
+    fun hentAktivIdent(): String = personIdenter.maxByOrNull { it.sporbar.endret.endretTid }?.ident ?: error("Fant ingen ident på fagsak $id")
+}
 
 @Table("fagsak")
 data class FagsakDomain(

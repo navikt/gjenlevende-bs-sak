@@ -21,6 +21,8 @@ spring:
     flyway:
         enabled: true
         locations: classpath:db/migration
+        placeholders:
+            ignoreIfProd:
 
     # Database konfigurasjon
     datasource:

@@ -16,6 +16,14 @@ open class FagsakPersonService(
         personIdenter: Set<String>,
         gjeldendePersonIdent: String,
     ): FagsakPerson {
+        try {
+            val fagsakPersonId = UUID.fromString(gjeldendePersonIdent)
+            return fagsakPersonRepository
+                .findById(fagsakPersonId)
+                .orElseThrow { IllegalArgumentException("Fant ingen fagsakPerson med id $fagsakPersonId") }
+        } catch (_: IllegalArgumentException) {
+        }
+
         feilHvisIkke(personIdenter.contains(gjeldendePersonIdent)) {
             "Liste med personidenter inneholder ikke gjeldende personident"
         }

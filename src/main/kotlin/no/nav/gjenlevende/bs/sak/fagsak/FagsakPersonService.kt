@@ -16,7 +16,6 @@ open class FagsakPersonService(
         personIdenter: Set<String>,
         gjeldendePersonIdent: String,
     ): FagsakPerson {
-
         try {
             val fagsakPersonId = UUID.fromString(gjeldendePersonIdent)
             return fagsakPersonRepository

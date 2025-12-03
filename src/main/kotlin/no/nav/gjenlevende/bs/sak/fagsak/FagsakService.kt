@@ -7,10 +7,7 @@ import no.nav.gjenlevende.bs.sak.fagsak.domain.tilFagsakMedPerson
 import no.nav.gjenlevende.bs.sak.fagsak.dto.FagsakDto
 import no.nav.gjenlevende.bs.sak.fagsak.dto.tilDto
 import no.nav.gjenlevende.bs.sak.infotrygd.dto.StønadType
-import org.apache.catalina.core.ApplicationContext
 import org.slf4j.LoggerFactory
-import org.springframework.boot.CommandLineRunner
-import org.springframework.stereotype.Component
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -33,7 +30,14 @@ open class FagsakService(
     ): Fagsak {
         val fagsakPerson = fagsakPersonService.hentEllerOpprettPerson(setOf(personIdent), personIdent)
         logger.info("FagsakPerson: $fagsakPerson")
-        val fagsak = opprettFagsak(fagsakPerson, stønadstype).tilFagsakMedPerson(fagsakPerson.identer)
+
+        val fagsakDomain =
+            fagsakRepository.findByFagsakPersonIdAndStønadstype(
+                fagsakPerson.id,
+                stønadstype,
+            ) ?: opprettFagsak(fagsakPerson, stønadstype)
+
+        val fagsak = fagsakDomain.tilFagsakMedPerson(fagsakPerson.identer)
         logger.info("Fagsak: $fagsak")
         return fagsak
     }

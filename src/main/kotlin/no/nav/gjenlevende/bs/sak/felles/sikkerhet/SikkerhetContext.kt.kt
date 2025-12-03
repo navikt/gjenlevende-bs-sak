@@ -25,4 +25,6 @@ object SikkerhetContext {
         }
         return result
     }
+
+    fun erMaskinTilMaskinToken(): Boolean = hentSaksbehandler() == SYSTEM_FORKORTELSE
 }

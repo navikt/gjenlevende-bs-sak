@@ -7,8 +7,7 @@ import org.springframework.boot.webmvc.autoconfigure.error.ErrorMvcAutoConfigura
 import org.springframework.context.annotation.Configuration
 import org.springframework.scheduling.annotation.EnableScheduling
 
-@SpringBootApplication(exclude = [ErrorMvcAutoConfiguration::class])
-open class ApplicationLocal
+open class ApplicationLocal : ApplicationLocalSetup()
 
 @Configuration(proxyBeanMethods = false)
 @EnableScheduling
@@ -24,6 +23,5 @@ fun main(args: Array<String>) {
         .initializers(DbContainerInitializer())
         .profiles(
             "local",
-            "dev",
         ).run(*args)
 }

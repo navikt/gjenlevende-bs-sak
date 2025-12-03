@@ -25,14 +25,14 @@ class SafClient(
 
     fun <T> utførQuery(
         query: String,
-        variables: Map<String, String>,
+        variables: JournalposterForBrukerRequest,
         responstype: ParameterizedTypeReference<SafJournalpostResponse<T>>,
         operasjon: String,
     ): T? {
         val request =
             SafJournalpostRequest(
                 query = query,
-                variables = variables,
+                variables = variables.tilSafRequestForBruker(),
             )
 
         val headers = lagSafHeaders()

@@ -1,17 +1,21 @@
 package no.nav.gjenlevende.bs.sak.pdl
 
 import no.nav.gjenlevende.bs.sak.config.PdlConfig
+import no.nav.gjenlevende.bs.sak.fagsak.FagsakPersonService
 import org.slf4j.LoggerFactory
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.stereotype.Service
+import java.util.UUID
 
 @Service
 class PdlService(
     private val pdlClient: PdlClient,
+    private val fagsakPersonService: FagsakPersonService,
 ) {
     private val logger = LoggerFactory.getLogger(PdlService::class.java)
 
-    fun hentNavn(ident: String): Navn? {
+    fun hentNavn(fagsakPersonId: String): Navn? {
+        val ident = fagsakPersonService.hentAktivIdent(UUID.fromString(fagsakPersonId))
         val data =
             pdlClient.utførQuery(
                 query = PdlConfig.hentNavnQuery,

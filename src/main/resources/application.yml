@@ -64,6 +64,9 @@ gjenlevende-bs-infotrygd:
 PDL_URL: https://pdl-api.dev-fss-pub.nais.io
 PDL_SCOPE: api://dev-fss.pdl.pdl-api/.default
 
+#SAF
+SAF_URL: https://saf-q2.dev.intern.nav.no
+
 # Swagger/OpenAPI konfigurasjon
 springdoc:
     api-docs:

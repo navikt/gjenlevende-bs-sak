@@ -3,13 +3,16 @@ package no.nav.gjenlevende.bs.sak.config
 import no.nav.familie.prosessering.config.ProsesseringInfoProvider
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.SpringBootConfiguration
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories
 
 @SpringBootConfiguration
+@ConfigurationPropertiesScan
 @ComponentScan(
     "no.nav.familie.prosessering",
+    "no.nav.gjenlevende.bs.sak",
 )
 open class ApplicationConfig {
     // TODO

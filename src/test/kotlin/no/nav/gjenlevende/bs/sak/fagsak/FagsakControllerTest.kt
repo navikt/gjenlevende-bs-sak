@@ -3,10 +3,12 @@ package no.nav.gjenlevende.bs.sak.fagsak
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.verify
+import no.nav.familie.prosessering.rest.Ressurs
 import no.nav.gjenlevende.bs.sak.ApplicationLocal
 import no.nav.gjenlevende.bs.sak.fagsak.dto.FagsakDto
 import no.nav.gjenlevende.bs.sak.felles.sikkerhet.TilgangService
 import no.nav.gjenlevende.bs.sak.infotrygd.dto.StønadType
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc
@@ -17,6 +19,7 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.post
 import tools.jackson.databind.ObjectMapper
+import tools.jackson.module.kotlin.readValue
 import java.util.UUID
 
 @WebMvcTest(
@@ -40,7 +43,6 @@ open class FagsakControllerTest {
 
     @Test
     fun `skal returnere fagsak når person finnes`() {
-        // Arrange
         val personIdent = "12345678910"
         val stønadstype = StønadType.BARNETILSYN
         val fagsakRequest =
@@ -62,18 +64,20 @@ open class FagsakControllerTest {
             fagsakService.hentEllerOpprettFagsakMedBehandlinger(personIdent, stønadstype)
         } returns forventetFagsak
 
-        // Act & Assert
-        mockMvc
-            .post("/api/fagsak") {
-                contentType = MediaType.APPLICATION_JSON
-                content = objectMapper.writeValueAsString(fagsakRequest)
-            }.andExpect {
-                status { isOk() }
-                content { contentType(MediaType.APPLICATION_JSON) }
-                jsonPath("$.status") { value("SUKSESS") }
-                jsonPath("$.data.personIdent") { value(personIdent) }
-                jsonPath("$.data.stønadstype") { value(stønadstype.toString()) }
-            }
+        val responseJson =
+            mockMvc
+                .post("/api/fagsak") {
+                    contentType = MediaType.APPLICATION_JSON
+                    content = objectMapper.writeValueAsString(fagsakRequest)
+                }.andExpect {
+                    status { isOk() }
+                    content { contentType(MediaType.APPLICATION_JSON) }
+                }.andReturn()
+                .response.contentAsString
+
+        val ressursFagsakDto: Ressurs<FagsakDto> = objectMapper.readValue(responseJson)
+        assertThat(ressursFagsakDto.data?.personIdent).isEqualTo(personIdent)
+        assertThat(ressursFagsakDto.data?.stønadstype).isEqualTo(stønadstype)
 
         verify(exactly = 1) {
             fagsakService.hentEllerOpprettFagsakMedBehandlinger(personIdent, stønadstype)

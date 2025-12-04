@@ -94,8 +94,8 @@ data class SafJournalpostResponse<T>(
 }
 
 data class SafError(
-    val message: String,
-    val extensions: SafExtension,
+    val message: String? = null,
+    val extensions: SafExtension? = null,
 )
 
 data class SafExtension(

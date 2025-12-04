@@ -144,7 +144,7 @@ fun String.graphqlCompatible(): String = StringUtils.normalizeSpace(this.replace
 fun graphqlQuery(path: String) = ClassPathResource(path).url.readText().graphqlCompatible()
 
 data class Journalpost(
-    val journalpostId: String,
+    val journalpostId: String? = null,
     val tema: String? = null,
     val behandlingstema: String? = null,
     val tittel: String? = null,

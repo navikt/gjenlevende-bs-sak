@@ -72,7 +72,7 @@ class TilgangskontrollControllerTest {
     }
 
     @Test
-    fun `harTilgangBulk returnerer tom liste naar ingen har tilgang`() {
+    fun `harTilgangBulk returnerer tom liste når ingen har tilgang`() {
         val personidenter = listOf("16449348706", "28422453875")
 
         every { tilgangsmaskinClient.harTilgangTilBrukere(personidenter) } returns emptyList()
@@ -86,7 +86,7 @@ class TilgangskontrollControllerTest {
     }
 
     @Test
-    fun `harTilgang kaster exception naar NAVident mangler i token`() {
+    fun `harTilgang kaster exception når NAVident mangler i token`() {
         val jwt = JwtTestHelper.opprettTokenUtenNavIdent()
         val authentication = JwtAuthenticationToken(jwt)
         SecurityContextHolder.getContext().authentication = authentication
@@ -97,7 +97,7 @@ class TilgangskontrollControllerTest {
     }
 
     @Test
-    fun `harTilgang kaster exception naar ingen JWT authentication finnes`() {
+    fun `harTilgang kaster exception når ingen JWT authentication finnes`() {
         SecurityContextHolder.clearContext()
 
         assertThrows<IllegalStateException> {

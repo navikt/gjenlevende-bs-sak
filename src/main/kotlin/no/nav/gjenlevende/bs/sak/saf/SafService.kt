@@ -12,12 +12,12 @@ class SafService(
 ) {
     private val logger = LoggerFactory.getLogger(PdlService::class.java)
 
-    fun hentJournalposterForIdent(fnr: String): Journalpost? {
+    fun hentJournalposterForIdent(fnr: String): List<Journalpost> {
         val data =
             safClient.utførQuery(
                 query = SafConfig.hentJournalposterBrukerQuery,
                 variables = JournalposterForBrukerRequest(Bruker(fnr, BrukerIdType.FNR), 10),
-                responstype = object : ParameterizedTypeReference<SafJournalpostResponse<Journalpost>>() {},
+                responstype = object : ParameterizedTypeReference<SafJournalpostResponse<List<Journalpost>>>() {},
                 operasjon = "hentJournalposterForBrukerId",
             ) ?: throw PdlException("Fant ingen person i SAF for brukerId")
 

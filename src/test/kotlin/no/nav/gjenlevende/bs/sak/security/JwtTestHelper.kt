@@ -9,9 +9,9 @@ object JwtTestHelper {
     private const val TEST_SUBJECT = "test-subject-123"
     private const val TEST_AUDIENCE = "test-client-id"
 
-    private const val AZURE_GROUP_ID_SAKSBEHANDLER = "8df38a8c-6b34-49d7-b837-cefb153a03e8"
-    private const val AZURE_GROUP_ID_BESLUTTER = "f9837eec-8d85-4f61-b89e-677e168fdf2f"
-    private const val AZURE_GROUP_ID_VEILEDER = "8c98e41f-4370-46e6-998a-2190c7f935bc"
+    private const val AZURE_GROUP_ID_SAKSBEHANDLER = "5b6745de-b65d-40eb-a6f5-860c8b61c27f"
+    private const val AZURE_GROUP_ID_ATTESTERING = "70cfce24-7865-4676-9fdc-b676e90bfc92"
+    private const val AZURE_GROUP_ID_LES = "609a78e7-e0bd-491c-a63b-96a09ec62b9b"
 
     fun opprettGyldigToken(
         navIdent: String = "A123456",
@@ -119,25 +119,25 @@ object JwtTestHelper {
             azureGrupper = listOf(AZURE_GROUP_ID_SAKSBEHANDLER),
         )
 
-    fun opprettBeslutterToken(navIdent: String = "B123456"): Jwt =
+    fun opprettAttestererToken(navIdent: String = "B123456"): Jwt =
         opprettGyldigToken(
             navIdent = navIdent,
-            azureGrupper = listOf(AZURE_GROUP_ID_BESLUTTER),
+            azureGrupper = listOf(AZURE_GROUP_ID_ATTESTERING),
         )
 
-    fun opprettVeilederToken(navIdent: String = "V123456"): Jwt =
+    fun opprettLeserToken(navIdent: String = "V123456"): Jwt =
         opprettGyldigToken(
             navIdent = navIdent,
-            azureGrupper = listOf(AZURE_GROUP_ID_VEILEDER),
+            azureGrupper = listOf(AZURE_GROUP_ID_LES),
         )
 
-    fun opprettSaksbehandlerOgBeslutterToken(navIdent: String = "AB12345"): Jwt =
+    fun opprettSaksbehandlerOgAttestererToken(navIdent: String = "AB12345"): Jwt =
         opprettGyldigToken(
             navIdent = navIdent,
             azureGrupper =
                 listOf(
                     AZURE_GROUP_ID_SAKSBEHANDLER,
-                    AZURE_GROUP_ID_BESLUTTER,
+                    AZURE_GROUP_ID_ATTESTERING,
                 ),
         )
 
@@ -147,8 +147,8 @@ object JwtTestHelper {
             azureGrupper =
                 listOf(
                     AZURE_GROUP_ID_SAKSBEHANDLER,
-                    AZURE_GROUP_ID_BESLUTTER,
-                    AZURE_GROUP_ID_VEILEDER,
+                    AZURE_GROUP_ID_ATTESTERING,
+                    AZURE_GROUP_ID_LES,
                 ),
         )
 }

@@ -95,7 +95,8 @@ open class WebClientConfig {
     @Bean
     open fun clientRegistrationRepository(
         pdlClientRegistration: ClientRegistration,
-    ): ClientRegistrationRepository = InMemoryClientRegistrationRepository(pdlClientRegistration)
+        safClientRegistration: ClientRegistration,
+    ): ClientRegistrationRepository = InMemoryClientRegistrationRepository(pdlClientRegistration, safClientRegistration)
 
     @Bean
     open fun authorizedClientService(

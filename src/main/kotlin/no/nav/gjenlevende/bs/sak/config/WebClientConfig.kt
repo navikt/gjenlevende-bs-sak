@@ -124,7 +124,6 @@ open class WebClientConfig {
     ): RestOperations {
         val restTemplate = RestTemplate()
         restTemplate.interceptors.add(PdlBearerTokenInterceptor(authorizedClientManager))
-        restTemplate.interceptors.add(SafBearerTokenInterceptor(authorizedClientManager))
         return restTemplate
     }
 }

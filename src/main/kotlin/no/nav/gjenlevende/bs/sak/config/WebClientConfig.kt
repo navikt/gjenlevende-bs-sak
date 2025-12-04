@@ -83,7 +83,7 @@ open class WebClientConfig {
                 .filter(String::isNotEmpty)
 
         return ClientRegistration
-            .withRegistrationId(PDL_CLIENT_REGISTRATION_ID)
+            .withRegistrationId(SAF_CLIENT_REGISTRATION_ID)
             .tokenUri(tokenEndpointUrl)
             .clientId(clientId)
             .clientSecret(clientSecret)

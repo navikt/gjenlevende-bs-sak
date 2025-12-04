@@ -19,7 +19,7 @@ class SafService(
                 variables = JournalposterForBrukerRequest(Bruker(fnr, BrukerIdType.FNR), emptyList(), emptyList(), 10),
                 responstype = object : ParameterizedTypeReference<SafJournalpostResponse<SafJournalposterData>>() {},
                 operasjon = "hentJournalposterForBrukerId",
-            ) ?: throw PdlException("Fant ingen person i SAF for brukerId")
+            ) ?: throw SafException("Fant ingen person i SAF for brukerId")
 
         return data
     }

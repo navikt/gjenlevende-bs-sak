@@ -1,7 +1,5 @@
 package no.nav.gjenlevende.bs.sak.saf
 
-import no.nav.gjenlevende.bs.sak.pdl.PdlClient
-import no.nav.gjenlevende.bs.sak.pdl.PdlException
 import org.apache.commons.lang3.StringUtils
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
@@ -21,7 +19,7 @@ class SafClient(
     val safConfig: SafConfig,
     @Qualifier("safAzureClientCredential") private val restTemplate: RestOperations,
 ) {
-    private val logger = LoggerFactory.getLogger(PdlClient::class.java)
+    private val logger = LoggerFactory.getLogger(SafClient::class.java)
 
     fun <T> utførQuery(
         query: String,
@@ -51,22 +49,35 @@ class SafClient(
 
             val safResponse =
                 response.body
-                    ?: throw PdlException("Ingen respons fra SAF for $operasjon")
+                    ?: throw SafException("Ingen respons fra SAF for $operasjon")
 
-            // håndterPdlErrors(pdlResponse.errors, operasjon)
+            håndterSafErrrors(safResponse.errors, operasjon)
 
             safResponse.data
         } catch (e: Exception) {
             when (e) {
-                is PdlException -> {
+                is SafException -> {
                     throw e
                 }
 
                 else -> {
                     logger.error("Teknisk feil ved SAF-operasjon: $operasjon", e)
-                    throw PdlException("Teknisk feil ved $operasjon", e)
+                    throw SafException("Teknisk feil ved $operasjon", e)
                 }
             }
+        }
+    }
+
+    private fun håndterSafErrrors(
+        errors: List<SafError>?,
+        operasjon: String,
+    ) {
+        if (errors != null && errors.isNotEmpty()) {
+            logger.error("Feil fra SAF ved $operasjon: $errors")
+            val firstError = errors.firstOrNull()
+            throw SafException(
+                "Feil ved $operasjon: ${firstError?.message ?: "Ukjent feil"}",
+            )
         }
     }
 
@@ -81,6 +92,11 @@ class SafClient(
         private const val NAV_CALL_ID = "Nav-Callid"
     }
 }
+
+class SafException(
+    message: String,
+    cause: Throwable? = null,
+) : RuntimeException(message, cause)
 
 data class SafJournalposterData(
     val journalposter: List<Journalpost>?,

@@ -118,12 +118,17 @@ open class WebClientConfig {
             .also { it.setAuthorizedClientProvider(provider) }
     }
 
-    @Bean(name = ["azureClientCredential"])
-    open fun azureClientCredentialRestTemplate(
-        authorizedClientManager: OAuth2AuthorizedClientManager,
-    ): RestOperations {
+    @Bean
+    open fun pdlRestTemplate(authorizedClientManager: OAuth2AuthorizedClientManager): RestOperations {
         val restTemplate = RestTemplate()
         restTemplate.interceptors.add(PdlBearerTokenInterceptor(authorizedClientManager))
+        return restTemplate
+    }
+
+    @Bean
+    open fun safRestTemplate(authorizedClientManager: OAuth2AuthorizedClientManager): RestOperations {
+        val restTemplate = RestTemplate()
+        restTemplate.interceptors.add(SafBearerTokenInterceptor(authorizedClientManager))
         return restTemplate
     }
 }

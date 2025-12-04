@@ -23,6 +23,7 @@ import org.springframework.web.client.RestTemplate
 import org.springframework.web.reactive.function.client.WebClient
 
 const val PDL_CLIENT_REGISTRATION_ID = "pdl-clientcredentials"
+const val SAF_CLIENT_REGISTRATION_ID = "saf-clientcredentials"
 
 @Configuration
 open class WebClientConfig {
@@ -46,6 +47,33 @@ open class WebClientConfig {
         @Value("\${AZUREAD_TOKEN_ENDPOINT_URL}")
         tokenEndpointUrl: String,
         @Value("\${PDL_SCOPE}")
+        scope: String,
+    ): ClientRegistration {
+        val scopes =
+            scope
+                .split(",")
+                .map(String::trim)
+                .filter(String::isNotEmpty)
+
+        return ClientRegistration
+            .withRegistrationId(PDL_CLIENT_REGISTRATION_ID)
+            .tokenUri(tokenEndpointUrl)
+            .clientId(clientId)
+            .clientSecret(clientSecret)
+            .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
+            .scope(*scopes.toTypedArray())
+            .build()
+    }
+
+    @Bean
+    open fun safClientRegistration(
+        @Value("\${azure.app.client.id}")
+        clientId: String,
+        @Value("\${azure.app.client.secret}")
+        clientSecret: String,
+        @Value("\${AZUREAD_TOKEN_ENDPOINT_URL}")
+        tokenEndpointUrl: String,
+        @Value("\${SAF_SCOPE}")
         scope: String,
     ): ClientRegistration {
         val scopes =
@@ -95,6 +123,7 @@ open class WebClientConfig {
     ): RestOperations {
         val restTemplate = RestTemplate()
         restTemplate.interceptors.add(PdlBearerTokenInterceptor(authorizedClientManager))
+        restTemplate.interceptors.add(SafBearerTokenInterceptor(authorizedClientManager))
         return restTemplate
     }
 }
@@ -122,6 +151,36 @@ internal class PdlBearerTokenInterceptor(
         return if (token.isNullOrBlank()) {
             logger.error("Kunne ikke hente token for PDL")
             throw IllegalStateException("Kunne ikke hente token for PDL")
+        } else {
+            request.headers.setBearerAuth(token)
+            execution.execute(request, body)
+        }
+    }
+}
+
+internal class SafBearerTokenInterceptor(
+    private val authorizedClientManager: OAuth2AuthorizedClientManager,
+) : ClientHttpRequestInterceptor {
+    private val logger = LoggerFactory.getLogger(SafBearerTokenInterceptor::class.java)
+
+    override fun intercept(
+        request: HttpRequest,
+        body: ByteArray,
+        execution: ClientHttpRequestExecution,
+    ): ClientHttpResponse {
+        val token =
+            authorizedClientManager
+                .authorize(
+                    OAuth2AuthorizeRequest
+                        .withClientRegistrationId(SAF_CLIENT_REGISTRATION_ID)
+                        .principal("gjenlevende-bs-sak")
+                        .build(),
+                )?.accessToken
+                ?.tokenValue
+
+        return if (token.isNullOrBlank()) {
+            logger.error("Kunne ikke hente token for SAF")
+            throw IllegalStateException("Kunne ikke hente token for SAF")
         } else {
             request.headers.setBearerAuth(token)
             execution.execute(request, body)

@@ -5,7 +5,9 @@ import org.slf4j.LoggerFactory
 import org.slf4j.MarkerFactory
 import kotlin.reflect.KClass
 
-class Logg(private val logger: Logger) {
+class Logg(
+    private val logger: Logger,
+) {
     private val teamLogsMarker = MarkerFactory.getMarker("TEAM_LOGS")
 
     // Secure logging (Default)

@@ -3,10 +3,10 @@ package no.nav.gjenlevende.bs.sak.infotrygd
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
+import no.nav.gjenlevende.bs.sak.felles.logg.Logg
 import no.nav.gjenlevende.bs.sak.infotrygd.dto.PersonPerioderResponse
 import no.nav.gjenlevende.bs.sak.infotrygd.dto.PersonidentRequest
 import no.nav.gjenlevende.bs.sak.util.PersonidentValidator
-import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Profile
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController
 class InfotrygdController(
     private val infotrygdClient: InfotrygdClient,
 ) {
-    private val logger = LoggerFactory.getLogger(InfotrygdController::class.java)
+    private val logger = Logg.getLogger(InfotrygdController::class)
 
     @PostMapping("/perioder")
     @PreAuthorize("hasRole('SAKSBEHANDLER') and hasRole('ATTESTERING') and hasRole('LES')")
@@ -40,7 +40,7 @@ class InfotrygdController(
         @RequestBody request: PersonidentRequest,
         @AuthenticationPrincipal jwt: Jwt,
     ): ResponseEntity<PersonPerioderResponse> {
-        logger.info("Henter perioder for person fra gjenlevende-bs-infotrygd")
+        logger.vanligInfo("Henter perioder for person fra gjenlevende-bs-infotrygd")
 
         return try {
             PersonidentValidator.validerPersonident(request.personident)

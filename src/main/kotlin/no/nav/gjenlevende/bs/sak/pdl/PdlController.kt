@@ -16,7 +16,7 @@ class PdlController(
         @RequestBody request: HentNavnRequest,
     ): ResponseEntity<Navn> {
         val navn =
-            pdlService.hentNavn(request.ident)
+            pdlService.hentNavn(request.fagsakPersonId)
                 ?: return ResponseEntity.notFound().build()
 
         return ResponseEntity.ok(navn)

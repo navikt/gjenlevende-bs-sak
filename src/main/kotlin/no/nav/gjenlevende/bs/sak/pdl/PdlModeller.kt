@@ -42,5 +42,5 @@ data class Navn(
 )
 
 data class HentNavnRequest(
-    val ident: String,
+    val fagsakPersonId: String,
 )

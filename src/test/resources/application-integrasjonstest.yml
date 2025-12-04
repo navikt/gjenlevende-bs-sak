@@ -3,6 +3,8 @@
 
 # Spring konfigurasjon
 spring:
+    main:
+        allow-bean-definition-overriding: true
     datasource:
         driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
         url: jdbc:tc:postgresql:17:///testdb
@@ -22,6 +24,7 @@ spring:
             resourceserver:
                 jwt:
                     issuer-uri: https://login.microsoftonline.com/test-tenant-id/v2.0
+                    jwk-set-uri: https://login.microsoftonline.com/test-tenant/v2.0/discovery/v2.0/keys
                     audiences: test-client-id
 
 # Scheduling konfigurasjon
@@ -56,5 +59,3 @@ unleash:
 UNLEASH_SERVER_API_URL: http://localhost:4242/api
 UNLEASH_SERVER_API_TOKEN: token
 UNLEASH_SERVER_API_ENV: server-env
-
-NAIS_APP_NAME: gjenlevende-bs-sak

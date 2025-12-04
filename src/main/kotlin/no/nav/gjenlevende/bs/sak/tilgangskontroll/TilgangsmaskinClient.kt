@@ -30,6 +30,7 @@ class TilgangsmaskinClient(
 
     /**
      * Sjekker om ansatt har tilgang til en bruker ved å bruke bulk OBO endpoint.
+     * Bruker KJERNE_REGELTYPE som sjekker habilitet (familie/partner/barn/søsken).
      * Returnerer true hvis ansatt har tilgang (status 204), false ellers.
      */
     fun harTilgangTilBruker(fnr: String): Boolean {
@@ -42,10 +43,10 @@ class TilgangsmaskinClient(
             val response =
                 webClient
                     .post()
-                    .uri("/api/v1/bulk/obo/KOMPLETT_REGELTYPE")
+                    .uri("/api/v1/bulk/obo/KJERNE_REGELTYPE")
                     .header("Authorization", "Bearer $oboToken")
                     .header("Content-Type", "application/json")
-                    .bodyValue(setOf(TilgangsmaskinBulkRequest(fnr)))
+                    .bodyValue(setOf(fnr))
                     .retrieve()
                     .bodyToMono<TilgangsmaskinBulkResponse>()
                     .block()
@@ -63,8 +64,13 @@ class TilgangsmaskinClient(
                     true
                 }
 
+                resultat.status == HttpStatus.NOT_FOUND.value() -> {
+                    logger.info("Bruker ikke funnet i PDL, antar tilgang OK")
+                    true
+                }
+
                 else -> {
-                    logger.info("Tilgang avvist for bruker med status: ${resultat.status}")
+                    logger.info("Tilgang avvist for bruker med status: ${resultat.status}, detaljer: ${resultat.detaljer}")
                     false
                 }
             }
@@ -102,17 +108,20 @@ class TilgangsmaskinClient(
             val response =
                 webClient
                     .post()
-                    .uri("/api/v1/bulk/obo/KOMPLETT_REGELTYPE")
+                    .uri("/api/v1/bulk/obo/KJERNE_REGELTYPE")
                     .header("Authorization", "Bearer $oboToken")
                     .header("Content-Type", "application/json")
-                    .bodyValue(fnrList.map { TilgangsmaskinBulkRequest(it) }.toSet())
+                    .bodyValue(fnrList.toSet())
                     .retrieve()
                     .bodyToMono<TilgangsmaskinBulkResponse>()
                     .block()
 
             response
                 ?.resultater
-                ?.filter { it.status == HttpStatus.NO_CONTENT.value() }
+                ?.filter {
+                    it.status == HttpStatus.NO_CONTENT.value() ||
+                        it.status == HttpStatus.NOT_FOUND.value()
+                }
                 ?.map { it.brukerId }
                 ?: emptyList()
         } catch (e: WebClientResponseException) {
@@ -138,14 +147,11 @@ class TilgangsmaskinClient(
     }
 }
 
-data class TilgangsmaskinBulkRequest(
-    @JsonProperty("brukerId")
-    val brukerId: String,
-)
-
 data class TilgangsmaskinBulkResponse(
+    @JsonProperty("ansattId")
+    val ansattId: String? = null,
     @JsonProperty("resultater")
-    val resultater: List<TilgangsmaskinBulkResultat>,
+    val resultater: Set<TilgangsmaskinBulkResultat> = emptySet(),
 )
 
 data class TilgangsmaskinBulkResultat(
@@ -153,4 +159,6 @@ data class TilgangsmaskinBulkResultat(
     val brukerId: String,
     @JsonProperty("status")
     val status: Int,
+    @JsonProperty("detaljer")
+    val detaljer: Any? = null,
 )

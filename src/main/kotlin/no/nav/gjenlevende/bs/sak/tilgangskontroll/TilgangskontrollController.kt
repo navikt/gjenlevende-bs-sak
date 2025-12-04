@@ -21,19 +21,19 @@ class TilgangskontrollController(
     @Operation(
         summary = "Sjekk om ansatt har tilgang til bruker",
         description =
-            "Sjekker om innlogget ansatt har tilgang til å behandle sak for oppgitt fnr. " +
+            "Sjekker om innlogget ansatt har tilgang til å behandle sak for oppgitt personident. " +
                 "Returnerer true hvis ansatt har tilgang, false hvis tilgang avvises på grunn av " +
                 "habilitet, skjerming, geografisk tilknytning etc.",
     )
     fun harTilgang(
-        @RequestParam fnr: String,
+        @RequestParam personident: String,
     ): TilgangResponse {
         val ansattId = hentAnsattId()
-        val harTilgang = tilgangsmaskinClient.harTilgangTilBruker(fnr)
+        val harTilgang = tilgangsmaskinClient.harTilgangTilBruker(personident)
 
         return TilgangResponse(
             ansattId = ansattId,
-            fnr = fnr,
+            personident = personident,
             harTilgang = harTilgang,
         )
     }
@@ -42,20 +42,20 @@ class TilgangskontrollController(
     @Operation(
         summary = "Sjekk om ansatt har tilgang til flere brukere",
         description =
-            "Sjekker om innlogget ansatt har tilgang til å behandle saker for oppgitte fnr. " +
-                "Returnerer liste med fnr for brukere ansatt har tilgang til. Maksimalt 1000 fnr per request.",
+            "Sjekker om innlogget ansatt har tilgang til å behandle saker for oppgitte personidenter. " +
+                "Returnerer liste med personidenter for brukere ansatt har tilgang til. Maksimalt 1000 per request.",
     )
     fun harTilgangBulk(
         @RequestBody request: TilgangBulkRequest,
     ): TilgangBulkResponse {
         val ansattId = hentAnsattId()
-        val fnrMedTilgang = tilgangsmaskinClient.harTilgangTilBrukere(request.fnrList)
+        val personidenterMedTilgang = tilgangsmaskinClient.harTilgangTilBrukere(request.personidenter)
 
         return TilgangBulkResponse(
             ansattId = ansattId,
-            totalAntall = request.fnrList.size,
-            antallMedTilgang = fnrMedTilgang.size,
-            fnrMedTilgang = fnrMedTilgang,
+            totalAntall = request.personidenter.size,
+            antallMedTilgang = personidenterMedTilgang.size,
+            personidenterMedTilgang = personidenterMedTilgang,
         )
     }
 
@@ -73,17 +73,17 @@ class TilgangskontrollController(
 
 data class TilgangResponse(
     val ansattId: String,
-    val fnr: String,
+    val personident: String,
     val harTilgang: Boolean,
 )
 
 data class TilgangBulkRequest(
-    val fnrList: List<String>,
+    val personidenter: List<String>,
 )
 
 data class TilgangBulkResponse(
     val ansattId: String,
     val totalAntall: Int,
     val antallMedTilgang: Int,
-    val fnrMedTilgang: List<String>,
+    val personidenterMedTilgang: List<String>,
 )

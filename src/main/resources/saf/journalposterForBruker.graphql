@@ -15,10 +15,10 @@ query journalposterForBruker($brukerId: BrukerIdInput!,
             tema
             tittel
             behandlingstema
-            sak { arkivsaksystem arkivsaksnummer datoOpprettet fagsakId fagsaksystem }
+            sak { datoOpprettet fagsakId fagsaksystem }
             bruker { id type }
             avsenderMottaker { id type navn land erLikBruker }
-            journalforendeEnhet
+            journalfoerendeEnhet
             kanal
             utsendingsinfo { varselSendt { type, varslingstidspunkt }, fysiskpostSendt { adressetekstKonvolutt }, digitalpostSendt { adresse } }
             dokumenter { dokumentInfoId tittel brevkode dokumentstatus dokumentvarianter { variantformat, saksbehandlerHarTilgang } logiskeVedlegg { logiskVedleggId tittel } }
@@ -27,3 +27,5 @@ query journalposterForBruker($brukerId: BrukerIdInput!,
         }
     }
 }
+
+

@@ -83,7 +83,7 @@ class SafClient(
 }
 
 data class SafJournalposterData(
-    val journalposter: List<Journalpost>,
+    val journalposter: List<Journalpost>?,
 )
 
 data class SafJournalpostResponse<T>(

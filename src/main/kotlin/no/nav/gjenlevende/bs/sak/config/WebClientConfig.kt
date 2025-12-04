@@ -1,6 +1,7 @@
 package no.nav.gjenlevende.bs.sak.config
 
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -119,6 +120,7 @@ open class WebClientConfig {
     }
 
     @Bean
+    @Qualifier("azureClientCredential")
     open fun pdlRestTemplate(authorizedClientManager: OAuth2AuthorizedClientManager): RestOperations {
         val restTemplate = RestTemplate()
         restTemplate.interceptors.add(PdlBearerTokenInterceptor(authorizedClientManager))

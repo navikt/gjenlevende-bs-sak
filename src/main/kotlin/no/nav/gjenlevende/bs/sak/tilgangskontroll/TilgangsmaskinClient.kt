@@ -28,12 +28,7 @@ class TilgangsmaskinClient(
             .baseUrl(tilgangsmaskinUrl)
             .build()
 
-    /**
-     * Sjekker om ansatt har tilgang til en bruker ved å bruke bulk OBO endpoint.
-     * Bruker KJERNE_REGELTYPE som sjekker habilitet (familie/partner/barn/søsken).
-     * Returnerer true hvis ansatt har tilgang (status 204), false ellers.
-     */
-    fun harTilgangTilBruker(fnr: String): Boolean {
+    fun harTilgangTilBruker(personident: String): Boolean {
         logger.info("Sjekker tilgang til bruker via tilgangsmaskin bulk OBO endpoint")
 
         val brukerToken = hentBrukerToken()
@@ -46,12 +41,12 @@ class TilgangsmaskinClient(
                     .uri("/api/v1/bulk/obo/KJERNE_REGELTYPE")
                     .header("Authorization", "Bearer $oboToken")
                     .header("Content-Type", "application/json")
-                    .bodyValue(setOf(fnr))
+                    .bodyValue(setOf(personident))
                     .retrieve()
                     .bodyToMono<TilgangsmaskinBulkResponse>()
                     .block()
 
-            val resultat = response?.resultater?.firstOrNull { it.brukerId == fnr }
+            val resultat = response?.resultater?.firstOrNull { it.brukerId == personident }
 
             when {
                 resultat == null -> {
@@ -86,20 +81,17 @@ class TilgangsmaskinClient(
         }
     }
 
-    /**
-     * Sjekker tilgang for flere brukere samtidig.
-     * Returnerer liste med fnr for brukere ansatt har tilgang til.
-     */
-    fun harTilgangTilBrukere(fnrList: List<String>): List<String> {
-        if (fnrList.isEmpty()) {
+    fun harTilgangTilBrukere(personidenter: List<String>): List<String> {
+        if (personidenter.isEmpty()) {
             return emptyList()
         }
 
-        if (fnrList.size > 1000) {
+        // Kommer aldri til å skje, men ja, er med for sikkerhetskyld.
+        if (personidenter.size > 1000) {
             throw IllegalArgumentException("Kan ikke sjekke tilgang for mer enn 1000 brukere samtidig")
         }
 
-        logger.info("Sjekker tilgang til ${fnrList.size} brukere via tilgangsmaskin bulk OBO endpoint")
+        logger.info("Sjekker tilgang til ${personidenter.size} brukere via tilgangsmaskin bulk OBO endpoint")
 
         val brukerToken = hentBrukerToken()
         val oboToken = texasClient.hentOboToken(brukerToken, tilgangsmaskinScope)
@@ -111,7 +103,7 @@ class TilgangsmaskinClient(
                     .uri("/api/v1/bulk/obo/KJERNE_REGELTYPE")
                     .header("Authorization", "Bearer $oboToken")
                     .header("Content-Type", "application/json")
-                    .bodyValue(fnrList.toSet())
+                    .bodyValue(personidenter.toSet())
                     .retrieve()
                     .bodyToMono<TilgangsmaskinBulkResponse>()
                     .block()
@@ -129,6 +121,7 @@ class TilgangsmaskinClient(
                 "Tilgangsmaskin bulk request feilet med status ${e.statusCode}: ${e.responseBodyAsString}",
                 e,
             )
+
             emptyList()
         } catch (e: Exception) {
             logger.error("Uventet feil ved sjekk av tilgang via tilgangsmaskin: ${e.message}", e)

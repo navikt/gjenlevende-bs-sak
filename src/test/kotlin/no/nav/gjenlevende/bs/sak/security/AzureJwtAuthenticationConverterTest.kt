@@ -29,8 +29,8 @@ class AzureJwtAuthenticationConverterTest {
     }
 
     @Test
-    fun `skal konvertere gyldig token med beslutter rolle`() {
-        val jwt = JwtTestHelper.opprettBeslutterToken(navIdent = "B123456")
+    fun `skal konvertere gyldig token med attestering rolle`() {
+        val jwt = JwtTestHelper.opprettAttestererToken(navIdent = "B123456")
 
         val resultat = converter.convert(jwt)
 
@@ -40,12 +40,12 @@ class AzureJwtAuthenticationConverterTest {
         val authorities = authToken.authorities.map { it.authority }
 
         assertEquals(1, authorities.size)
-        assertTrue(authorities.contains("ROLE_BESLUTTER"))
+        assertTrue(authorities.contains("ROLE_ATTESTERING"))
     }
 
     @Test
-    fun `skal konvertere gyldig token med veileder rolle`() {
-        val jwt = JwtTestHelper.opprettVeilederToken(navIdent = "V123456")
+    fun `skal konvertere gyldig token med les rolle`() {
+        val jwt = JwtTestHelper.opprettLeserToken(navIdent = "V123456")
 
         val resultat = converter.convert(jwt)
 
@@ -55,12 +55,12 @@ class AzureJwtAuthenticationConverterTest {
         val authorities = authToken.authorities.map { it.authority }
 
         assertEquals(1, authorities.size)
-        assertTrue(authorities.contains("ROLE_VEILEDER"))
+        assertTrue(authorities.contains("ROLE_LES"))
     }
 
     @Test
     fun `skal konvertere token med flere roller`() {
-        val jwt = JwtTestHelper.opprettSaksbehandlerOgBeslutterToken(navIdent = "AB12345")
+        val jwt = JwtTestHelper.opprettSaksbehandlerOgAttestererToken(navIdent = "AB12345")
 
         val resultat = converter.convert(jwt)
 
@@ -71,7 +71,7 @@ class AzureJwtAuthenticationConverterTest {
 
         assertEquals(2, authorities.size)
         assertTrue(authorities.contains("ROLE_SAKSBEHANDLER"))
-        assertTrue(authorities.contains("ROLE_BESLUTTER"))
+        assertTrue(authorities.contains("ROLE_ATTESTERING"))
     }
 
     @Test
@@ -87,8 +87,8 @@ class AzureJwtAuthenticationConverterTest {
 
         assertEquals(3, authorities.size)
         assertTrue(authorities.contains("ROLE_SAKSBEHANDLER"))
-        assertTrue(authorities.contains("ROLE_BESLUTTER"))
-        assertTrue(authorities.contains("ROLE_VEILEDER"))
+        assertTrue(authorities.contains("ROLE_ATTESTERING"))
+        assertTrue(authorities.contains("ROLE_LES"))
     }
 
     @Test
@@ -148,9 +148,9 @@ class AzureJwtAuthenticationConverterTest {
                 navIdent = "MIKSED123",
                 azureGrupper =
                     listOf(
-                        "8df38a8c-6b34-49d7-b837-cefb153a03e8", // SAKSBEHANDLER
+                        "5b6745de-b65d-40eb-a6f5-860c8b61c27f", // SAKSBEHANDLER
                         "00000000-0000-0000-0000-000000000000", // Ukjent gruppe
-                        "f9837eec-8d85-4f61-b89e-677e168fdf2f", // BESLUTTER
+                        "70cfce24-7865-4676-9fdc-b676e90bfc92", // ATTESTERING
                     ),
             )
 
@@ -160,6 +160,6 @@ class AzureJwtAuthenticationConverterTest {
 
         assertEquals(2, authorities.size)
         assertTrue(authorities.contains("ROLE_SAKSBEHANDLER"))
-        assertTrue(authorities.contains("ROLE_BESLUTTER"))
+        assertTrue(authorities.contains("ROLE_ATTESTERING"))
     }
 }

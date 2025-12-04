@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import org.springframework.web.servlet.resource.NoResourceFoundException
 
-@ControllerAdvice(basePackages = ["no.ditt.company.api"])
+@ControllerAdvice(basePackages = ["no.nav.gjenlevende.bs.sak"])
 class ApiExceptionHandler {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -48,14 +48,6 @@ class ApiExceptionHandler {
         // Re-throw sånn at Spring kan håndtere sin egne resource not found exceptions
         // Dette fikser unødvendig støy i loggene fra actuator-/interne endepunktene
         throw e
-    }
-
-    @ExceptionHandler(Exception::class)
-    fun handleGeneralException(e: Exception): ResponseEntity<FeilResponse> {
-        logger.error("Uventet feil: ${e.message}", e)
-        return ResponseEntity
-            .status(HttpStatus.INTERNAL_SERVER_ERROR)
-            .body(FeilResponse("En uventet feil oppstod", HttpStatus.INTERNAL_SERVER_ERROR.value()))
     }
 }
 

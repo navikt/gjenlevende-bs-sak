@@ -2,72 +2,83 @@
 
 Saksbehandler app som tar for seg barnetilsyn og skolepenger for etterlatte/gjenlevende.
 
-### Quick start - kjøre lokalt
+### Lokal kjøring
 
-For å starte alle tjenester med en kommando:
+Følg disse stegene for å kjøre applikasjonen lokalt:
 
-1. Sørg for at du er pålogget Nais og Google CLI (nais login)
+#### 1. Logg inn på Nais
+```bash
+nais login
+```
+Følg instruksjonene for å logge inn.
 
+#### Husk Nais device!
 
-2. Kjør start-scriptet:
+#### 2. Hent miljøvariabler
+Kjør scriptet for å hente miljøvariabler fra dev-gcp:
+```bash
+./hent-og-lagre-miljøvariabler.sh
+```
+Dette oppretter en `.env.local` fil (skjult fil) i prosjektmappen.
+
+#### 3. Konfigurer ApplicationLocal profil i IntelliJ
+
+##### 3a. Opprett profil (hvis den ikke eksisterer)
+Hvis du ikke har en ApplicationLocal profil:
+- Gå til `ApplicationLocal.kt` og forsøk å kjøre den
+- Den vil feile, men det opprettes en profil i øvre høyre hjørne ved siden av kjøreknappen
+
+##### 3b. Legg til miljøvariabler i profilen
+1. Klikk på profilen i øvre høyre hjørne
+2. Hold musen over **ApplicationLocal** profilen
+3. Klikk på de tre prikkene (kebab-meny) og velg **Edit**
+4. Klikk på **Modify options** (på samme linje som "Build and Run")
+5. Under **Operating System**, velg **Environment variables**
+6. Klikk på mappeikonet ved siden av Environment variables-feltet
+7. Naviger til `gjenlevende-bs-sak` mappen
+8. Finn `.env.local` filen (den er skjult som standard)
+   - **Mac:** Trykk `Cmd + Shift + .` for å vise skjulte filer
+9. Velg `.env.local` filen
+10. Klikk **Apply** nederst i vinduet
+
+#### 4. Start Docker-containere
+1. Sørg for at **Docker Desktop** kjører
+2. Sjekk om det er konflikterende containere som kjører:
+   ```bash
+   docker ps
+   ```
+   Hvis det er containere som kan ødelegge ting, fjern dem:
+   ```
+   docker stop <container-id>
+   ```
+   eller
+
+    ```
+   docker compose down -d
+   ```
+
+3. Start Texas-containeren:
    ```bash
    ./start-local.sh
    ```
-   Dette vil:
-    - Hente miljøvariabler fra dev-gcp (hvis ikke allerede gjort)
-    - Starte Texas (token exchange service)
-    - Starte nødvendige databaser
 
+#### 5. Kjør applikasjonen
+Kjør **ApplicationLocal** fra profilen i øvre høyre hjørne i IntelliJ.
 
-3. Konfigurer miljøvariabler i IntelliJ:
-    - Gå til **Run** → **Edit Configurations**
-    - Velg **ApplicationLocal**
-    - **Anbefalt:** Installer **EnvFile** plugin og pek til `.env.local`
-    - **Alternativt:** Kopier miljøvariabler manuelt fra `.env.local`
+#### Feilsøking
 
+##### Build feiler med feilmelding om InfotrygdController (eller whatever)
+Kjør:
+```bash
+mvn clean install
+```
+Dette løser vanligvis problemet. Årsaken er ukjent, er noe cache greier.
 
-4. Kjør applikasjonen med `ApplicationLocal`
-
-For å stoppe alle services:
+#### Stoppe services
+For å stoppe alle Docker-containere:
 ```bash
 docker-compose down
 ```
-
-### Autentisering lokalt mot pre-prod (manuell oppsett)
-
-For å kjøre applikasjonen lokalt med autentisering mot pre-prod, må du først hente secrets fra dev-gcp:
-
-1. Sørg for at du er pålogget Nais og Google CLI (nais login)
-
-
-2. Kjør scriptet for å hente miljøvariabler:
-   ```bash
-   ./hent-og-lagre-miljovariabler.sh
-   ```
-3. Last inn miljøvariablene:
-   ```bash
-   source .env.local
-   ```
-4. Start Texas (token exchange service) med Docker:
-   ```bash
-   docker-compose up -d texas
-   ```
-5. Konfigurer miljøvariabler i IntelliJ:
-    - Gå til **Run** → **Edit Configurations**
-    - Velg **ApplicationLocal**
-    - I **Environment variables** feltet, legg til:
-        - `AZURE_APP_CLIENT_ID` (fra `.env.local`)
-        - `AZURE_APP_CLIENT_SECRET` (fra `.env.local`)
-        - `AZURE_APP_TENANT_ID` (fra `.env.local`)
-    - Alternativt: Installer **EnvFile** plugin og pek til `.env.local`
-
-
-6. Kjør applikasjonen med `ApplicationLocal`
-
-### Kjøring med in-memory-database
-For å kjøre opp appen lokalt, kan en kjøre `ApplicationLocal`.
-
-Appen starter da opp med en testcontainer postgres-database og er tilgjengelig under `localhost:8080`.
 
 ## Swagger
 Du når Swagger ved å gå til:
@@ -76,8 +87,6 @@ Ingress:
 - https://gjenlevende-bs-sak.intern.dev.nav.no/swagger-ui/index.html
 
 Lokalt:
-- http://localhost:8080/swagger-ui.html
-- http://localhost:8080/swagger-ui/index.html
-
-Husk Nais device!
+- http://localhost:8082/swagger-ui.html
+- http://localhost:8082/swagger-ui/index.html
 

@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import org.springframework.web.servlet.resource.NoResourceFoundException
 
-@ControllerAdvice
+@ControllerAdvice(basePackages = ["no.ditt.company.api"])
 class ApiExceptionHandler {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -52,12 +52,6 @@ class ApiExceptionHandler {
 
     @ExceptionHandler(Exception::class)
     fun handleGeneralException(e: Exception): ResponseEntity<FeilResponse> {
-        // Ikke handle Springs interne exceptions – la Springs standardhåndtering ta over
-        // Dette fikser problemet der vi blander oss inn i actuator-endepunkter og annen Spring magi
-        if (e.javaClass.packageName.startsWith("org.springframework.web.servlet.resource")) {
-            throw e
-        }
-
         logger.error("Uventet feil: ${e.message}", e)
         return ResponseEntity
             .status(HttpStatus.INTERNAL_SERVER_ERROR)

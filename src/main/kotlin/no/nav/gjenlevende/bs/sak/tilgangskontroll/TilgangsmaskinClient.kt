@@ -5,12 +5,15 @@ import no.nav.gjenlevende.bs.sak.texas.TexasClient
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
+import org.springframework.http.client.reactive.ReactorClientHttpConnector
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import org.springframework.web.reactive.function.client.bodyToMono
+import reactor.netty.http.client.HttpClient
+import java.time.Duration
 
 @Service
 class TilgangsmaskinClient(
@@ -26,7 +29,11 @@ class TilgangsmaskinClient(
         WebClient
             .builder()
             .baseUrl(tilgangsmaskinUrl)
-            .build()
+            .clientConnector(
+                ReactorClientHttpConnector(
+                    HttpClient.create().responseTimeout(Duration.ofSeconds(10)),
+                ),
+            ).build()
 
     fun harTilgangTilBruker(personident: String): Boolean {
         logger.info("Sjekker tilgang til bruker via tilgangsmaskin bulk OBO endpoint")
@@ -113,8 +120,7 @@ class TilgangsmaskinClient(
                 ?.filter {
                     it.status == HttpStatus.NO_CONTENT.value() ||
                         it.status == HttpStatus.NOT_FOUND.value()
-                }
-                ?.map { it.brukerId }
+                }?.map { it.brukerId }
                 ?: emptyList()
         } catch (e: WebClientResponseException) {
             logger.error(

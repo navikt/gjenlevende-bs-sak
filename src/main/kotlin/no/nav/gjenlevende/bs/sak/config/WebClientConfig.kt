@@ -128,6 +128,7 @@ open class WebClientConfig {
     }
 
     @Bean
+    @Qualifier("safAzureClientCredential")
     open fun safRestTemplate(authorizedClientManager: OAuth2AuthorizedClientManager): RestOperations {
         val restTemplate = RestTemplate()
         restTemplate.interceptors.add(SafBearerTokenInterceptor(authorizedClientManager))

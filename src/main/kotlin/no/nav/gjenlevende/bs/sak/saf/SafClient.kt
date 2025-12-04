@@ -19,7 +19,7 @@ import kotlin.collections.isNotEmpty
 @Service
 class SafClient(
     val safConfig: SafConfig,
-    @Qualifier("azureClientCredential") private val restTemplate: RestOperations,
+    @Qualifier("safAzureClientCredential") private val restTemplate: RestOperations,
 ) {
     private val logger = LoggerFactory.getLogger(PdlClient::class.java)
 

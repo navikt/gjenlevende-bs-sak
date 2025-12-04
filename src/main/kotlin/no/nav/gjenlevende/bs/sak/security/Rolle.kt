@@ -4,8 +4,8 @@ enum class Rolle(
     val beskrivelse: String,
 ) {
     SAKSBEHANDLER("Kan saksbehandle i saksbehandler-løsningen"),
-    BESLUTTER("Kan fatte beslutninger i på saker i saksbehandling-løsningen"),
-    VEILEDER("Kan veilede og gi støtte i saksbehandling-løsningen"),
+    ATTESTERING("Kan attestere vedtak i saksbehandling-løsningen"),
+    LES("Kan lese og se informasjon i saksbehandling-løsningen"),
     ;
 
     fun authority(): String = "ROLE_$name"
@@ -13,9 +13,9 @@ enum class Rolle(
     companion object {
         val AZURE_GRUPPE_TIL_ROLLE: Map<String, Set<Rolle>> =
             mapOf(
-                "8df38a8c-6b34-49d7-b837-cefb153a03e8" to setOf(SAKSBEHANDLER),
-                "f9837eec-8d85-4f61-b89e-677e168fdf2f" to setOf(BESLUTTER),
-                "8c98e41f-4370-46e6-998a-2190c7f935bc" to setOf(VEILEDER),
+                "5b6745de-b65d-40eb-a6f5-860c8b61c27f" to setOf(SAKSBEHANDLER),
+                "70cfce24-7865-4676-9fdc-b676e90bfc92" to setOf(ATTESTERING),
+                "609a78e7-e0bd-491c-a63b-96a09ec62b9b" to setOf(LES),
             )
 
         fun fraAzureGrupper(gruppeIder: List<String>): Set<Rolle> =

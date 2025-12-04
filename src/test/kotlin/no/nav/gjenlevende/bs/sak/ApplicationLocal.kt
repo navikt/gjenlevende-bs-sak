@@ -1,13 +1,11 @@
 package no.nav.gjenlevende.bs.sak
 
-import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.builder.SpringApplicationBuilder
-import org.springframework.boot.webmvc.autoconfigure.error.ErrorMvcAutoConfiguration
 import org.springframework.context.annotation.Configuration
 import org.springframework.scheduling.annotation.EnableScheduling
 
-open class ApplicationLocal : ApplicationLocalSetup()
+class ApplicationLocal : ApplicationLocalSetup()
 
 @Configuration(proxyBeanMethods = false)
 @EnableScheduling
@@ -16,7 +14,7 @@ open class ApplicationLocal : ApplicationLocalSetup()
     havingValue = "true",
     matchIfMissing = true,
 )
-open class SchedulingConfiguration
+class SchedulingConfiguration
 
 fun main(args: Array<String>) {
     SpringApplicationBuilder(ApplicationLocal::class.java)

@@ -82,6 +82,10 @@ class SafClient(
     }
 }
 
+data class SafJournalposterData(
+    val journalposter: List<Journalpost>,
+)
+
 data class SafJournalpostResponse<T>(
     val data: T? = null,
     val errors: List<SafError>? = null,

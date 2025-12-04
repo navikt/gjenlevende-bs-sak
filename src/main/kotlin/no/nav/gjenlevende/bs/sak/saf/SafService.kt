@@ -17,10 +17,10 @@ class SafService(
             safClient.utførQuery(
                 query = SafConfig.hentJournalposterBrukerQuery,
                 variables = JournalposterForBrukerRequest(Bruker(fnr, BrukerIdType.FNR), 10),
-                responstype = object : ParameterizedTypeReference<SafJournalpostResponse<List<Journalpost>>>() {},
+                responstype = object : ParameterizedTypeReference<SafJournalpostResponse<SafJournalposterData>>() {},
                 operasjon = "hentJournalposterForBrukerId",
             ) ?: throw PdlException("Fant ingen person i SAF for brukerId")
 
-        return data
+        return data.journalposter
     }
 }

@@ -98,7 +98,11 @@ class SafException(
     cause: Throwable? = null,
 ) : RuntimeException(message, cause)
 
-data class SafJournalposterData(
+class SafJournalpostBrukerData(
+    val dokumentoversiktBruker: Journalpostliste,
+)
+
+data class Journalpostliste(
     val journalposter: List<Journalpost>?,
 )
 

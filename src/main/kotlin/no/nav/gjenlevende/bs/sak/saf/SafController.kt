@@ -14,7 +14,7 @@ class SafController(
     @PostMapping("/tittel")
     fun hentJournalPostForBrukerId(
         @RequestBody request: String,
-    ): ResponseEntity<SafJournalposterData> {
+    ): ResponseEntity<List<Journalpost>> {
         val data =
             safService.hentJournalposterForIdent(request)
                 ?: return ResponseEntity.notFound().build()

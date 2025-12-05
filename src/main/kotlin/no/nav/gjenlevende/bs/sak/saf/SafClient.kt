@@ -37,7 +37,7 @@ class SafClient(
         val entity = HttpEntity(request, headers)
 
         logger.info("Utfører SAF-operasjon: $operasjon")
-
+        logger.info("SAF request payload: query={}, variables={}", query, variables) // TODO FJERN
         return try {
             val response =
                 restTemplate.exchange(
@@ -46,7 +46,7 @@ class SafClient(
                     entity,
                     responstype,
                 )
-
+            logger.info("SAF raw response: {}", response.body) //TODO FJERN
             val safResponse =
                 response.body
                     ?: throw SafException("Ingen respons fra SAF for $operasjon")

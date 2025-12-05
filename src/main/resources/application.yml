@@ -96,3 +96,5 @@ prosessering:
     delete:
         after:
             weeks: 16
+
+FAMILIE_BREV_API_URL: http://familie-brev

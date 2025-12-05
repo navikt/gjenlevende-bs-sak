@@ -46,6 +46,7 @@
         <unleash.version>11.1.1</unleash.version>
         <mockk.version>1.14.6</mockk.version>
         <prosessering.version>2.20251127080553_2073bf2</prosessering.version>
+        <felles.version>3.20251105152539_b03ed80</felles.version>
     </properties>
     <dependencies>
         <dependency>
@@ -146,6 +147,11 @@
             <groupId>no.nav.familie</groupId>
             <artifactId>prosessering-core</artifactId>
             <version>${prosessering.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.familie.felles</groupId>
+            <artifactId>http-client</artifactId>
+            <version>${felles.version}</version>
         </dependency>
 
         <!-- Logging -->

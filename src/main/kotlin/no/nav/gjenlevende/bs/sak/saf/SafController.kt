@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController
 class SafController(
     private val safService: SafService,
 ) {
-    @PostMapping("/tittel")
+    @PostMapping("/journalposter")
     fun hentJournalPostForBrukerId(
         @RequestBody request: String,
     ): ResponseEntity<List<Journalpost>> {

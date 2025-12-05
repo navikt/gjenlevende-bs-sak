@@ -15,7 +15,7 @@ class SafService(
         val data =
             safClient.utførQuery(
                 query = SafConfig.hentJournalposterBrukerQuery,
-                variables = JournalposterForBrukerRequest(Bruker(fnr, BrukerIdType.FNR), listOf(Arkivtema.ENF), listOf(Journalposttype.I, Journalposttype.N, Journalposttype.U), 10),
+                variables = JournalposterForBrukerRequest(Bruker(fnr, BrukerIdType.FNR), emptyList(), emptyList(), 10),
                 responstype = object : ParameterizedTypeReference<SafJournalpostResponse<SafJournalpostBrukerData>>() {},
                 operasjon = "hentJournalposterForBrukerId",
             ) ?: throw SafException("Fant ingen person i SAF for brukerId")

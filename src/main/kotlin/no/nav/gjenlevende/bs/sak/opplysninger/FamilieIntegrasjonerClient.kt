@@ -4,7 +4,6 @@ import no.nav.gjenlevende.bs.sak.fagsak.domain.PersonIdent
 import no.nav.gjenlevende.bs.sak.felles.auditlogger.Tilgang
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
@@ -37,13 +36,13 @@ class FamilieIntegrasjonerClient(
                 tilgangRelasjonerUri,
                 HttpMethod.POST,
                 entity,
-                object : ParameterizedTypeReference<Tilgang>() {},
+                Tilgang::class.java,
             ).body ?: error("Ingen response ved henting av tilgang til person med relasjoner")
     }
 
     companion object {
         private const val PATH_TILGANG_RELASJONER = "api/tilgang/person-med-relasjoner"
         private const val HEADER_NAV_TEMA = "Nav-Tema"
-        private const val HEADER_NAV_TEMA_EYO = "ENF" //TODO Gjør om til EYO og tillat temaet i integrasjoner
+        private const val HEADER_NAV_TEMA_EYO = "ENF" // TODO Gjør om til EYO og tillat temaet i integrasjoner
     }
 }

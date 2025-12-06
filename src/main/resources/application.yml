@@ -1,5 +1,6 @@
 # Felles variabler
 NAIS_APP_NAME: gjenlevende-bs-sak
+ON_PREM_URL_ENV: dev
 
 # Server konfigurasjon
 server:

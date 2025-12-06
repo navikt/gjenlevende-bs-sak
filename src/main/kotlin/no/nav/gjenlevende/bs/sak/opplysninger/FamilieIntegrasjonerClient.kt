@@ -44,6 +44,6 @@ class FamilieIntegrasjonerClient(
     companion object {
         private const val PATH_TILGANG_RELASJONER = "api/tilgang/person-med-relasjoner"
         private const val HEADER_NAV_TEMA = "Nav-Tema"
-        private const val HEADER_NAV_TEMA_EYO = "EYO"
+        private const val HEADER_NAV_TEMA_EYO = "ENF" //TODO Gjør om til EYO og tillat temaet i integrasjoner
     }
 }

@@ -46,6 +46,10 @@ gjenlevende-bs-infotrygd:
     url: https://gjenlevende-bs-infotrygd.dev-fss-pub.nais.io
     audience: ${GJENLEVENDE_BS_INFOTRYGD_SCOPE}
 
+# Familie-integrasjoner
+FAMILIE_INTEGRASJONER_URL: http://localhost:8386
+FAMILIE_INTEGRASJONER_SCOPE: api://${AZURE_APP_CLIENT_ID}/.default
+
 # PDL (Persondataløsningen)
 PDL_URL: https://pdl-api.dev-fss-pub.nais.io
 PDL_SCOPE: api://dev-fss.pdl.pdl-api/.default

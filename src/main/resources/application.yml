@@ -1,6 +1,6 @@
 # Felles variabler
 NAIS_APP_NAME: gjenlevende-bs-sak
-ON_PREM_URL_ENV: dev
+DEPLOY_ENV: dev
 
 # Server konfigurasjon
 server:
@@ -67,7 +67,7 @@ gjenlevende-bs-infotrygd:
     audience: api://dev-fss.etterlatte.gjenlevende-bs-infotrygd/.default
 
 # Familie-integrasjoner
-FAMILIE_INTEGRASJONER_URL: https://familie-integrasjoner.${ON_PREM_URL_ENV}-fss-pub.nais.io
+FAMILIE_INTEGRASJONER_URL: https://familie-integrasjoner.${DEPLOY_ENV}-fss-pub.nais.io
 FAMILIE_INTEGRASJONER_SCOPE: api://${DEPLOY_ENV}-fss.teamfamilie.familie-integrasjoner/.default
 
 # PDL (Persondataløsningen)

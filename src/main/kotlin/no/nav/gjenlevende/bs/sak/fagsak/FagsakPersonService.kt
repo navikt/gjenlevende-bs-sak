@@ -2,13 +2,12 @@ package no.nav.gjenlevende.bs.sak.fagsak
 
 import no.nav.gjenlevende.bs.sak.fagsak.domain.FagsakPerson
 import no.nav.gjenlevende.bs.sak.fagsak.domain.PersonIdent
-import no.nav.gjenlevende.bs.sak.infrastruktur.exception.feilHvisIkke
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
 
 @Service
-open class FagsakPersonService(
+class FagsakPersonService(
     private val fagsakPersonRepository: FagsakPersonRepository,
 ) {
     @Transactional
@@ -24,9 +23,6 @@ open class FagsakPersonService(
         } catch (_: IllegalArgumentException) {
         }
 
-        feilHvisIkke(personIdenter.contains(gjeldendePersonIdent)) {
-            "Liste med personidenter inneholder ikke gjeldende personident"
-        }
         return (
             fagsakPersonRepository.findByIdent(personIdenter)
                 ?: opprettFagsakPerson(gjeldendePersonIdent)

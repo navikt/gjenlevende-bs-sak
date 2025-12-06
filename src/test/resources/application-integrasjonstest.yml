@@ -48,6 +48,8 @@ AZURE_APP_TENANT_ID: test-tenant-id
 # Ekstern tjeneste konfigurasjon (Mock-verdier for tester)
 PDL_URL: http://localhost:8080/pdl
 PDL_SCOPE: test-scope
+FAMILIE_INTEGRASJONER_URL: http://localhost:8386
+FAMILIE_INTEGRASJONER_SCOPE: scope
 
 # Database konfigurasjon
 DB_JDBC_URL: jdbc:tc:postgresql:17:///testdb

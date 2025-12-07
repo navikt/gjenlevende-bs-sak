@@ -45,7 +45,7 @@
         <flyway.version>11.15.0</flyway.version>
         <unleash.version>11.1.1</unleash.version>
         <mockk.version>1.14.6</mockk.version>
-        <prosessering.version>2.20251127080553_2073bf2</prosessering.version>
+        <prosessering.version>2.20251205101334_e75fc2d</prosessering.version>
     </properties>
     <dependencies>
         <dependency>
@@ -94,7 +94,7 @@
         <dependency>
             <groupId>com.ninja-squad</groupId>
             <artifactId>springmockk</artifactId>
-            <version>4.0.2</version>
+            <version>5.0.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>

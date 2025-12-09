@@ -24,11 +24,6 @@ class FamilieIntegrasjonerConfig(
         @Value("\${FAMILIE_INTEGRASJONER_SCOPE}")
         scope: String,
     ): ClientRegistration {
-        val scopes =
-            scope
-                .split(",")
-                .map(String::trim)
-                .filter(String::isNotEmpty)
 
         return ClientRegistration
             .withRegistrationId(FAMILIE_INTEGRASJONER_CLIENT_REGISTRATION_ID)

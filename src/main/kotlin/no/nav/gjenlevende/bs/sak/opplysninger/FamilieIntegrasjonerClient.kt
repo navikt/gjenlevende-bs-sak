@@ -33,7 +33,12 @@ class FamilieIntegrasjonerClient(
                 it.set(HEADER_NAV_TEMA, HEADER_NAV_TEMA_EYO)
             }
 
-        val entity = HttpEntity(no.nav.familie.kontrakter.felles.PersonIdent(personIdent), headers)
+        val entity =
+            HttpEntity(
+                no.nav.familie.kontrakter.felles
+                    .PersonIdent(personIdent),
+                headers,
+            )
         return restTemplate
             .exchange<Tilgang>(
                 tilgangRelasjonerUri,

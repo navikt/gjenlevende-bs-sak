@@ -17,7 +17,7 @@ class TilgangService(
         event: AuditLoggerEvent,
     ) {
         val tilgang = familieIntegrasjonerClient.sjekkTilgangTilPersonMedRelasjoner(personIdent)
-        //auditLogger.log(Sporingsdata(event, personIdent, tilgang))
+        // auditLogger.log(Sporingsdata(event, personIdent, tilgang))
         if (!tilgang.harTilgang) {
             /*
             secureLogger.warn(

@@ -42,7 +42,6 @@ class FamilieIntegrasjonerClientTest {
 
     @Test
     fun `sjekkTilgangTilPersonMedRelasjoner returnerer Tilgang når respons body finnes`() {
-
         val personIdent = "01010112345"
         val forventetTilgang = Tilgang(true)
 

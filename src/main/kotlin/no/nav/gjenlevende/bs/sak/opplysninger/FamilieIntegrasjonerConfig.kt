@@ -23,9 +23,8 @@ class FamilieIntegrasjonerConfig(
         tokenEndpointUrl: String,
         @Value("\${FAMILIE_INTEGRASJONER_SCOPE}")
         scope: String,
-    ): ClientRegistration {
-
-        return ClientRegistration
+    ): ClientRegistration =
+        ClientRegistration
             .withRegistrationId(FAMILIE_INTEGRASJONER_CLIENT_REGISTRATION_ID)
             .tokenUri(tokenEndpointUrl)
             .clientId(clientId)
@@ -33,7 +32,6 @@ class FamilieIntegrasjonerConfig(
             .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
             .scope(scope)
             .build()
-    }
 
     companion object {
         const val FAMILIE_INTEGRASJONER_CLIENT_REGISTRATION_ID = "familie-integrasjoner-clientcredentials"

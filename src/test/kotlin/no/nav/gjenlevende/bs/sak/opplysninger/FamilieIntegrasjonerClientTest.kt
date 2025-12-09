@@ -42,11 +42,10 @@ class FamilieIntegrasjonerClientTest {
 
     @Test
     fun `sjekkTilgangTilPersonMedRelasjoner returnerer Tilgang når respons body finnes`() {
-        // Arrange
+
         val personIdent = "01010112345"
         val forventetTilgang = Tilgang(true)
 
-        // Mock RestOperations.exchange til å returnere ResponseEntity med body
         every {
             restOperations.exchange(
                 any<URI>(),

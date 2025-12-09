@@ -1,8 +1,9 @@
 package no.nav.gjenlevende.bs.sak.pdl
 
 import no.nav.gjenlevende.bs.sak.config.PdlConfig
+import no.nav.gjenlevende.bs.sak.felles.OAuth2RestOperationsFactory
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
@@ -14,9 +15,11 @@ import org.springframework.web.client.RestOperations
 @Component
 class PdlClient(
     val pdlConfig: PdlConfig,
-    @Qualifier("azureClientCredential") private val restTemplate: RestOperations,
+    @Value("\${pdl.oauth.registration-id}") registrationId: String,
+    oauth2RestFactory: OAuth2RestOperationsFactory,
 ) {
     private val logger = LoggerFactory.getLogger(PdlClient::class.java)
+    private val restTemplate: RestOperations = oauth2RestFactory.create(registrationId)
 
     fun <T> utførQuery(
         query: String,

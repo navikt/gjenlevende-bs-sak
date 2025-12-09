@@ -63,7 +63,10 @@ familie-integrasjoner:
     url: ${FAMILIE_INTEGRASJONER_URL}
     oauth:
         registration-id: familie-integrasjoner-clientcredentials
-
+pdl:
+    url: ${PDL_URL}
+    oauth:
+        registration-id: pdl-clientcredentials
 oauth2:
     clients:
         pdl:

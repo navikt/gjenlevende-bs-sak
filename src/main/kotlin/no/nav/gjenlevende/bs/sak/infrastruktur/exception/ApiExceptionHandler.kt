@@ -20,6 +20,14 @@ class ApiExceptionHandler {
             .body(FeilResponse(feil.feilmelding, feil.httpStatus.value()))
     }
 
+    @ExceptionHandler(Feil::class)
+    fun handleFeil(feil: Feil): ResponseEntity<FeilResponse> {
+        logger.warn("Feil: ${feil.message}", feil)
+        return ResponseEntity
+            .status(feil.httpStatus)
+            .body(FeilResponse(feil.frontendFeilmelding ?: feil.message ?: "Ukjent feil", feil.httpStatus.value()))
+    }
+
     @ExceptionHandler(IllegalArgumentException::class)
     fun handleIllegalArgumentException(e: IllegalArgumentException): ResponseEntity<FeilResponse> {
         logger.warn("IllegalArgumentException: ${e.message}", e)

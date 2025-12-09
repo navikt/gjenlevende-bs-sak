@@ -1,5 +1,7 @@
 package no.nav.gjenlevende.bs.sak.pdl
 
+import java.util.UUID
+
 data class PdlRequest(
     val query: String,
     val variables: Map<String, String>,
@@ -42,5 +44,5 @@ data class Navn(
 )
 
 data class HentNavnRequest(
-    val fagsakPersonId: String,
+    val fagsakPersonId: UUID,
 )

@@ -1,6 +1,7 @@
 package no.nav.gjenlevende.bs.sak.opplysninger
 
 import no.nav.gjenlevende.bs.sak.fagsak.domain.PersonIdent
+import no.nav.gjenlevende.bs.sak.felles.OAuth2RestOperationsFactory
 import no.nav.gjenlevende.bs.sak.felles.auditlogger.Tilgang
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
@@ -9,14 +10,18 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestOperations
+import org.springframework.web.client.exchange
 import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
 
 @Component
 class FamilieIntegrasjonerClient(
-    @Value("\${FAMILIE_INTEGRASJONER_URL}") private val integrasjonUri: URI,
-    @Qualifier("azureClientCredential") private val restTemplate: RestOperations,
+    @Value("\${familie-integrasjoner.url}") private val integrasjonUri: URI,
+    @Value("\${familie-integrasjoner.oauth.registration-id}") registrationId: String,
+    oauth2RestFactory: OAuth2RestOperationsFactory,
 ) {
+    private val restTemplate: RestOperations = oauth2RestFactory.create(registrationId)
+
     val tilgangRelasjonerUri: URI =
         UriComponentsBuilder
             .fromUri(integrasjonUri)
@@ -32,11 +37,10 @@ class FamilieIntegrasjonerClient(
 
         val entity = HttpEntity(PersonIdent(personIdent), headers)
         return restTemplate
-            .exchange(
+            .exchange<Tilgang>(
                 tilgangRelasjonerUri,
                 HttpMethod.POST,
                 entity,
-                Tilgang::class.java,
             ).body ?: error("Ingen response ved henting av tilgang til person med relasjoner")
     }
 

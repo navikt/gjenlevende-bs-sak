@@ -56,6 +56,29 @@ azure:
             id: ${AZURE_APP_CLIENT_ID}
             secret: ${AZURE_APP_CLIENT_SECRET}
 
+
+
+# OAuth2 klient konfigurering
+familie-integrasjoner:
+    url: ${FAMILIE_INTEGRASJONER_URL}
+    oauth:
+        registration-id: familie-integrasjoner-clientcredentials
+
+oauth2:
+    clients:
+        pdl:
+            registration-id: pdl-clientcredentials
+            client-id: ${AZURE_APP_CLIENT_ID}
+            client-secret: ${AZURE_APP_CLIENT_SECRET}
+            token-endpoint-url: ${AZUREAD_TOKEN_ENDPOINT_URL}
+            scope: ${PDL_SCOPE}
+        familie-integrasjoner:
+            registration-id: familie-integrasjoner-clientcredentials
+            client-id: ${AZURE_APP_CLIENT_ID}
+            client-secret: ${AZURE_APP_CLIENT_SECRET}
+            token-endpoint-url: ${AZUREAD_TOKEN_ENDPOINT_URL}
+            scope: ${FAMILIE_INTEGRASJONER_SCOPE}
+
 # Azure AD miljøvariabler (for SwaggerConfig.kt)
 AZUREAD_TOKEN_ENDPOINT_URL: https://login.microsoftonline.com/${azure.app.tenant.id}/oauth2/v2.0/token
 AUTHORIZATION_URL: https://login.microsoftonline.com/${azure.app.tenant.id}/oauth2/v2.0/authorize

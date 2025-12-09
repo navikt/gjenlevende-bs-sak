@@ -1,78 +1,99 @@
+// src/test/kotlin/no/nav/gjenlevende/bs/sak/opplysninger/FamilieIntegrasjonerClientTest.kt
+
 package no.nav.gjenlevende.bs.sak.opplysninger
 
-import com.github.tomakehurst.wiremock.WireMockServer
-import com.github.tomakehurst.wiremock.client.WireMock
-import com.github.tomakehurst.wiremock.client.WireMock.aResponse
-import com.github.tomakehurst.wiremock.client.WireMock.anyUrl
-import com.github.tomakehurst.wiremock.client.WireMock.post
-import com.github.tomakehurst.wiremock.core.WireMockConfiguration
-import org.assertj.core.api.Assertions
-import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeAll
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
+import no.nav.gjenlevende.bs.sak.fagsak.domain.PersonIdent
+import no.nav.gjenlevende.bs.sak.felles.OAuth2RestOperationsFactory
+import no.nav.gjenlevende.bs.sak.felles.auditlogger.Tilgang
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.springframework.boot.restclient.RestTemplateBuilder
+import org.springframework.core.ParameterizedTypeReference
+import org.springframework.http.HttpEntity
+import org.springframework.http.HttpMethod
+import org.springframework.http.ResponseEntity
 import org.springframework.web.client.RestOperations
 import java.net.URI
 
 class FamilieIntegrasjonerClientTest {
-    companion object {
-        private lateinit var wireMockServer: WireMockServer
-        private val restOperations: RestOperations = RestTemplateBuilder().build()
-        lateinit var familieIntegrasjonerClient: FamilieIntegrasjonerClient
+    private val baseUri = URI.create("http://localhost")
+    private val registrationId = "familie-integrasjoner-clientcredentials"
 
-        @BeforeAll
-        @JvmStatic
-        fun initClass() {
-            wireMockServer = WireMockServer(WireMockConfiguration.wireMockConfig().dynamicPort())
-            wireMockServer.start()
+    private val oauth2RestFactory = mockk<OAuth2RestOperationsFactory>()
+    private val restOperations = mockk<RestOperations>()
 
-            familieIntegrasjonerClient =
-                FamilieIntegrasjonerClient(
-                    URI.create(wireMockServer.baseUrl()),
-                    restOperations,
-                )
-        }
-
-        @AfterAll
-        @JvmStatic
-        fun tearDown() {
-            wireMockServer.stop()
-        }
-    }
+    private lateinit var client: FamilieIntegrasjonerClient
 
     @BeforeEach
-    fun configure() {
-        WireMock.configureFor(wireMockServer.port())
-    }
+    fun setup() {
+        every { oauth2RestFactory.create(registrationId, any()) } returns restOperations
 
-    @AfterEach
-    fun tearDownEachTest() {
-        wireMockServer.resetAll()
+        client =
+            FamilieIntegrasjonerClient(
+                integrasjonUri = baseUri,
+                registrationId = registrationId,
+                oauth2RestFactory = oauth2RestFactory,
+            )
     }
 
     @Test
-    fun `saksbehandler har tilgang til personer med relasjoner`() {
-        wireMockServer.stubFor(
-            post(anyUrl())
-                .willReturn(
-                    aResponse()
-                        .withBody(tilgangTilPersonerMedRelasjonerJson)
-                        .withHeader("Content-Type", "application/json"),
-                ),
-        )
+    fun `sjekkTilgangTilPersonMedRelasjoner returnerer Tilgang når respons body finnes`() {
+        // Arrange
+        val personIdent = "01010112345"
+        val forventetTilgang = Tilgang(true)
 
-        val response = familieIntegrasjonerClient.sjekkTilgangTilPersonMedRelasjoner("01010199999")
-        Assertions.assertThat(response).isNotNull
-        Assertions.assertThat(response.harTilgang).isTrue
+        // Mock RestOperations.exchange til å returnere ResponseEntity med body
+        every {
+            restOperations.exchange(
+                any<URI>(),
+                HttpMethod.POST,
+                any<HttpEntity<PersonIdent>>(),
+                any<ParameterizedTypeReference<Tilgang>>(),
+            )
+        } returns ResponseEntity.ok(forventetTilgang)
+
+        val faktisk = client.sjekkTilgangTilPersonMedRelasjoner(personIdent)
+
+        assertEquals(forventetTilgang, faktisk)
+
+        verify {
+            restOperations.exchange(
+                any<URI>(),
+                HttpMethod.POST,
+                any<HttpEntity<PersonIdent>>(),
+                any<ParameterizedTypeReference<Tilgang>>(),
+            )
+        }
     }
 
-    private val tilgangTilPersonerMedRelasjonerJson =
-        """
-        {
-            "personIdent": "01010199999",
-            "harTilgang": true
+    @Test
+    fun `sjekkTilgangTilPersonMedRelasjoner kaster når respons body er null`() {
+        val personIdent = "02020200000"
+
+        every {
+            restOperations.exchange(
+                any<URI>(),
+                HttpMethod.POST,
+                any<HttpEntity<PersonIdent>>(),
+                any<ParameterizedTypeReference<Tilgang>>(),
+            )
+        } returns ResponseEntity.ok(null)
+
+        assertThrows(IllegalStateException::class.java) {
+            client.sjekkTilgangTilPersonMedRelasjoner(personIdent)
         }
-        """.trimIndent()
+
+        verify {
+            restOperations.exchange(
+                any<URI>(),
+                HttpMethod.POST,
+                any<HttpEntity<PersonIdent>>(),
+                any<ParameterizedTypeReference<Tilgang>>(),
+            )
+        }
+    }
 }

@@ -12,7 +12,12 @@ class SøkService(
 ) {
     fun søkPerson(personident: String): Søkeresultat {
         val fagsakPerson = fagsakPersonService.finnPerson(setOf(personident))
-        val navnPdl = pdlService.hentNavn(personident)
+
+        if (fagsakPerson == null) {
+            return tilSøkeresultat(personident, null, null)
+        }
+
+        val navnPdl = pdlService.hentNavn(fagsakPerson.id)
 
         return tilSøkeresultat(personident, fagsakPerson, navnPdl)
     }

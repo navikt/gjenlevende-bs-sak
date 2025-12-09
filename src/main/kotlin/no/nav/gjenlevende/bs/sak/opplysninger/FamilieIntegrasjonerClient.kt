@@ -1,9 +1,7 @@
 package no.nav.gjenlevende.bs.sak.opplysninger
 
-import no.nav.gjenlevende.bs.sak.fagsak.domain.PersonIdent
 import no.nav.gjenlevende.bs.sak.felles.OAuth2RestOperationsFactory
 import no.nav.gjenlevende.bs.sak.felles.auditlogger.Tilgang
-import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
@@ -35,7 +33,7 @@ class FamilieIntegrasjonerClient(
                 it.set(HEADER_NAV_TEMA, HEADER_NAV_TEMA_EYO)
             }
 
-        val entity = HttpEntity(PersonIdent(personIdent), headers)
+        val entity = HttpEntity(no.nav.familie.kontrakter.felles.PersonIdent(personIdent), headers)
         return restTemplate
             .exchange<Tilgang>(
                 tilgangRelasjonerUri,

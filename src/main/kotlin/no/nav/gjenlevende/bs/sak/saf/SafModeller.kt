@@ -2,6 +2,11 @@ package no.nav.gjenlevende.bs.sak.saf
 
 import org.apache.commons.lang3.StringUtils
 import org.springframework.core.io.ClassPathResource
+import java.util.UUID
+
+data class HentJournalposterRequest(
+    val fagsakPersonId: UUID,
+)
 
 class SafException(
     message: String,

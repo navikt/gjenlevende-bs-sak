@@ -11,7 +11,7 @@ import java.util.UUID
 @Service
 class SafService(
     private val safClient: SafClient,
-    private val fagsakPersonService: FagsakPersonService
+    private val fagsakPersonService: FagsakPersonService,
 ) {
     private val logger = LoggerFactory.getLogger(PdlService::class.java)
 

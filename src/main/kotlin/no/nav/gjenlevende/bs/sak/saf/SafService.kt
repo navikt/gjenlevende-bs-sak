@@ -1,5 +1,6 @@
 package no.nav.gjenlevende.bs.sak.saf
 
+import no.nav.gjenlevende.bs.sak.config.SafConfig
 import no.nav.gjenlevende.bs.sak.pdl.PdlService
 import org.slf4j.LoggerFactory
 import org.springframework.core.ParameterizedTypeReference

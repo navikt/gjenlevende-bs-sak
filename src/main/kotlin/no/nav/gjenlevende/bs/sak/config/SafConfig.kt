@@ -1,13 +1,10 @@
-package no.nav.gjenlevende.bs.sak.saf
+package no.nav.gjenlevende.bs.sak.config
 
 import org.apache.commons.lang3.StringUtils
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
-import kotlin.io.readText
-import kotlin.jvm.java
-import kotlin.text.replace
 
 @Configuration
 open class SafConfig(

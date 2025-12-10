@@ -14,8 +14,8 @@ class PdlService(
 ) {
     private val logger = LoggerFactory.getLogger(PdlService::class.java)
 
-    fun hentNavn(fagsakPersonId: String): Navn? {
-        val ident = fagsakPersonService.hentAktivIdent(UUID.fromString(fagsakPersonId))
+    fun hentNavn(fagsakPersonId: UUID): Navn? {
+        val ident = fagsakPersonService.hentAktivIdent(fagsakPersonId)
         val data =
             pdlClient.utførQuery(
                 query = PdlConfig.hentNavnQuery,

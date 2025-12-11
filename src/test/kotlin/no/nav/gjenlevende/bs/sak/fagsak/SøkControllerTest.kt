@@ -1,0 +1,46 @@
+package no.nav.gjenlevende.bs.sak.fagsak
+
+import io.mockk.mockk
+import no.nav.gjenlevende.bs.sak.infrastruktur.exception.Feil
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
+import org.springframework.http.HttpStatus
+import kotlin.test.assertEquals
+
+class SøkControllerTest {
+    private val søkController = SøkController(søkService = mockk())
+
+    @Test
+    fun `validerErPersonIdent ident med 11 siffer er innafor`() {
+        val gyldigPersonident = "12345678901"
+        søkController.validerErPersonIdent(gyldigPersonident)
+    }
+
+    @Test
+    fun `validerErPersonIdent ident med mindre enn 11 siffer skal gi feilmeding`() {
+        val ugyldigPersonident = "123"
+
+        val exception =
+            assertThrows<Feil> {
+                søkController.validerErPersonIdent(ugyldigPersonident)
+            }
+
+        assertEquals("Personident må være 11 siffer, var 3", exception.message)
+        assertEquals("Personident må være 11 siffer", exception.frontendFeilmelding)
+        assertEquals(HttpStatus.BAD_REQUEST, exception.httpStatus)
+    }
+
+    @Test
+    fun `validerErPersonIdent med ident som inneholder bokstaver skal gi feilmeding`() {
+        val ugyldigPersonident = "123456789AB"
+
+        val exception =
+            assertThrows<Feil> {
+                søkController.validerErPersonIdent(ugyldigPersonident)
+            }
+
+        assertEquals("Personident kan kun inneholde tall", exception.message)
+        assertEquals("Personident kan kun inneholde tall", exception.frontendFeilmelding)
+        assertEquals(HttpStatus.BAD_REQUEST, exception.httpStatus)
+    }
+}

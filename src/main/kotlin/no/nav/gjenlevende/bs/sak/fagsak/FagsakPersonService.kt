@@ -35,6 +35,8 @@ open class FagsakPersonService(
 
     fun opprettFagsakPerson(gjeldendePersonIdent: String): FagsakPerson = fagsakPersonRepository.insert(FagsakPerson(identer = setOf(PersonIdent(gjeldendePersonIdent))))
 
+    fun finnPerson(personIdenter: Set<String>): FagsakPerson? = fagsakPersonRepository.findByIdent(personIdenter)
+
     fun hentAktivIdent(fagsakPersonId: UUID): String {
         val fagsakPerson =
             fagsakPersonRepository

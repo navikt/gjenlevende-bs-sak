@@ -4,7 +4,7 @@ import no.nav.gjenlevende.bs.sak.infotrygd.dto.StønadType
 import java.util.UUID
 
 data class FagsakRequest(
-    val personIdent: String?,
+    val personident: String?,
     val fagsakPersonId: UUID?,
     val stønadstype: StønadType,
 )

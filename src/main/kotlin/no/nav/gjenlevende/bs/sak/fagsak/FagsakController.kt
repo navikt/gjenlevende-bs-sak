@@ -27,9 +27,9 @@ open class FagsakController(
 
         val fagsakDto =
             when {
-                fagsakRequest.personIdent != null -> {
+                fagsakRequest.personident != null -> {
                     fagsakService.hentEllerOpprettFagsakMedBehandlinger(
-                        fagsakRequest.personIdent,
+                        fagsakRequest.personident,
                         fagsakRequest.stønadstype,
                     )
                 }

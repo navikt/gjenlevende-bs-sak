@@ -43,18 +43,18 @@ open class FagsakControllerTest {
 
     @Test
     fun `skal returnere fagsak når person finnes`() {
-        val personIdent = "12345678910"
+        val personident = "12345678910"
         val stønadstype = StønadType.BARNETILSYN
         val fagsakRequest =
             FagsakRequest(
-                personIdent = personIdent,
+                personident = personident,
                 fagsakPersonId = null,
                 stønadstype = stønadstype,
             )
 
         val forventetFagsak =
             FagsakDto(
-                personIdent = personIdent,
+                personident = personident,
                 stønadstype = stønadstype,
                 id = UUID.randomUUID(),
                 fagsakPersonId = UUID.randomUUID(),
@@ -62,7 +62,7 @@ open class FagsakControllerTest {
             )
 
         every {
-            fagsakService.hentEllerOpprettFagsakMedBehandlinger(personIdent, stønadstype)
+            fagsakService.hentEllerOpprettFagsakMedBehandlinger(personident, stønadstype)
         } returns forventetFagsak
 
         val responseJson =
@@ -77,29 +77,29 @@ open class FagsakControllerTest {
                 .response.contentAsString
 
         val ressursFagsakDto: Ressurs<FagsakDto> = objectMapper.readValue(responseJson)
-        assertThat(ressursFagsakDto.data?.personIdent).isEqualTo(personIdent)
+        assertThat(ressursFagsakDto.data?.personident).isEqualTo(personident)
         assertThat(ressursFagsakDto.data?.stønadstype).isEqualTo(stønadstype)
 
         verify(exactly = 1) {
-            fagsakService.hentEllerOpprettFagsakMedBehandlinger(personIdent, stønadstype)
+            fagsakService.hentEllerOpprettFagsakMedBehandlinger(personident, stønadstype)
         }
     }
 
     @Test
     fun `skal returnere fagsak når fagsakPersonId finnes`() {
         val fagsakPersonId = UUID.randomUUID()
-        val personIdent = "12345678910"
+        val personident = "12345678910"
         val stønadstype = StønadType.BARNETILSYN
         val fagsakRequest =
             FagsakRequest(
-                personIdent = null,
+                personident = null,
                 fagsakPersonId = fagsakPersonId,
                 stønadstype = stønadstype,
             )
 
         val forventetFagsak =
             FagsakDto(
-                personIdent = personIdent,
+                personident = personident,
                 stønadstype = stønadstype,
                 id = UUID.randomUUID(),
                 fagsakPersonId = fagsakPersonId,
@@ -132,7 +132,7 @@ open class FagsakControllerTest {
 
     @Test
     fun `skal håndtere valideringsfeil`() {
-        val ugyldigRequest = """{"personIdent": ""}"""
+        val ugyldigRequest = """{"personident": ""}"""
 
         mockMvc
             .post("/api/fagsak") {

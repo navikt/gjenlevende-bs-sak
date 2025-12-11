@@ -1,7 +1,5 @@
 package no.nav.gjenlevende.bs.sak.opplysninger
 
-import no.nav.gjenlevende.bs.sak.config.PDL_CLIENT_REGISTRATION_ID
-import org.hibernate.validator.constraints.URL
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

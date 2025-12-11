@@ -52,7 +52,7 @@ class SøkController(
         }
     }
 
-    private fun validerErPersonident(personident: String) {
+    internal fun validerErPersonident(personident: String) {
         if (personident.isBlank()) {
             throw Feil(
                 message = "Personident kan ikke være tom",

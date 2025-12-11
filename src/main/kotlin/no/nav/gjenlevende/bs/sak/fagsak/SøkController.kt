@@ -29,9 +29,9 @@ class SøkController(
 ) {
     @PostMapping("/person")
     fun søkPerson(
-        @RequestBody personIdentRequest: PersonidentRequest,
+        @RequestBody personidentRequest: PersonidentRequest,
     ): Søkeresultat {
-        val personident = personIdentRequest.personident
+        val personident = personidentRequest.personident
         validerErPersonIdent(personident)
 
         return søkService.søkPerson(personident)

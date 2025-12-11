@@ -1,5 +1,3 @@
-// src/test/kotlin/no/nav/gjenlevende/bs/sak/opplysninger/FamilieIntegrasjonerClientTest.kt
-
 package no.nav.gjenlevende.bs.sak.opplysninger
 
 import io.mockk.every

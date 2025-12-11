@@ -2,11 +2,9 @@ package no.nav.gjenlevende.bs.sak.fagsak
 
 import no.nav.familie.prosessering.rest.Ressurs
 import no.nav.gjenlevende.bs.sak.fagsak.dto.FagsakDto
-import no.nav.gjenlevende.bs.sak.felles.auditlogger.AuditLoggerEvent
 import no.nav.gjenlevende.bs.sak.felles.sikkerhet.TilgangService
 import no.nav.gjenlevende.bs.sak.infotrygd.InfotrygdClient
 import org.slf4j.LoggerFactory
-import org.springframework.context.annotation.Profile
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -27,7 +25,7 @@ open class FagsakController(
         @RequestBody fagsakRequest: FagsakRequest,
     ): Ressurs<FagsakDto> {
         logger.info("kaller hentEllerOpprettFagsakForPerson")
-        tilgangService.validerTilgangTilPersonMedBarn(fagsakRequest.personIdent, AuditLoggerEvent.CREATE)
+        tilgangService.validerTilgangTilPersonMedBarn(fagsakRequest.personIdent)
 
         return Ressurs.success(
             fagsakService.hentEllerOpprettFagsakMedBehandlinger(

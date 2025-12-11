@@ -65,7 +65,7 @@ open class FagsakControllerTest {
             fagsakService.hentEllerOpprettFagsakMedBehandlinger(personIdent, stønadstype)
         } returns forventetFagsak
 
-        justRun { tilgangService.validerTilgangTilPersonMedBarn(any(), any()) }
+        justRun { tilgangService.validerTilgangTilPersonMedBarn(any()) }
 
         val responseJson =
             mockMvc

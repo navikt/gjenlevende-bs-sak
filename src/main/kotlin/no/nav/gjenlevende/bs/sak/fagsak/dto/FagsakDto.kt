@@ -7,7 +7,7 @@ import java.util.UUID
 data class FagsakDto(
     val id: UUID,
     val fagsakPersonId: UUID,
-    val personIdent: String,
+    val personident: String,
     val stønadstype: StønadType,
     val eksternId: Long,
 )
@@ -16,7 +16,7 @@ fun Fagsak.tilDto(): FagsakDto =
     FagsakDto(
         id = this.id,
         fagsakPersonId = this.fagsakPersonId,
-        personIdent = this.hentAktivIdent(),
+        personident = this.hentAktivIdent(),
         stønadstype = this.stønadstype,
         eksternId = this.eksternId,
     )

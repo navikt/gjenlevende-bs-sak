@@ -48,6 +48,7 @@ open class FagsakControllerTest {
         val fagsakRequest =
             FagsakRequest(
                 personIdent = personIdent,
+                fagsakPersonId = null,
                 stønadstype = stønadstype,
             )
 
@@ -81,6 +82,51 @@ open class FagsakControllerTest {
 
         verify(exactly = 1) {
             fagsakService.hentEllerOpprettFagsakMedBehandlinger(personIdent, stønadstype)
+        }
+    }
+
+    @Test
+    fun `skal returnere fagsak når fagsakPersonId finnes`() {
+        val fagsakPersonId = UUID.randomUUID()
+        val personIdent = "12345678910"
+        val stønadstype = StønadType.BARNETILSYN
+        val fagsakRequest =
+            FagsakRequest(
+                personIdent = null,
+                fagsakPersonId = fagsakPersonId,
+                stønadstype = stønadstype,
+            )
+
+        val forventetFagsak =
+            FagsakDto(
+                personIdent = personIdent,
+                stønadstype = stønadstype,
+                id = UUID.randomUUID(),
+                fagsakPersonId = fagsakPersonId,
+                eksternId = 1L,
+            )
+
+        every {
+            fagsakService.hentEllerOpprettFagsakMedFagsakPersonId(fagsakPersonId, stønadstype)
+        } returns forventetFagsak
+
+        val responseJson =
+            mockMvc
+                .post("/api/fagsak") {
+                    contentType = MediaType.APPLICATION_JSON
+                    content = objectMapper.writeValueAsString(fagsakRequest)
+                }.andExpect {
+                    status { isOk() }
+                    content { contentType(MediaType.APPLICATION_JSON) }
+                }.andReturn()
+                .response.contentAsString
+
+        val ressursFagsakDto: Ressurs<FagsakDto> = objectMapper.readValue(responseJson)
+        assertThat(ressursFagsakDto.data?.fagsakPersonId).isEqualTo(fagsakPersonId)
+        assertThat(ressursFagsakDto.data?.stønadstype).isEqualTo(stønadstype)
+
+        verify(exactly = 1) {
+            fagsakService.hentEllerOpprettFagsakMedFagsakPersonId(fagsakPersonId, stønadstype)
         }
     }
 

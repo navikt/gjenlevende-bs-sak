@@ -10,6 +10,7 @@ import no.nav.gjenlevende.bs.sak.infotrygd.dto.StønadType
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.util.UUID
 
 @Service
 open class FagsakService(
@@ -23,12 +24,39 @@ open class FagsakService(
         stønadstype: StønadType,
     ): FagsakDto = hentEllerOpprettFagsak(personIdent, stønadstype).tilDto()
 
+    fun hentEllerOpprettFagsakMedFagsakPersonId(
+        fagsakPersonId: UUID,
+        stønadstype: StønadType,
+    ): FagsakDto = hentEllerOpprettFagsakMedId(fagsakPersonId, stønadstype).tilDto()
+
     @Transactional
     open fun hentEllerOpprettFagsak(
         personIdent: String,
         stønadstype: StønadType,
     ): Fagsak {
         val fagsakPerson = fagsakPersonService.hentEllerOpprettPerson(setOf(personIdent), personIdent)
+        logger.info("FagsakPerson: $fagsakPerson")
+
+        val fagsakDomain =
+            fagsakRepository.findByFagsakPersonIdAndStønadstype(
+                fagsakPerson.id,
+                stønadstype,
+            ) ?: opprettFagsak(fagsakPerson, stønadstype)
+
+        val fagsak = fagsakDomain.tilFagsakMedPerson(fagsakPerson.identer)
+        logger.info("Fagsak: $fagsak")
+        return fagsak
+    }
+
+    @Transactional
+    open fun hentEllerOpprettFagsakMedId(
+        fagsakPersonId: java.util.UUID,
+        stønadstype: StønadType,
+    ): Fagsak {
+        val fagsakPerson =
+            fagsakPersonService.finnPersonMedId(fagsakPersonId)
+                ?: throw IllegalArgumentException("Fant ingen fagsakPerson med id $fagsakPersonId")
+
         logger.info("FagsakPerson: $fagsakPerson")
 
         val fagsakDomain =

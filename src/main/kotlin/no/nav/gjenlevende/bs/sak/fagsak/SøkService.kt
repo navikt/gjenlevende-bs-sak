@@ -4,6 +4,7 @@ import no.nav.gjenlevende.bs.sak.fagsak.domain.FagsakPerson
 import no.nav.gjenlevende.bs.sak.pdl.Navn
 import no.nav.gjenlevende.bs.sak.pdl.PdlService
 import org.springframework.stereotype.Service
+import java.util.UUID
 
 @Service
 class SøkService(
@@ -18,6 +19,19 @@ class SøkService(
         }
 
         val navnPdl = pdlService.hentNavn(fagsakPerson.id)
+
+        return tilSøkeresultat(personident, fagsakPerson, navnPdl)
+    }
+
+    fun søkMedFagsakPersonId(fagsakPersonId: UUID): Søkeresultat {
+        val fagsakPerson = fagsakPersonService.finnPersonMedId(fagsakPersonId)
+
+        if (fagsakPerson == null) {
+            return tilSøkeresultat("Ukjent", null, null)
+        }
+
+        val personident = fagsakPersonService.hentAktivIdent(fagsakPersonId)
+        val navnPdl = pdlService.hentNavn(fagsakPersonId)
 
         return tilSøkeresultat(personident, fagsakPerson, navnPdl)
     }

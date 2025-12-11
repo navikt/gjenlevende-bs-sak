@@ -39,6 +39,9 @@ open class FagsakControllerTest {
     @MockkBean
     private lateinit var tilgangService: TilgangService
 
+    @MockkBean
+    private lateinit var fagsakPersonService: FagsakPersonService
+
     @Autowired
     private lateinit var objectMapper: ObjectMapper
 
@@ -112,6 +115,10 @@ open class FagsakControllerTest {
         every {
             fagsakService.hentEllerOpprettFagsakMedFagsakPersonId(fagsakPersonId, stønadstype)
         } returns forventetFagsak
+
+        every { fagsakPersonService.hentAktivIdent(any()) } returns personident
+
+        justRun { tilgangService.validerTilgangTilPersonMedBarn(any()) }
 
         val responseJson =
             mockMvc

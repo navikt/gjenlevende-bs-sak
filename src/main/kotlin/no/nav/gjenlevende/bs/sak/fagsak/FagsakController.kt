@@ -15,19 +15,21 @@ import org.springframework.web.bind.annotation.RestController
 @Validated
 open class FagsakController(
     private val fagsakService: FagsakService,
+    private val fagsakPersonService: FagsakPersonService,
     private val tilgangService: TilgangService,
 ) {
-    private val logger = LoggerFactory.getLogger(InfotrygdClient::class.java)
+    private val logger = LoggerFactory.getLogger(FagsakController::class.java)
 
     @PostMapping
     open fun hentEllerOpprettFagsakForPerson(
         @RequestBody fagsakRequest: FagsakRequest,
     ): Ressurs<FagsakDto> {
         logger.info("kaller hentEllerOpprettFagsakForPerson")
-        tilgangService.validerTilgangTilPersonMedBarn(fagsakRequest.personIdent)
+
         val fagsakDto =
             when {
                 fagsakRequest.personident != null -> {
+                    tilgangService.validerTilgangTilPersonMedBarn(fagsakRequest.personident)
                     fagsakService.hentEllerOpprettFagsakMedBehandlinger(
                         fagsakRequest.personident,
                         fagsakRequest.stønadstype,
@@ -35,6 +37,8 @@ open class FagsakController(
                 }
 
                 fagsakRequest.fagsakPersonId != null -> {
+                    val personident = fagsakPersonService.hentAktivIdent(fagsakRequest.fagsakPersonId)
+                    tilgangService.validerTilgangTilPersonMedBarn(personident)
                     fagsakService.hentEllerOpprettFagsakMedFagsakPersonId(
                         fagsakRequest.fagsakPersonId,
                         fagsakRequest.stønadstype,

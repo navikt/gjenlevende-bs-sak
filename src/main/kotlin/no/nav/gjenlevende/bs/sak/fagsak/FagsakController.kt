@@ -3,7 +3,6 @@ package no.nav.gjenlevende.bs.sak.fagsak
 import no.nav.familie.prosessering.rest.Ressurs
 import no.nav.gjenlevende.bs.sak.fagsak.dto.FagsakDto
 import no.nav.gjenlevende.bs.sak.felles.sikkerhet.TilgangService
-import no.nav.gjenlevende.bs.sak.infotrygd.InfotrygdClient
 import org.slf4j.LoggerFactory
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.PostMapping
@@ -26,12 +25,27 @@ open class FagsakController(
     ): Ressurs<FagsakDto> {
         logger.info("kaller hentEllerOpprettFagsakForPerson")
         tilgangService.validerTilgangTilPersonMedBarn(fagsakRequest.personIdent)
+        val fagsakDto =
+            when {
+                fagsakRequest.personident != null -> {
+                    fagsakService.hentEllerOpprettFagsakMedBehandlinger(
+                        fagsakRequest.personident,
+                        fagsakRequest.stønadstype,
+                    )
+                }
 
-        return Ressurs.success(
-            fagsakService.hentEllerOpprettFagsakMedBehandlinger(
-                fagsakRequest.personIdent,
-                fagsakRequest.stønadstype,
-            ),
-        )
+                fagsakRequest.fagsakPersonId != null -> {
+                    fagsakService.hentEllerOpprettFagsakMedFagsakPersonId(
+                        fagsakRequest.fagsakPersonId,
+                        fagsakRequest.stønadstype,
+                    )
+                }
+
+                else -> {
+                    throw IllegalArgumentException("Må oppgi enten personIdent eller fagsakPersonId")
+                }
+            }
+
+        return Ressurs.success(fagsakDto)
     }
 }

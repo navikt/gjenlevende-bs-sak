@@ -44,17 +44,18 @@ open class FagsakControllerTest {
 
     @Test
     fun `skal returnere fagsak når person finnes`() {
-        val personIdent = "12345678910"
+        val personident = "12345678910"
         val stønadstype = StønadType.BARNETILSYN
         val fagsakRequest =
             FagsakRequest(
-                personIdent = personIdent,
+                personident = personident,
+                fagsakPersonId = null,
                 stønadstype = stønadstype,
             )
 
         val forventetFagsak =
             FagsakDto(
-                personIdent = personIdent,
+                personident = personident,
                 stønadstype = stønadstype,
                 id = UUID.randomUUID(),
                 fagsakPersonId = UUID.randomUUID(),
@@ -62,7 +63,7 @@ open class FagsakControllerTest {
             )
 
         every {
-            fagsakService.hentEllerOpprettFagsakMedBehandlinger(personIdent, stønadstype)
+            fagsakService.hentEllerOpprettFagsakMedBehandlinger(personident, stønadstype)
         } returns forventetFagsak
 
         justRun { tilgangService.validerTilgangTilPersonMedBarn(any()) }
@@ -79,17 +80,62 @@ open class FagsakControllerTest {
                 .response.contentAsString
 
         val ressursFagsakDto: Ressurs<FagsakDto> = objectMapper.readValue(responseJson)
-        assertThat(ressursFagsakDto.data?.personIdent).isEqualTo(personIdent)
+        assertThat(ressursFagsakDto.data?.personident).isEqualTo(personident)
         assertThat(ressursFagsakDto.data?.stønadstype).isEqualTo(stønadstype)
 
         verify(exactly = 1) {
-            fagsakService.hentEllerOpprettFagsakMedBehandlinger(personIdent, stønadstype)
+            fagsakService.hentEllerOpprettFagsakMedBehandlinger(personident, stønadstype)
+        }
+    }
+
+    @Test
+    fun `skal returnere fagsak når fagsakPersonId finnes`() {
+        val fagsakPersonId = UUID.randomUUID()
+        val personident = "12345678910"
+        val stønadstype = StønadType.BARNETILSYN
+        val fagsakRequest =
+            FagsakRequest(
+                personident = null,
+                fagsakPersonId = fagsakPersonId,
+                stønadstype = stønadstype,
+            )
+
+        val forventetFagsak =
+            FagsakDto(
+                personident = personident,
+                stønadstype = stønadstype,
+                id = UUID.randomUUID(),
+                fagsakPersonId = fagsakPersonId,
+                eksternId = 1L,
+            )
+
+        every {
+            fagsakService.hentEllerOpprettFagsakMedFagsakPersonId(fagsakPersonId, stønadstype)
+        } returns forventetFagsak
+
+        val responseJson =
+            mockMvc
+                .post("/api/fagsak") {
+                    contentType = MediaType.APPLICATION_JSON
+                    content = objectMapper.writeValueAsString(fagsakRequest)
+                }.andExpect {
+                    status { isOk() }
+                    content { contentType(MediaType.APPLICATION_JSON) }
+                }.andReturn()
+                .response.contentAsString
+
+        val ressursFagsakDto: Ressurs<FagsakDto> = objectMapper.readValue(responseJson)
+        assertThat(ressursFagsakDto.data?.fagsakPersonId).isEqualTo(fagsakPersonId)
+        assertThat(ressursFagsakDto.data?.stønadstype).isEqualTo(stønadstype)
+
+        verify(exactly = 1) {
+            fagsakService.hentEllerOpprettFagsakMedFagsakPersonId(fagsakPersonId, stønadstype)
         }
     }
 
     @Test
     fun `skal håndtere valideringsfeil`() {
-        val ugyldigRequest = """{"personIdent": ""}"""
+        val ugyldigRequest = """{"personident": ""}"""
 
         mockMvc
             .post("/api/fagsak") {

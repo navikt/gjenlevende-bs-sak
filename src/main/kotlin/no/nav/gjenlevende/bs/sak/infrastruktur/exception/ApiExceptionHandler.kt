@@ -1,16 +1,26 @@
 package no.nav.gjenlevende.bs.sak.infrastruktur.exception
 
+import no.nav.gjenlevende.bs.sak.felles.sikkerhet.ManglerTilgang
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import org.springframework.web.servlet.resource.NoResourceFoundException
 
-@ControllerAdvice(basePackages = ["no.nav.gjenlevende.bs.sak"])
+@ControllerAdvice
 class ApiExceptionHandler {
     private val logger = LoggerFactory.getLogger(this::class.java)
+
+    @ExceptionHandler(ManglerTilgang::class)
+    fun handleManglerTilgang(e: ManglerTilgang): ResponseEntity<FeilResponse> {
+        logger.warn("ManglerTilgang: ${e.melding} (${e.avvisningsgrunn})")
+        return ResponseEntity
+            .status(HttpStatus.FORBIDDEN)
+            .body(FeilResponse(e.frontendFeilmelding, HttpStatus.FORBIDDEN.value()))
+    }
 
     @ExceptionHandler(ApiFeil::class)
     fun handleApiFeil(feil: ApiFeil): ResponseEntity<FeilResponse> {
@@ -34,6 +44,28 @@ class ApiExceptionHandler {
         return ResponseEntity
             .status(HttpStatus.BAD_REQUEST)
             .body(FeilResponse(e.message ?: "Ugyldig request", HttpStatus.BAD_REQUEST.value()))
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException::class)
+    fun handleHttpMessageNotReadableException(e: HttpMessageNotReadableException): ResponseEntity<FeilResponse> {
+        logger.warn("HttpMessageNotReadableException: ${e.message}")
+        return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .body(FeilResponse("Ugyldig request format", HttpStatus.BAD_REQUEST.value()))
+    }
+
+    @ExceptionHandler(Exception::class)
+    fun handleGeneralException(e: Exception): ResponseEntity<FeilResponse> {
+        // Ikke handle Springs interne exceptions – la Springs standardhåndtering ta over
+        // Dette fikser problemet der vi blander oss inn i actuator-endepunkter og annen Spring magi
+        if (e.javaClass.packageName.startsWith("org.springframework.web.servlet.resource")) {
+            throw e
+        }
+
+        logger.error("Uventet feil: ${e.message}", e)
+        return ResponseEntity
+            .status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body(FeilResponse("En uventet feil oppstod", HttpStatus.INTERNAL_SERVER_ERROR.value()))
     }
 
     @ExceptionHandler(WebClientResponseException::class)

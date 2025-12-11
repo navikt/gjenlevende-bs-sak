@@ -35,7 +35,7 @@ class TilgangskontrollControllerTest {
     @Test
     fun `harTilgang returnerer riktig respons med tilgang`() {
         val personident = "12345678901"
-        every { tilgangsmaskinClient.harTilgangTilBruker(personident) } returns true
+        every { tilgangsmaskinClient.sjekkTilgang(personident) } returns TilgangResultat.godkjent()
 
         val response = controller.harTilgang(TilgangRequest(personident))
 
@@ -47,13 +47,19 @@ class TilgangskontrollControllerTest {
     @Test
     fun `harTilgang returnerer riktig respons uten tilgang`() {
         val personident = "16449348706"
-        every { tilgangsmaskinClient.harTilgangTilBruker(personident) } returns false
+        every { tilgangsmaskinClient.sjekkTilgang(personident) } returns
+            TilgangResultat.avvist(
+                Avvisningsgrunn.AVVIST_HABILITET,
+                "Du har ikke tilgang til data om deg selv eller dine nærstående",
+            )
 
         val response = controller.harTilgang(TilgangRequest(personident))
 
         assertEquals("Z990227", response.ansattId)
         assertEquals(personident, response.personident)
         assertFalse(response.harTilgang)
+        assertEquals("AVVIST_HABILITET", response.avvisningsgrunn)
+        assertEquals("Du har ikke tilgang til data om deg selv eller dine nærstående", response.begrunnelse)
     }
 
     @Test

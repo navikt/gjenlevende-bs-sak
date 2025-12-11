@@ -27,12 +27,14 @@ class TilgangskontrollController(
         @Valid @RequestBody request: TilgangRequest,
     ): TilgangResponse {
         val ansattId = hentAnsattId()
-        val harTilgang = tilgangsmaskinClient.harTilgangTilBruker(request.personident)
+        val resultat = tilgangsmaskinClient.sjekkTilgang(request.personident)
 
         return TilgangResponse(
             ansattId = ansattId,
             personident = request.personident,
-            harTilgang = harTilgang,
+            harTilgang = resultat.harTilgang,
+            avvisningsgrunn = resultat.avvisningsgrunn?.kode,
+            begrunnelse = resultat.begrunnelse,
         )
     }
 
@@ -76,6 +78,8 @@ data class TilgangResponse(
     val ansattId: String,
     val personident: String,
     val harTilgang: Boolean,
+    val avvisningsgrunn: String? = null,
+    val begrunnelse: String? = null,
 )
 
 data class TilgangBulkRequest(

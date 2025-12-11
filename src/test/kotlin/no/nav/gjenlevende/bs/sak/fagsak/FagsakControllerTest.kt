@@ -2,10 +2,12 @@ package no.nav.gjenlevende.bs.sak.fagsak
 
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
+import io.mockk.justRun
 import io.mockk.verify
 import no.nav.familie.prosessering.rest.Ressurs
 import no.nav.gjenlevende.bs.sak.ApplicationLocal
 import no.nav.gjenlevende.bs.sak.fagsak.dto.FagsakDto
+import no.nav.gjenlevende.bs.sak.felles.auditlogger.AuditLoggerEvent
 import no.nav.gjenlevende.bs.sak.felles.sikkerhet.TilgangService
 import no.nav.gjenlevende.bs.sak.infotrygd.dto.StønadType
 import org.assertj.core.api.Assertions.assertThat
@@ -60,6 +62,7 @@ open class FagsakControllerTest {
                 eksternId = 1L,
             )
 
+        justRun { tilgangService.validerTilgangTilPersonMedBarn(personIdent, AuditLoggerEvent.CREATE) }
         every {
             fagsakService.hentEllerOpprettFagsakMedBehandlinger(personIdent, stønadstype)
         } returns forventetFagsak
@@ -86,6 +89,7 @@ open class FagsakControllerTest {
 
     @Test
     fun `skal håndtere valideringsfeil`() {
+        // Missing required field 'stønadstype' should cause deserialization failure
         val ugyldigRequest = """{"personIdent": ""}"""
 
         mockMvc

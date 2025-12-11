@@ -35,7 +35,7 @@ class TilgangsmaskinClient(
                 ),
             ).build()
 
-    fun harTilgangTilBruker(personident: String): Boolean {
+    fun sjekkTilgang(personident: String): TilgangResultat {
         logger.info("Sjekker tilgang til bruker via tilgangsmaskin bulk OBO endpoint")
 
         val brukerToken = hentBrukerToken()
@@ -58,35 +58,45 @@ class TilgangsmaskinClient(
             when {
                 resultat == null -> {
                     logger.warn("Ingen resultat funnet for bruker i bulk response")
-                    false
+                    TilgangResultat.avvist("Ingen resultat fra tilgangsmaskin")
                 }
 
                 resultat.status == HttpStatus.NO_CONTENT.value() -> {
                     logger.info("Tilgang godkjent for bruker")
-                    true
+                    TilgangResultat.godkjent()
                 }
 
                 resultat.status == HttpStatus.NOT_FOUND.value() -> {
                     logger.info("Bruker ikke funnet i PDL, antar tilgang OK")
-                    true
+                    TilgangResultat.godkjent()
                 }
 
                 else -> {
-                    logger.info("Tilgang avvist for bruker med status: ${resultat.status}, detaljer: ${resultat.detaljer}")
-                    false
+                    val avvisningsgrunn = Avvisningsgrunn.fraKode(resultat.detaljer?.avvisningsgrunn)
+                    val begrunnelse = resultat.detaljer?.begrunnelse ?: avvisningsgrunn?.beskrivelse
+                    logger.info(
+                        "Tilgang avvist for bruker med status: ${resultat.status}, " +
+                            "avvisningsgrunn: $avvisningsgrunn, begrunnelse: $begrunnelse",
+                    )
+                    if (avvisningsgrunn != null) {
+                        TilgangResultat.avvist(avvisningsgrunn, begrunnelse)
+                    } else {
+                        TilgangResultat.avvist("Tilgang avvist")
+                    }
                 }
             }
         } catch (e: WebClientResponseException) {
             logger.error(
-                "Tilgangsmaskin bulk request feilet med status ${e.statusCode}: ${e.responseBodyAsString}",
-                e,
+                "Tilgangsmaskin bulk request feilet med status ${e.statusCode}: ${e.responseBodyAsString} der feil er: $e",
             )
-            false
+            TilgangResultat.avvist("Feil ved sjekk av tilgang")
         } catch (e: Exception) {
-            logger.error("Uventet feil ved sjekk av tilgang via tilgangsmaskin: ${e.message}", e)
-            false
+            logger.error("Uventet feil ved sjekk av tilgang via tilgangsmaskin: ${e.message} der feil er: $e")
+            TilgangResultat.avvist("Feil ved sjekk av tilgang")
         }
     }
+
+    fun harTilgangTilBruker(personident: String): Boolean = sjekkTilgang(personident).harTilgang
 
     fun harTilgangTilBrukere(personidenter: List<String>): List<String> {
         if (personidenter.isEmpty()) {
@@ -159,5 +169,12 @@ data class TilgangsmaskinBulkResultat(
     @JsonProperty("status")
     val status: Int,
     @JsonProperty("detaljer")
-    val detaljer: Any? = null,
+    val detaljer: TilgangsmaskinDetaljer? = null,
+)
+
+data class TilgangsmaskinDetaljer(
+    @JsonProperty("avvisningsgrunn")
+    val avvisningsgrunn: String? = null,
+    @JsonProperty("begrunnelse")
+    val begrunnelse: String? = null,
 )

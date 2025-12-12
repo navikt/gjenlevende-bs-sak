@@ -24,11 +24,28 @@ open class FagsakController(
     ): Ressurs<FagsakDto> {
         // tilgangService.validerTilgangTilPersonMedBarn(fagsakRequest.personIdent, AuditLoggerEvent.CREATE)
         // logger.info("kaller hentEllerOpprettFagsakForPerson")
-        return Ressurs.success(
-            fagsakService.hentEllerOpprettFagsakMedBehandlinger(
-                fagsakRequest.personIdent,
-                fagsakRequest.stønadstype,
-            ),
-        )
+
+        val fagsakDto =
+            when {
+                fagsakRequest.personident != null -> {
+                    fagsakService.hentEllerOpprettFagsakMedBehandlinger(
+                        fagsakRequest.personident,
+                        fagsakRequest.stønadstype,
+                    )
+                }
+
+                fagsakRequest.fagsakPersonId != null -> {
+                    fagsakService.hentEllerOpprettFagsakMedFagsakPersonId(
+                        fagsakRequest.fagsakPersonId,
+                        fagsakRequest.stønadstype,
+                    )
+                }
+
+                else -> {
+                    throw IllegalArgumentException("Må oppgi enten personIdent eller fagsakPersonId")
+                }
+            }
+
+        return Ressurs.success(fagsakDto)
     }
 }

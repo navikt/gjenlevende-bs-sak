@@ -37,6 +37,8 @@ open class FagsakPersonService(
 
     fun finnPerson(personIdenter: Set<String>): FagsakPerson? = fagsakPersonRepository.findByIdent(personIdenter)
 
+    fun finnPersonMedId(fagsakPersonId: UUID): FagsakPerson? = fagsakPersonRepository.findById(fagsakPersonId).orElse(null)
+
     fun hentAktivIdent(fagsakPersonId: UUID): String {
         val fagsakPerson =
             fagsakPersonRepository

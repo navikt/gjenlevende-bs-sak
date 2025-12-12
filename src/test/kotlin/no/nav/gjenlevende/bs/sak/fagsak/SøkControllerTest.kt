@@ -11,18 +11,18 @@ class SøkControllerTest {
     private val søkController = SøkController(søkService = mockk())
 
     @Test
-    fun `validerErPersonIdent ident med 11 siffer er innafor`() {
+    fun `validerErPersonident ident med 11 siffer er innafor`() {
         val gyldigPersonident = "12345678901"
-        søkController.validerErPersonIdent(gyldigPersonident)
+        søkController.validerErPersonident(gyldigPersonident)
     }
 
     @Test
-    fun `validerErPersonIdent ident med mindre enn 11 siffer skal gi feilmeding`() {
+    fun `validerErPersonident ident med mindre enn 11 siffer skal gi feilmeding`() {
         val ugyldigPersonident = "123"
 
         val exception =
             assertThrows<Feil> {
-                søkController.validerErPersonIdent(ugyldigPersonident)
+                søkController.validerErPersonident(ugyldigPersonident)
             }
 
         assertEquals("Personident må være 11 siffer, var 3", exception.message)
@@ -36,7 +36,7 @@ class SøkControllerTest {
 
         val exception =
             assertThrows<Feil> {
-                søkController.validerErPersonIdent(ugyldigPersonident)
+                søkController.validerErPersonident(ugyldigPersonident)
             }
 
         assertEquals("Personident kan kun inneholde tall", exception.message)

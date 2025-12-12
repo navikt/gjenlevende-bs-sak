@@ -16,8 +16,9 @@ data class Søkeresultat(
     val harFagsak: Boolean,
 )
 
-data class PersonidentRequest(
-    val personident: String,
+data class SøkRequest(
+    val personident: String?,
+    val fagsakPersonId: UUID?,
 )
 
 const val LENGDE_PERSONIDENT = 11
@@ -29,15 +30,29 @@ class SøkController(
 ) {
     @PostMapping("/person")
     fun søkPerson(
-        @RequestBody personIdentRequest: PersonidentRequest,
+        @RequestBody søkRequest: SøkRequest,
     ): Søkeresultat {
-        val personident = personIdentRequest.personident
-        validerErPersonIdent(personident)
+        when {
+            søkRequest.personident != null -> {
+                validerErPersonident(søkRequest.personident)
+                return søkService.søkPerson(søkRequest.personident)
+            }
 
-        return søkService.søkPerson(personident)
+            søkRequest.fagsakPersonId != null -> {
+                return søkService.søkMedFagsakPersonId(søkRequest.fagsakPersonId)
+            }
+
+            else -> {
+                throw Feil(
+                    message = "Må oppgi enten personident eller fagsakPersonId",
+                    frontendFeilmelding = "Må oppgi enten personident eller fagsakPersonId",
+                    httpStatus = HttpStatus.BAD_REQUEST,
+                )
+            }
+        }
     }
 
-    fun validerErPersonIdent(personident: String) {
+    internal fun validerErPersonident(personident: String) {
         if (personident.isBlank()) {
             throw Feil(
                 message = "Personident kan ikke være tom",

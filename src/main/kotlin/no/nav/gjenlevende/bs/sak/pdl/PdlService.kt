@@ -1,7 +1,7 @@
 package no.nav.gjenlevende.bs.sak.pdl
 
-import no.nav.gjenlevende.bs.sak.config.PdlConfig
 import no.nav.gjenlevende.bs.sak.fagsak.FagsakPersonService
+import org.apache.commons.lang3.StringUtils
 import org.slf4j.LoggerFactory
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.stereotype.Service
@@ -18,7 +18,7 @@ class PdlService(
         val ident = fagsakPersonService.hentAktivIdent(fagsakPersonId)
         val data =
             pdlClient.utførQuery(
-                query = PdlConfig.hentNavnQuery,
+                query = graphqlQuery("graphql/pdl/hent_navn.graphql"),
                 variables = mapOf("ident" to ident),
                 responstype = object : ParameterizedTypeReference<PdlResponse<HentPersonData>>() {},
                 operasjon = "hentNavn",
@@ -36,4 +36,12 @@ class PdlService(
 
         return navnListe.first()
     }
+
+    fun graphqlQuery(path: String) =
+        PdlService::class.java
+            .getResource(path)
+            .readText()
+            .graphqlCompatible()
+
+    private fun String.graphqlCompatible(): String = StringUtils.normalizeSpace(this.replace("\n", ""))
 }

@@ -28,7 +28,7 @@ class SafService(
         return data.dokumentoversiktBruker.journalposter
     }
 
-    fun finnVedleggForPerson(fagsakPersonId: UUID): List<DokumentinfoDto> {
+    fun finnDokumenterForPerson(fagsakPersonId: UUID): List<DokumentinfoDto> {
         val ident = fagsakPersonService.hentAktivIdent(fagsakPersonId)
         val journalposter = hentJournalposterForIdent(ident)
 

@@ -16,7 +16,7 @@ class SafController(
         @RequestBody request: HentDokumenterRequest,
     ): ResponseEntity<List<DokumentinfoDto>> {
         val data =
-            safService.finnVedleggForPerson(request.fagsakPersonId)
+            safService.finnDokumenterForPerson(request.fagsakPersonId)
 
         return ResponseEntity.ok(data)
     }

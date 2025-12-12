@@ -25,7 +25,7 @@ class PdlClient(
     val pdlPath: URI =
         UriComponentsBuilder
             .fromUri(pdlUrl)
-            .pathSegment("/graphql")
+            .pathSegment("graphql")
             .build()
             .toUri()
 

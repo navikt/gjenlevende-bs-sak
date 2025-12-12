@@ -1,10 +1,9 @@
 package no.nav.gjenlevende.bs.sak.saf
 
-import org.apache.commons.lang3.StringUtils
-import org.springframework.core.io.ClassPathResource
+import java.time.LocalDateTime
 import java.util.UUID
 
-data class HentJournalposterRequest(
+data class HentDokumenterRequest(
     val fagsakPersonId: UUID,
 )
 
@@ -83,19 +82,27 @@ data class SafJournalpostRequest(
     val query: String,
 )
 
-fun String.graphqlCompatible(): String = StringUtils.normalizeSpace(this.replace("\n", ""))
-
-fun graphqlQuery(path: String) = ClassPathResource(path).url.readText().graphqlCompatible()
-
 data class Journalpost(
-    val journalpostId: String? = null,
+    val journalpostId: String,
+    val journalposttype: Journalposttype,
+    val journalstatus: Journalstatus,
     val tema: String? = null,
     val behandlingstema: String? = null,
     val tittel: String? = null,
     val bruker: Bruker? = null,
+    val avsenderMottaker: AvsenderMottaker? = null,
     val journalforendeEnhet: String? = null,
     val kanal: String? = null,
+    val dokumenter: List<DokumentInfo>? = null,
+    val relevanteDatoer: List<RelevantDato>? = null,
     val eksternReferanseId: String? = null,
+) {
+    val datoMottatt = relevanteDatoer?.firstOrNull { it.datotype == "DATO_REGISTRERT" }?.dato
+}
+
+data class RelevantDato(
+    val dato: LocalDateTime,
+    val datotype: String,
 )
 
 enum class Arkivtema(
@@ -171,3 +178,89 @@ enum class Journalposttype {
     U,
     N,
 }
+
+data class DokumentInfo(
+    val dokumentInfoId: String,
+    val tittel: String? = null,
+    val brevkode: String? = null,
+    val dokumentstatus: Dokumentstatus? = null,
+    val dokumentvarianter: List<Dokumentvariant>? = null,
+    val logiskeVedlegg: List<LogiskVedlegg>? = null,
+)
+
+enum class Dokumentstatus {
+    FERDIGSTILT,
+    AVBRUTT,
+    UNDER_REDIGERING,
+    KASSERT,
+}
+
+data class Dokumentvariant(
+    val variantformat: Dokumentvariantformat,
+    val filnavn: String? = null,
+    val saksbehandlerHarTilgang: Boolean,
+)
+
+enum class Dokumentvariantformat {
+    ORIGINAL,
+    ARKIV,
+    FULLVERSJON,
+    PRODUKSJON,
+    PRODUKSJON_DLF,
+    SLADDET,
+}
+
+data class LogiskVedlegg(
+    val logiskVedleggId: String,
+    val tittel: String,
+)
+
+data class DokumentinfoDto(
+    val dokumentinfoId: String,
+    val filnavn: String?,
+    val tittel: String,
+    val journalpostId: String,
+    val dato: LocalDateTime?,
+    val tema: String?,
+    val journalstatus: Journalstatus,
+    val journalposttype: Journalposttype,
+    val harSaksbehandlerTilgang: Boolean,
+    val logiskeVedlegg: List<LogiskVedleggDto>,
+    val avsenderMottaker: AvsenderMottaker?,
+)
+
+enum class Journalstatus {
+    MOTTATT,
+    JOURNALFOERT,
+    FERDIGSTILT,
+    EKSPEDERT,
+    UNDER_ARBEID,
+    FEILREGISTRERT,
+    UTGAAR,
+    AVBRUTT,
+    UKJENT_BRUKER,
+    RESERVERT,
+    OPPLASTING_DOKUMENT,
+    UKJENT,
+}
+
+data class AvsenderMottaker(
+    val id: String?,
+    val type: AvsenderMottakerIdType?,
+    val navn: String?,
+    val land: String?,
+    val erLikBruker: Boolean,
+)
+
+enum class AvsenderMottakerIdType {
+    FNR,
+    HPRNR,
+    NULL,
+    ORGNR,
+    UKJENT,
+    UTL_ORG,
+}
+
+data class LogiskVedleggDto(
+    val tittel: String,
+)

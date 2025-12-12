@@ -11,13 +11,12 @@ import org.springframework.web.bind.annotation.RestController
 class SafController(
     private val safService: SafService,
 ) {
-    @PostMapping("/journalposter")
+    @PostMapping("/dokumenter")
     fun hentJournalPostForBrukerId(
-        @RequestBody request: HentJournalposterRequest,
-    ): ResponseEntity<List<Journalpost>> {
+        @RequestBody request: HentDokumenterRequest,
+    ): ResponseEntity<List<DokumentinfoDto>> {
         val data =
-            safService.hentJournalposterForIdent(request.fagsakPersonId)
-                ?: return ResponseEntity.notFound().build()
+            safService.finnVedleggForPerson(request.fagsakPersonId)
 
         return ResponseEntity.ok(data)
     }

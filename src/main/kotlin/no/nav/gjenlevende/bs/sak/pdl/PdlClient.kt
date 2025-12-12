@@ -22,6 +22,13 @@ class PdlClient(
     private val logger = LoggerFactory.getLogger(PdlClient::class.java)
     private val restTemplate: RestOperations = oauth2RestFactory.create(registrationId)
 
+    val pdlPath: URI =
+        UriComponentsBuilder
+            .fromUri(pdlUrl)
+            .pathSegment("/graphql")
+            .build()
+            .toUri()
+
     fun <T> utførQuery(
         query: String,
         variables: Map<String, String>,
@@ -42,7 +49,7 @@ class PdlClient(
         return try {
             val response =
                 restTemplate.exchange(
-                    pdlUrl,
+                    pdlPath,
                     HttpMethod.POST,
                     entity,
                     responstype,

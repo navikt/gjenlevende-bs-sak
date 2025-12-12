@@ -2,6 +2,7 @@ package no.nav.gjenlevende.bs.sak.fagsak
 
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
+import io.mockk.justRun
 import io.mockk.verify
 import no.nav.familie.prosessering.rest.Ressurs
 import no.nav.gjenlevende.bs.sak.ApplicationLocal
@@ -38,6 +39,9 @@ open class FagsakControllerTest {
     @MockkBean
     private lateinit var tilgangService: TilgangService
 
+    @MockkBean
+    private lateinit var fagsakPersonService: FagsakPersonService
+
     @Autowired
     private lateinit var objectMapper: ObjectMapper
 
@@ -64,6 +68,8 @@ open class FagsakControllerTest {
         every {
             fagsakService.hentEllerOpprettFagsakMedBehandlinger(personident, stønadstype)
         } returns forventetFagsak
+
+        justRun { tilgangService.validerTilgangTilPersonMedBarn(any()) }
 
         val responseJson =
             mockMvc
@@ -109,6 +115,10 @@ open class FagsakControllerTest {
         every {
             fagsakService.hentEllerOpprettFagsakMedFagsakPersonId(fagsakPersonId, stønadstype)
         } returns forventetFagsak
+
+        every { fagsakPersonService.hentAktivIdent(any()) } returns personident
+
+        justRun { tilgangService.validerTilgangTilPersonMedBarn(any()) }
 
         val responseJson =
             mockMvc

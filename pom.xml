@@ -44,9 +44,9 @@
         <springdoc.version>3.0.0</springdoc.version>
         <flyway.version>11.15.0</flyway.version>
         <unleash.version>11.1.1</unleash.version>
-        <mockk.version>1.14.6</mockk.version>
-        <prosessering.version>2.20251127080553_2073bf2</prosessering.version>
-        <kontrakter.version>3.0_20251112142340_c5baa9c</kontrakter.version>
+        <mockk.version>1.14.7</mockk.version>
+        <prosessering.version>2.20251205101334_e75fc2d</prosessering.version>
+        <kontrakter.version>3.0_20251208150204_158920b</kontrakter.version>
     </properties>
     <dependencies>
         <dependency>
@@ -95,7 +95,7 @@
         <dependency>
             <groupId>com.ninja-squad</groupId>
             <artifactId>springmockk</artifactId>
-            <version>4.0.2</version>
+            <version>5.0.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>

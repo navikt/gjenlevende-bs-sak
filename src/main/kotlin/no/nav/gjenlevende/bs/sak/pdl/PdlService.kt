@@ -18,7 +18,7 @@ class PdlService(
         val ident = fagsakPersonService.hentAktivIdent(fagsakPersonId)
         val data =
             pdlClient.utførQuery(
-                query = graphqlQuery("graphql/pdl/hent_navn.graphql"),
+                query = graphqlQuery("/pdl/hent_navn.graphql"),
                 variables = mapOf("ident" to ident),
                 responstype = object : ParameterizedTypeReference<PdlResponse<HentPersonData>>() {},
                 operasjon = "hentNavn",

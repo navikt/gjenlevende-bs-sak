@@ -35,6 +35,7 @@ data class SafExtension(
     val classification: String,
 )
 
+@Suppress("EnumEntryName")
 enum class SafErrorCode {
     forbidden,
     not_found,

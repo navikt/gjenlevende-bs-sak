@@ -100,6 +100,11 @@ FAMILIE_INTEGRASJONER_SCOPE: api://${DEPLOY_ENV}-fss.teamfamilie.familie-integra
 PDL_URL: https://pdl-api.dev-fss-pub.nais.io
 PDL_SCOPE: api://dev-fss.pdl.pdl-api/.default
 
+# Tilgangsmaskin (Populasjonstilgangskontroll)
+tilgangsmaskin:
+    url: http://populasjonstilgangskontroll.tilgangsmaskin
+    scope: api://dev-gcp.tilgangsmaskin.populasjonstilgangskontroll/.default
+
 # Swagger/OpenAPI konfigurasjon
 springdoc:
     api-docs:

@@ -1,0 +1,129 @@
+package no.nav.gjenlevende.bs.sak.tilgangskontroll
+
+import no.nav.gjenlevende.bs.sak.felles.OAuth2RestOperationsFactory
+import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.HttpEntity
+import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpMethod
+import org.springframework.http.MediaType
+import org.springframework.stereotype.Component
+import org.springframework.web.client.RestOperations
+import org.springframework.web.client.exchange
+import org.springframework.web.util.UriComponentsBuilder
+import java.net.URI
+
+@Component
+class TilgangsmaskinClient(
+    @Value("\${tilgangsmaskin.url}") private val tilgangsmaskinUrl: URI,
+    @Value("\${tilgangsmaskin.oauth.registration-id}") registrationId: String,
+    oauth2RestFactory: OAuth2RestOperationsFactory,
+) {
+    private val logger = LoggerFactory.getLogger(TilgangsmaskinClient::class.java)
+    private val restTemplate: RestOperations = oauth2RestFactory.create(registrationId)
+
+    fun sjekkTilgangEnkel(
+        ansattId: String,
+        brukerId: String,
+    ): TilgangsResponse {
+        val uri =
+            UriComponentsBuilder
+                .fromUri(tilgangsmaskinUrl)
+                .pathSegment("dev", "ansatt", ansattId, brukerId)
+                .build()
+                .toUri()
+
+        val headers =
+            HttpHeaders().apply {
+                contentType = MediaType.APPLICATION_JSON
+            }
+
+        return try {
+            val response =
+                restTemplate.exchange<TilgangsResponse>(
+                    url = uri,
+                    method = HttpMethod.GET,
+                    requestEntity = HttpEntity<Any>(headers),
+                )
+            response.body ?: throw TilgangsmaskinException("Ingen respons fra tilgangsmaskinen")
+        } catch (e: Exception) {
+            logger.error("Feil ved sjekk av tilgang mot tilgangsmaskinen: $e")
+            throw TilgangsmaskinException("Feil ved tilgangssjekk: ${e.message}", e)
+        }
+    }
+
+    fun sjekkAnsatt(ansattId: String): EnkelTilgangsResponse {
+        val uri =
+            UriComponentsBuilder
+                .fromUri(tilgangsmaskinUrl)
+                .pathSegment("dev", "ansatt", ansattId)
+                .build()
+                .toUri()
+
+        val headers =
+            HttpHeaders().apply {
+                contentType = MediaType.APPLICATION_JSON
+            }
+
+        return try {
+            val response =
+                restTemplate.exchange<EnkelTilgangsResponse>(
+                    url = uri,
+                    method = HttpMethod.GET,
+                    requestEntity = HttpEntity<Any>(headers),
+                )
+            response.body ?: throw TilgangsmaskinException("Ingen respons fra tilgangsmaskinen")
+        } catch (e: Exception) {
+            logger.error("Feil ved henting av ansattinfo fra tilgangsmaskinen: $e")
+            throw TilgangsmaskinException("Feil ved henting av ansattinfo: ${e.message}", e)
+        }
+    }
+
+    fun sjekkTilgangBulk(
+        ansattId: String,
+        identer: List<String>,
+        regelType: RegelType = RegelType.KOMPLETT_REGELTYPE,
+    ): BulkTilgangsResponse {
+        val uri =
+            UriComponentsBuilder
+                .fromUri(tilgangsmaskinUrl)
+                .pathSegment("api", "v1", "bulk", "obo", regelType.name)
+                .build()
+                .toUri()
+
+        val headers =
+            HttpHeaders().apply {
+                contentType = MediaType.APPLICATION_JSON
+            }
+
+        val request = BulkTilgangsRequest(identer)
+        val entity = HttpEntity(request, headers)
+
+        return try {
+            val response =
+                restTemplate.exchange<BulkTilgangsResponse>(
+                    url = uri,
+                    method = HttpMethod.POST,
+                    requestEntity = entity,
+                )
+            response.body ?: throw TilgangsmaskinException("Ingen respons fra tilgangsmaskinen (bulk)")
+        } catch (e: Exception) {
+            logger.error("Feil ved bulk-sjekk av tilgang mot tilgangsmaskinen: $e")
+            throw TilgangsmaskinException("Feil ved bulk-tilgangssjekk: ${e.message}", e)
+        }
+    }
+
+    fun harTilgang(
+        ansattId: String,
+        brukerId: String,
+        regelType: RegelType = RegelType.KOMPLETT_REGELTYPE,
+    ): Boolean {
+        val response = sjekkTilgangBulk(ansattId, listOf(brukerId), regelType)
+        return response.resultater.firstOrNull()?.status == 204
+    }
+}
+
+class TilgangsmaskinException(
+    message: String,
+    cause: Throwable? = null,
+) : RuntimeException(message, cause)

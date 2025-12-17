@@ -105,4 +105,6 @@ spec:
                     - "azp_name"
             replyURLs:
                 - https://gjenlevende-bs-sak.intern.dev.nav.no/swagger-ui/oauth2-redirect.html
+                - http://localhost:8080/oauth2/callback # TODO: Denne skal fjernes ved merge, kun for lokal-testing
+                - http://localhost:8080/swagger-ui/oauth2-redirect.html # TODO: Denne skal fjernes ved merge, kun for lokal-testing
             singlePageApplication: true

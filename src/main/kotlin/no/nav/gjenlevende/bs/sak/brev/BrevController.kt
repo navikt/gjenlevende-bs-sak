@@ -32,7 +32,7 @@ class BrevController(
 
 data class BrevRequest(
     val brevmal: BrevmalDto,
-    val fritekstBolker: List<TekstbolkDto>,
+    val fritekstbolker: List<TekstbolkDto>,
 )
 
 data class BrevmalDto(

@@ -67,6 +67,11 @@ pdl:
     url: ${PDL_URL}
     oauth:
         registration-id: pdl-clientcredentials
+saf:
+    url: ${SAF_URL}
+    oauth:
+        registration-id: saf-clientcredentials
+
 oauth2:
     clients:
         pdl:
@@ -81,6 +86,12 @@ oauth2:
             client-secret: ${AZURE_APP_CLIENT_SECRET}
             token-endpoint-url: ${AZUREAD_TOKEN_ENDPOINT_URL}
             scope: ${FAMILIE_INTEGRASJONER_SCOPE}
+        saf:
+            registration-id: saf-clientcredentials
+            client-id: ${AZURE_APP_CLIENT_ID}
+            client-secret: ${AZURE_APP_CLIENT_SECRET}
+            token-endpoint-url: ${AZUREAD_TOKEN_ENDPOINT_URL}
+            scope: ${SAF_SCOPE}
 
 # Azure AD miljøvariabler (for SwaggerConfig.kt)
 AZUREAD_TOKEN_ENDPOINT_URL: https://login.microsoftonline.com/${azure.app.tenant.id}/oauth2/v2.0/token
@@ -99,6 +110,10 @@ FAMILIE_INTEGRASJONER_SCOPE: api://${DEPLOY_ENV}-fss.teamfamilie.familie-integra
 # PDL (Persondataløsningen)
 PDL_URL: https://pdl-api.dev-fss-pub.nais.io
 PDL_SCOPE: api://dev-fss.pdl.pdl-api/.default
+
+#SAF
+SAF_URL: https://saf-q2.dev-fss-pub.nais.io
+SAF_SCOPE: api://dev-fss.teamdokumenthandtering.saf/.default
 
 # Swagger/OpenAPI konfigurasjon
 springdoc:

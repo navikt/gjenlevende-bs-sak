@@ -35,12 +35,11 @@ data class SafExtension(
     val classification: String,
 )
 
-@Suppress("EnumEntryName")
 enum class SafErrorCode {
-    forbidden,
-    not_found,
-    bad_request,
-    server_error,
+    FORBIDDEN,
+    NOT_FOUND,
+    BAD_REQUEST,
+    SERVER_ERROR,
 }
 
 data class JournalposterForBrukerRequest(

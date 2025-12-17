@@ -42,7 +42,7 @@ class TilgangsmaskinClient(
             val response =
                 restTemplate.exchange<TilgangsResponse>(
                     url = uri,
-                    method = HttpMethod.GET,
+                    method = HttpMethod.POST,
                     requestEntity = HttpEntity<Any>(headers),
                 )
             response.body ?: throw TilgangsmaskinException("Ingen respons fra tilgangsmaskinen")

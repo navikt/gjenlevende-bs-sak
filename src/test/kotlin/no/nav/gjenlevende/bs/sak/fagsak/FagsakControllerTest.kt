@@ -141,15 +141,54 @@ open class FagsakControllerTest {
     }
 
     @Test
-    fun `skal håndtere valideringsfeil`() {
-        val ugyldigRequest = """{"personident": ""}"""
+    fun `skal kaste feil når hverken personident eller fagsakPersonId er oppgitt`() {
+        val ugyldigRequest =
+            FagsakRequest(
+                personident = null,
+                fagsakPersonId = null,
+                stønadstype = StønadType.BARNETILSYN,
+            )
 
         mockMvc
             .post("/api/fagsak") {
                 contentType = MediaType.APPLICATION_JSON
-                content = ugyldigRequest
+                content = objectMapper.writeValueAsString(ugyldigRequest)
             }.andExpect {
                 status { isBadRequest() }
+            }
+    }
+
+    @Test
+    fun `skal godta request med kun fagsakPersonId`() {
+        val fagsakPersonId = UUID.randomUUID()
+
+        val request =
+            FagsakRequest(
+                personident = null,
+                fagsakPersonId = fagsakPersonId,
+                stønadstype = StønadType.BARNETILSYN,
+            )
+
+        every {
+            fagsakService.hentEllerOpprettFagsakMedFagsakPersonId(any(), any())
+        } returns
+            FagsakDto(
+                personident = "12345678910",
+                stønadstype = StønadType.BARNETILSYN,
+                id = UUID.randomUUID(),
+                fagsakPersonId = fagsakPersonId,
+                eksternId = 1L,
+            )
+
+        every { fagsakPersonService.hentAktivIdent(any()) } returns "12345678910"
+        justRun { tilgangService.validerTilgangTilPersonMedBarn(any()) }
+
+        mockMvc
+            .post("/api/fagsak") {
+                contentType = MediaType.APPLICATION_JSON
+                content = objectMapper.writeValueAsString(request)
+            }.andExpect {
+                status { isOk() }
             }
     }
 }

@@ -34,7 +34,7 @@ class TilgangsmaskinController(
             ApiResponse(
                 responseCode = "200",
                 description = "Tilgangssjekk utført",
-                content = [Content(schema = Schema(implementation = TilgangsResponse::class))],
+                content = [Content(schema = Schema(implementation = EnkelTilgangsResponse::class))],
             ),
             ApiResponse(responseCode = "401", description = "Ikke autentisert"),
             ApiResponse(responseCode = "500", description = "Feil ved kommunikasjon med tilgangsmaskinen"),
@@ -44,7 +44,7 @@ class TilgangsmaskinController(
     fun sjekkTilgangEnkel(
         @Parameter(description = "Personident (11 siffer) for brukeren som skal sjekkes")
         @PathVariable brukerId: String,
-    ): TilgangsResponse {
+    ): EnkelTilgangsResponse {
         val ansattId = SikkerhetContext.hentSaksbehandler()
         logger.info("Sjekker tilgang for saksbehandler $ansattId til bruker")
         return tilgangsmaskinClient.sjekkTilgangEnkel(ansattId, brukerId)

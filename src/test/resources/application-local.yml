@@ -56,6 +56,11 @@ FAMILIE_INTEGRASJONER_SCOPE: api://${AZURE_APP_CLIENT_ID}/.default
 PDL_URL: https://pdl-api.dev-fss-pub.nais.io
 PDL_SCOPE: api://dev-fss.pdl.pdl-api/.default
 
+# Tilgangsmaskin (Populasjonstilgangskontroll) - ekstern URL for lokal utvikling
+tilgangsmaskin:
+    url: ${TILGANGSMASKIN_URL:https://tilgangsmaskin.intern.dev.nav.no}
+TILGANGSMASKIN_SCOPE: api://dev-gcp.tilgangsmaskin.populasjonstilgangskontroll/.default
+
 # Database konfigurasjon
 DB_JDBC_URL: jdbc:tc:postgresql:17:///testdb
 

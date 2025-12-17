@@ -25,11 +25,17 @@ class TilgangsmaskinClient(
     fun sjekkTilgangEnkel(
         ansattId: String,
         brukerId: String,
-    ): TilgangsResponse {
+        regelType: RegelType = RegelType.KOMPLETT_REGELTYPE,
+    ): EnkelTilgangsResponse {
+        val regelPath = when (regelType) {
+            RegelType.KJERNE_REGELTYPE -> "kjerne"
+            else -> "komplett"
+        }
+
         val uri =
             UriComponentsBuilder
                 .fromUri(tilgangsmaskinUrl)
-                .pathSegment("dev", "ansatt", ansattId, brukerId)
+                .pathSegment("dev", regelPath, ansattId, brukerId)
                 .build()
                 .toUri()
 
@@ -40,15 +46,58 @@ class TilgangsmaskinClient(
 
         return try {
             val response =
-                restTemplate.exchange<TilgangsResponse>(
+                restTemplate.exchange<String>(
                     url = uri,
-                    method = HttpMethod.POST,
+                    method = HttpMethod.GET,
                     requestEntity = HttpEntity<Any>(headers),
                 )
-            response.body ?: throw TilgangsmaskinException("Ingen respons fra tilgangsmaskinen")
+
+            when (response.statusCode.value()) {
+                204 -> EnkelTilgangsResponse(
+                    ansattId = ansattId,
+                    personident = brukerId,
+                    harTilgang = true,
+                    avvisningsgrunn = null,
+                    begrunnelse = null,
+                )
+                else -> EnkelTilgangsResponse(
+                    ansattId = ansattId,
+                    personident = brukerId,
+                    harTilgang = false,
+                    avvisningsgrunn = "UKJENT",
+                    begrunnelse = response.body,
+                )
+            }
+        } catch (e: org.springframework.web.client.HttpClientErrorException.Forbidden) {
+            logger.info("Tilgang avvist for ansatt $ansattId til bruker $brukerId: ${e.responseBodyAsString}")
+            EnkelTilgangsResponse(
+                ansattId = ansattId,
+                personident = brukerId,
+                harTilgang = false,
+                avvisningsgrunn = parseAvvisningsgrunn(e.responseBodyAsString),
+                begrunnelse = parseBegrunnelse(e.responseBodyAsString),
+            )
         } catch (e: Exception) {
             logger.error("Feil ved sjekk av tilgang mot tilgangsmaskinen: $e")
             throw TilgangsmaskinException("Feil ved tilgangssjekk: ${e.message}", e)
+        }
+    }
+
+    private fun parseAvvisningsgrunn(responseBody: String): String? {
+        return try {
+            val regex = """"title"\s*:\s*"([^"]+)"""".toRegex()
+            regex.find(responseBody)?.groupValues?.get(1)
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    private fun parseBegrunnelse(responseBody: String): String? {
+        return try {
+            val regex = """"begrunnelse"\s*:\s*"([^"]+)"""".toRegex()
+            regex.find(responseBody)?.groupValues?.get(1)
+        } catch (e: Exception) {
+            null
         }
     }
 

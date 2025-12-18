@@ -8,6 +8,7 @@ import no.nav.gjenlevende.bs.sak.brev.FamilieDokumentClient
 import no.nav.gjenlevende.bs.sak.brev.domain.BrevRequest
 import org.springframework.stereotype.Service
 import tools.jackson.databind.ObjectMapper
+import java.util.UUID
 
 @Service
 @TaskStepBeskrivelse(
@@ -19,13 +20,13 @@ import tools.jackson.databind.ObjectMapper
 open class BrevTask(
     val brevService: BrevService,
     val objectMapper: ObjectMapper,
-    val familieDokumentClient: FamilieDokumentClient,
 ) : AsyncTaskStep {
     override fun doTask(task: Task) {
-        val brevRequest = objectMapper.readValue(task.payload, BrevRequest::class.java)
-        val html = brevService.genererHTMLFraBrevRequest(brevRequest)
-        val pdf: ByteArray = familieDokumentClient.genererPdfFraHtml(html)
-        println(pdf)
+        val behandlingsId = UUID.fromString(task.payload)
+        val brev = brevService.hentBrev(behandlingsId)
+        val brevSomJson = objectMapper.readValue(brev?.brevJson, BrevRequest::class.java)
+        // TODO generer html, send til familiedokument og lagre respons i brevrepository
+        println(brevSomJson)
     }
 
     companion object {

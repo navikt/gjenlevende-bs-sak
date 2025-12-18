@@ -1,6 +1,8 @@
 package no.nav.gjenlevende.bs.sak.brev
 
+import no.nav.familie.prosessering.domene.Task
 import no.nav.gjenlevende.bs.sak.brev.domain.BrevRequest
+import no.nav.gjenlevende.bs.sak.task.BrevTask
 import org.postgresql.util.PGobject
 import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
@@ -8,35 +10,23 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import tools.jackson.databind.ObjectMapper
 import java.util.UUID
-import no.nav.familie.prosessering.domene.Task
-import no.nav.gjenlevende.bs.sak.task.BrevTask
 
 @Service
 class BrevService(
     private val brevRepository: BrevRepository,
     private val objectMapper: ObjectMapper,
 ) {
-    private val logger = LoggerFactory.getLogger(javaClass)
-
-    fun lagBrevPDFtask(brevRequest: BrevRequest): Task {
-        val payload = objectMapper.writeValueAsString(brevRequest)
-        return BrevTask.opprettTask(payload)
-    }
+    fun lagBrevPDFtask(behandlingsId: UUID): Task = BrevTask.opprettTask(behandlingsId.toString())
 
     @Transactional
     fun opprettBrev(
         behandlingsId: UUID,
         brevRequest: BrevRequest,
     ): Brev {
-        val jsonb =
-            PGobject().apply {
-                type = "jsonb"
-                value = objectMapper.writeValueAsString(brevRequest)
-            }
         val brev =
             Brev(
                 behandlingsId = behandlingsId,
-                brevJson = jsonb,
+                brevJson = objectMapper.writeValueAsString(brevRequest),
             )
 
         if (brevRepository.existsById(behandlingsId)) {
@@ -49,8 +39,7 @@ class BrevService(
     }
 
     fun hentBrev(behandlingsId: UUID): Brev? = brevRepository.findByIdOrNull(behandlingsId)
-
-    // TODO
+// TODO
 //    fun genererHTMLFraBrevRequest(brevRequest: BrevRequest): String {
 //        val sb = StringBuilder()
 //        sb.append("<html><body>")

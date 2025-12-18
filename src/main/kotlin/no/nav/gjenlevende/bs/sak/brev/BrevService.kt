@@ -1,6 +1,7 @@
 package no.nav.gjenlevende.bs.sak.brev
 
 import no.nav.gjenlevende.bs.sak.brev.domain.BrevRequest
+import org.postgresql.util.PGobject
 import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -13,29 +14,30 @@ class BrevService(
     private val brevRepository: BrevRepository,
     private val objectMapper: ObjectMapper,
 ) {
+    private val logger = LoggerFactory.getLogger(javaClass)
+
     @Transactional
     fun opprettBrev(
         behandlingsId: UUID,
         brevRequest: BrevRequest,
     ): Brev {
-        val logger = LoggerFactory.getLogger(javaClass)
+        val jsonb =
+            PGobject().apply {
+                type = "jsonb"
+                value = objectMapper.writeValueAsString(brevRequest)
+            }
         val brev =
             Brev(
                 behandlingsId = behandlingsId,
-                brevJson = objectMapper.writeValueAsString(brevRequest),
+                brevJson = jsonb,
             )
-
-        logger.info("opprettetAv={}, endretAv={}", brev.sporbar.opprettetAv, brev.sporbar.endret.endretAv)
 
         try {
             brevRepository.insert(brev)
         } catch (e: Exception) {
             logger.error(
-                "Noe gikk galt",
+                "Klarte ikke å insert brev",
                 brev,
-                behandlingsId,
-                brev.sporbar.opprettetAv,
-                brev.sporbar.endret.endretAv,
                 e,
             )
             throw e

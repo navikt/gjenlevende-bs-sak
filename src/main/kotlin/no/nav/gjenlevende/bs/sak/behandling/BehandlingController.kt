@@ -11,6 +11,10 @@ data class OpprettRequest(
     val fagsakId: UUID,
 )
 
+data class HentRequest(
+    val behandlingId: UUID,
+)
+
 @RestController
 @RequestMapping(path = ["/api/behandling"])
 class BehandlingController(
@@ -28,11 +32,11 @@ class BehandlingController(
 
     @PostMapping("/hent")
     fun hentBehandling(
-        @RequestBody opprettRequest: OpprettRequest,
+        @RequestBody hentRequest: HentRequest,
     ): Ressurs<BehandlingDto?> {
-        val fagsakId = opprettRequest.fagsakId
+        val behandlingId = hentRequest.behandlingId
 
-        val behandling = behandlingService.hentBehandling(fagsakId)
+        val behandling = behandlingService.hentBehandling(behandlingId)
         return Ressurs.success(behandling?.tilDto())
     }
 }

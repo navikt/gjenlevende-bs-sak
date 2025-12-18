@@ -11,7 +11,7 @@ import java.util.UUID
 data class Brev(
     @Id
     val behandlingsId: UUID,
-    val brevJson: PGobject,
+    val brevJson: String,
     val brevPdf: ByteArray? = null,
     @Embedded(onEmpty = Embedded.OnEmpty.USE_EMPTY)
     val sporbar: Sporbar = Sporbar(),

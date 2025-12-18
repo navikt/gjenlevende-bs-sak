@@ -21,15 +21,10 @@ class BrevService(
         behandlingsId: UUID,
         brevRequest: BrevRequest,
     ): Brev {
-        val jsonb =
-            PGobject().apply {
-                type = "jsonb"
-                value = objectMapper.writeValueAsString(brevRequest)
-            }
         val brev =
             Brev(
                 behandlingsId = behandlingsId,
-                brevJson = jsonb,
+                brevJson = objectMapper.writeValueAsString(brevRequest),
             )
 
         if (brevRepository.existsById(behandlingsId)) {

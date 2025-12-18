@@ -5,10 +5,12 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import no.nav.familie.prosessering.internal.TaskService
 import no.nav.gjenlevende.bs.sak.brev.domain.BrevRequest
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import java.util.UUID
 
 @RestController
 @RequestMapping(path = ["/api/brev"])
@@ -27,6 +29,15 @@ class BrevController(
     ): ResponseEntity<String> {
         val task = brevService.lagBrevPDFtask(brevRequest)
         taskService.save(task)
-        return ResponseEntity.ok("OK")
+        return ResponseEntity.ok("OK")}
+
+
+    @PostMapping("/{behandlingsId}")
+    fun opprettBrev(
+        @PathVariable behandlingsId: UUID,
+        @RequestBody brevRequest: BrevRequest,
+    ): ResponseEntity<UUID> {
+        brevService.opprettBrev(behandlingsId, brevRequest)
+        return ResponseEntity.ok(behandlingsId)
     }
 }

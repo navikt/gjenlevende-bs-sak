@@ -12,7 +12,6 @@ import java.util.UUID
 @Service
 class BrevService(
     private val brevRepository: BrevRepository,
-    private val objectMapper: ObjectMapper,
 ) {
     private val logger = LoggerFactory.getLogger(javaClass)
 
@@ -24,7 +23,7 @@ class BrevService(
         val brev =
             Brev(
                 behandlingsId = behandlingsId,
-                brevJson = objectMapper.writeValueAsString(brevRequest),
+                brevJson = brevRequest,
             )
 
         if (brevRepository.existsById(behandlingsId)) {

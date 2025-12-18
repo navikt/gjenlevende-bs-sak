@@ -15,6 +15,7 @@ class BrevService(
         return BrevTask.opprettTask(payload)
     }
 
+    // TODO
     fun genererHTMLFraBrevRequest(brevRequest: BrevRequest): String {
         val sb = StringBuilder()
         sb.append("<html><body>")

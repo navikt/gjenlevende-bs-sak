@@ -96,10 +96,6 @@ gjenlevende-bs-infotrygd:
 FAMILIE_INTEGRASJONER_URL: https://familie-integrasjoner.${DEPLOY_ENV}-fss-pub.nais.io
 FAMILIE_INTEGRASJONER_SCOPE: api://${DEPLOY_ENV}-fss.teamfamilie.familie-integrasjoner/.default
 
-# FAMILIE DOKUMENT
-#FAMILIE_DOKUMENT_URL: http://familie-dokument
-FAMILIE_DOKUMENT_URL: http://localhost:8082
-
 # PDL (Persondataløsningen)
 PDL_URL: https://pdl-api.dev-fss-pub.nais.io
 PDL_SCOPE: api://dev-fss.pdl.pdl-api/.default

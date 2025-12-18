@@ -3,6 +3,7 @@ package no.nav.gjenlevende.bs.sak.config
 import no.nav.familie.prosessering.PropertiesWrapperTilStringConverter
 import no.nav.familie.prosessering.StringTilPropertiesWrapperConverter
 import no.nav.gjenlevende.bs.sak.brev.domain.BrevRequest
+import org.postgresql.util.PGobject
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.flyway.autoconfigure.FlywayConfigurationCustomizer
 import org.springframework.context.annotation.Bean
@@ -30,8 +31,8 @@ open class DatabaseConfig(
         listOf(
             PropertiesWrapperTilStringConverter(),
             StringTilPropertiesWrapperConverter(),
-            BrevRequestTilStringConverter(objectMapper),
-            StringTilBrevRequestConverter(objectMapper),
+            BrevRequestTilJsonbConverter(objectMapper),
+            JsonbTilBrevRequestConverter(objectMapper),
         )
 
     @Bean
@@ -52,16 +53,20 @@ open class DatabaseConfig(
     }
 
     @WritingConverter
-    class BrevRequestTilStringConverter(
+    class BrevRequestTilJsonbConverter(
         private val objectMapper: ObjectMapper,
-    ) : Converter<BrevRequest, String> {
-        override fun convert(brevRequest: BrevRequest): String = objectMapper.writeValueAsString(brevRequest)
+    ) : Converter<BrevRequest, PGobject> {
+        override fun convert(source: BrevRequest): PGobject =
+            PGobject().apply {
+                type = "jsonb"
+                value = objectMapper.writeValueAsString(source)
+            }
     }
 
     @ReadingConverter
-    class StringTilBrevRequestConverter(
+    class JsonbTilBrevRequestConverter(
         private val objectMapper: ObjectMapper,
-    ) : Converter<String, BrevRequest> {
-        override fun convert(source: String): BrevRequest = objectMapper.readValue(source, BrevRequest::class.java)
+    ) : Converter<PGobject, BrevRequest> {
+        override fun convert(source: PGobject): BrevRequest = objectMapper.readValue(source.value, BrevRequest::class.java)
     }
 }

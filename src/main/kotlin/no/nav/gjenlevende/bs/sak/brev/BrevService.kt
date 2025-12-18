@@ -17,7 +17,7 @@ class BrevService(
     fun opprettBrev(
         behandlingsId: UUID,
         brevRequest: BrevRequest,
-    ): Brev {
+    ) {
         val brev =
             Brev(
                 behandlingsId = behandlingsId,
@@ -29,8 +29,6 @@ class BrevService(
         } else {
             brevRepository.insert(brev)
         }
-
-        return brev
     }
 
     fun hentBrev(behandlingsId: UUID): Brev? = brevRepository.findByIdOrNull(behandlingsId)

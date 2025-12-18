@@ -28,7 +28,7 @@ open class BrevTask(
         val behandlingsId = UUID.fromString(task.payload)
         val brev = brevService.hentBrev(behandlingsId)
         // TODO generer html, send til familiedokument og lagre respons i brevrepository
-        logger.info("Gjennomfører BrevTask", brev)
+        logger.info("Gjennomfører BrevTask: Brev={}", brev)
     }
 
     companion object {

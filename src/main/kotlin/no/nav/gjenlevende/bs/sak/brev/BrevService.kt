@@ -32,16 +32,12 @@ class BrevService(
                 brevJson = jsonb,
             )
 
-        try {
+        if (brevRepository.existsById(behandlingsId)) {
+            brevRepository.update(brev)
+        } else {
             brevRepository.insert(brev)
-        } catch (e: Exception) {
-            logger.error(
-                "Klarte ikke å insert brev",
-                brev,
-                e,
-            )
-            throw e
         }
+
         return brev
     }
 

@@ -1,12 +1,10 @@
 package no.nav.gjenlevende.bs.sak.brev
 
 import no.nav.gjenlevende.bs.sak.brev.domain.BrevRequest
-import org.postgresql.util.PGobject
 import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import tools.jackson.databind.ObjectMapper
 import java.util.UUID
 
 @Service

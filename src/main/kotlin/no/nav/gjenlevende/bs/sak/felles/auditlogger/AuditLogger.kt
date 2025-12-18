@@ -2,6 +2,7 @@ package no.nav.gjenlevende.bs.sak.felles.auditlogger
 
 import jakarta.servlet.http.HttpServletRequest
 import no.nav.familie.prosessering.util.MDCConstants
+import no.nav.gjenlevende.bs.sak.felles.sikkerhet.SikkerhetContext
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
 import org.springframework.beans.factory.annotation.Value

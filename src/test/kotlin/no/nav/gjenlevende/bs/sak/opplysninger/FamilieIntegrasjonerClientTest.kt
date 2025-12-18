@@ -52,9 +52,9 @@ class FamilieIntegrasjonerClientTest {
             )
         } returns ResponseEntity.ok(forventetTilgang)
 
-        val faktisk = client.sjekkTilgangTilPersonMedRelasjoner(personIdent)
+        val harTilgang = client.sjekkTilgangTilPersonMedRelasjoner(personIdent)
 
-        assertEquals(forventetTilgang, faktisk)
+        assertEquals(forventetTilgang, harTilgang)
 
         verify {
             restOperations.exchange(

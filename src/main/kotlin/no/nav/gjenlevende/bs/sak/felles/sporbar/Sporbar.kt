@@ -1,5 +1,6 @@
 package no.nav.gjenlevende.bs.sak.felles.sporbar
 
+import no.nav.gjenlevende.bs.sak.felles.sikkerhet.SikkerhetContext
 import org.springframework.data.annotation.LastModifiedBy
 import org.springframework.data.relational.core.mapping.Embedded
 import java.time.LocalDateTime

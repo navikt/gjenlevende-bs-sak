@@ -6,6 +6,7 @@ import no.nav.familie.prosessering.domene.Task
 import no.nav.gjenlevende.bs.sak.brev.BrevService
 import no.nav.gjenlevende.bs.sak.brev.FamilieDokumentClient
 import no.nav.gjenlevende.bs.sak.brev.domain.BrevRequest
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import tools.jackson.databind.ObjectMapper
 import java.util.UUID
@@ -21,12 +22,13 @@ open class BrevTask(
     val brevService: BrevService,
     val objectMapper: ObjectMapper,
 ) : AsyncTaskStep {
+    private val logger = LoggerFactory.getLogger(javaClass)
+
     override fun doTask(task: Task) {
         val behandlingsId = UUID.fromString(task.payload)
         val brev = brevService.hentBrev(behandlingsId)
-        val brevSomJson = objectMapper.readValue(brev?.brevJson, BrevRequest::class.java)
         // TODO generer html, send til familiedokument og lagre respons i brevrepository
-        println(brevSomJson)
+        logger.info("Gjennomfører BrevTask", brev)
     }
 
     companion object {

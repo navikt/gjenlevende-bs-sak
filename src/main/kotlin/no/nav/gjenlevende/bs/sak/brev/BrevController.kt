@@ -3,6 +3,7 @@ package no.nav.gjenlevende.bs.sak.brev
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import no.nav.familie.prosessering.internal.TaskService
+import no.nav.gjenlevende.bs.sak.brev.domain.BrevRequest
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -29,24 +30,3 @@ class BrevController(
         return ResponseEntity.ok("OK")
     }
 }
-
-data class BrevRequest(
-    val brevmal: BrevmalDto,
-    val fritekstbolker: List<TekstbolkDto>,
-)
-
-data class BrevmalDto(
-    val tittel: String,
-    val informasjonOmBruker: InformasjonOmBrukerDto,
-    val fastTekstAvslutning: List<TekstbolkDto>,
-)
-
-data class InformasjonOmBrukerDto(
-    val navn: String,
-    val fnr: String,
-)
-
-data class TekstbolkDto(
-    val underoverskrift: String?,
-    val innhold: String,
-)

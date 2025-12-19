@@ -1,6 +1,8 @@
 package no.nav.gjenlevende.bs.sak.brev
 
+import no.nav.familie.prosessering.domene.Task
 import no.nav.gjenlevende.bs.sak.brev.domain.BrevRequest
+import no.nav.gjenlevende.bs.sak.task.BrevTask
 import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -11,7 +13,7 @@ import java.util.UUID
 class BrevService(
     private val brevRepository: BrevRepository,
 ) {
-    private val logger = LoggerFactory.getLogger(javaClass)
+    fun lagBrevPDFtask(behandlingsId: UUID): Task = BrevTask.opprettTask(behandlingsId.toString())
 
     @Transactional
     fun opprettBrev(

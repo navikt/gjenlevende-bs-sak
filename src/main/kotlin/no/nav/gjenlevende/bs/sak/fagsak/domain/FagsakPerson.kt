@@ -1,5 +1,6 @@
 package no.nav.gjenlevende.bs.sak.fagsak.domain
 
+import no.nav.gjenlevende.bs.sak.felles.sikkerhet.SikkerhetContext
 import no.nav.gjenlevende.bs.sak.felles.sporbar.Sporbar
 import no.nav.gjenlevende.bs.sak.felles.sporbar.SporbarUtils
 import org.springframework.data.annotation.Id

@@ -47,7 +47,7 @@ data class EnkelTilgangsResponse(
 
 data class AnsattInfoResponse(
     val ansattId: String,
-    val bruker: BrukerInfo,
+    val bruker: BrukerInfo? = null,
     val grupper: List<GruppeInfo> = emptyList(),
 )
 

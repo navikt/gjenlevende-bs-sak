@@ -105,7 +105,7 @@ class TilgangsmaskinClient(
             null
         }
 
-    fun sjekkAnsatt(ansattId: String): EnkelTilgangsResponse {
+    fun sjekkAnsatt(ansattId: String): AnsattInfoResponse {
         val uri =
             UriComponentsBuilder
                 .fromUri(tilgangsmaskinUrl)
@@ -120,7 +120,7 @@ class TilgangsmaskinClient(
 
         return try {
             val response =
-                restTemplate.exchange<EnkelTilgangsResponse>(
+                restTemplate.exchange<AnsattInfoResponse>(
                     url = uri,
                     method = HttpMethod.GET,
                     requestEntity = HttpEntity<Any>(headers),

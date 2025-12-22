@@ -83,7 +83,7 @@ class TilgangsmaskinController(
             ApiResponse(
                 responseCode = "200",
                 description = "Ansattinformasjon hentet",
-                content = [Content(schema = Schema(implementation = EnkelTilgangsResponse::class))],
+                content = [Content(schema = Schema(implementation = AnsattInfoResponse::class))],
             ),
             ApiResponse(responseCode = "401", description = "Ikke autentisert"),
             ApiResponse(responseCode = "500", description = "Feil ved kommunikasjon med tilgangsmaskinen"),
@@ -93,7 +93,7 @@ class TilgangsmaskinController(
     fun hentAnsattInfo(
         @Parameter(description = "NAV-ident for ansatt (f.eks. Z990227)")
         @PathVariable ansattId: String,
-    ): EnkelTilgangsResponse {
+    ): AnsattInfoResponse {
         logger.info("Henter info for ansatt $ansattId")
         return tilgangsmaskinClient.sjekkAnsatt(ansattId)
     }

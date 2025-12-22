@@ -44,3 +44,48 @@ data class EnkelTilgangsResponse(
     val avvisningsgrunn: String? = null,
     val begrunnelse: String? = null,
 )
+
+data class AnsattInfoResponse(
+    val ansattId: String,
+    val bruker: BrukerInfo,
+    val grupper: List<GruppeInfo> = emptyList(),
+)
+
+data class GruppeInfo(
+    val id: String,
+    val displayName: String = "N/A",
+)
+
+data class BrukerInfo(
+    val brukerIds: BrukerIds,
+    val geografiskTilknytning: GeografiskTilknytning? = null,
+    val familie: FamilieInfo? = null,
+    val harUkjentBosted: Boolean = false,
+    val harUtenlandskBosted: Boolean = false,
+    val oppslagId: String,
+)
+
+data class BrukerIds(
+    val aktivBrukerId: String,
+    val oppslagId: String,
+    val historiskeIds: List<String> = emptyList(),
+)
+
+data class GeografiskTilknytning(
+    val kommune: KommuneInfo? = null,
+)
+
+data class KommuneInfo(
+    val verdi: String,
+)
+
+data class FamilieInfo(
+    val foreldre: List<FamilieRelasjon> = emptyList(),
+    val barn: List<FamilieRelasjon> = emptyList(),
+    val partnere: List<FamilieRelasjon> = emptyList(),
+)
+
+data class FamilieRelasjon(
+    val brukerId: String,
+    val relasjon: String,
+)

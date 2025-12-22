@@ -27,10 +27,11 @@ class TilgangsmaskinClient(
         brukerId: String,
         regelType: RegelType = RegelType.KOMPLETT_REGELTYPE,
     ): EnkelTilgangsResponse {
-        val regelPath = when (regelType) {
-            RegelType.KJERNE_REGELTYPE -> "kjerne"
-            else -> "komplett"
-        }
+        val regelPath =
+            when (regelType) {
+                RegelType.KJERNE_REGELTYPE -> "kjerne"
+                else -> "komplett"
+            }
 
         val uri =
             UriComponentsBuilder
@@ -53,20 +54,25 @@ class TilgangsmaskinClient(
                 )
 
             when (response.statusCode.value()) {
-                204 -> EnkelTilgangsResponse(
-                    ansattId = ansattId,
-                    personident = brukerId,
-                    harTilgang = true,
-                    avvisningsgrunn = null,
-                    begrunnelse = null,
-                )
-                else -> EnkelTilgangsResponse(
-                    ansattId = ansattId,
-                    personident = brukerId,
-                    harTilgang = false,
-                    avvisningsgrunn = "UKJENT",
-                    begrunnelse = response.body,
-                )
+                204 -> {
+                    EnkelTilgangsResponse(
+                        ansattId = ansattId,
+                        personident = brukerId,
+                        harTilgang = true,
+                        avvisningsgrunn = null,
+                        begrunnelse = null,
+                    )
+                }
+
+                else -> {
+                    EnkelTilgangsResponse(
+                        ansattId = ansattId,
+                        personident = brukerId,
+                        harTilgang = false,
+                        avvisningsgrunn = "UKJENT",
+                        begrunnelse = response.body,
+                    )
+                }
             }
         } catch (e: org.springframework.web.client.HttpClientErrorException.Forbidden) {
             logger.info("Tilgang avvist for ansatt $ansattId til bruker $brukerId: ${e.responseBodyAsString}")
@@ -83,23 +89,21 @@ class TilgangsmaskinClient(
         }
     }
 
-    private fun parseAvvisningsgrunn(responseBody: String): String? {
-        return try {
+    private fun parseAvvisningsgrunn(responseBody: String): String? =
+        try {
             val regex = """"title"\s*:\s*"([^"]+)"""".toRegex()
             regex.find(responseBody)?.groupValues?.get(1)
         } catch (e: Exception) {
             null
         }
-    }
 
-    private fun parseBegrunnelse(responseBody: String): String? {
-        return try {
+    private fun parseBegrunnelse(responseBody: String): String? =
+        try {
             val regex = """"begrunnelse"\s*:\s*"([^"]+)"""".toRegex()
             regex.find(responseBody)?.groupValues?.get(1)
         } catch (e: Exception) {
             null
         }
-    }
 
     fun sjekkAnsatt(ansattId: String): EnkelTilgangsResponse {
         val uri =
@@ -160,15 +164,6 @@ class TilgangsmaskinClient(
             logger.error("Feil ved bulk-sjekk av tilgang mot tilgangsmaskinen: $e")
             throw TilgangsmaskinException("Feil ved bulk-tilgangssjekk: ${e.message}", e)
         }
-    }
-
-    fun harTilgang(
-        ansattId: String,
-        brukerId: String,
-        regelType: RegelType = RegelType.KOMPLETT_REGELTYPE,
-    ): Boolean {
-        val response = sjekkTilgangBulk(ansattId, listOf(brukerId), regelType)
-        return response.resultater.firstOrNull()?.status == 204
     }
 }
 

@@ -63,8 +63,8 @@ class TilgangsmaskinController(
     )
     @PostMapping("/sjekk/bulk", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun sjekkTilgangBulk(
-        @Parameter(description = "Regeltype for tilgangssjekk")
-        @RequestParam(defaultValue = "KOMPLETT_REGELTYPE") regelType: RegelType,
+        @Parameter(description = "Regeltype for tilgangssjekk (KJERNE_REGELTYPE eller KOMPLETT_REGELTYPE)")
+        @RequestParam(defaultValue = "KJERNE_REGELTYPE") regelType: RegelType,
         @RequestBody request: BulkTilgangsRequest,
     ): BulkTilgangsResponse {
         val navIdent = SikkerhetContext.hentSaksbehandler()

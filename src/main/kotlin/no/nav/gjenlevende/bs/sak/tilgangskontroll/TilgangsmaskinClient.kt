@@ -25,7 +25,7 @@ class TilgangsmaskinClient(
     fun sjekkTilgangEnkel(
         navIdent: String,
         personident: String,
-        regelType: RegelType = RegelType.KOMPLETT_REGELTYPE,
+        regelType: RegelType = RegelType.KJERNE_REGELTYPE,
     ): EnkelTilgangsResponse {
         val regelPath =
             when (regelType) {
@@ -135,7 +135,7 @@ class TilgangsmaskinClient(
     fun sjekkTilgangBulk(
         navIdent: String,
         personidenter: List<String>,
-        regelType: RegelType = RegelType.KOMPLETT_REGELTYPE,
+        regelType: RegelType = RegelType.KJERNE_REGELTYPE,
     ): BulkTilgangsResponse {
         val uri =
             UriComponentsBuilder

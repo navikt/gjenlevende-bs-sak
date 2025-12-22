@@ -19,11 +19,13 @@ open class FagsakService(
 ) {
     private val logger = LoggerFactory.getLogger(javaClass)
 
+    @Transactional
     fun hentEllerOpprettFagsakMedBehandlinger(
         personIdent: String,
         stønadstype: StønadType,
     ): FagsakDto = hentEllerOpprettFagsak(personIdent, stønadstype).tilDto()
 
+    @Transactional
     fun hentEllerOpprettFagsakMedFagsakPersonId(
         fagsakPersonId: UUID,
         stønadstype: StønadType,
@@ -35,40 +37,42 @@ open class FagsakService(
         stønadstype: StønadType,
     ): Fagsak {
         val fagsakPerson = fagsakPersonService.hentEllerOpprettPerson(setOf(personIdent), personIdent)
-        logger.info("FagsakPerson: $fagsakPerson")
 
-        val fagsakDomain =
-            fagsakRepository.findByFagsakPersonIdAndStønadstype(
-                fagsakPerson.id,
-                stønadstype,
-            ) ?: opprettFagsak(fagsakPerson, stønadstype)
-
-        val fagsak = fagsakDomain.tilFagsakMedPerson(fagsakPerson.identer)
-        logger.info("Fagsak: $fagsak")
-        return fagsak
+        return hentEllerOpprettFagsakForPerson(fagsakPerson, stønadstype)
     }
 
     @Transactional
     open fun hentEllerOpprettFagsakMedId(
-        fagsakPersonId: java.util.UUID,
+        fagsakPersonId: UUID,
         stønadstype: StønadType,
     ): Fagsak {
         val fagsakPerson =
             fagsakPersonService.finnPersonMedId(fagsakPersonId)
                 ?: throw IllegalArgumentException("Fant ingen fagsakPerson med id $fagsakPersonId")
 
+        return hentEllerOpprettFagsakForPerson(fagsakPerson, stønadstype)
+    }
+
+    private fun hentEllerOpprettFagsakForPerson(
+        fagsakPerson: FagsakPerson,
+        stønadstype: StønadType,
+    ): Fagsak {
         logger.info("FagsakPerson: $fagsakPerson")
 
         val fagsakDomain =
-            fagsakRepository.findByFagsakPersonIdAndStønadstype(
-                fagsakPerson.id,
-                stønadstype,
-            ) ?: opprettFagsak(fagsakPerson, stønadstype)
+            hentFagsakForPerson(fagsakPerson, stønadstype) ?: opprettFagsak(fagsakPerson, stønadstype)
 
-        val fagsak = fagsakDomain.tilFagsakMedPerson(fagsakPerson.identer)
-        logger.info("Fagsak: $fagsak")
-        return fagsak
+        return fagsakDomain.tilFagsakMedPerson(fagsakPerson.identer)
     }
+
+    private fun hentFagsakForPerson(
+        fagsakPerson: FagsakPerson,
+        stønadstype: StønadType,
+    ): FagsakDomain? =
+        fagsakRepository.findByFagsakPersonIdAndStønadstype(
+            fagsakPerson.id,
+            stønadstype,
+        )
 
     private fun opprettFagsak(
         fagsakPerson: FagsakPerson,

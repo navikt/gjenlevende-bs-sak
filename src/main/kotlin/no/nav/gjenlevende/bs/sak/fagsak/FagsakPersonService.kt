@@ -14,20 +14,9 @@ class FagsakPersonService(
     open fun hentEllerOpprettPerson(
         personIdenter: Set<String>,
         gjeldendePersonIdent: String,
-    ): FagsakPerson {
-        try {
-            val fagsakPersonId = UUID.fromString(gjeldendePersonIdent)
-            return fagsakPersonRepository
-                .findById(fagsakPersonId)
-                .orElseThrow { IllegalArgumentException("Fant ingen fagsakPerson med id $fagsakPersonId") }
-        } catch (_: IllegalArgumentException) {
-        }
-
-        return (
-            fagsakPersonRepository.findByIdent(personIdenter)
-                ?: opprettFagsakPerson(gjeldendePersonIdent)
-        )
-    }
+    ): FagsakPerson =
+        fagsakPersonRepository.findByIdent(personIdenter)
+            ?: opprettFagsakPerson(gjeldendePersonIdent)
 
     fun opprettFagsakPerson(gjeldendePersonIdent: String): FagsakPerson = fagsakPersonRepository.insert(FagsakPerson(identer = setOf(PersonIdent(gjeldendePersonIdent))))
 

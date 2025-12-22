@@ -46,7 +46,6 @@ spec:
                 -   application: gjenlevende-bs-sak-frontend
                 -   application: gjenlevende-bs-sak-frontend-lokal
                 -   application: etterlatte-prosessering
-                -   application: etterlatte-prosessering-lokal
         outbound:
             rules:
                 -   application: gjenlevende-bs-sak-frontend
@@ -61,6 +60,7 @@ spec:
                 -   host: gjenlevende-bs-infotrygd.dev-fss-pub.nais.io
                 -   host: etterlatte-unleash-api.nav.cloud.nais.io
                 -   host: familie-integrasjoner.dev-fss-pub.nais.io
+                -   host: saf-q2.dev-fss-pub.nais.io
 
     # Toggle
     envFrom:

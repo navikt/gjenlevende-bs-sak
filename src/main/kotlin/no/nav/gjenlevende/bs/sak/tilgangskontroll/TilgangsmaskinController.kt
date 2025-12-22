@@ -10,8 +10,6 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import no.nav.gjenlevende.bs.sak.felles.sikkerhet.SikkerhetContext
 import org.slf4j.LoggerFactory
 import org.springframework.http.MediaType
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -40,14 +38,13 @@ class TilgangsmaskinController(
             ApiResponse(responseCode = "500", description = "Feil ved kommunikasjon med tilgangsmaskinen"),
         ],
     )
-    @GetMapping("/sjekk/{brukerId}", produces = [MediaType.APPLICATION_JSON_VALUE])
+    @PostMapping("/sjekk", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun sjekkTilgangEnkel(
-        @Parameter(description = "Personident (11 siffer) for brukeren som skal sjekkes")
-        @PathVariable brukerId: String,
+        @RequestBody request: TilgangssjekkRequest,
     ): EnkelTilgangsResponse {
-        val ansattId = SikkerhetContext.hentSaksbehandler()
-        logger.info("Sjekker tilgang for saksbehandler $ansattId til bruker")
-        return tilgangsmaskinClient.sjekkTilgangEnkel(ansattId, brukerId)
+        val navIdent = SikkerhetContext.hentSaksbehandler()
+        logger.info("Sjekker tilgang for saksbehandler $navIdent til bruker")
+        return tilgangsmaskinClient.sjekkTilgangEnkel(navIdent, request.personident)
     }
 
     @Operation(
@@ -70,9 +67,9 @@ class TilgangsmaskinController(
         @RequestParam(defaultValue = "KOMPLETT_REGELTYPE") regelType: RegelType,
         @RequestBody request: BulkTilgangsRequest,
     ): BulkTilgangsResponse {
-        val ansattId = SikkerhetContext.hentSaksbehandler()
-        logger.info("Bulk-sjekker tilgang for saksbehandler $ansattId til ${request.brukerIdenter.size} brukere")
-        return tilgangsmaskinClient.sjekkTilgangBulk(ansattId, request.brukerIdenter, regelType)
+        val navIdent = SikkerhetContext.hentSaksbehandler()
+        logger.info("Bulk-sjekker tilgang for saksbehandler $navIdent til ${request.personidenter.size} brukere")
+        return tilgangsmaskinClient.sjekkTilgangBulk(navIdent, request.personidenter, regelType)
     }
 
     @Operation(
@@ -89,12 +86,11 @@ class TilgangsmaskinController(
             ApiResponse(responseCode = "500", description = "Feil ved kommunikasjon med tilgangsmaskinen"),
         ],
     )
-    @GetMapping("/ansatt/{ansattId}", produces = [MediaType.APPLICATION_JSON_VALUE])
+    @PostMapping("/ansatt", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun hentAnsattInfo(
-        @Parameter(description = "NAV-ident for ansatt (f.eks. Z990227)")
-        @PathVariable ansattId: String,
+        @RequestBody request: AnsattInfoRequest,
     ): AnsattInfoResponse {
-        logger.info("Henter info for ansatt $ansattId")
-        return tilgangsmaskinClient.sjekkAnsatt(ansattId)
+        logger.info("Henter info for ansatt ${request.navIdent}")
+        return tilgangsmaskinClient.sjekkAnsatt(request.navIdent)
     }
 }

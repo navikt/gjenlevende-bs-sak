@@ -23,8 +23,8 @@ class TilgangsmaskinClient(
     private val restTemplate: RestOperations = oauth2RestFactory.create(registrationId)
 
     fun sjekkTilgangEnkel(
-        ansattId: String,
-        brukerId: String,
+        navIdent: String,
+        personident: String,
         regelType: RegelType = RegelType.KOMPLETT_REGELTYPE,
     ): EnkelTilgangsResponse {
         val regelPath =
@@ -36,7 +36,7 @@ class TilgangsmaskinClient(
         val uri =
             UriComponentsBuilder
                 .fromUri(tilgangsmaskinUrl)
-                .pathSegment("dev", regelPath, ansattId, brukerId)
+                .pathSegment("dev", regelPath, navIdent, personident)
                 .build()
                 .toUri()
 
@@ -56,8 +56,8 @@ class TilgangsmaskinClient(
             when (response.statusCode.value()) {
                 204 -> {
                     EnkelTilgangsResponse(
-                        ansattId = ansattId,
-                        personident = brukerId,
+                        navIdent = navIdent,
+                        personident = personident,
                         harTilgang = true,
                         avvisningsgrunn = null,
                         begrunnelse = null,
@@ -66,8 +66,8 @@ class TilgangsmaskinClient(
 
                 else -> {
                     EnkelTilgangsResponse(
-                        ansattId = ansattId,
-                        personident = brukerId,
+                        navIdent = navIdent,
+                        personident = personident,
                         harTilgang = false,
                         avvisningsgrunn = "UKJENT",
                         begrunnelse = response.body,
@@ -75,10 +75,10 @@ class TilgangsmaskinClient(
                 }
             }
         } catch (e: org.springframework.web.client.HttpClientErrorException.Forbidden) {
-            logger.info("Tilgang avvist for ansatt $ansattId til bruker $brukerId: ${e.responseBodyAsString}")
+            logger.info("Tilgang avvist for ansatt $navIdent til bruker $personident: ${e.responseBodyAsString}")
             EnkelTilgangsResponse(
-                ansattId = ansattId,
-                personident = brukerId,
+                navIdent = navIdent,
+                personident = personident,
                 harTilgang = false,
                 avvisningsgrunn = parseAvvisningsgrunn(e.responseBodyAsString),
                 begrunnelse = parseBegrunnelse(e.responseBodyAsString),
@@ -105,11 +105,11 @@ class TilgangsmaskinClient(
             null
         }
 
-    fun sjekkAnsatt(ansattId: String): AnsattInfoResponse {
+    fun sjekkAnsatt(navIdent: String): AnsattInfoResponse {
         val uri =
             UriComponentsBuilder
                 .fromUri(tilgangsmaskinUrl)
-                .pathSegment("dev", "ansatt", ansattId)
+                .pathSegment("dev", "ansatt", navIdent)
                 .build()
                 .toUri()
 
@@ -133,8 +133,8 @@ class TilgangsmaskinClient(
     }
 
     fun sjekkTilgangBulk(
-        ansattId: String,
-        identer: List<String>,
+        navIdent: String,
+        personidenter: List<String>,
         regelType: RegelType = RegelType.KOMPLETT_REGELTYPE,
     ): BulkTilgangsResponse {
         val uri =
@@ -149,7 +149,7 @@ class TilgangsmaskinClient(
                 contentType = MediaType.APPLICATION_JSON
             }
 
-        val request = BulkTilgangsRequest(identer)
+        val request = BulkTilgangsRequest(personidenter)
         val entity = HttpEntity(request, headers)
 
         return try {

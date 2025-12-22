@@ -10,17 +10,25 @@ enum class RegelType {
     KJERNE_REGELTYPE,
 }
 
+data class TilgangssjekkRequest(
+    val personident: String,
+)
+
+data class AnsattInfoRequest(
+    val navIdent: String,
+)
+
 data class BulkTilgangsRequest(
-    val brukerIdenter: List<String>,
+    val personidenter: List<String>,
 )
 
 data class BulkTilgangsResponse(
-    val ansattId: String,
+    val navIdent: String,
     val resultater: List<TilgangsResultat>,
 )
 
 data class TilgangsResultat(
-    val brukerId: String,
+    val personident: String,
     val status: Int,
     val detaljer: AvvisningsDetaljer? = null,
 )
@@ -38,7 +46,7 @@ data class AvvisningsDetaljer(
 )
 
 data class EnkelTilgangsResponse(
-    val ansattId: String,
+    val navIdent: String,
     val personident: String,
     val harTilgang: Boolean,
     val avvisningsgrunn: String? = null,
@@ -46,7 +54,7 @@ data class EnkelTilgangsResponse(
 )
 
 data class AnsattInfoResponse(
-    val ansattId: String,
+    val navIdent: String,
     val bruker: BrukerInfo? = null,
     val grupper: List<GruppeInfo> = emptyList(),
 )
@@ -86,6 +94,6 @@ data class FamilieInfo(
 )
 
 data class FamilieRelasjon(
-    val brukerId: String,
+    val personident: String,
     val relasjon: String,
 )

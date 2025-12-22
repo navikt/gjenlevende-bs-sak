@@ -54,6 +54,7 @@ data class EnkelTilgangsResponse(
 )
 
 data class AnsattInfoResponse(
+    @JsonProperty("ansattId")
     val navIdent: String,
     val bruker: BrukerInfo? = null,
     val grupper: List<GruppeInfo> = emptyList(),
@@ -94,6 +95,7 @@ data class FamilieInfo(
 )
 
 data class FamilieRelasjon(
+    @JsonProperty("brukerId")
     val personident: String,
     val relasjon: String,
 )

@@ -10,6 +10,8 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import no.nav.gjenlevende.bs.sak.felles.sikkerhet.SikkerhetContext
 import org.slf4j.LoggerFactory
 import org.springframework.http.MediaType
+import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -66,10 +68,15 @@ class TilgangsmaskinController(
         @Parameter(description = "Regeltype for tilgangssjekk (KJERNE_REGELTYPE eller KOMPLETT_REGELTYPE)")
         @RequestParam(defaultValue = "KJERNE_REGELTYPE") regelType: RegelType,
         @RequestBody request: BulkTilgangsRequest,
+        @AuthenticationPrincipal jwt: Jwt,
     ): BulkTilgangsResponse {
         val navIdent = SikkerhetContext.hentSaksbehandler()
         logger.info("Bulk-sjekker tilgang for saksbehandler $navIdent til ${request.personidenter.size} brukere")
-        return tilgangsmaskinClient.sjekkTilgangBulk(navIdent, request.personidenter, regelType)
+        return tilgangsmaskinClient.sjekkTilgangBulk(
+            brukerToken = jwt.tokenValue,
+            personidenter = request.personidenter,
+            regelType = regelType,
+        )
     }
 
     @Operation(

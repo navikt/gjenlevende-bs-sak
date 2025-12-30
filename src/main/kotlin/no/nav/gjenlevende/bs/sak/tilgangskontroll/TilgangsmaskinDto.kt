@@ -23,14 +23,14 @@ data class BulkTilgangsRequest(
 )
 
 data class BulkTilgangsResponse(
-    val navIdent: String,
-    val resultater: List<TilgangsResultat>,
+    val ansattId: String,
+    val resultater: Set<TilgangsResultat> = emptySet(),
 )
 
 data class TilgangsResultat(
-    val personident: String,
+    val brukerId: String,
     val status: Int,
-    val detaljer: AvvisningsDetaljer? = null,
+    val detaljer: Any? = null,
 )
 
 data class AvvisningsDetaljer(

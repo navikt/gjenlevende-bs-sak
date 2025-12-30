@@ -3,6 +3,7 @@ package no.nav.gjenlevende.bs.sak.tilgangskontroll
 import io.mockk.every
 import io.mockk.mockk
 import no.nav.gjenlevende.bs.sak.felles.OAuth2RestOperationsFactory
+import no.nav.gjenlevende.bs.sak.texas.TexasClient
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
@@ -23,9 +24,11 @@ import java.nio.charset.StandardCharsets
 class TilgangsmaskinClientTest {
     private val tilgangsmaskinUrl = URI.create("http://localhost:8080")
     private val registrationId = "tilgangsmaskin"
+    private val tilgangsmaskinScope = "api://test/.default"
 
     private val oauth2RestFactory = mockk<OAuth2RestOperationsFactory>()
     private val restOperations = mockk<RestOperations>()
+    private val texasClient = mockk<TexasClient>()
 
     private lateinit var client: TilgangsmaskinClient
 
@@ -37,6 +40,8 @@ class TilgangsmaskinClientTest {
             TilgangsmaskinClient(
                 tilgangsmaskinUrl = tilgangsmaskinUrl,
                 registrationId = registrationId,
+                tilgangsmaskinScope = tilgangsmaskinScope,
+                texasClient = texasClient,
                 oauth2RestFactory = oauth2RestFactory,
             )
     }

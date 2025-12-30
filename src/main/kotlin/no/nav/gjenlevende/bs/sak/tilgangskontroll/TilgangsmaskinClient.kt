@@ -1,6 +1,7 @@
 package no.nav.gjenlevende.bs.sak.tilgangskontroll
 
 import no.nav.gjenlevende.bs.sak.felles.OAuth2RestOperationsFactory
+import no.nav.gjenlevende.bs.sak.texas.TexasClient
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpEntity
@@ -9,6 +10,7 @@ import org.springframework.http.HttpMethod
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestOperations
+import org.springframework.web.client.RestTemplate
 import org.springframework.web.client.exchange
 import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
@@ -17,6 +19,8 @@ import java.net.URI
 class TilgangsmaskinClient(
     @Value("\${tilgangsmaskin.url}") private val tilgangsmaskinUrl: URI,
     @Value("\${tilgangsmaskin.oauth.registration-id}") registrationId: String,
+    @Value("\${TILGANGSMASKIN_SCOPE}") private val tilgangsmaskinScope: String,
+    private val texasClient: TexasClient,
     oauth2RestFactory: OAuth2RestOperationsFactory,
 ) {
     private val logger = LoggerFactory.getLogger(TilgangsmaskinClient::class.java)
@@ -133,7 +137,7 @@ class TilgangsmaskinClient(
     }
 
     fun sjekkTilgangBulk(
-        navIdent: String,
+        brukerToken: String,
         personidenter: List<String>,
         regelType: RegelType = RegelType.KJERNE_REGELTYPE,
     ): BulkTilgangsResponse {
@@ -144,17 +148,23 @@ class TilgangsmaskinClient(
                 .build()
                 .toUri()
 
+        val oboToken =
+            texasClient.hentOboToken(
+                brukerToken = brukerToken,
+                targetAudience = tilgangsmaskinScope,
+            )
+
         val headers =
             HttpHeaders().apply {
                 contentType = MediaType.APPLICATION_JSON
+                setBearerAuth(oboToken)
             }
 
-        val request = BulkTilgangsRequest(personidenter)
-        val entity = HttpEntity(request, headers)
+        val entity = HttpEntity(personidenter.toSet(), headers)
 
         return try {
             val response =
-                restTemplate.exchange<BulkTilgangsResponse>(
+                RestTemplate().exchange<BulkTilgangsResponse>(
                     url = uri,
                     method = HttpMethod.POST,
                     requestEntity = entity,

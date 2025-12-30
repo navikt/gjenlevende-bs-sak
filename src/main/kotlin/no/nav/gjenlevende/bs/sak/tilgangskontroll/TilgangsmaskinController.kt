@@ -50,7 +50,39 @@ class TilgangsmaskinController(
     }
 
     @Operation(
-        summary = "Bulk-sjekk tilgang til flere brukere",
+        summary = "Bulk-sjekk tilgang til flere brukere (forenklet)",
+        description = "Sjekker kjerneregelsett (habilitet) og returnerer forenklet respons med harTilgang-flagg",
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "Bulk-sjekk utført",
+                content = [Content(schema = Schema(implementation = ForenkletBulkTilgangsResponse::class))],
+            ),
+            ApiResponse(responseCode = "401", description = "Ikke autentisert"),
+            ApiResponse(responseCode = "500", description = "Feil ved kommunikasjon med tilgangsmaskinen"),
+        ],
+    )
+    @PostMapping("/sjekk/bulk", produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun sjekkTilgangBulkForenklet(
+        @RequestBody request: BulkTilgangsRequest,
+        @AuthenticationPrincipal jwt: Jwt,
+    ): ForenkletBulkTilgangsResponse {
+        val navIdent = SikkerhetContext.hentSaksbehandler()
+        logger.info("Bulk-sjekker tilgang (kjerne) for saksbehandler $navIdent til ${request.personidenter.size} brukere")
+        val respons =
+            tilgangsmaskinClient.sjekkTilgangBulk(
+                brukerToken = jwt.tokenValue,
+                personidenter = request.personidenter,
+                regelType = RegelType.KJERNE_REGELTYPE,
+            )
+        return tilForenkletRespons(respons)
+    }
+
+    @Operation(
+        summary = "Bulk-sjekk tilgang til flere brukere (komplett)",
+        description = "Sjekker komplett regelsett inkludert geografiske begrensninger. Returnerer full respons med alle detaljer.",
     )
     @ApiResponses(
         value = [
@@ -63,19 +95,35 @@ class TilgangsmaskinController(
             ApiResponse(responseCode = "500", description = "Feil ved kommunikasjon med tilgangsmaskinen"),
         ],
     )
-    @PostMapping("/sjekk/bulk", produces = [MediaType.APPLICATION_JSON_VALUE])
-    fun sjekkTilgangBulk(
-        @Parameter(description = "Regeltype for tilgangssjekk (KJERNE_REGELTYPE eller KOMPLETT_REGELTYPE)")
-        @RequestParam(defaultValue = "KJERNE_REGELTYPE") regelType: RegelType,
+    @PostMapping("/sjekk/bulk/komplett", produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun sjekkTilgangBulkKomplett(
         @RequestBody request: BulkTilgangsRequest,
         @AuthenticationPrincipal jwt: Jwt,
     ): BulkTilgangsResponse {
         val navIdent = SikkerhetContext.hentSaksbehandler()
-        logger.info("Bulk-sjekker tilgang for saksbehandler $navIdent til ${request.personidenter.size} brukere")
+        logger.info("Bulk-sjekker tilgang (komplett) for saksbehandler $navIdent til ${request.personidenter.size} brukere")
         return tilgangsmaskinClient.sjekkTilgangBulk(
             brukerToken = jwt.tokenValue,
             personidenter = request.personidenter,
-            regelType = regelType,
+            regelType = RegelType.KOMPLETT_REGELTYPE,
+        )
+    }
+
+    private fun tilForenkletRespons(respons: BulkTilgangsResponse): ForenkletBulkTilgangsResponse {
+        val forenkledeResultater =
+            respons.resultater.map { resultat ->
+                val harTilgang = resultat.status == 204
+                val detaljer = resultat.detaljer as? Map<*, *>
+                ForenkletTilgangsResultat(
+                    brukerId = resultat.brukerId,
+                    harTilgang = harTilgang,
+                    avvisningsgrunn = if (!harTilgang) detaljer?.get("title")?.toString() else null,
+                    begrunnelse = if (!harTilgang) detaljer?.get("begrunnelse")?.toString() else null,
+                )
+            }
+        return ForenkletBulkTilgangsResponse(
+            ansattId = respons.ansattId,
+            resultater = forenkledeResultater,
         )
     }
 

@@ -33,6 +33,18 @@ data class TilgangsResultat(
     val detaljer: Any? = null,
 )
 
+data class ForenkletBulkTilgangsResponse(
+    val ansattId: String,
+    val resultater: List<ForenkletTilgangsResultat>,
+)
+
+data class ForenkletTilgangsResultat(
+    val brukerId: String,
+    val harTilgang: Boolean,
+    val avvisningsgrunn: String? = null,
+    val begrunnelse: String? = null,
+)
+
 data class AvvisningsDetaljer(
     val type: String,
     val title: String,

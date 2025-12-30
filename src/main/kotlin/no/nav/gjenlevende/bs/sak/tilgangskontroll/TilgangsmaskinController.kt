@@ -31,7 +31,7 @@ class TilgangsmaskinController(
         value = [
             ApiResponse(
                 responseCode = "200",
-                description = "Tilgangssjekk utført",
+                description = "Tilgangssjekk fungerte",
                 content = [Content(schema = Schema(implementation = EnkelTilgangsResponse::class))],
             ),
         ],
@@ -53,7 +53,7 @@ class TilgangsmaskinController(
         value = [
             ApiResponse(
                 responseCode = "200",
-                description = "Bulk-sjekk utført",
+                description = "Bulk sjekk fungerte",
                 content = [Content(schema = Schema(implementation = ForenkletBulkTilgangsResponse::class))],
             ),
         ],
@@ -64,7 +64,7 @@ class TilgangsmaskinController(
         @AuthenticationPrincipal jwt: Jwt,
     ): ForenkletBulkTilgangsResponse {
         val navIdent = SikkerhetContext.hentSaksbehandler()
-        logger.info("Bulk-sjekker tilgang (kjerne) for saksbehandler $navIdent til ${request.personidenter.size} brukere")
+        logger.info("Bulk sjekker tilgang (kjerne) for saksbehandler $navIdent til ${request.personidenter.size} brukere")
         val respons =
             tilgangsmaskinClient.sjekkTilgangBulk(
                 brukerToken = jwt.tokenValue,
@@ -75,14 +75,14 @@ class TilgangsmaskinController(
     }
 
     @Operation(
-        summary = "Bulk-sjekk tilgang til flere brukere (komplett)",
+        summary = "Bulk sjekk tilgang til flere brukere (komplett)",
         description = "Sjekker komplett regelsett inkludert geografiske begrensninger. Returnerer full respons med alle detaljer.",
     )
     @ApiResponses(
         value = [
             ApiResponse(
                 responseCode = "200",
-                description = "Bulk-sjekk utført",
+                description = "Bulk sjekk fungerte",
                 content = [Content(schema = Schema(implementation = BulkTilgangsResponse::class))],
             ),
         ],

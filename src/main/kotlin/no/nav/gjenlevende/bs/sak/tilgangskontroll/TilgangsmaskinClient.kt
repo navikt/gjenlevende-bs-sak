@@ -1,5 +1,6 @@
 package no.nav.gjenlevende.bs.sak.tilgangskontroll
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import no.nav.gjenlevende.bs.sak.felles.OAuth2RestOperationsFactory
 import no.nav.gjenlevende.bs.sak.texas.TexasClient
 import org.slf4j.LoggerFactory
@@ -25,17 +26,14 @@ class TilgangsmaskinClient(
 ) {
     private val logger = LoggerFactory.getLogger(TilgangsmaskinClient::class.java)
     private val restTemplate: RestOperations = oauth2RestFactory.create(registrationId)
+    private val objectMapper = jacksonObjectMapper()
 
     fun sjekkTilgangEnkel(
         navIdent: String,
         personident: String,
         regelType: RegelType = RegelType.KJERNE_REGELTYPE,
     ): EnkelTilgangsResponse {
-        val regelPath =
-            when (regelType) {
-                RegelType.KJERNE_REGELTYPE -> "kjerne"
-                else -> "komplett"
-            }
+        val regelPath = if (regelType == RegelType.KJERNE_REGELTYPE) "kjerne" else "komplett"
 
         val uri =
             UriComponentsBuilder
@@ -44,71 +42,36 @@ class TilgangsmaskinClient(
                 .build()
                 .toUri()
 
-        val headers =
-            HttpHeaders().apply {
-                contentType = MediaType.APPLICATION_JSON
-            }
+        val headers = HttpHeaders().apply { contentType = MediaType.APPLICATION_JSON }
 
         return try {
-            val response =
-                restTemplate.exchange<String>(
-                    url = uri,
-                    method = HttpMethod.GET,
-                    requestEntity = HttpEntity<Any>(headers),
-                )
-
-            when (response.statusCode.value()) {
-                204 -> {
-                    EnkelTilgangsResponse(
-                        navIdent = navIdent,
-                        personident = personident,
-                        harTilgang = true,
-                        avvisningskode = null,
-                        begrunnelse = null,
-                    )
-                }
-
-                else -> {
-                    EnkelTilgangsResponse(
-                        navIdent = navIdent,
-                        personident = personident,
-                        harTilgang = false,
-                        avvisningskode = null,
-                        begrunnelse = response.body,
-                    )
-                }
-            }
+            restTemplate.exchange<String>(
+                url = uri,
+                method = HttpMethod.GET,
+                requestEntity = HttpEntity<Any>(headers),
+            )
+            EnkelTilgangsResponse(
+                navIdent = navIdent,
+                personident = personident,
+                harTilgang = true,
+            )
         } catch (e: org.springframework.web.client.HttpClientErrorException.Forbidden) {
-            logger.info("Tilgang avvist for ansatt $navIdent til bruker $personident: ${e.responseBodyAsString}")
+            logger.info("Tilgang avvist for ansatt $navIdent til bruker $personident")
+            val feilRespons = parseFeilRespons(e.responseBodyAsString)
             EnkelTilgangsResponse(
                 navIdent = navIdent,
                 personident = personident,
                 harTilgang = false,
-                avvisningskode = parseAvvisningskode(e.responseBodyAsString),
-                begrunnelse = parseBegrunnelse(e.responseBodyAsString),
+                avvisningskode = feilRespons?.title?.let { runCatching { Avvisningskode.valueOf(it) }.getOrNull() },
+                begrunnelse = feilRespons?.begrunnelse,
             )
         } catch (e: Exception) {
-            logger.error("Feil ved sjekk av tilgang mot tilgangsmaskinen: $e")
+            logger.error("Feil ved sjekk av tilgang mot tilgangsmaskinen: ${e.message}")
             throw TilgangsmaskinException("Feil ved tilgangssjekk: ${e.message}", e)
         }
     }
 
-    private fun parseAvvisningskode(responseBody: String): Avvisningskode? =
-        try {
-            val regex = """"title"\s*:\s*"([^"]+)"""".toRegex()
-            val title = regex.find(responseBody)?.groupValues?.get(1)
-            title?.let { runCatching { Avvisningskode.valueOf(it) }.getOrNull() }
-        } catch (e: Exception) {
-            null
-        }
-
-    private fun parseBegrunnelse(responseBody: String): String? =
-        try {
-            val regex = """"begrunnelse"\s*:\s*"([^"]+)"""".toRegex()
-            regex.find(responseBody)?.groupValues?.get(1)
-        } catch (e: Exception) {
-            null
-        }
+    private fun parseFeilRespons(responseBody: String): TilgangsmaskinFeilRespons? = runCatching { objectMapper.readValue(responseBody, TilgangsmaskinFeilRespons::class.java) }.getOrNull()
 
     fun sjekkAnsatt(navIdent: String): AnsattInfoResponse {
         val uri =
@@ -118,10 +81,7 @@ class TilgangsmaskinClient(
                 .build()
                 .toUri()
 
-        val headers =
-            HttpHeaders().apply {
-                contentType = MediaType.APPLICATION_JSON
-            }
+        val headers = HttpHeaders().apply { contentType = MediaType.APPLICATION_JSON }
 
         return try {
             val response =
@@ -132,7 +92,7 @@ class TilgangsmaskinClient(
                 )
             response.body ?: throw TilgangsmaskinException("Ingen respons fra tilgangsmaskinen")
         } catch (e: Exception) {
-            logger.error("Feil ved henting av ansattinfo fra tilgangsmaskinen: $e")
+            logger.error("Feil ved henting av ansattinfo fra tilgangsmaskinen: ${e.message}")
             throw TilgangsmaskinException("Feil ved henting av ansattinfo: ${e.message}", e)
         }
     }
@@ -161,18 +121,16 @@ class TilgangsmaskinClient(
                 setBearerAuth(oboToken)
             }
 
-        val entity = HttpEntity(personidenter.toSet(), headers)
-
         return try {
             val response =
                 RestTemplate().exchange<BulkTilgangsResponse>(
                     url = uri,
                     method = HttpMethod.POST,
-                    requestEntity = entity,
+                    requestEntity = HttpEntity(personidenter.toSet(), headers),
                 )
             response.body ?: throw TilgangsmaskinException("Ingen respons fra tilgangsmaskinen (bulk)")
         } catch (e: Exception) {
-            logger.error("Feil ved bulk-sjekk av tilgang mot tilgangsmaskinen: $e")
+            logger.error("Feil ved bulk-sjekk av tilgang mot tilgangsmaskinen: ${e.message}")
             throw TilgangsmaskinException("Feil ved bulk-tilgangssjekk: ${e.message}", e)
         }
     }

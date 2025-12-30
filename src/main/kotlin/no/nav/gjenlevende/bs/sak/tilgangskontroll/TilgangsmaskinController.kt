@@ -26,9 +26,7 @@ class TilgangsmaskinController(
 ) {
     private val logger = LoggerFactory.getLogger(TilgangsmaskinController::class.java)
 
-    @Operation(
-        summary = "Sjekk tilgang til en enkelt bruker",
-    )
+    @Operation(summary = "Sjekk tilgang til en enkelt bruker",)
     @ApiResponses(
         value = [
             ApiResponse(
@@ -36,8 +34,6 @@ class TilgangsmaskinController(
                 description = "Tilgangssjekk utført",
                 content = [Content(schema = Schema(implementation = EnkelTilgangsResponse::class))],
             ),
-            ApiResponse(responseCode = "401", description = "Ikke autentisert"),
-            ApiResponse(responseCode = "500", description = "Feil ved kommunikasjon med tilgangsmaskinen"),
         ],
     )
     @PostMapping("/sjekk", produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -60,8 +56,6 @@ class TilgangsmaskinController(
                 description = "Bulk-sjekk utført",
                 content = [Content(schema = Schema(implementation = ForenkletBulkTilgangsResponse::class))],
             ),
-            ApiResponse(responseCode = "401", description = "Ikke autentisert"),
-            ApiResponse(responseCode = "500", description = "Feil ved kommunikasjon med tilgangsmaskinen"),
         ],
     )
     @PostMapping("/sjekk/bulk", produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -90,9 +84,7 @@ class TilgangsmaskinController(
                 responseCode = "200",
                 description = "Bulk-sjekk utført",
                 content = [Content(schema = Schema(implementation = BulkTilgangsResponse::class))],
-            ),
-            ApiResponse(responseCode = "401", description = "Ikke autentisert"),
-            ApiResponse(responseCode = "500", description = "Feil ved kommunikasjon med tilgangsmaskinen"),
+            )
         ],
     )
     @PostMapping("/sjekk/bulk/komplett", produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -109,40 +101,39 @@ class TilgangsmaskinController(
         )
     }
 
-    private fun tilForenkletRespons(respons: BulkTilgangsResponse): ForenkletBulkTilgangsResponse {
-        val forenkledeResultater =
-            respons.resultater.map { resultat ->
-                val harTilgang = resultat.status == 204
-                val detaljer = resultat.detaljer as? Map<*, *>
-                val avvisningskode =
-                    detaljer?.get("title")?.toString()?.let { title ->
-                        runCatching { Avvisningskode.valueOf(title) }.getOrNull()
-                    }
-                ForenkletTilgangsResultat(
-                    personident = resultat.personident,
-                    harTilgang = harTilgang,
-                    avvisningskode = if (!harTilgang) avvisningskode else null,
-                    begrunnelse = if (!harTilgang) detaljer?.get("begrunnelse")?.toString() else null,
-                )
-            }
-        return ForenkletBulkTilgangsResponse(
+    private fun tilForenkletRespons(respons: BulkTilgangsResponse) =
+        ForenkletBulkTilgangsResponse(
             navIdent = respons.navIdent,
-            resultater = forenkledeResultater,
-        )
-    }
+            resultater =
+                respons.resultater.map { resultat ->
+                    val harTilgang = resultat.status == 204
+                    val detaljer = resultat.detaljer as? Map<*, *>
 
-    @Operation(
-        summary = "Hent ansattinformasjon",
-    )
+                    ForenkletTilgangsResultat(
+                        personident = resultat.personident,
+                        harTilgang = harTilgang,
+                        avvisningskode =
+                            if (harTilgang) {
+                                null
+                            } else {
+                                detaljer
+                                    ?.get("title")
+                                    ?.toString()
+                                    ?.let { runCatching { Avvisningskode.valueOf(it) }.getOrNull() }
+                            },
+                        begrunnelse = if (harTilgang) null else detaljer?.get("begrunnelse")?.toString(),
+                    )
+                },
+        )
+
+    @Operation(summary = "Hent ansattinformasjon")
     @ApiResponses(
         value = [
             ApiResponse(
                 responseCode = "200",
                 description = "Ansattinformasjon hentet",
                 content = [Content(schema = Schema(implementation = AnsattInfoResponse::class))],
-            ),
-            ApiResponse(responseCode = "401", description = "Ikke autentisert"),
-            ApiResponse(responseCode = "500", description = "Feil ved kommunikasjon med tilgangsmaskinen"),
+            )
         ],
     )
     @PostMapping("/ansatt", produces = [MediaType.APPLICATION_JSON_VALUE])

@@ -407,5 +407,71 @@ class TilgangsmaskinClientTest {
             assertEquals("AVVIST_SKJERMING", resultat.avvisningsgrunn)
             assertEquals("Du har ikke tilgang til Nav-ansatte og andre skjermede brukere", resultat.begrunnelse)
         }
+
+        @Test
+        fun `saksbehandler med tilgang til egen ansatt har tilgang`() {
+            val navIdent = "Z654321"
+            val personident = "12345678901"
+
+            every {
+                restOperations.exchange(
+                    any<URI>(),
+                    HttpMethod.GET,
+                    any<HttpEntity<Any>>(),
+                    any<ParameterizedTypeReference<String>>(),
+                )
+            } returns ResponseEntity.noContent().build()
+
+            val resultat = client.sjekkTilgangEnkel(navIdent, personident)
+
+            assertTrue(resultat.harTilgang)
+            assertEquals(navIdent, resultat.navIdent)
+            assertEquals(personident, resultat.personident)
+            assertNull(resultat.avvisningsgrunn)
+            assertNull(resultat.begrunnelse)
+        }
+
+        @Test
+        fun `saksbehandler uten tilgang søker opp annen Nav-ansatt - avvises med AVVIST_SKJERMING`() {
+            val navIdent = "Z123456"
+            val personident = "12345678907"
+
+            val forbiddenBody =
+                """
+                {
+                    "type": "about:blank",
+                    "title": "AVVIST_SKJERMING",
+                    "status": 403,
+                    "instance": "/dev/komplett/$navIdent/$personident",
+                    "brukerIdent": "$personident",
+                    "navIdent": "$navIdent",
+                    "begrunnelse": "Du har ikke tilgang til Nav-ansatte og andre skjermede brukere",
+                    "traceId": "abc123",
+                    "kanOverstyres": false
+                }
+                """.trimIndent()
+
+            every {
+                restOperations.exchange(
+                    any<URI>(),
+                    HttpMethod.GET,
+                    any<HttpEntity<Any>>(),
+                    any<ParameterizedTypeReference<String>>(),
+                )
+            } throws
+                HttpClientErrorException.create(
+                    HttpStatus.FORBIDDEN,
+                    "Forbidden",
+                    org.springframework.http.HttpHeaders(),
+                    forbiddenBody.toByteArray(StandardCharsets.UTF_8),
+                    StandardCharsets.UTF_8,
+                )
+
+            val resultat = client.sjekkTilgangEnkel(navIdent, personident)
+
+            assertFalse(resultat.harTilgang)
+            assertEquals("AVVIST_SKJERMING", resultat.avvisningsgrunn)
+            assertEquals("Du har ikke tilgang til Nav-ansatte og andre skjermede brukere", resultat.begrunnelse)
+        }
     }
 }

@@ -26,7 +26,7 @@ class TilgangsmaskinController(
 ) {
     private val logger = LoggerFactory.getLogger(TilgangsmaskinController::class.java)
 
-    @Operation(summary = "Sjekk tilgang til en enkelt bruker",)
+    @Operation(summary = "Sjekk tilgang til en enkelt bruker")
     @ApiResponses(
         value = [
             ApiResponse(
@@ -84,7 +84,7 @@ class TilgangsmaskinController(
                 responseCode = "200",
                 description = "Bulk-sjekk utført",
                 content = [Content(schema = Schema(implementation = BulkTilgangsResponse::class))],
-            )
+            ),
         ],
     )
     @PostMapping("/sjekk/bulk/komplett", produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -133,7 +133,7 @@ class TilgangsmaskinController(
                 responseCode = "200",
                 description = "Ansattinformasjon hentet",
                 content = [Content(schema = Schema(implementation = AnsattInfoResponse::class))],
-            )
+            ),
         ],
     )
     @PostMapping("/ansatt", produces = [MediaType.APPLICATION_JSON_VALUE])

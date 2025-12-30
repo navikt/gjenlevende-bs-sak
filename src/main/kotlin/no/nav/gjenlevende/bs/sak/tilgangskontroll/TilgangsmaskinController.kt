@@ -104,27 +104,26 @@ class TilgangsmaskinController(
     private fun tilForenkletRespons(respons: BulkTilgangsResponse) =
         ForenkletBulkTilgangsResponse(
             navIdent = respons.navIdent,
-            resultater =
-                respons.resultater.map { resultat ->
-                    val harTilgang = resultat.status == 204
-                    val detaljer = resultat.detaljer as? Map<*, *>
-
-                    ForenkletTilgangsResultat(
-                        personident = resultat.personident,
-                        harTilgang = harTilgang,
-                        avvisningskode =
-                            if (harTilgang) {
-                                null
-                            } else {
-                                detaljer
-                                    ?.get("title")
-                                    ?.toString()
-                                    ?.let { runCatching { Avvisningskode.valueOf(it) }.getOrNull() }
-                            },
-                        begrunnelse = if (harTilgang) null else detaljer?.get("begrunnelse")?.toString(),
-                    )
-                },
+            resultater = respons.resultater.map { it.tilForenklet() },
         )
+
+    private fun TilgangsResultat.tilForenklet(): ForenkletTilgangsResultat {
+        if (status == 204) {
+            return ForenkletTilgangsResultat(personident = personident, harTilgang = true)
+        }
+
+        val detaljer = detaljer as? Map<*, *>
+        return ForenkletTilgangsResultat(
+            personident = personident,
+            harTilgang = false,
+            avvisningskode =
+                detaljer
+                    ?.get("title")
+                    ?.toString()
+                    ?.let { runCatching { Avvisningskode.valueOf(it) }.getOrNull() },
+            begrunnelse = detaljer?.get("begrunnelse")?.toString(),
+        )
+    }
 
     @Operation(summary = "Hent ansattinformasjon")
     @ApiResponses(

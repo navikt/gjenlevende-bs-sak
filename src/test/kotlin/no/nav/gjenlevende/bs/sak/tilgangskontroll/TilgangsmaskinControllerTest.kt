@@ -97,17 +97,17 @@ class TilgangsmaskinControllerTest {
             assertEquals(navIdent, resultat.navIdent)
             assertEquals(3, resultat.resultater.size)
 
-            val medTilgang = resultat.resultater.find { it.personident == personidentMedTilgang }!!
+            val medTilgang = resultat.resultater.first { it.personident == personidentMedTilgang }
             assertTrue(medTilgang.harTilgang)
             assertNull(medTilgang.avvisningskode)
             assertNull(medTilgang.begrunnelse)
 
-            val skjermet = resultat.resultater.find { it.personident == personidentUtenTilgang }!!
+            val skjermet = resultat.resultater.first { it.personident == personidentUtenTilgang }
             assertFalse(skjermet.harTilgang)
             assertEquals(Avvisningskode.AVVIST_SKJERMING, skjermet.avvisningskode)
             assertEquals("Du har ikke tilgang til Nav-ansatte og andre skjermede brukere", skjermet.begrunnelse)
 
-            val familie = resultat.resultater.find { it.personident == personidentEgenFamilie }!!
+            val familie = resultat.resultater.first { it.personident == personidentEgenFamilie }
             assertFalse(familie.harTilgang)
             assertEquals(Avvisningskode.AVVIST_HABILITET, familie.avvisningskode)
             assertEquals("Du har ikke tilgang til data om deg selv eller dine nærstående", familie.begrunnelse)
@@ -292,16 +292,16 @@ class TilgangsmaskinControllerTest {
 
             assertEquals(4, resultat.resultater.size)
 
-            val strengtFortroligResultat = resultat.resultater.find { it.personident == strengtFortrolig }!!
+            val strengtFortroligResultat = resultat.resultater.first { it.personident == strengtFortrolig }
             assertEquals(Avvisningskode.AVVIST_STRENGT_FORTROLIG_ADRESSE, strengtFortroligResultat.avvisningskode)
 
-            val fortroligResultat = resultat.resultater.find { it.personident == fortrolig }!!
+            val fortroligResultat = resultat.resultater.first { it.personident == fortrolig }
             assertEquals(Avvisningskode.AVVIST_FORTROLIG_ADRESSE, fortroligResultat.avvisningskode)
 
-            val skjermetResultat = resultat.resultater.find { it.personident == skjermet }!!
+            val skjermetResultat = resultat.resultater.first { it.personident == skjermet }
             assertEquals(Avvisningskode.AVVIST_SKJERMING, skjermetResultat.avvisningskode)
 
-            val geografiskResultat = resultat.resultater.find { it.personident == geografisk }!!
+            val geografiskResultat = resultat.resultater.first { it.personident == geografisk }
             assertEquals(Avvisningskode.AVVIST_GEOGRAFISK, geografiskResultat.avvisningskode)
         }
     }

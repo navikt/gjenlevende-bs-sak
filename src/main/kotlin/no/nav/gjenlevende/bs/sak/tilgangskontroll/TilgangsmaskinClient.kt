@@ -19,8 +19,8 @@ import java.net.URI
 @Component
 class TilgangsmaskinClient(
     @Value("\${tilgangsmaskin.url}") private val tilgangsmaskinUrl: URI,
-    @Value("\${tilgangsmaskin.oauth.registration-id}") registrationId: String,
-    @Value("\${TILGANGSMASKIN_SCOPE}") private val tilgangsmaskinScope: String,
+    @Value("\${tilgangsmaskin.oauth.registration-id}") private val registrationId: String,
+    @Value("\${tilgangsmaskin.oauth.scope}") private val tilgangsmaskinScope: String,
     private val texasClient: TexasClient,
     oauth2RestFactory: OAuth2RestOperationsFactory,
 ) {

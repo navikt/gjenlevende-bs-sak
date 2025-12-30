@@ -97,7 +97,7 @@ oauth2:
             client-id: ${AZURE_APP_CLIENT_ID}
             client-secret: ${AZURE_APP_CLIENT_SECRET}
             token-endpoint-url: ${AZUREAD_TOKEN_ENDPOINT_URL}
-            scope: ${TILGANGSMASKIN_SCOPE}
+            scope: ${tilgangsmaskin.oauth.scope}
 
 # Azure AD miljøvariabler (for SwaggerConfig.kt)
 AZUREAD_TOKEN_ENDPOINT_URL: https://login.microsoftonline.com/${azure.app.tenant.id}/oauth2/v2.0/token
@@ -126,7 +126,7 @@ tilgangsmaskin:
     url: ${TILGANGSMASKIN_URL:http://populasjonstilgangskontroll.tilgangsmaskin}
     oauth:
         registration-id: tilgangsmaskin-clientcredentials
-TILGANGSMASKIN_SCOPE: api://dev-gcp.tilgangsmaskin.populasjonstilgangskontroll/.default
+        scope: ${TILGANGSMASKIN_SCOPE:api://dev-gcp.tilgangsmaskin.populasjonstilgangskontroll/.default}
 
 # Swagger/OpenAPI konfigurasjon
 springdoc:

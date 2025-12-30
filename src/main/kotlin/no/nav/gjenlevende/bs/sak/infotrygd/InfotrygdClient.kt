@@ -42,8 +42,9 @@ class InfotrygdClient(
             .bodyValue(PersonidentRequest(personident = personident))
             .retrieve()
             .bodyToMono<PersonPerioderResponse>()
+            .switchIfEmpty(Mono.error(NoSuchElementException("Tom respons fra gjenlevende-bs-infotrygd")))
             .timeout(Duration.ofSeconds(TIMEOUT_SEKUNDER))
-            .doOnSuccess { response ->
+            .doOnNext { response ->
                 logger.info("Hentet perioder for person: ${response.barnetilsyn.size} barnetilsyn, ${response.skolepenger.size} skolepenger")
             }.doOnError { logger.error("Feilet å hente perioder for person: $it") }
     }

@@ -114,15 +114,19 @@ class TilgangsmaskinController(
             respons.resultater.map { resultat ->
                 val harTilgang = resultat.status == 204
                 val detaljer = resultat.detaljer as? Map<*, *>
+                val avvisningskode =
+                    detaljer?.get("title")?.toString()?.let { title ->
+                        runCatching { Avvisningskode.valueOf(title) }.getOrNull()
+                    }
                 ForenkletTilgangsResultat(
-                    brukerId = resultat.brukerId,
+                    personident = resultat.personident,
                     harTilgang = harTilgang,
-                    avvisningsgrunn = if (!harTilgang) detaljer?.get("title")?.toString() else null,
+                    avvisningskode = if (!harTilgang) avvisningskode else null,
                     begrunnelse = if (!harTilgang) detaljer?.get("begrunnelse")?.toString() else null,
                 )
             }
         return ForenkletBulkTilgangsResponse(
-            ansattId = respons.ansattId,
+            navIdent = respons.navIdent,
             resultater = forenkledeResultater,
         )
     }

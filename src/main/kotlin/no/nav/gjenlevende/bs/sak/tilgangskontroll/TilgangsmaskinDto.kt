@@ -10,6 +10,18 @@ enum class RegelType {
     KJERNE_REGELTYPE,
 }
 
+enum class Avvisningskode {
+    AVVIST_STRENGT_FORTROLIG_ADRESSE,
+    AVVIST_STRENGT_FORTROLIG_UTLAND,
+    AVVIST_AVDØD,
+    AVVIST_PERSON_UTLAND,
+    AVVIST_SKJERMING,
+    AVVIST_FORTROLIG_ADRESSE,
+    AVVIST_UKJENT_BOSTED,
+    AVVIST_GEOGRAFISK,
+    AVVIST_HABILITET,
+}
+
 data class TilgangssjekkRequest(
     val personident: String,
 )
@@ -23,45 +35,35 @@ data class BulkTilgangsRequest(
 )
 
 data class BulkTilgangsResponse(
-    val ansattId: String,
+    @JsonProperty("ansattId")
+    val navIdent: String,
     val resultater: Set<TilgangsResultat> = emptySet(),
 )
 
 data class TilgangsResultat(
-    val brukerId: String,
+    @JsonProperty("brukerId")
+    val personident: String,
     val status: Int,
     val detaljer: Any? = null,
 )
 
 data class ForenkletBulkTilgangsResponse(
-    val ansattId: String,
+    val navIdent: String,
     val resultater: List<ForenkletTilgangsResultat>,
 )
 
 data class ForenkletTilgangsResultat(
-    val brukerId: String,
+    val personident: String,
     val harTilgang: Boolean,
-    val avvisningsgrunn: String? = null,
+    val avvisningskode: Avvisningskode? = null,
     val begrunnelse: String? = null,
-)
-
-data class AvvisningsDetaljer(
-    val type: String,
-    val title: String,
-    val status: Int,
-    val instance: String,
-    val brukerIdent: String,
-    val navIdent: String,
-    val begrunnelse: String,
-    val traceId: String,
-    val kanOverstyres: Boolean,
 )
 
 data class EnkelTilgangsResponse(
     val navIdent: String,
     val personident: String,
     val harTilgang: Boolean,
-    val avvisningsgrunn: String? = null,
+    val avvisningskode: Avvisningskode? = null,
     val begrunnelse: String? = null,
 )
 
@@ -84,10 +86,14 @@ data class BrukerInfo(
     val harUkjentBosted: Boolean = false,
     val harUtenlandskBosted: Boolean = false,
     val oppslagId: String,
-)
+) {
+    val kommunenummer: String?
+        get() = geografiskTilknytning?.kommune?.verdi
+}
 
 data class BrukerIds(
-    val aktivBrukerId: String,
+    @JsonProperty("aktivBrukerId")
+    val aktivPersonident: String,
     val oppslagId: String,
     val historiskeIds: List<String> = emptyList(),
 )

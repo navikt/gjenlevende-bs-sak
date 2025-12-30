@@ -63,7 +63,7 @@ class TilgangsmaskinClient(
                         navIdent = navIdent,
                         personident = personident,
                         harTilgang = true,
-                        avvisningsgrunn = null,
+                        avvisningskode = null,
                         begrunnelse = null,
                     )
                 }
@@ -73,7 +73,7 @@ class TilgangsmaskinClient(
                         navIdent = navIdent,
                         personident = personident,
                         harTilgang = false,
-                        avvisningsgrunn = "UKJENT",
+                        avvisningskode = null,
                         begrunnelse = response.body,
                     )
                 }
@@ -84,7 +84,7 @@ class TilgangsmaskinClient(
                 navIdent = navIdent,
                 personident = personident,
                 harTilgang = false,
-                avvisningsgrunn = parseAvvisningsgrunn(e.responseBodyAsString),
+                avvisningskode = parseAvvisningskode(e.responseBodyAsString),
                 begrunnelse = parseBegrunnelse(e.responseBodyAsString),
             )
         } catch (e: Exception) {
@@ -93,10 +93,11 @@ class TilgangsmaskinClient(
         }
     }
 
-    private fun parseAvvisningsgrunn(responseBody: String): String? =
+    private fun parseAvvisningskode(responseBody: String): Avvisningskode? =
         try {
             val regex = """"title"\s*:\s*"([^"]+)"""".toRegex()
-            regex.find(responseBody)?.groupValues?.get(1)
+            val title = regex.find(responseBody)?.groupValues?.get(1)
+            title?.let { runCatching { Avvisningskode.valueOf(it) }.getOrNull() }
         } catch (e: Exception) {
             null
         }

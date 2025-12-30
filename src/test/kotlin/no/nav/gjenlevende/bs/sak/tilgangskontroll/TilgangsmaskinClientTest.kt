@@ -67,7 +67,7 @@ class TilgangsmaskinClientTest {
             assertTrue(resultat.harTilgang)
             assertEquals(navIdent, resultat.navIdent)
             assertEquals(personident, resultat.personident)
-            assertNull(resultat.avvisningsgrunn)
+            assertNull(resultat.avvisningskode)
             assertNull(resultat.begrunnelse)
         }
 
@@ -112,7 +112,7 @@ class TilgangsmaskinClientTest {
             assertFalse(resultat.harTilgang)
             assertEquals(navIdent, resultat.navIdent)
             assertEquals(personident, resultat.personident)
-            assertEquals("AVVIST_HABILITET", resultat.avvisningsgrunn)
+            assertEquals(Avvisningskode.AVVIST_HABILITET, resultat.avvisningskode)
             assertEquals("Du har ikke tilgang til data om deg selv eller dine nærstående", resultat.begrunnelse)
         }
 
@@ -155,7 +155,7 @@ class TilgangsmaskinClientTest {
             val resultat = client.sjekkTilgangEnkel(navIdent, personident)
 
             assertFalse(resultat.harTilgang)
-            assertEquals("AVVIST_HABILITET", resultat.avvisningsgrunn)
+            assertEquals(Avvisningskode.AVVIST_HABILITET, resultat.avvisningskode)
             assertEquals("Du har ikke tilgang til data om deg selv eller dine nærstående", resultat.begrunnelse)
         }
 
@@ -198,7 +198,7 @@ class TilgangsmaskinClientTest {
             val resultat = client.sjekkTilgangEnkel(navIdent, personident)
 
             assertFalse(resultat.harTilgang)
-            assertEquals("AVVIST_HABILITET", resultat.avvisningsgrunn)
+            assertEquals(Avvisningskode.AVVIST_HABILITET, resultat.avvisningskode)
         }
 
         @Test
@@ -218,7 +218,7 @@ class TilgangsmaskinClientTest {
             val resultat = client.sjekkTilgangEnkel(navIdent, personident)
 
             assertTrue(resultat.harTilgang)
-            assertNull(resultat.avvisningsgrunn)
+            assertNull(resultat.avvisningskode)
         }
 
         @Test
@@ -238,7 +238,7 @@ class TilgangsmaskinClientTest {
             val resultat = client.sjekkTilgangEnkel(navIdent, personident)
 
             assertTrue(resultat.harTilgang)
-            assertNull(resultat.avvisningsgrunn)
+            assertNull(resultat.avvisningskode)
         }
 
         @Test
@@ -280,7 +280,7 @@ class TilgangsmaskinClientTest {
             val resultat = client.sjekkTilgangEnkel(navIdent, personident)
 
             assertFalse(resultat.harTilgang)
-            assertEquals("AVVIST_STRENGT_FORTROLIG_ADRESSE", resultat.avvisningsgrunn)
+            assertEquals(Avvisningskode.AVVIST_STRENGT_FORTROLIG_ADRESSE, resultat.avvisningskode)
             assertEquals("Du har ikke tilgang til brukere med strengt fortrolig adresse", resultat.begrunnelse)
         }
 
@@ -323,7 +323,7 @@ class TilgangsmaskinClientTest {
             val resultat = client.sjekkTilgangEnkel(navIdent, personident)
 
             assertFalse(resultat.harTilgang)
-            assertEquals("AVVIST_FORTROLIG_ADRESSE", resultat.avvisningsgrunn)
+            assertEquals(Avvisningskode.AVVIST_FORTROLIG_ADRESSE, resultat.avvisningskode)
             assertEquals("Du har ikke tilgang til brukere med fortrolig adresse", resultat.begrunnelse)
         }
 
@@ -366,7 +366,7 @@ class TilgangsmaskinClientTest {
             val resultat = client.sjekkTilgangEnkel(navIdent, personident)
 
             assertFalse(resultat.harTilgang)
-            assertEquals("AVVIST_GEOGRAFISK", resultat.avvisningsgrunn)
+            assertEquals(Avvisningskode.AVVIST_GEOGRAFISK, resultat.avvisningskode)
             assertEquals("Du har ikke tilgang til brukerens geografiske område eller oppfølgingsenhet", resultat.begrunnelse)
         }
 
@@ -409,7 +409,7 @@ class TilgangsmaskinClientTest {
             val resultat = client.sjekkTilgangEnkel(navIdent, personident)
 
             assertFalse(resultat.harTilgang)
-            assertEquals("AVVIST_SKJERMING", resultat.avvisningsgrunn)
+            assertEquals(Avvisningskode.AVVIST_SKJERMING, resultat.avvisningskode)
             assertEquals("Du har ikke tilgang til Nav-ansatte og andre skjermede brukere", resultat.begrunnelse)
         }
 
@@ -432,7 +432,7 @@ class TilgangsmaskinClientTest {
             assertTrue(resultat.harTilgang)
             assertEquals(navIdent, resultat.navIdent)
             assertEquals(personident, resultat.personident)
-            assertNull(resultat.avvisningsgrunn)
+            assertNull(resultat.avvisningskode)
             assertNull(resultat.begrunnelse)
         }
 
@@ -475,7 +475,7 @@ class TilgangsmaskinClientTest {
             val resultat = client.sjekkTilgangEnkel(navIdent, personident)
 
             assertFalse(resultat.harTilgang)
-            assertEquals("AVVIST_SKJERMING", resultat.avvisningsgrunn)
+            assertEquals(Avvisningskode.AVVIST_SKJERMING, resultat.avvisningskode)
             assertEquals("Du har ikke tilgang til Nav-ansatte og andre skjermede brukere", resultat.begrunnelse)
         }
     }

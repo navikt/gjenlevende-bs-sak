@@ -13,6 +13,10 @@ object BeregningUtils {
     private val eldreBarnetilsynsatser: List<MaxbeløpBarnetilsynSats> =
         listOf(
             MaxbeløpBarnetilsynSats(
+                Månedsperiode(YearMonth.of(2025, 1), YearMonth.of(2025, 12)),
+                maxbeløp = mapOf(1 to 4790, 2 to 6248, 3 to 7081),
+            ),
+            MaxbeløpBarnetilsynSats(
                 Månedsperiode(YearMonth.of(2024, 1), YearMonth.of(2024, 12)),
                 maxbeløp = mapOf(1 to 4650, 2 to 6066, 3 to 6875),
             ),
@@ -46,12 +50,11 @@ object BeregningUtils {
                 maxbeløp = mapOf(1 to 3888, 2 to 5074, 3 to 5749),
             ),
         )
-
     val satserForBarnetilsyn: List<MaxbeløpBarnetilsynSats> =
         listOf(
             MaxbeløpBarnetilsynSats(
-                Månedsperiode(YearMonth.of(2025, 1), YearMonth.of(9999, 12)),
-                maxbeløp = mapOf(1 to 4790, 2 to 6248, 3 to 7081),
+                Månedsperiode(YearMonth.of(2026, 1), YearMonth.of(9999, 12)),
+                maxbeløp = mapOf(1 to 4895, 2 to 6385, 3 to 7237),
             ),
         ) +
             eldreBarnetilsynsatser
@@ -67,7 +70,6 @@ object BeregningUtils {
     ): BigDecimal {
         val utbetalingsbeløp = kalkulerUtbetalingsbeløp(periodeutgift)
         val maxSatsBeløp = satserForBarnetilsyn.hentSatsFor(antallBarn, årMåned).toBigDecimal()
-
         val minBeløp = minOf(utbetalingsbeløp, maxSatsBeløp)
 
         return maxOf(BigDecimal.ZERO, minBeløp)

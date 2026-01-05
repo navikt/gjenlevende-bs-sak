@@ -20,20 +20,20 @@ class BrevServiceTest {
 
     @Test
     fun `opprettBrev insert når brev ikke finnes`() {
-        val behandlingsId = UUID.randomUUID()
+        val behandlingId = UUID.randomUUID()
         val brevRequest = gyldigBrevRequest()
 
-        every { brevRepository.existsById(behandlingsId) } returns false
+        every { brevRepository.existsById(behandlingId) } returns false
         coEvery { brevRepository.insert(any()) } answers {
             firstArg<Brev>()
         }
 
-        brevService.opprettBrev(behandlingsId, brevRequest)
+        brevService.opprettBrev(behandlingId, brevRequest)
 
         verify(exactly = 1) {
             brevRepository.insert(
                 match {
-                    it.behandlingsId == behandlingsId &&
+                    it.behandlingId == behandlingId &&
                         it.brevJson == brevRequest
                 },
             )
@@ -46,20 +46,20 @@ class BrevServiceTest {
 
     @Test
     fun `opprettBrev update når brev finnes`() {
-        val behandlingsId = UUID.randomUUID()
+        val behandlingId = UUID.randomUUID()
         val brevRequest = gyldigBrevRequest()
 
-        every { brevRepository.existsById(behandlingsId) } returns true
+        every { brevRepository.existsById(behandlingId) } returns true
         coEvery { brevRepository.update(any()) } answers {
             firstArg<Brev>()
         }
 
-        brevService.opprettBrev(behandlingsId, brevRequest)
+        brevService.opprettBrev(behandlingId, brevRequest)
 
         verify(exactly = 1) {
             brevRepository.update(
                 match {
-                    it.behandlingsId == behandlingsId &&
+                    it.behandlingId == behandlingId &&
                         it.brevJson == brevRequest
                 },
             )
@@ -72,21 +72,21 @@ class BrevServiceTest {
 
     @Test
     fun `hentBrev returnerer brev når det finnes`() {
-        val behandlingsId = UUID.randomUUID()
-        val brev = Brev(behandlingsId = behandlingsId, brevJson = gyldigBrevRequest())
+        val behandlingId = UUID.randomUUID()
+        val brev = Brev(behandlingId = behandlingId, brevJson = gyldigBrevRequest())
 
-        every { brevRepository.findByIdOrNull(behandlingsId) } returns brev
-        val result = brevService.hentBrev(behandlingsId)
+        every { brevRepository.findByIdOrNull(behandlingId) } returns brev
+        val result = brevService.hentBrev(behandlingId)
 
         assertThat(result).isEqualTo(brev)
     }
 
     @Test
     fun `hentBrev returnerer null når brev ikke finnes`() {
-        val behandlingsId = UUID.randomUUID()
+        val behandlingId = UUID.randomUUID()
 
-        every { brevRepository.findByIdOrNull(behandlingsId) } returns null
-        val result = brevService.hentBrev(behandlingsId)
+        every { brevRepository.findByIdOrNull(behandlingId) } returns null
+        val result = brevService.hentBrev(behandlingId)
 
         assertThat(result).isNull()
     }

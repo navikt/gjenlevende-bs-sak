@@ -16,12 +16,12 @@ import java.util.UUID
 class BrevController(
     private val brevService: BrevService,
 ) {
-    @PostMapping("/{behandlingsId}")
+    @PostMapping("/{behandlingId}")
     fun opprettBrev(
-        @PathVariable behandlingsId: UUID,
+        @PathVariable behandlingId: UUID,
         @RequestBody brevRequest: BrevRequest,
     ): ResponseEntity<UUID> {
-        brevService.opprettBrev(behandlingsId, brevRequest)
-        return ResponseEntity.ok(behandlingsId)
+        brevService.opprettBrev(behandlingId, brevRequest)
+        return ResponseEntity.ok(behandlingId)
     }
 }

@@ -37,8 +37,8 @@ open class BrevControllerTest {
     private lateinit var objectMapper: ObjectMapper
 
     @Test
-    fun `opprettBrev returnerer 200 OK og behandlingsId`() {
-        val behandlingsId = UUID.randomUUID()
+    fun `opprettBrev returnerer 200 OK og behandlingId`() {
+        val behandlingId = UUID.randomUUID()
         val brevRequest =
             BrevRequest(
                 brevmal =
@@ -67,11 +67,11 @@ open class BrevControllerTest {
             )
 
         every {
-            brevService.opprettBrev(behandlingsId, brevRequest)
+            brevService.opprettBrev(behandlingId, brevRequest)
         } returns Unit
         val responseJson =
             mockMvc
-                .post("/api/brev/$behandlingsId") {
+                .post("/api/brev/$behandlingId") {
                     contentType = MediaType.APPLICATION_JSON
                     content = objectMapper.writeValueAsString(brevRequest)
                 }.andExpect {
@@ -81,19 +81,19 @@ open class BrevControllerTest {
                 .response
                 .contentAsString
         val response = objectMapper.readValue<UUID>(responseJson)
-        assertThat(response).isEqualTo(behandlingsId)
+        assertThat(response).isEqualTo(behandlingId)
 
         verify(exactly = 1) {
-            brevService.opprettBrev(behandlingsId, brevRequest)
+            brevService.opprettBrev(behandlingId, brevRequest)
         }
     }
 
     @Test
     fun `returnerer 400 ved ugyldig request body`() {
-        val behandlingsId = UUID.randomUUID()
+        val behandlingId = UUID.randomUUID()
 
         mockMvc
-            .post("/api/brev/$behandlingsId") {
+            .post("/api/brev/$behandlingId") {
                 contentType = MediaType.APPLICATION_JSON
                 content = "ugyldig request"
             }.andExpect {

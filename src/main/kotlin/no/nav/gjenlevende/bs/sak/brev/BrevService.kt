@@ -15,21 +15,21 @@ class BrevService(
 
     @Transactional
     fun opprettBrev(
-        behandlingsId: UUID,
+        behandlingId: UUID,
         brevRequest: BrevRequest,
     ) {
         val brev =
             Brev(
-                behandlingsId = behandlingsId,
+                behandlingId = behandlingId,
                 brevJson = brevRequest,
             )
 
-        if (brevRepository.existsById(behandlingsId)) {
+        if (brevRepository.existsById(behandlingId)) {
             brevRepository.update(brev)
         } else {
             brevRepository.insert(brev)
         }
     }
 
-    fun hentBrev(behandlingsId: UUID): Brev? = brevRepository.findByIdOrNull(behandlingsId)
+    fun hentBrev(behandlingId: UUID): Brev? = brevRepository.findByIdOrNull(behandlingId)
 }

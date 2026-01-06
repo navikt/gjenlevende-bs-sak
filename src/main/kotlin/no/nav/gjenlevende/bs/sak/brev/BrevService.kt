@@ -13,27 +13,25 @@ import java.util.UUID
 class BrevService(
     private val brevRepository: BrevRepository,
 ) {
-    fun lagBrevPDFtask(behandlingsId: UUID): Task = BrevTask.opprettTask(behandlingsId.toString())
+    fun lagBrevPDFtask(behandlingId: UUID): Task = BrevTask.opprettTask(behandlingId.toString())
 
     @Transactional
     fun opprettBrev(
-        behandlingsId: UUID,
+        behandlingId: UUID,
         brevRequest: BrevRequest,
-    ): Brev {
+    ) {
         val brev =
             Brev(
-                behandlingsId = behandlingsId,
+                behandlingId = behandlingId,
                 brevJson = brevRequest,
             )
 
-        if (brevRepository.existsById(behandlingsId)) {
+        if (brevRepository.existsById(behandlingId)) {
             brevRepository.update(brev)
         } else {
             brevRepository.insert(brev)
         }
-
-        return brev
     }
 
-    fun hentBrev(behandlingsId: UUID): Brev? = brevRepository.findByIdOrNull(behandlingsId)
+    fun hentBrev(behandlingId: UUID): Brev? = brevRepository.findByIdOrNull(behandlingId)
 }

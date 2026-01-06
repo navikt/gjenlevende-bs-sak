@@ -19,25 +19,25 @@ class BrevController(
     private val brevService: BrevService,
     private val taskService: TaskService,
 ) {
-    @PostMapping("/lag-task/{behandlingsId}")
+    @PostMapping("/lag-task/{behandlingId}")
     @Operation(
         summary = "Lager brev-task",
         description = "Lager task for å lage pdf brev",
     )
     fun lagBrevTask(
-        @PathVariable behandlingsId: UUID,
+        @PathVariable behandlingId: UUID,
     ): ResponseEntity<String> {
-        val task = brevService.lagBrevPDFtask(behandlingsId)
+        val task = brevService.lagBrevPDFtask(behandlingId)
         taskService.save(task)
         return ResponseEntity.ok("OK")
     }
 
-    @PostMapping("/{behandlingsId}")
+    @PostMapping("/{behandlingId}")
     fun opprettBrev(
-        @PathVariable behandlingsId: UUID,
+        @PathVariable behandlingId: UUID,
         @RequestBody brevRequest: BrevRequest,
     ): ResponseEntity<UUID> {
-        brevService.opprettBrev(behandlingsId, brevRequest)
-        return ResponseEntity.ok(behandlingsId)
+        brevService.opprettBrev(behandlingId, brevRequest)
+        return ResponseEntity.ok(behandlingId)
     }
 }

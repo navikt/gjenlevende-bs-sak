@@ -10,7 +10,7 @@ import java.util.UUID
 @Table("brev")
 data class Brev(
     @Id
-    val behandlingsId: UUID,
+    val behandlingId: UUID,
     val brevJson: BrevRequest,
     val brevPdf: ByteArray? = null,
     @Embedded(onEmpty = Embedded.OnEmpty.USE_EMPTY)

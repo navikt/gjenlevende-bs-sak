@@ -25,8 +25,8 @@ open class BrevTask(
     private val logger = LoggerFactory.getLogger(javaClass)
 
     override fun doTask(task: Task) {
-        val behandlingsId = UUID.fromString(task.payload)
-        val brev = brevService.hentBrev(behandlingsId)
+        val behandlingId = UUID.fromString(task.payload)
+        val brev = brevService.hentBrev(behandlingId)
         // TODO generer html, send til familiedokument og lagre respons i brevrepository
         logger.info("Gjennomfører BrevTask: Brev={}", brev)
     }

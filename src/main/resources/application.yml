@@ -104,7 +104,7 @@ gjenlevende-bs-infotrygd:
     audience: api://dev-fss.etterlatte.gjenlevende-bs-infotrygd/.default
 
 # FAMILIE DOKUMENT
-FAMILIE_DOKUMENT_URL: http://familie-dokument
+FAMILIE_DOKUMENT_URL: http://familie-dokument.teamfamilie
 
 # Familie-integrasjoner
 FAMILIE_INTEGRASJONER_URL: https://familie-integrasjoner.${DEPLOY_ENV}-fss-pub.nais.io

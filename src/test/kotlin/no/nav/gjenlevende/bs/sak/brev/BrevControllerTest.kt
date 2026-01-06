@@ -3,6 +3,7 @@ package no.nav.gjenlevende.bs.sak.brev
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.verify
+import no.nav.familie.prosessering.internal.TaskService
 import no.nav.gjenlevende.bs.sak.ApplicationLocal
 import no.nav.gjenlevende.bs.sak.brev.domain.BrevRequest
 import no.nav.gjenlevende.bs.sak.brev.domain.BrevmalDto
@@ -32,6 +33,9 @@ open class BrevControllerTest {
 
     @MockkBean
     private lateinit var brevService: BrevService
+
+    @MockkBean
+    private lateinit var taskService: TaskService
 
     @Autowired
     private lateinit var objectMapper: ObjectMapper

@@ -3,7 +3,6 @@ package no.nav.gjenlevende.bs.sak.brev
 import no.nav.familie.prosessering.domene.Task
 import no.nav.gjenlevende.bs.sak.brev.domain.BrevRequest
 import no.nav.gjenlevende.bs.sak.task.BrevTask
-import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -34,4 +33,15 @@ class BrevService(
     }
 
     fun hentBrev(behandlingId: UUID): Brev? = brevRepository.findByIdOrNull(behandlingId)
+
+    @Transactional
+    fun lagreBrevPdf(
+        behandlingId: UUID,
+        pdf: ByteArray,
+    ) {
+        val eksisterende =
+            brevRepository.findByIdOrNull(behandlingId)
+                ?: error("Fant ikke brev for behandlingId=$behandlingId ved lagring av PDF")
+        brevRepository.update(eksisterende.copy(brevPdf = pdf))
+    }
 }

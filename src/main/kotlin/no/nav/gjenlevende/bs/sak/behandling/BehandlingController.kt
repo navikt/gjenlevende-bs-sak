@@ -15,6 +15,10 @@ data class HentRequest(
     val behandlingId: UUID,
 )
 
+data class HentBehandlingerRequest(
+    val fagsakId: UUID,
+)
+
 @RestController
 @RequestMapping(path = ["/api/behandling"])
 class BehandlingController(
@@ -26,8 +30,22 @@ class BehandlingController(
     ): Ressurs<UUID> {
         val fagsakId = opprettRequest.fagsakId
 
+        if (behandlingService.finnesÅpenBehandling(opprettRequest.fagsakId)) {
+            throw IllegalStateException("Finnes åpen behandling")
+        }
+
         val behandling = behandlingService.opprettBehandling(fagsakId)
         return Ressurs.success(behandling.id)
+    }
+
+    @PostMapping("/hentBehandlinger")
+    fun hentBehandlinger(
+        @RequestBody hentBehandlingerRequest: HentBehandlingerRequest,
+    ): Ressurs<List<BehandlingDto>?> {
+        val fagsakId = hentBehandlingerRequest.fagsakId
+
+        val behandlinger = behandlingService.hentBehandlingerFraFagsak(fagsakId)
+        return Ressurs.success(behandlinger?.map { it.tilDto() })
     }
 
     @PostMapping("/hent")

@@ -8,4 +8,11 @@ import java.util.UUID
 @Repository
 interface BehandlingRepository :
     RepositoryInterface<Behandling, UUID>,
-    InsertUpdateRepository<Behandling>
+    InsertUpdateRepository<Behandling> {
+    fun findAllByFagsakId(fagsakId: UUID): List<Behandling>
+
+    fun existsByFagsakIdAndStatusIsNot(
+        fagsakId: UUID,
+        behandlingStatus: BehandlingStatus,
+    ): Boolean
+}

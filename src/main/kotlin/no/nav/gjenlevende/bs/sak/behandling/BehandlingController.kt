@@ -1,6 +1,5 @@
 package no.nav.gjenlevende.bs.sak.behandling
 
-import no.nav.familie.kontrakter.felles.Ressurs
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -28,7 +27,7 @@ class BehandlingController(
     @PostMapping("/opprett")
     fun opprettBehandling(
         @RequestBody opprettRequest: OpprettRequest,
-    ): Ressurs<UUID> {
+    ): ResponseEntity<UUID> {
         val fagsakId = opprettRequest.fagsakId
 
         if (behandlingService.finnesÅpenBehandling(opprettRequest.fagsakId)) {
@@ -36,7 +35,7 @@ class BehandlingController(
         }
 
         val behandling = behandlingService.opprettBehandling(fagsakId)
-        return Ressurs.success(behandling.id)
+        return ResponseEntity.ok(behandling.id)
     }
 
     @PostMapping("/hentBehandlinger")
@@ -52,10 +51,10 @@ class BehandlingController(
     @PostMapping("/hent")
     fun hentBehandling(
         @RequestBody hentRequest: HentRequest,
-    ): Ressurs<BehandlingDto?> {
+    ): ResponseEntity<BehandlingDto> {
         val behandlingId = hentRequest.behandlingId
 
         val behandling = behandlingService.hentBehandling(behandlingId)
-        return Ressurs.success(behandling?.tilDto())
+        return ResponseEntity.ok(behandling?.tilDto())
     }
 }

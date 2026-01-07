@@ -7,6 +7,7 @@ import no.nav.gjenlevende.bs.sak.fagsak.domain.tilFagsakMedPerson
 import no.nav.gjenlevende.bs.sak.fagsak.dto.FagsakDto
 import no.nav.gjenlevende.bs.sak.fagsak.dto.tilDto
 import no.nav.gjenlevende.bs.sak.infotrygd.dto.StønadType
+import no.nav.gjenlevende.bs.sak.tilgangskontroll.dto.TilgangService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -16,6 +17,7 @@ import java.util.UUID
 open class FagsakService(
     private val fagsakRepository: FagsakRepository,
     private val fagsakPersonService: FagsakPersonService,
+    private val tilgangService: TilgangService,
 ) {
     private val logger = LoggerFactory.getLogger(javaClass)
 
@@ -37,6 +39,18 @@ open class FagsakService(
         stønadstype: StønadType,
     ): Fagsak {
         val fagsakPerson = fagsakPersonService.hentEllerOpprettPerson(setOf(personIdent), personIdent)
+
+        return hentEllerOpprettFagsakForPerson(fagsakPerson, stønadstype)
+    }
+
+    @Transactional
+    open fun hentEllerOpprettFagsakMedTilgangValidering(
+        personident: String,
+        stønadstype: StønadType,
+    ): Fagsak {
+        tilgangService.validerTilgangForPerson(personident)
+
+        val fagsakPerson = fagsakPersonService.hentEllerOpprettPerson(personIdenter = setOf(personident), gjeldendePersonIdent = personident)
 
         return hentEllerOpprettFagsakForPerson(fagsakPerson, stønadstype)
     }

@@ -1,6 +1,6 @@
 package no.nav.gjenlevende.bs.sak.behandling
 
-import no.nav.familie.kontrakter.felles.Ressurs
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -15,6 +15,10 @@ data class HentRequest(
     val behandlingId: UUID,
 )
 
+data class HentBehandlingerRequest(
+    val fagsakId: UUID,
+)
+
 @RestController
 @RequestMapping(path = ["/api/behandling"])
 class BehandlingController(
@@ -23,20 +27,34 @@ class BehandlingController(
     @PostMapping("/opprett")
     fun opprettBehandling(
         @RequestBody opprettRequest: OpprettRequest,
-    ): Ressurs<UUID> {
+    ): ResponseEntity<UUID> {
         val fagsakId = opprettRequest.fagsakId
 
+        if (behandlingService.finnesÅpenBehandling(opprettRequest.fagsakId)) {
+            throw IllegalStateException("Finnes åpen behandling")
+        }
+
         val behandling = behandlingService.opprettBehandling(fagsakId)
-        return Ressurs.success(behandling.id)
+        return ResponseEntity.ok(behandling.id)
+    }
+
+    @PostMapping("/hentBehandlinger")
+    fun hentBehandlinger(
+        @RequestBody hentBehandlingerRequest: HentBehandlingerRequest,
+    ): ResponseEntity<List<BehandlingDto>> {
+        val fagsakId = hentBehandlingerRequest.fagsakId
+
+        val behandlinger = behandlingService.hentBehandlingerFraFagsak(fagsakId)
+        return ResponseEntity.ok(behandlinger?.map { it.tilDto() })
     }
 
     @PostMapping("/hent")
     fun hentBehandling(
         @RequestBody hentRequest: HentRequest,
-    ): Ressurs<BehandlingDto?> {
+    ): ResponseEntity<BehandlingDto> {
         val behandlingId = hentRequest.behandlingId
 
         val behandling = behandlingService.hentBehandling(behandlingId)
-        return Ressurs.success(behandling?.tilDto())
+        return ResponseEntity.ok(behandling?.tilDto())
     }
 }

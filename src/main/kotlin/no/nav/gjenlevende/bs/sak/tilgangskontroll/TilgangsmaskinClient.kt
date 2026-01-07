@@ -1,5 +1,6 @@
 package no.nav.gjenlevende.bs.sak.tilgangskontroll
 
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import no.nav.gjenlevende.bs.sak.felles.OAuth2RestOperationsFactory
 import no.nav.gjenlevende.bs.sak.texas.TexasClient
@@ -26,7 +27,10 @@ class TilgangsmaskinClient(
 ) {
     private val logger = LoggerFactory.getLogger(TilgangsmaskinClient::class.java)
     private val restTemplate: RestOperations = oauth2RestFactory.create(registrationId)
-    private val objectMapper = jacksonObjectMapper()
+    private val objectMapper =
+        jacksonObjectMapper().apply {
+            configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+        }
 
     fun sjekkTilgangEnkel(
         navIdent: String,
@@ -71,7 +75,7 @@ class TilgangsmaskinClient(
         }
     }
 
-    private fun parseFeilRespons(responseBody: String): TilgangsmaskinFeilRespons? = runCatching { objectMapper.readValue(responseBody, TilgangsmaskinFeilRespons::class.java) }.getOrNull()
+    private fun parseFeilRespons(responseBody: String): TilgangsmaskinFeilResponse? = runCatching { objectMapper.readValue(responseBody, TilgangsmaskinFeilResponse::class.java) }.getOrNull()
 
     fun sjekkAnsatt(navIdent: String): AnsattInfoResponse {
         val uri =

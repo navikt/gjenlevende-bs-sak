@@ -118,7 +118,7 @@ data class FamilieRelasjon(
     val relasjon: String,
 )
 
-data class TilgangsmaskinFeilRespons(
+data class TilgangsmaskinFeilResponse(
     val title: String? = null,
     val begrunnelse: String? = null,
 )

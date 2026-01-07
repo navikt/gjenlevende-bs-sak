@@ -30,6 +30,8 @@ open class FagsakController(
             when {
                 fagsakRequest.personident != null -> {
                     tilgangService.validerTilgangTilPersonMedBarn(fagsakRequest.personident)
+                    tilgangService.validerTilgangForPersonMotTilgangsmaskin(fagsakRequest.personident)
+
                     fagsakService.hentEllerOpprettFagsakMedBehandlinger(
                         fagsakRequest.personident,
                         fagsakRequest.stønadstype,

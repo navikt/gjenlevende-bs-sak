@@ -1,6 +1,7 @@
 package no.nav.gjenlevende.bs.sak.behandling
 
 import no.nav.familie.kontrakter.felles.Ressurs
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -41,11 +42,11 @@ class BehandlingController(
     @PostMapping("/hentBehandlinger")
     fun hentBehandlinger(
         @RequestBody hentBehandlingerRequest: HentBehandlingerRequest,
-    ): Ressurs<List<BehandlingDto>?> {
+    ): ResponseEntity<List<BehandlingDto>> {
         val fagsakId = hentBehandlingerRequest.fagsakId
 
         val behandlinger = behandlingService.hentBehandlingerFraFagsak(fagsakId)
-        return Ressurs.success(behandlinger?.map { it.tilDto() })
+        return ResponseEntity.ok(behandlinger?.map { it.tilDto() })
     }
 
     @PostMapping("/hent")

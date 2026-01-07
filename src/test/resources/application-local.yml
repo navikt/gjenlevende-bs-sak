@@ -59,6 +59,13 @@ FAMILIE_DOKUMENT_URL: http://localhost:8087
 PDL_URL: https://pdl-api.dev-fss-pub.nais.io
 PDL_SCOPE: api://dev-fss.pdl.pdl-api/.default
 
+# Tilgangsmaskin (Populasjonstilgangskontroll) - ekstern URL for lokal utvikling
+tilgangsmaskin:
+    url: ${TILGANGSMASKIN_URL:https://tilgangsmaskin.intern.dev.nav.no}
+    oauth:
+        registration-id: tilgangsmaskin-clientcredentials
+        scope: ${TILGANGSMASKIN_SCOPE:api://dev-gcp.tilgangsmaskin.populasjonstilgangskontroll/.default}
+
 # Database konfigurasjon
 DB_JDBC_URL: jdbc:tc:postgresql:17:///testdb
 

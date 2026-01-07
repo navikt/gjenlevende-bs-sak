@@ -130,7 +130,7 @@ class TilgangsmaskinClient(
                 )
             response.body ?: throw TilgangsmaskinException("Ingen respons fra tilgangsmaskinen (bulk)")
         } catch (e: Exception) {
-            logger.error("Feil ved bulk-sjekk av tilgang mot tilgangsmaskinen: ${e.message}")
+            logger.error("Feil ved bulk sjekk av tilgang mot tilgangsmaskinen: ${e.message}")
             throw TilgangsmaskinException("Feil ved bulk-tilgangssjekk: ${e.message}", e)
         }
     }

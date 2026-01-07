@@ -118,7 +118,6 @@ data class FamilieRelasjon(
     val relasjon: String,
 )
 
-@com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown = true)
 data class TilgangsmaskinFeilRespons(
     val title: String? = null,
     val begrunnelse: String? = null,

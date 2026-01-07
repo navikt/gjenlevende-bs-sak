@@ -40,7 +40,10 @@ open class FagsakController(
 
                 fagsakRequest.fagsakPersonId != null -> {
                     val personident = fagsakPersonService.hentAktivIdent(fagsakRequest.fagsakPersonId)
+
                     tilgangService.validerTilgangTilPersonMedBarn(personident)
+                    tilgangService.validerTilgangForPersonMotTilgangsmaskin(personident)
+
                     fagsakService.hentEllerOpprettFagsakMedFagsakPersonId(
                         fagsakRequest.fagsakPersonId,
                         fagsakRequest.stønadstype,

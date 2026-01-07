@@ -70,6 +70,7 @@ open class FagsakControllerTest {
         } returns forventetFagsak
 
         justRun { tilgangService.validerTilgangTilPersonMedBarn(any()) }
+        every { tilgangService.validerTilgangForPersonMotTilgangsmaskin(any()) } returns true
 
         val responseJson =
             mockMvc
@@ -119,6 +120,7 @@ open class FagsakControllerTest {
         every { fagsakPersonService.hentAktivIdent(any()) } returns personident
 
         justRun { tilgangService.validerTilgangTilPersonMedBarn(any()) }
+        every { tilgangService.validerTilgangForPersonMotTilgangsmaskin(any()) } returns true
 
         val responseJson =
             mockMvc
@@ -182,6 +184,7 @@ open class FagsakControllerTest {
 
         every { fagsakPersonService.hentAktivIdent(any()) } returns "12345678910"
         justRun { tilgangService.validerTilgangTilPersonMedBarn(any()) }
+        every { tilgangService.validerTilgangForPersonMotTilgangsmaskin(any()) } returns true
 
         mockMvc
             .post("/api/fagsak") {

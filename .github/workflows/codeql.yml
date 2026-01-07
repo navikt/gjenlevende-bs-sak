@@ -29,7 +29,7 @@ jobs:
                     cache: 'maven'
 
             -   name: Initialize CodeQL
-                uses: github/codeql-action/init@ea9e4e37992a54ee68a9571571f2c252b5b37a4a # ratchet:github/codeql-action/init@v3
+                uses: github/codeql-action/init@45c373516f557556c15d420e3f5e0aa3d64366bc # ratchet:github/codeql-action/init@v3
                 with:
                     languages: java-kotlin
                     build-mode: manual
@@ -45,6 +45,6 @@ jobs:
                       --batch-mode --errors
 
             -   name: Perform CodeQL Analysis
-                uses: github/codeql-action/analyze@ea9e4e37992a54ee68a9571571f2c252b5b37a4a # ratchet:github/codeql-action/analyze@v3
+                uses: github/codeql-action/analyze@45c373516f557556c15d420e3f5e0aa3d64366bc # ratchet:github/codeql-action/analyze@v3
                 with:
                     category: "/language:java-kotlin"

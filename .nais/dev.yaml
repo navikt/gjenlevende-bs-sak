@@ -6,7 +6,7 @@ metadata:
 
 spec:
     # Applikasjon konfigurasjon
-    image: {{ image }}
+    image: { { image } }
     port: 8080
     replicas:
         min: 2
@@ -52,6 +52,8 @@ spec:
                 -   application: gjenlevende-bs-sak-frontend-lokal
                 -   application: populasjonstilgangskontroll
                     namespace: tilgangsmaskin
+                -   application: familie-dokument
+                    namespace: teamfamilie
 
                     # Team Logs
                 -   application: logging

@@ -29,8 +29,7 @@ open class FagsakController(
         val fagsakDto =
             when {
                 fagsakRequest.personident != null -> {
-                    tilgangService.validerTilgangTilPersonMedBarn(fagsakRequest.personident)
-                    tilgangService.validerTilgangForPersonMotTilgangsmaskin(fagsakRequest.personident)
+                    tilgangService.validerTilgangTilPersonMedRelasjoner(fagsakRequest.personident)
 
                     fagsakService.hentEllerOpprettFagsakMedBehandlinger(
                         fagsakRequest.personident,
@@ -41,8 +40,7 @@ open class FagsakController(
                 fagsakRequest.fagsakPersonId != null -> {
                     val personident = fagsakPersonService.hentAktivIdent(fagsakRequest.fagsakPersonId)
 
-                    tilgangService.validerTilgangTilPersonMedBarn(personident)
-                    tilgangService.validerTilgangForPersonMotTilgangsmaskin(personident)
+                    tilgangService.validerTilgangTilPersonMedRelasjoner(personident)
 
                     fagsakService.hentEllerOpprettFagsakMedFagsakPersonId(
                         fagsakRequest.fagsakPersonId,

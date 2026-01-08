@@ -28,5 +28,14 @@ object SikkerhetContext {
         return result
     }
 
+    fun hentBrukerToken(): String {
+        val authentication = SecurityContextHolder.getContext().authentication
+
+        if (authentication is JwtAuthenticationToken) {
+            return authentication.token.tokenValue
+        }
+        error("Finner ikke brukertoken i security context")
+    }
+
     fun erMaskinTilMaskinToken(): Boolean = hentSaksbehandler() == SYSTEM_FORKORTELSE
 }

@@ -46,3 +46,25 @@ data class Navn(
 data class HentNavnRequest(
     val fagsakPersonId: UUID,
 )
+
+data class HentFamilieRelasjonerData(
+    val hentPerson: HentPersonMedRelasjoner?,
+)
+
+data class HentPersonMedRelasjoner(
+    val forelderBarnRelasjon: List<ForelderBarnRelasjon>,
+)
+
+data class ForelderBarnRelasjon(
+    val relatertPersonsIdent: String?, // TODO: Refaktorer
+    val relatertPersonsRolle: ForelderBarnRelasjonRolle,
+    val minRolleForPerson: ForelderBarnRelasjonRolle?,
+)
+
+// TODO: Trengs alle verdiene her?
+enum class ForelderBarnRelasjonRolle {
+    BARN,
+    FAR,
+    MEDMOR,
+    MOR,
+}

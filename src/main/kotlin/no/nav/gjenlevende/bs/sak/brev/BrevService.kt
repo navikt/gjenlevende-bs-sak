@@ -6,13 +6,20 @@ import no.nav.gjenlevende.bs.sak.task.BrevTask
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import tools.jackson.databind.ObjectMapper
 import java.util.UUID
 
 @Service
 class BrevService(
     private val brevRepository: BrevRepository,
+    private val objectMapper: ObjectMapper,
 ) {
-    fun lagBrevPDFtask(behandlingId: UUID): Task = BrevTask.opprettTask(behandlingId.toString())
+    fun lagBrevPDFtask(behandlingId: UUID): Task =
+        BrevTask.opprettTask(
+            objectMapper.writeValueAsString(
+                BrevTask.LagBrevPdfTaskData(behandlingId),
+            ),
+        )
 
     @Transactional
     fun opprettBrev(

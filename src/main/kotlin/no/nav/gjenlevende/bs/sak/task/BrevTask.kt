@@ -5,10 +5,11 @@ import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
 import no.nav.gjenlevende.bs.sak.brev.BrevService
 import no.nav.gjenlevende.bs.sak.brev.FamilieDokumentClient
-import no.nav.gjenlevende.bs.sak.brev.domain.BrevRequest
 import no.nav.gjenlevende.bs.sak.brev.lagHtml
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import tools.jackson.databind.ObjectMapper
+import java.time.LocalDateTime
 import java.util.UUID
 
 @Service
@@ -21,11 +22,13 @@ import java.util.UUID
 class BrevTask(
     val brevService: BrevService,
     private val familieDokumentClient: FamilieDokumentClient,
+    private val objectMapper: ObjectMapper,
 ) : AsyncTaskStep {
     private val logger = LoggerFactory.getLogger(javaClass)
 
     override fun doTask(task: Task) {
-        val behandlingId = UUID.fromString(task.payload)
+        val data = objectMapper.readValue(task.payload, LagBrevPdfTaskData::class.java)
+        val behandlingId = data.behandlingId
         val brev =
             brevService.hentBrev(behandlingId)
                 ?: error("Fant ikke brev for behandlingId=$behandlingId")
@@ -45,4 +48,9 @@ class BrevTask(
                 payload,
             )
     }
+
+    data class LagBrevPdfTaskData(
+        val behandlingId: UUID,
+        val unik: LocalDateTime = LocalDateTime.now(),
+    )
 }

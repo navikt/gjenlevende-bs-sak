@@ -1,5 +1,6 @@
 package no.nav.gjenlevende.bs.sak.behandling
 
+import no.nav.gjenlevende.bs.sak.infrastruktur.exception.Feil
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -31,7 +32,7 @@ class BehandlingController(
         val fagsakId = opprettRequest.fagsakId
 
         if (behandlingService.finnesÅpenBehandling(opprettRequest.fagsakId)) {
-            throw IllegalStateException("Finnes åpen behandling")
+            throw Feil("Finnes åpen behandling", "Finnes åpen behandling")
         }
 
         val behandling = behandlingService.opprettBehandling(fagsakId)

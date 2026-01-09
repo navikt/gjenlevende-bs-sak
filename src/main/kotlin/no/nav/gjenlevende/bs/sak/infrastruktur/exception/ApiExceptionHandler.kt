@@ -13,20 +13,12 @@ import org.springframework.web.servlet.resource.NoResourceFoundException
 class ApiExceptionHandler {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    @ExceptionHandler(ApiFeil::class)
-    fun handleApiFeil(feil: ApiFeil): ResponseEntity<FeilResponse> {
-        logger.warn("ApiFeil: ${feil.feilmelding}", feil)
-        return ResponseEntity
-            .status(feil.httpStatus)
-            .body(FeilResponse(feil.feilmelding, feil.httpStatus.value()))
-    }
-
     @ExceptionHandler(Feil::class)
     fun handleFeil(feil: Feil): ResponseEntity<FeilResponse> {
-        logger.warn("Feil: ${feil.message}", feil)
+        logger.warn("Feil: ${feil.melding}", feil)
         return ResponseEntity
             .status(feil.httpStatus)
-            .body(FeilResponse(feil.frontendFeilmelding ?: feil.message ?: "Ukjent feil", feil.httpStatus.value()))
+            .body(FeilResponse(melding = feil.melding, status = feil.httpStatus.value()))
     }
 
     @ExceptionHandler(IllegalArgumentException::class)
@@ -34,7 +26,7 @@ class ApiExceptionHandler {
         logger.warn("IllegalArgumentException: ${e.message}", e)
         return ResponseEntity
             .status(HttpStatus.BAD_REQUEST)
-            .body(FeilResponse(e.message ?: "Ugyldig request", HttpStatus.BAD_REQUEST.value()))
+            .body(FeilResponse(melding = e.message ?: "Ugyldig request", status = HttpStatus.BAD_REQUEST.value()))
     }
 
     @ExceptionHandler(WebClientResponseException::class)
@@ -49,7 +41,7 @@ class ApiExceptionHandler {
         logger.warn("WebClientResponseException: ${e.statusCode} - $feilmelding")
         return ResponseEntity
             .status(e.statusCode)
-            .body(FeilResponse(feilmelding, e.statusCode.value()))
+            .body(FeilResponse(melding = feilmelding, status = e.statusCode.value()))
     }
 
     @ExceptionHandler(ManglerTilgang::class)

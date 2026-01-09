@@ -25,8 +25,7 @@ class SøkControllerTest {
                 søkController.validerErPersonident(ugyldigPersonident)
             }
 
-        assertEquals("Personident må være 11 siffer, var 3", exception.message)
-        assertEquals("Personident må være 11 siffer", exception.frontendFeilmelding)
+        assertEquals("Personident må være 11 siffer", exception.message)
         assertEquals(HttpStatus.BAD_REQUEST, exception.httpStatus)
     }
 
@@ -40,7 +39,6 @@ class SøkControllerTest {
             }
 
         assertEquals("Personident kan kun inneholde tall", exception.message)
-        assertEquals("Personident kan kun inneholde tall", exception.frontendFeilmelding)
         assertEquals(HttpStatus.BAD_REQUEST, exception.httpStatus)
     }
 }

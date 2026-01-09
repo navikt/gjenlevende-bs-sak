@@ -30,7 +30,7 @@ class SøkControllerTest {
     }
 
     @Test
-    fun `validerErPersonIdent med ident som inneholder bokstaver skal gi feilmeding`() {
+    fun `validerErPersonident med ident som inneholder bokstaver skal gi feilmeding`() {
         val ugyldigPersonident = "123456789AB"
 
         val exception =

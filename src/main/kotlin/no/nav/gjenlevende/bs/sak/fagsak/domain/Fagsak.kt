@@ -11,12 +11,12 @@ import java.util.UUID
 data class Fagsak(
     val id: UUID,
     val fagsakPersonId: UUID,
-    val personIdenter: Set<PersonIdent>,
+    val personidenter: Set<Personident>,
     val eksternId: Long,
     val stønadstype: StønadType,
     val sporbar: Sporbar,
 ) {
-    fun hentAktivIdent(): String = personIdenter.maxByOrNull { it.sporbar.endret.endretTid }?.ident ?: error("Fant ingen ident på fagsak $id")
+    fun hentAktivIdent(): String = personidenter.maxByOrNull { it.sporbar.endret.endretTid }?.ident ?: error("Fant ingen ident på fagsak $id")
 }
 
 @Table("fagsak")
@@ -31,11 +31,11 @@ data class FagsakDomain(
     val sporbar: Sporbar = Sporbar(),
 )
 
-fun FagsakDomain.tilFagsakMedPerson(personIdenter: Set<PersonIdent>): Fagsak =
+fun FagsakDomain.tilFagsakMedPerson(personidenter: Set<Personident>): Fagsak =
     Fagsak(
         id = id,
         fagsakPersonId = fagsakPersonId,
-        personIdenter = personIdenter,
+        personidenter = personidenter,
         eksternId = eksternId,
         stønadstype = stønadstype,
         sporbar = sporbar,

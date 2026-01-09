@@ -13,12 +13,12 @@ data class FagsakPerson(
     @Id
     val id: UUID = UUID.randomUUID(),
     @MappedCollection(idColumn = "fagsak_person_id")
-    val identer: Set<PersonIdent>,
+    val identer: Set<Personident>,
     val opprettetAv: String = SikkerhetContext.hentSaksbehandlerEllerSystembruker(),
     val opprettetTid: LocalDateTime = SporbarUtils.now(),
 )
 
-data class PersonIdent(
+data class Personident(
     @Id
     val ident: String,
     @Embedded(onEmpty = Embedded.OnEmpty.USE_EMPTY)

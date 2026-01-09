@@ -21,9 +21,9 @@ open class FagsakService(
 
     @Transactional
     fun hentEllerOpprettFagsakMedBehandlinger(
-        personIdent: String,
+        personident: String,
         stønadstype: StønadType,
-    ): FagsakDto = hentEllerOpprettFagsak(personIdent, stønadstype).tilDto()
+    ): FagsakDto = hentEllerOpprettFagsak(personident, stønadstype).tilDto()
 
     @Transactional
     fun hentEllerOpprettFagsakMedFagsakPersonId(
@@ -33,10 +33,10 @@ open class FagsakService(
 
     @Transactional
     open fun hentEllerOpprettFagsak(
-        personIdent: String,
+        personident: String,
         stønadstype: StønadType,
     ): Fagsak {
-        val fagsakPerson = fagsakPersonService.hentEllerOpprettPerson(setOf(personIdent), personIdent)
+        val fagsakPerson = fagsakPersonService.hentEllerOpprettPerson(setOf(personident), personident)
 
         return hentEllerOpprettFagsakForPerson(fagsakPerson, stønadstype)
     }

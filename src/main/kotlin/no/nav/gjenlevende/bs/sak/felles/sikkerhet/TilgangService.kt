@@ -11,9 +11,9 @@ class TilgangService(
     private val familieIntegrasjonerClient: FamilieIntegrasjonerClient,
 ) {
     fun validerTilgangTilPersonMedBarn(
-        personIdent: String,
+        personident: String,
     ) {
-        val tilgang = familieIntegrasjonerClient.sjekkTilgangTilPersonMedRelasjoner(personIdent)
+        val tilgang = familieIntegrasjonerClient.sjekkTilgangTilPersonMedRelasjoner(personident)
         if (!tilgang.harTilgang) {
             throw ManglerTilgang(
                 melding =

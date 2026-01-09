@@ -44,7 +44,10 @@ fun lagHtml(request: BrevRequest): String {
         <body>
           <header>
             <h1>$tittel</h1>
-            <div class="meta">\n<strong>Navn:</strong> $navn<br/>\n<strong>Fødselsnummer:</strong> $fnr\n</div>
+                <div class="meta"><strong>Navn:</strong> $navn
+                <br/>
+                <strong>Fødselsnummer:</strong> $fnr
+            </div>
           </header>
           <main>
             $fritekst

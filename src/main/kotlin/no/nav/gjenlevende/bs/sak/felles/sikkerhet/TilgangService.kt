@@ -18,7 +18,9 @@ class TilgangService(
     fun validerTilgangTilPersonMedRelasjoner(personident: String) {
         val brukerToken = SikkerhetContext.hentBrukerToken()
         val barnPersonidenter = pdlService.hentBarnPersonidenter(personident)
-        val allePersonidenter = listOf(personident) + barnPersonidenter
+        val foreldreAvBarn = barnPersonidenter.flatMap { pdlService.hentForeldrePersonidenter(it) }
+
+        val allePersonidenter = (listOf(personident) + barnPersonidenter + foreldreAvBarn).distinct()
 
         logger.info("Validerer tilgang til ${allePersonidenter.size} person(er) via tilgangsmaskin")
 
@@ -32,16 +34,13 @@ class TilgangService(
 
         if (avvistePersoner.isNotEmpty()) {
             val avvisningsdetaljer = avvistePersoner.map { it.tilAvvisningsdetaljer() }
-            logger.warn(
-                "Tilgang avvist for saksbehandler ${respons.navIdent}. " +
-                    "Avviste: $avvisningsdetaljer",
-            )
+            logger.warn("Tilgang avvist for saksbehandler ${respons.navIdent} årsak: $avvisningsdetaljer")
 
-            val forsteBegrunnelse = avvisningsdetaljer.firstOrNull()?.begrunnelse ?: "Ukjent årsak"
+            val begrunnelse = avvisningsdetaljer.firstOrNull()?.begrunnelse ?: "Ukjent årsak"
 
             throw ManglerTilgang(
-                melding = "Saksbehandler ${respons.navIdent} har ikke tilgang til person eller dets barn",
-                frontendFeilmelding = "Mangler tilgang til opplysningene. Årsak: $forsteBegrunnelse",
+                melding = "Saksbehandler ${respons.navIdent} har ikke tilgang til person eller relaterte personer",
+                frontendFeilmelding = "Mangler tilgang til opplysningene. Årsak: $begrunnelse",
             )
         }
 

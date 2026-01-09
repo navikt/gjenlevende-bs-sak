@@ -18,7 +18,7 @@ class ApiExceptionHandler {
         logger.warn("Feil: ${feil.melding}", feil)
         return ResponseEntity
             .status(feil.httpStatus)
-            .body(FeilResponse(feil.melding, feil.httpStatus.value()))
+            .body(FeilResponse(melding = feil.melding, status = feil.httpStatus.value()))
     }
 
     @ExceptionHandler(IllegalArgumentException::class)
@@ -26,7 +26,7 @@ class ApiExceptionHandler {
         logger.warn("IllegalArgumentException: ${e.message}", e)
         return ResponseEntity
             .status(HttpStatus.BAD_REQUEST)
-            .body(FeilResponse(e.message ?: "Ugyldig request", HttpStatus.BAD_REQUEST.value()))
+            .body(FeilResponse(melding = e.message ?: "Ugyldig request", status = HttpStatus.BAD_REQUEST.value()))
     }
 
     @ExceptionHandler(WebClientResponseException::class)
@@ -41,7 +41,7 @@ class ApiExceptionHandler {
         logger.warn("WebClientResponseException: ${e.statusCode} - $feilmelding")
         return ResponseEntity
             .status(e.statusCode)
-            .body(FeilResponse(feilmelding, e.statusCode.value()))
+            .body(FeilResponse(melding = feilmelding, status = e.statusCode.value()))
     }
 
     @ExceptionHandler(ManglerTilgang::class)

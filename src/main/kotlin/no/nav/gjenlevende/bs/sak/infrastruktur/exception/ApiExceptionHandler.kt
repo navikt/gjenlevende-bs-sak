@@ -13,20 +13,12 @@ import org.springframework.web.servlet.resource.NoResourceFoundException
 class ApiExceptionHandler {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    @ExceptionHandler(ApiFeil::class)
-    fun handleApiFeil(feil: ApiFeil): ResponseEntity<FeilResponse> {
-        logger.warn("ApiFeil: ${feil.feilmelding}", feil)
-        return ResponseEntity
-            .status(feil.httpStatus)
-            .body(FeilResponse(feil.feilmelding, feil.httpStatus.value()))
-    }
-
     @ExceptionHandler(Feil::class)
     fun handleFeil(feil: Feil): ResponseEntity<FeilResponse> {
-        logger.warn("Feil: ${feil.message}", feil)
+        logger.warn("Feil: ${feil.melding}", feil)
         return ResponseEntity
             .status(feil.httpStatus)
-            .body(FeilResponse(feil.frontendFeilmelding ?: feil.message ?: "Ukjent feil", feil.httpStatus.value()))
+            .body(FeilResponse( feil.melding, feil.httpStatus.value()))
     }
 
     @ExceptionHandler(IllegalArgumentException::class)

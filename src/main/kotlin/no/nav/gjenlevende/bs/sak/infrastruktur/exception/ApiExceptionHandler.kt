@@ -18,7 +18,7 @@ class ApiExceptionHandler {
         logger.warn("Feil: ${feil.melding}", feil)
         return ResponseEntity
             .status(feil.httpStatus)
-            .body(FeilResponse( feil.melding, feil.httpStatus.value()))
+            .body(FeilResponse(feil.melding, feil.httpStatus.value()))
     }
 
     @ExceptionHandler(IllegalArgumentException::class)

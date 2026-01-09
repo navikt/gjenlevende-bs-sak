@@ -1,7 +1,6 @@
 package no.nav.gjenlevende.bs.sak.brev
 
 import io.mockk.coEvery
-import io.mockk.coJustRun
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -11,12 +10,14 @@ import no.nav.gjenlevende.bs.sak.brev.domain.InformasjonOmBrukerDto
 import no.nav.gjenlevende.bs.sak.brev.domain.TekstbolkDto
 import org.assertj.core.api.Assertions.assertThat
 import org.springframework.data.repository.findByIdOrNull
+import tools.jackson.databind.ObjectMapper
 import java.util.UUID
 import kotlin.test.Test
 
 class BrevServiceTest {
     private val brevRepository = mockk<BrevRepository>(relaxed = true)
-    private val brevService = BrevService(brevRepository)
+    private val objectMapper = mockk<ObjectMapper>()
+    private val brevService = BrevService(brevRepository, objectMapper)
 
     @Test
     fun `opprettBrev insert når brev ikke finnes`() {

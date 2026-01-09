@@ -32,7 +32,7 @@ class BehandlingController(
         val fagsakId = opprettRequest.fagsakId
 
         if (behandlingService.finnesÅpenBehandling(opprettRequest.fagsakId)) {
-            throw Feil("Finnes åpen behandling", "Finnes åpen behandling")
+            throw Feil("Finnes åpen behandling")
         }
 
         val behandling = behandlingService.opprettBehandling(fagsakId)

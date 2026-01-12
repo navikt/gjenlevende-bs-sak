@@ -55,13 +55,13 @@ data class HentPersonMedRelasjoner(
     val forelderBarnRelasjon: List<ForelderBarnRelasjon>,
 )
 
+// TODO: Gjør denne bedre, litt vanskelig å forstå.
 data class ForelderBarnRelasjon(
-    val relatertPersonsIdent: String?, // TODO: Refaktorer
+    val relatertPersonsIdent: String?,
     val relatertPersonsRolle: ForelderBarnRelasjonRolle,
     val minRolleForPerson: ForelderBarnRelasjonRolle?,
 )
 
-// TODO: Trengs alle verdiene her?
 enum class ForelderBarnRelasjonRolle {
     BARN,
     FAR,

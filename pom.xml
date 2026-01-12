@@ -161,6 +161,8 @@
             <artifactId>prosessering-core</artifactId>
             <version>${prosessering.version}</version>
         </dependency>
+
+        <!--TODO: Fjern denne, denne trengs ikke lenger.-->
         <dependency>
             <groupId>no.nav.familie.kontrakter</groupId>
             <artifactId>enslig-forsorger</artifactId>

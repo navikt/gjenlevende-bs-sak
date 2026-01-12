@@ -34,8 +34,8 @@ open class FagsakController(
                     tilgangService.validerTilgangTilPersonMedRelasjoner(fagsakRequest.personident)
 
                     fagsakService.hentEllerOpprettFagsakMedBehandlinger(
-                        fagsakRequest.personident,
-                        fagsakRequest.stønadstype,
+                        personident = fagsakRequest.personident,
+                        stønadstype = fagsakRequest.stønadstype,
                     )
                 }
 
@@ -45,8 +45,8 @@ open class FagsakController(
                     tilgangService.validerTilgangTilPersonMedRelasjoner(personident)
 
                     fagsakService.hentEllerOpprettFagsakMedFagsakPersonId(
-                        fagsakRequest.fagsakPersonId,
-                        fagsakRequest.stønadstype,
+                        fagsakPersonId = fagsakRequest.fagsakPersonId,
+                        stønadstype = fagsakRequest.stønadstype,
                     )
                 }
 

@@ -4,7 +4,6 @@ import no.nav.gjenlevende.bs.sak.fagsak.domain.Fagsak
 import no.nav.gjenlevende.bs.sak.fagsak.domain.FagsakPerson
 import no.nav.gjenlevende.bs.sak.fagsak.dto.FagsakDto
 import no.nav.gjenlevende.bs.sak.fagsak.dto.tilDto
-import no.nav.gjenlevende.bs.sak.felles.sikkerhet.TilgangService
 import no.nav.gjenlevende.bs.sak.infotrygd.dto.StønadType
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -15,7 +14,6 @@ import java.util.UUID
 open class FagsakService(
     private val fagsakRepository: FagsakRepository,
     private val fagsakPersonService: FagsakPersonService,
-    private val tilgangService: TilgangService,
 ) {
     private val logger = LoggerFactory.getLogger(javaClass)
 

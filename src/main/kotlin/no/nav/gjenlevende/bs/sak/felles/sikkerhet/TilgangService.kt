@@ -30,6 +30,7 @@ class TilgangService(
                 personidenter = allePersonidenter,
             )
 
+        // TODO: Bruk harTilgang
         val avvistePersoner = respons.resultater.filter { it.status != 204 }
 
         if (avvistePersoner.isNotEmpty()) {
@@ -43,8 +44,6 @@ class TilgangService(
                 frontendFeilmelding = "Mangler tilgang til opplysningene. Årsak: $begrunnelse",
             )
         }
-
-        logger.info("Tilgang OK for saksbehandler ${respons.navIdent} til ${allePersonidenter.size} person(er)")
     }
 
     private fun TilgangsResultat.tilAvvisningsdetaljer(): Avvisningsdetaljer {

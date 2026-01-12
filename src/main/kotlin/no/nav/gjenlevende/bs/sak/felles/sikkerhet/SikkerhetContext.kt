@@ -34,6 +34,7 @@ object SikkerhetContext {
         if (authentication is JwtAuthenticationToken) {
             return authentication.token.tokenValue
         }
+
         error("Finner ikke brukertoken i security context")
     }
 

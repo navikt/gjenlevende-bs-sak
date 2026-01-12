@@ -16,7 +16,6 @@ data class Fagsak(
     val eksternId: Long = 0,
     @Column("stonadstype")
     val stønadstype: StønadType,
-    // TODO: Trengs denne, skal ikke dette være på handlinger/metoder?
     @Embedded(onEmpty = Embedded.OnEmpty.USE_EMPTY)
     val sporbar: Sporbar = Sporbar(),
 )

@@ -12,7 +12,7 @@ fun lagHtml(request: BrevRequest): String {
 
     val tittel = esc(request.brevmal.tittel)
     val navn = esc(request.brevmal.informasjonOmBruker.navn)
-    val fnr = esc(request.brevmal.informasjonOmBruker.fnr)
+    val personident = esc(request.brevmal.informasjonOmBruker.fnr)
     val fritekst =
         request.fritekstbolker.joinToString(separator = "") { bolk ->
             val under = bolk.underoverskrift?.let { "<h2>${esc(it)}</h2>" } ?: ""
@@ -46,7 +46,7 @@ fun lagHtml(request: BrevRequest): String {
             <h1>$tittel</h1>
                 <div class="meta"><strong>Navn:</strong> $navn
                 <br/>
-                <strong>Fødselsnummer:</strong> $fnr
+                <strong>Fødselsnummer:</strong> $personident
             </div>
           </header>
           <main>

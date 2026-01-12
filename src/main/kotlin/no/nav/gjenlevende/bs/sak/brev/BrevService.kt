@@ -14,7 +14,7 @@ class BrevService(
     private val brevRepository: BrevRepository,
     private val objectMapper: ObjectMapper,
 ) {
-    fun lagBrevPDFtask(behandlingId: UUID): Task =
+    fun lagBrevPdfTask(behandlingId: UUID): Task =
         BrevTask.opprettTask(
             objectMapper.writeValueAsString(
                 BrevTask.LagBrevPdfTaskData(behandlingId),
@@ -42,13 +42,14 @@ class BrevService(
     fun hentBrev(behandlingId: UUID): Brev? = brevRepository.findByIdOrNull(behandlingId)
 
     @Transactional
-    fun lagreBrevPdf(
+    fun oppdatereBrevPdf(
         behandlingId: UUID,
         pdf: ByteArray,
     ) {
-        val eksisterende =
+        val eksisterendeBrev =
             brevRepository.findByIdOrNull(behandlingId)
                 ?: error("Fant ikke brev for behandlingId=$behandlingId ved lagring av PDF")
-        brevRepository.update(eksisterende.copy(brevPdf = pdf))
+        val oppdatertBrevPdf = eksisterendeBrev.copy(brevPdf = pdf)
+        brevRepository.update(oppdatertBrevPdf)
     }
 }

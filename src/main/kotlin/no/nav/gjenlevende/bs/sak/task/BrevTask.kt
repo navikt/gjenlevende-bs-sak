@@ -34,9 +34,9 @@ class BrevTask(
                 ?: error("Fant ikke brev for behandlingId=$behandlingId")
         val html = lagHtml(brev.brevJson)
         val pdf = familieDokumentClient.genererPdfFraHtml(html)
-        brevService.lagreBrevPdf(behandlingId, pdf)
+        brevService.oppdatereBrevPdf(behandlingId, pdf)
 
-        logger.info("Gjennomførte BrevTask: behandlingId={} - PDF generert og lagret ({} bytes)", behandlingId, pdf.size)
+        logger.info("Gjennomført BrevTask: behandlingId={}", behandlingId)
     }
 
     companion object {

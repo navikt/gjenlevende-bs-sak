@@ -1,9 +1,7 @@
 package no.nav.gjenlevende.bs.sak.fagsak
 
 import no.nav.gjenlevende.bs.sak.fagsak.domain.Fagsak
-import no.nav.gjenlevende.bs.sak.fagsak.domain.FagsakDomain
 import no.nav.gjenlevende.bs.sak.fagsak.domain.FagsakPerson
-import no.nav.gjenlevende.bs.sak.fagsak.domain.tilFagsakMedPerson
 import no.nav.gjenlevende.bs.sak.fagsak.dto.FagsakDto
 import no.nav.gjenlevende.bs.sak.fagsak.dto.tilDto
 import no.nav.gjenlevende.bs.sak.infotrygd.dto.StønadType
@@ -59,16 +57,15 @@ open class FagsakService(
     ): Fagsak {
         logger.info("FagsakPerson: $fagsakPerson")
 
-        val fagsakDomain =
-            hentFagsakForPerson(fagsakPerson, stønadstype) ?: opprettFagsak(fagsakPerson, stønadstype)
+        val fagsak = hentFagsakForPerson(fagsakPerson = fagsakPerson, stønadstype = stønadstype) ?: opprettFagsak(fagsakPerson = fagsakPerson, `stønadstype` = stønadstype)
 
-        return fagsakDomain.tilFagsakMedPerson(fagsakPerson.identer)
+        return fagsak
     }
 
     private fun hentFagsakForPerson(
         fagsakPerson: FagsakPerson,
         stønadstype: StønadType,
-    ): FagsakDomain? =
+    ): Fagsak? =
         fagsakRepository.findByFagsakPersonIdAndStønadstype(
             fagsakPerson.id,
             stønadstype,
@@ -77,9 +74,9 @@ open class FagsakService(
     private fun opprettFagsak(
         fagsakPerson: FagsakPerson,
         stønadstype: StønadType,
-    ): FagsakDomain =
+    ): Fagsak =
         fagsakRepository.insert(
-            FagsakDomain(
+            Fagsak(
                 fagsakPersonId = fagsakPerson.id,
                 stønadstype = stønadstype,
             ),

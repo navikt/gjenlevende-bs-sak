@@ -16,7 +16,7 @@ fun Fagsak.tilDto(): FagsakDto =
     FagsakDto(
         id = this.id,
         fagsakPersonId = this.fagsakPersonId,
-        personident = this.hentAktivIdent(),
+        personident = "12345", // TODO: Dette skal ikke være slik
         stønadstype = this.stønadstype,
         eksternId = this.eksternId,
     )

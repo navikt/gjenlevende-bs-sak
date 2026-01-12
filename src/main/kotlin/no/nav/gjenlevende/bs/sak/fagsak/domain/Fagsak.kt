@@ -8,18 +8,27 @@ import org.springframework.data.relational.core.mapping.Embedded
 import org.springframework.data.relational.core.mapping.Table
 import java.util.UUID
 
+@Table("fagsak")
 data class Fagsak(
-    val id: UUID,
+    @Id
+    val id: UUID = UUID.randomUUID(),
+
     val fagsakPersonId: UUID,
-    val personidenter: Set<Personident>,
-    val eksternId: Long,
+    val eksternId: Long = 0,
+
+    @Column("stonadstype")
     val stønadstype: StønadType,
-    val sporbar: Sporbar,
+
+    // TODO: Trengs denne, skal ikke dette være på handlinger/metoder?
+    @Embedded(onEmpty = Embedded.OnEmpty.USE_EMPTY)
+    val sporbar: Sporbar = Sporbar(),
 ) {
+/*
     fun hentAktivIdent(): String = personidenter.maxByOrNull { it.sporbar.endret.endretTid }?.ident ?: error("Fant ingen ident på fagsak $id")
+*/
 }
 
-@Table("fagsak")
+/*@Table("fagsak")
 data class FagsakDomain(
     @Id
     val id: UUID = UUID.randomUUID(),
@@ -29,9 +38,9 @@ data class FagsakDomain(
     val stønadstype: StønadType,
     @Embedded(onEmpty = Embedded.OnEmpty.USE_EMPTY)
     val sporbar: Sporbar = Sporbar(),
-)
+)*/
 
-fun FagsakDomain.tilFagsakMedPerson(personidenter: Set<Personident>): Fagsak =
+/*fun FagsakDomain.tilFagsakMedPerson(personidenter: Set<Personident>): Fagsak =
     Fagsak(
         id = id,
         fagsakPersonId = fagsakPersonId,
@@ -39,4 +48,4 @@ fun FagsakDomain.tilFagsakMedPerson(personidenter: Set<Personident>): Fagsak =
         eksternId = eksternId,
         stønadstype = stønadstype,
         sporbar = sporbar,
-    )
+    )*/

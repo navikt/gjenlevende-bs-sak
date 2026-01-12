@@ -10,6 +10,7 @@ data class BehandlingDto(
     val sistEndret: LocalDateTime,
     val opprettet: LocalDateTime,
     val opprettetAv: String,
+    val resultat: BehandlingResultat,
 )
 
 fun Behandling.tilDto(): BehandlingDto =
@@ -20,4 +21,5 @@ fun Behandling.tilDto(): BehandlingDto =
         sistEndret = this.sporbar.endret.endretTid,
         opprettet = this.sporbar.opprettetTid,
         opprettetAv = this.sporbar.opprettetAv,
+        resultat = this.resultat,
     )

@@ -8,19 +8,8 @@ import org.springframework.data.relational.core.mapping.Embedded
 import org.springframework.data.relational.core.mapping.Table
 import java.util.UUID
 
-data class Fagsak(
-    val id: UUID,
-    val fagsakPersonId: UUID,
-    val personIdenter: Set<PersonIdent>,
-    val eksternId: Long,
-    val stønadstype: StønadType,
-    val sporbar: Sporbar,
-) {
-    fun hentAktivIdent(): String = personIdenter.maxByOrNull { it.sporbar.endret.endretTid }?.ident ?: error("Fant ingen ident på fagsak $id")
-}
-
 @Table("fagsak")
-data class FagsakDomain(
+data class Fagsak(
     @Id
     val id: UUID = UUID.randomUUID(),
     val fagsakPersonId: UUID,
@@ -30,13 +19,3 @@ data class FagsakDomain(
     @Embedded(onEmpty = Embedded.OnEmpty.USE_EMPTY)
     val sporbar: Sporbar = Sporbar(),
 )
-
-fun FagsakDomain.tilFagsakMedPerson(personIdenter: Set<PersonIdent>): Fagsak =
-    Fagsak(
-        id = id,
-        fagsakPersonId = fagsakPersonId,
-        personIdenter = personIdenter,
-        eksternId = eksternId,
-        stønadstype = stønadstype,
-        sporbar = sporbar,
-    )

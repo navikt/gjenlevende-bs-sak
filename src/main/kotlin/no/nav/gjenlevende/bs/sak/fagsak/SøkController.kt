@@ -44,8 +44,7 @@ class SøkController(
 
             else -> {
                 throw Feil(
-                    message = "Må oppgi enten personident eller fagsakPersonId",
-                    frontendFeilmelding = "Må oppgi enten personident eller fagsakPersonId",
+                    melding = "Må oppgi enten personident eller fagsakPersonId",
                     httpStatus = HttpStatus.BAD_REQUEST,
                 )
             }
@@ -55,24 +54,21 @@ class SøkController(
     internal fun validerErPersonident(personident: String) {
         if (personident.isBlank()) {
             throw Feil(
-                message = "Personident kan ikke være tom",
-                frontendFeilmelding = "Personident må fylles ut",
+                melding = "Personident kan ikke være tom",
                 httpStatus = HttpStatus.BAD_REQUEST,
             )
         }
 
         if (personident.length != LENGDE_PERSONIDENT) {
             throw Feil(
-                message = "Personident må være $LENGDE_PERSONIDENT siffer, var ${personident.length}",
-                frontendFeilmelding = "Personident må være $LENGDE_PERSONIDENT siffer",
+                melding = "Personident må være $LENGDE_PERSONIDENT siffer",
                 httpStatus = HttpStatus.BAD_REQUEST,
             )
         }
 
         if (!personident.all { it.isDigit() }) {
             throw Feil(
-                message = "Personident kan kun inneholde tall",
-                frontendFeilmelding = "Personident kan kun inneholde tall",
+                melding = "Personident kan kun inneholde tall",
                 httpStatus = HttpStatus.BAD_REQUEST,
             )
         }

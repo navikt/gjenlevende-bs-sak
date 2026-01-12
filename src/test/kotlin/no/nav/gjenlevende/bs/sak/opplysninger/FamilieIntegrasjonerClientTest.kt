@@ -3,7 +3,7 @@ package no.nav.gjenlevende.bs.sak.opplysninger
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import no.nav.gjenlevende.bs.sak.fagsak.domain.PersonIdent
+import no.nav.gjenlevende.bs.sak.fagsak.domain.Personident
 import no.nav.gjenlevende.bs.sak.felles.OAuth2RestOperationsFactory
 import no.nav.gjenlevende.bs.sak.felles.auditlogger.Tilgang
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -47,7 +47,7 @@ class FamilieIntegrasjonerClientTest {
             restOperations.exchange(
                 any<URI>(),
                 HttpMethod.POST,
-                any<HttpEntity<PersonIdent>>(),
+                any<HttpEntity<Personident>>(),
                 any<ParameterizedTypeReference<Tilgang>>(),
             )
         } returns ResponseEntity.ok(forventetTilgang)
@@ -60,7 +60,7 @@ class FamilieIntegrasjonerClientTest {
             restOperations.exchange(
                 any<URI>(),
                 HttpMethod.POST,
-                any<HttpEntity<PersonIdent>>(),
+                any<HttpEntity<Personident>>(),
                 any<ParameterizedTypeReference<Tilgang>>(),
             )
         }
@@ -74,7 +74,7 @@ class FamilieIntegrasjonerClientTest {
             restOperations.exchange(
                 any<URI>(),
                 HttpMethod.POST,
-                any<HttpEntity<PersonIdent>>(),
+                any<HttpEntity<Personident>>(),
                 any<ParameterizedTypeReference<Tilgang>>(),
             )
         } returns ResponseEntity.ok(null)
@@ -87,7 +87,7 @@ class FamilieIntegrasjonerClientTest {
             restOperations.exchange(
                 any<URI>(),
                 HttpMethod.POST,
-                any<HttpEntity<PersonIdent>>(),
+                any<HttpEntity<Personident>>(),
                 any<ParameterizedTypeReference<Tilgang>>(),
             )
         }

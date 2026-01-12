@@ -27,7 +27,7 @@ class BrevController(
     fun lagBrevTask(
         @PathVariable behandlingId: UUID,
     ): ResponseEntity<String> {
-        val task = brevService.lagBrevPDFtask(behandlingId)
+        val task = brevService.lagBrevPdfTask(behandlingId)
         taskService.save(task)
         return ResponseEntity.ok("OK")
     }

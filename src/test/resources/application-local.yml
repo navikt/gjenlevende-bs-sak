@@ -48,14 +48,9 @@ gjenlevende-bs-infotrygd:
     url: https://gjenlevende-bs-infotrygd.dev-fss-pub.nais.io
     audience: ${GJENLEVENDE_BS_INFOTRYGD_SCOPE}
 
-# Familie-integrasjoner
-# TODO: Revert til http://localhost:8386 etter testing - bruker dev URL for sammenligning med tilgangsmaskin
-FAMILIE_INTEGRASJONER_URL: https://familie-integrasjoner.dev-fss-pub.nais.io
-# TODO: Revert til api://${AZURE_APP_CLIENT_ID}/.default etter testing
-FAMILIE_INTEGRASJONER_SCOPE: api://dev-fss.teamfamilie.familie-integrasjoner/.default
-
 # Familie-dokument
 FAMILIE_DOKUMENT_URL: http://localhost:8087
+FAMILIE_DOKUMENT_SCOPE: api://dev-gcp.teamfamilie.familie-dokument/.default
 
 # PDL (Persondataløsningen)
 PDL_URL: https://pdl-api.dev-fss-pub.nais.io

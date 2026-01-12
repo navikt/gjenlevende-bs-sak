@@ -1,6 +1,5 @@
 package no.nav.gjenlevende.bs.sak.infrastruktur.exception
 
-import no.nav.familie.kontrakter.felles.Ressurs
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -45,17 +44,15 @@ class ApiExceptionHandler {
     }
 
     @ExceptionHandler(ManglerTilgang::class)
-    fun handleThrowable(manglerTilgang: ManglerTilgang): ResponseEntity<Ressurs<Nothing>> {
+    fun handleManglerTilgang(manglerTilgang: ManglerTilgang): ResponseEntity<ManglerTilgangResponse> {
         logger.warn("En håndtert tilgangsfeil har oppstått")
         return ResponseEntity
             .status(HttpStatus.FORBIDDEN)
             .body(
-                Ressurs(
-                    data = null,
-                    status = Ressurs.Status.IKKE_TILGANG,
+                ManglerTilgangResponse(
+                    status = "IKKE_TILGANG",
                     frontendFeilmelding = manglerTilgang.frontendFeilmelding,
                     melding = manglerTilgang.melding,
-                    stacktrace = null,
                 ),
             )
     }
@@ -71,4 +68,10 @@ class ApiExceptionHandler {
 data class FeilResponse(
     val melding: String,
     val status: Int,
+)
+
+data class ManglerTilgangResponse(
+    val status: String,
+    val frontendFeilmelding: String?,
+    val melding: String?,
 )

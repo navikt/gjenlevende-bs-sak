@@ -1,6 +1,6 @@
 package no.nav.gjenlevende.bs.sak.fagsak
 
-import no.nav.gjenlevende.bs.sak.fagsak.domain.FagsakDomain
+import no.nav.gjenlevende.bs.sak.fagsak.domain.Fagsak
 import no.nav.gjenlevende.bs.sak.felles.InsertUpdateRepository
 import no.nav.gjenlevende.bs.sak.felles.RepositoryInterface
 import no.nav.gjenlevende.bs.sak.infotrygd.dto.StønadType
@@ -10,11 +10,11 @@ import java.util.UUID
 
 @Repository
 interface FagsakRepository :
-    RepositoryInterface<FagsakDomain, UUID>,
-    InsertUpdateRepository<FagsakDomain> {
+    RepositoryInterface<Fagsak, UUID>,
+    InsertUpdateRepository<Fagsak> {
     @Query("SELECT * FROM fagsak WHERE fagsak_person_id = :fagsakPersonId AND stonadstype = :stønadstype")
     fun findByFagsakPersonIdAndStønadstype(
         fagsakPersonId: UUID,
         stønadstype: StønadType,
-    ): FagsakDomain?
+    ): Fagsak?
 }

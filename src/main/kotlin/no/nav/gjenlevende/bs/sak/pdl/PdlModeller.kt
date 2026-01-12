@@ -47,22 +47,21 @@ data class HentNavnRequest(
     val fagsakPersonId: UUID,
 )
 
-data class HentFamilieRelasjonerData(
-    val hentPerson: HentPersonMedRelasjoner?,
+data class FamilieRelasjonerResponse(
+    val hentPerson: FamilieRelasjoner?,
 )
 
-data class HentPersonMedRelasjoner(
+data class FamilieRelasjoner(
     val forelderBarnRelasjon: List<ForelderBarnRelasjon>,
 )
 
-// TODO: Gjør denne bedre, litt vanskelig å forstå.
 data class ForelderBarnRelasjon(
     val relatertPersonsIdent: String?,
-    val relatertPersonsRolle: ForelderBarnRelasjonRolle,
-    val minRolleForPerson: ForelderBarnRelasjonRolle?,
+    val relatertPersonsRolle: Familierolle,
+    val minRolleForPerson: Familierolle?,
 )
 
-enum class ForelderBarnRelasjonRolle {
+enum class Familierolle {
     BARN,
     FAR,
     MEDMOR,

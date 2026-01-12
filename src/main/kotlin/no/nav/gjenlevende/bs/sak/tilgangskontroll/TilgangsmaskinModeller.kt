@@ -45,7 +45,10 @@ data class TilgangsResultat(
     val personident: String,
     val status: Int,
     val detaljer: Any? = null,
-)
+) {
+    val harTilgang: Boolean
+        get() = status == 204
+}
 
 data class ForenkletBulkTilgangsResponse(
     val navIdent: String,

@@ -30,8 +30,7 @@ class TilgangService(
                 personidenter = allePersonidenter,
             )
 
-        // TODO: Bruk harTilgang
-        val avvistePersoner = respons.resultater.filter { it.status != 204 }
+        val avvistePersoner = respons.resultater.filter { !it.harTilgang }
 
         if (avvistePersoner.isNotEmpty()) {
             val avvisningsdetaljer = avvistePersoner.map { it.tilAvvisningsdetaljer() }

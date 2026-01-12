@@ -21,13 +21,21 @@ open class FagsakService(
     fun hentEllerOpprettFagsakMedBehandlinger(
         personident: String,
         stønadstype: StønadType,
-    ): FagsakDto = hentEllerOpprettFagsak(personident, stønadstype).tilDto()
+    ): FagsakDto {
+        val fagsak = hentEllerOpprettFagsak(personident = personident, stønadstype = stønadstype)
+        return fagsak.tilDto(personident)
+    }
 
     @Transactional
     fun hentEllerOpprettFagsakMedFagsakPersonId(
         fagsakPersonId: UUID,
         stønadstype: StønadType,
-    ): FagsakDto = hentEllerOpprettFagsakMedId(fagsakPersonId, stønadstype).tilDto()
+    ): FagsakDto {
+        val fagsak = hentEllerOpprettFagsakMedId(fagsakPersonId = fagsakPersonId, stønadstype = stønadstype)
+        val personident = fagsakPersonService.hentAktivIdent(fagsakPersonId)
+
+        return fagsak.tilDto(personident)
+    }
 
     @Transactional
     open fun hentEllerOpprettFagsak(

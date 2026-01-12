@@ -12,11 +12,11 @@ data class FagsakDto(
     val eksternId: Long,
 )
 
-fun Fagsak.tilDto(): FagsakDto =
+fun Fagsak.tilDto(personident: String): FagsakDto =
     FagsakDto(
         id = this.id,
         fagsakPersonId = this.fagsakPersonId,
-        personident = "12345", // TODO: Dette skal ikke være slik
+        personident = personident,
         stønadstype = this.stønadstype,
         eksternId = this.eksternId,
     )

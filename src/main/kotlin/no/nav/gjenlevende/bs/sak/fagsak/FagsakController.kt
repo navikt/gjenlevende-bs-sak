@@ -48,7 +48,7 @@ open class FagsakController(
                 }
 
                 else -> {
-                    throw Feil("Må oppgi enten personIdent eller fagsakPersonId")
+                    throw Feil("Må oppgi enten personident eller fagsakPersonId")
                 }
             }
 

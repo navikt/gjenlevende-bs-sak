@@ -27,7 +27,7 @@ class FamilieIntegrasjonerClient(
             .build()
             .toUri()
 
-    fun sjekkTilgangTilPersonMedRelasjoner(personIdent: String): Tilgang {
+    fun sjekkTilgangTilPersonMedRelasjoner(personident: String): Tilgang {
         val headers =
             HttpHeaders().also {
                 it.set(HEADER_NAV_TEMA, HEADER_NAV_TEMA_EYO)
@@ -36,7 +36,7 @@ class FamilieIntegrasjonerClient(
         val entity =
             HttpEntity(
                 no.nav.familie.kontrakter.felles
-                    .PersonIdent(personIdent),
+                    .PersonIdent(personident),
                 headers,
             )
         return restTemplate

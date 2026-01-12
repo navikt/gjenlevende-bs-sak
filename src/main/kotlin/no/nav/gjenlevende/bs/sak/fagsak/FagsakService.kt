@@ -65,7 +65,7 @@ open class FagsakService(
     ): Fagsak {
         logger.info("FagsakPerson: $fagsakPerson")
 
-        val fagsak = hentFagsakForPerson(fagsakPerson = fagsakPerson, stønadstype = stønadstype) ?: opprettFagsak(fagsakPerson = fagsakPerson, `stønadstype` = stønadstype)
+        val fagsak = hentFagsakForPerson(fagsakPerson = fagsakPerson, stønadstype = stønadstype) ?: opprettFagsak(fagsakPerson = fagsakPerson, stønadstype = stønadstype)
 
         return fagsak
     }

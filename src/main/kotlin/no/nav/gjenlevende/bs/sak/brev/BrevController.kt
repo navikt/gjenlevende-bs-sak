@@ -44,9 +44,9 @@ class BrevController(
     fun mellomlagreBrev(
         @PathVariable behandlingId: UUID,
         @RequestBody brevRequest: BrevRequest,
-    ): ResponseEntity<String> {
+    ): ResponseEntity<Void> {
         brevService.mellomlagreBrev(behandlingId, brevRequest)
-        return ResponseEntity.ok("Brev mellomlagret for behandlingId: $behandlingId")
+        return ResponseEntity.ok().build()
     }
 
     @GetMapping("/hentMellomlagretBrev/{behandlingId}")

@@ -37,6 +37,30 @@ class PdlService(
         return navnListe.first()
     }
 
+    fun hentBarnPersonidenter(personident: String): List<String> =
+        hentFamilieRelasjoner(personident)
+            ?.filter { it.relatertPersonsRolle == Familierolle.BARN }
+            ?.mapNotNull { it.relatertPersonsIdent }
+            ?: emptyList()
+
+    fun hentForeldrePersonidenter(personident: String): List<String> =
+        hentFamilieRelasjoner(personident)
+            ?.filter { it.relatertPersonsRolle in listOf(Familierolle.FAR, Familierolle.MOR, Familierolle.MEDMOR) }
+            ?.mapNotNull { it.relatertPersonsIdent }
+            ?: emptyList()
+
+    private fun hentFamilieRelasjoner(personident: String): List<ForelderBarnRelasjon>? {
+        val data =
+            pdlClient.utførQuery(
+                query = graphqlQuery("/pdl/hent_familie_relasjoner.graphql"),
+                variables = mapOf("ident" to personident),
+                responstype = object : ParameterizedTypeReference<PdlResponse<FamilieRelasjonerResponse>>() {},
+                operasjon = "hentFamilieRelasjoner",
+            ) ?: return null
+
+        return data.hentPerson?.forelderBarnRelasjon
+    }
+
     fun graphqlQuery(path: String) =
         PdlService::class.java
             .getResource(path)

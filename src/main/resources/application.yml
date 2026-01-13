@@ -59,10 +59,6 @@ azure:
 
 
 # OAuth2 klient konfigurering
-familie-integrasjoner:
-    url: ${FAMILIE_INTEGRASJONER_URL}
-    oauth:
-        registration-id: familie-integrasjoner-clientcredentials
 pdl:
     url: ${PDL_URL}
     oauth:
@@ -71,6 +67,10 @@ saf:
     url: ${SAF_URL}
     oauth:
         registration-id: saf-clientcredentials
+familie-dokument:
+    url: ${FAMILIE_DOKUMENT_URL}
+    oauth:
+        registration-id: familie-dokument-clientcredentials
 
 oauth2:
     clients:
@@ -80,12 +80,6 @@ oauth2:
             client-secret: ${AZURE_APP_CLIENT_SECRET}
             token-endpoint-url: ${AZUREAD_TOKEN_ENDPOINT_URL}
             scope: ${PDL_SCOPE}
-        familie-integrasjoner:
-            registration-id: familie-integrasjoner-clientcredentials
-            client-id: ${AZURE_APP_CLIENT_ID}
-            client-secret: ${AZURE_APP_CLIENT_SECRET}
-            token-endpoint-url: ${AZUREAD_TOKEN_ENDPOINT_URL}
-            scope: ${FAMILIE_INTEGRASJONER_SCOPE}
         saf:
             registration-id: saf-clientcredentials
             client-id: ${AZURE_APP_CLIENT_ID}
@@ -98,6 +92,12 @@ oauth2:
             client-secret: ${AZURE_APP_CLIENT_SECRET}
             token-endpoint-url: ${AZUREAD_TOKEN_ENDPOINT_URL}
             scope: ${tilgangsmaskin.oauth.scope}
+        familie-dokument:
+            registration-id: familie-dokument-clientcredentials
+            client-id: ${AZURE_APP_CLIENT_ID}
+            client-secret: ${AZURE_APP_CLIENT_SECRET}
+            token-endpoint-url: ${AZUREAD_TOKEN_ENDPOINT_URL}
+            scope: ${FAMILIE_DOKUMENT_SCOPE}
 
 # Azure AD miljøvariabler (for SwaggerConfig.kt)
 AZUREAD_TOKEN_ENDPOINT_URL: https://login.microsoftonline.com/${azure.app.tenant.id}/oauth2/v2.0/token
@@ -111,10 +111,7 @@ gjenlevende-bs-infotrygd:
 
 # FAMILIE DOKUMENT
 FAMILIE_DOKUMENT_URL: http://familie-dokument.teamfamilie
-
-# Familie-integrasjoner
-FAMILIE_INTEGRASJONER_URL: https://familie-integrasjoner.${DEPLOY_ENV}-fss-pub.nais.io
-FAMILIE_INTEGRASJONER_SCOPE: api://${DEPLOY_ENV}-fss.teamfamilie.familie-integrasjoner/.default
+FAMILIE_DOKUMENT_SCOPE: api://${DEPLOY_ENV}-gcp.teamfamilie.familie-dokument/.default
 
 # PDL (Persondataløsningen)
 PDL_URL: https://pdl-api.dev-fss-pub.nais.io

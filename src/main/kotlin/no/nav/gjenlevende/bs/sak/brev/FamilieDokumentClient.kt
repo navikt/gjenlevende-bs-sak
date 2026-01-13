@@ -15,7 +15,7 @@ import java.net.URI
 @Component
 class FamilieDokumentClient(
     @Value("\${FAMILIE_DOKUMENT_URL}") private val familieDokumentUrl: URI,
-    @Value("\${familie-integrasjoner.oauth.registration-id}") registrationId: String,
+    @Value("\${familie-dokument.oauth.registration-id}") registrationId: String,
     oauth2RestFactory: OAuth2RestOperationsFactory,
 ) {
     private val restTemplate: RestOperations = oauth2RestFactory.create(registrationId)

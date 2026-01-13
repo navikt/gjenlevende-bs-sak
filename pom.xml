@@ -46,7 +46,7 @@
         <unleash.version>11.2.1</unleash.version>
         <mockk.version>1.14.7</mockk.version>
         <prosessering.version>2.20251222111020_cec9344</prosessering.version>
-        <kontrakter.version>3.0_20251217091435_940f8da</kontrakter.version>
+
     </properties>
     <dependencies>
         <dependency>
@@ -160,11 +160,6 @@
             <groupId>no.nav.familie</groupId>
             <artifactId>prosessering-core</artifactId>
             <version>${prosessering.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>no.nav.familie.kontrakter</groupId>
-            <artifactId>enslig-forsorger</artifactId>
-            <version>${kontrakter.version}</version>
         </dependency>
 
         <dependency>

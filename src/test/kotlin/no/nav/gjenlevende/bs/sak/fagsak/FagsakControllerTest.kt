@@ -68,7 +68,7 @@ open class FagsakControllerTest {
             fagsakService.hentEllerOpprettFagsakMedBehandlinger(personident, stønadstype)
         } returns forventetFagsak
 
-        justRun { tilgangService.validerTilgangTilPersonMedBarn(any()) }
+        justRun { tilgangService.validerTilgangTilPersonMedRelasjoner(any()) }
 
         val responseJson =
             mockMvc
@@ -117,7 +117,7 @@ open class FagsakControllerTest {
 
         every { fagsakPersonService.hentAktivIdent(any()) } returns personident
 
-        justRun { tilgangService.validerTilgangTilPersonMedBarn(any()) }
+        justRun { tilgangService.validerTilgangTilPersonMedRelasjoner(any()) }
 
         val responseJson =
             mockMvc
@@ -180,7 +180,7 @@ open class FagsakControllerTest {
             )
 
         every { fagsakPersonService.hentAktivIdent(any()) } returns "12345678910"
-        justRun { tilgangService.validerTilgangTilPersonMedBarn(any()) }
+        justRun { tilgangService.validerTilgangTilPersonMedRelasjoner(any()) }
 
         mockMvc
             .post("/api/fagsak") {

@@ -6,6 +6,7 @@ import no.nav.familie.prosessering.internal.TaskService
 import no.nav.gjenlevende.bs.sak.brev.domain.BrevRequest
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -16,7 +17,7 @@ import java.util.UUID
 
 @RestController
 @RequestMapping(path = ["/api/brev"])
-@ProtectedWithClaims(issuer = "azuread")
+@PreAuthorize("hasRole('SAKSBEHANDLER')")
 @Tag(name = "BrevController", description = "Endepunkter for håndtering av brev")
 class BrevController(
     private val brevService: BrevService,

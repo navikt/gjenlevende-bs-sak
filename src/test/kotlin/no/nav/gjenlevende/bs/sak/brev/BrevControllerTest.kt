@@ -80,12 +80,12 @@ open class BrevControllerTest {
                     content = objectMapper.writeValueAsString(brevRequest)
                 }.andExpect {
                     status { isOk() }
-                    content { contentType(MediaType.APPLICATION_JSON) }
+                    content { contentTypeCompatibleWith(MediaType.TEXT_PLAIN) }
                 }.andReturn()
                 .response
                 .contentAsString
-        val response = objectMapper.readValue<UUID>(responseJson)
-        assertThat(response).isEqualTo(behandlingId)
+
+        assertThat(responseJson).isEqualTo("Brev mellomlagret for behandlingId: $behandlingId")
 
         verify(exactly = 1) {
             brevService.mellomlagreBrev(behandlingId, brevRequest)

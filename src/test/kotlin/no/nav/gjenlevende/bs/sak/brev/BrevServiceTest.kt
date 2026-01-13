@@ -20,7 +20,7 @@ class BrevServiceTest {
     private val brevService = BrevService(brevRepository, objectMapper)
 
     @Test
-    fun `opprettBrev insert når brev ikke finnes`() {
+    fun `mellomlagreBrev insert når brev ikke finnes`() {
         val behandlingId = UUID.randomUUID()
         val brevRequest = gyldigBrevRequest()
 
@@ -29,7 +29,7 @@ class BrevServiceTest {
             firstArg<Brev>()
         }
 
-        brevService.opprettBrev(behandlingId, brevRequest)
+        brevService.mellomlagreBrev(behandlingId, brevRequest)
 
         verify(exactly = 1) {
             brevRepository.insert(
@@ -46,7 +46,7 @@ class BrevServiceTest {
     }
 
     @Test
-    fun `opprettBrev update når brev finnes`() {
+    fun `mellomlagreBrev update når brev finnes`() {
         val behandlingId = UUID.randomUUID()
         val brevRequest = gyldigBrevRequest()
 
@@ -55,7 +55,7 @@ class BrevServiceTest {
             firstArg<Brev>()
         }
 
-        brevService.opprettBrev(behandlingId, brevRequest)
+        brevService.mellomlagreBrev(behandlingId, brevRequest)
 
         verify(exactly = 1) {
             brevRepository.update(

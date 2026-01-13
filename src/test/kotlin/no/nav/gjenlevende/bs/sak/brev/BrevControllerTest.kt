@@ -71,7 +71,7 @@ open class BrevControllerTest {
             )
 
         every {
-            brevService.opprettBrev(behandlingId, brevRequest)
+            brevService.mellomlagreBrev(behandlingId, brevRequest)
         } returns Unit
         val responseJson =
             mockMvc
@@ -88,7 +88,7 @@ open class BrevControllerTest {
         assertThat(response).isEqualTo(behandlingId)
 
         verify(exactly = 1) {
-            brevService.opprettBrev(behandlingId, brevRequest)
+            brevService.mellomlagreBrev(behandlingId, brevRequest)
         }
     }
 
@@ -105,7 +105,7 @@ open class BrevControllerTest {
             }
 
         verify(exactly = 0) {
-            brevService.opprettBrev(any(), any())
+            brevService.mellomlagreBrev(any(), any())
         }
     }
 }

@@ -32,12 +32,12 @@ class BrevController(
         return ResponseEntity.ok("OK")
     }
 
-    @PostMapping("/{behandlingId}")
+    @PostMapping("/mellomlagre/{behandlingId}")
     fun opprettBrev(
         @PathVariable behandlingId: UUID,
         @RequestBody brevRequest: BrevRequest,
     ): ResponseEntity<UUID> {
-        brevService.opprettBrev(behandlingId, brevRequest)
+        brevService.mellomlagreBrev(behandlingId, brevRequest)
         return ResponseEntity.ok(behandlingId)
     }
 }

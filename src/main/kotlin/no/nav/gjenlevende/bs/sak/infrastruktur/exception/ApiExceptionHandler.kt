@@ -50,8 +50,6 @@ class ApiExceptionHandler {
             .status(HttpStatus.FORBIDDEN)
             .body(
                 ManglerTilgangResponse(
-                    status = "IKKE_TILGANG",
-                    frontendFeilmelding = manglerTilgang.frontendFeilmelding,
                     melding = manglerTilgang.melding,
                 ),
             )
@@ -71,7 +69,5 @@ data class FeilResponse(
 )
 
 data class ManglerTilgangResponse(
-    val status: String,
-    val frontendFeilmelding: String?,
     val melding: String?,
 )

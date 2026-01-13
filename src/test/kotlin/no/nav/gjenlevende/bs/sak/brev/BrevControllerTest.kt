@@ -75,7 +75,7 @@ open class BrevControllerTest {
         } returns Unit
         val responseJson =
             mockMvc
-                .post("/api/brev/$behandlingId") {
+                .post("/api/brev/mellomlagre/$behandlingId") {
                     contentType = MediaType.APPLICATION_JSON
                     content = objectMapper.writeValueAsString(brevRequest)
                 }.andExpect {
@@ -97,7 +97,7 @@ open class BrevControllerTest {
         val behandlingId = UUID.randomUUID()
 
         mockMvc
-            .post("/api/brev/$behandlingId") {
+            .post("/api/brev/mellomlagre/$behandlingId") {
                 contentType = MediaType.APPLICATION_JSON
                 content = "ugyldig request"
             }.andExpect {

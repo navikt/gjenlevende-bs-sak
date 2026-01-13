@@ -10,5 +10,4 @@ class Feil(
 
 class ManglerTilgang(
     val melding: String,
-    val frontendFeilmelding: String,
 ) : RuntimeException(melding)

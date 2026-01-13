@@ -39,8 +39,7 @@ class TilgangService(
             val begrunnelse = avvisningsdetaljer.firstOrNull()?.begrunnelse ?: "Ukjent årsak"
 
             throw ManglerTilgang(
-                melding = "Saksbehandler ${respons.navIdent} har ikke tilgang til person eller relaterte personer",
-                frontendFeilmelding = "Mangler tilgang til opplysningene. Årsak: $begrunnelse",
+                melding = "Mangler tilgang til opplysningene. Årsak: $begrunnelse",
             )
         }
     }

@@ -1,6 +1,14 @@
 # Gjenlevende-BS-Sak
 
-Saksbehandler app som tar for seg barnetilsyn og skolepenger for etterlatte/gjenlevende.
+Saksbehandler-app som tar for seg barnetilsyn og skolepenger for etterlatte/gjenlevende.
+
+## Forutsetninger
+
+- **Docker Desktop** må være installert og kjøre
+- **IntelliJ IDEA** (anbefalt)
+- **nais CLI** (kun for dev-profil)
+
+---
 
 ## Lokal kjøring
 
@@ -17,19 +25,19 @@ Applikasjonen har to lokale utviklingsprofiler:
 
 Denne profilen krever **ingen secrets** og fungerer fullt offline.
 
-#### 1. Start mock miljøet
+#### 1. Start mock-miljøet
 ```bash
 ./start-mock.sh
 ```
-Dette starter:
+Dette starter følgende Docker-containere:
 - PostgreSQL (persistent database)
-- mock-oauth2-server (for token validering)
+- mock-oauth2-server (for token-validering)
 - WireMock (mocker alle eksterne tjenester)
 
 #### 2. Kjør applikasjonen
-Kjør **ApplicationLocalMock** fra IntelliJ (ingen miljøvariabel konfigurasjon nødvendig).
+Kjør **ApplicationLocalMock** fra IntelliJ (ingen miljøvariabel-konfigurasjon nødvendig).
 
-#### 3. Test med mock token
+#### 3. Test med mock-token
 ```bash
 # Hent token
 TOKEN=$(curl -s -X POST http://localhost:8089/default/token \
@@ -47,63 +55,101 @@ docker compose --profile mock down -v   # Slett data
 
 ---
 
-### Dev profil (For testing mot real tjenester)
+### Dev-profil (For testing mot ekte tjenester)
 
 Bruk denne kun når du må teste mot ekte dev-tjenester (PDL, SAF, Tilgangsmaskin, etc.).
 
 #### 1. Logg på Nais
+
 ```bash
 nais login
 ```
 
-#### Husk Nais device!
+> **Husk:** Du må ha Nais device installert og kjørende!
 
-#### 2. Hent miljøvariabler
-
-**Skift kontekst til DEV, svært viktig.**
+#### 2. Bytt til riktig Kubernetes-kontekst
 
 ```bash
 kubectl config use-context dev-gcp
 ```
 
-Endre namespace til Etterlatte.
+> ⚠️ **ADVARSEL:** Du **MÅ** bruke `dev-gcp` - scriptet fungerer **IKKE** med `prod-gcp`!
+>
+> Verifiser at du er i riktig kontekst:
+> ```bash
+> kubectl config current-context
+> ```
+> Skal vise: `dev-gcp`
+
+#### 3. Sett namespace til etterlatte
 
 ```bash
 kubectl config set-context --current --namespace=etterlatte
 ```
 
-Se etter azure hemmelighet navn, typisk azure-gjenlevende-bs-sak-noe
+#### 4. Finn riktig Azure-hemmelighet
 
 ```bash
 kubectl get secrets | grep gjenlevende-bs-sak
 ```
 
-Oppdater hent-og-lagre-miljøvaribler.sh med secret instans navn
-
+Du vil se noe lignende dette:
 ```
-get_secrets azure-gjenlevende-bs-sak-noe
+azure-gjenlevende-bs-sak-3d8552ce-2026-3      Opaque   7      2d
+azuread-gjenlevende-bs-sak-lokal              Opaque   5      30d
 ```
 
-Kjør hent-og-lagre-miljøvaribler:
+> **VIKTIG:** Kopier navnet på hemmeligheten som starter med `azure-gjenlevende-bs-sak-` og har en roterende ID (f.eks. `azure-gjenlevende-bs-sak-3d8552ce-2026-3`).
+>
+> **IKKE** bruk den som heter `azuread-gjenlevende-bs-sak-lokal` - denne er feil!
+
+#### 5. Oppdater hent-og-lagre-miljøvariabler.sh
+
+Åpne filen `hent-og-lagre-miljøvariabler.sh` og finn linje 11. Erstatt hemmelighetsnavnet med det du kopierte:
 
 ```bash
-./hent-og-lagre-miljøvariabler.sh
+GJENLEVENDE_BS_SAK_LOKAL_SECRETS=$(get_secrets azure-gjenlevende-bs-sak-WHATEVER)
 ```
 
-Dette oppretter en `.env.local` fil.
+#### 6. Kjør scriptet for å hente hemmeligheter
 
-#### 3. Start dev miljøet
+```bash
+./hent-og-lagre-miljovariabler.sh
+```
+
+Dette oppretter en skjult `.env.local`-fil i repository-mappen.
+
+#### 7. Start dev-miljøet
+
 ```bash
 ./start-dev.sh
 ```
 
-#### 4. Konfigurer IntelliJ
-1. Gå til **ApplicationLocalDev** profilen
-2. Klikk **Edit Configuration**
-3. Under **Environment variables**, legg til `.env.local` filen
-4. Kjør **ApplicationLocalDev**
+Dette starter PostgreSQL og Texas (token-proxy) i Docker.
 
-#### 5. Stoppe appen
+#### 8. Konfigurer IntelliJ med miljøvariabler
+
+Dette er viktig - følg stegene nøye:
+
+1. Finn **ApplicationLocalDev** i prosjekt-treet (`src/test/kotlin/.../ApplicationLocalDev.kt`)
+2. Klikk på den **grønne play-knappen** ▶️ ved siden av `fun main()`
+3. Velg **Modify Run Configuration...**
+4. I vinduet som åpnes, se på høyre side under **Build and run**
+5. Klikk på **Modify options** (eller "More options")
+6. Velg **Environment variables**
+7. Et nytt felt for miljøvariabler vises
+8. Klikk på **mappe-ikonet** 📁 til høyre for feltet
+9. En fil-utforsker åpnes - naviger til repository-mappen
+10. Filen `.env.local` er **skjult**. På Mac: trykk `Shift + Cmd + .` for å vise skjulte filer
+11. Velg `.env.local` og klikk **OK**
+12. Klikk **Apply** og deretter **OK**
+
+#### 9. Kjør applikasjonen
+
+Kjør **ApplicationLocalDev** fra IntelliJ (trykk ▶️ eller `Ctrl+R` / `Cmd+R`).
+
+#### 10. Stopp tjenestene
+
 ```bash
 docker compose --profile dev down       # Behold data
 docker compose --profile dev down -v    # Slett data
@@ -113,18 +159,21 @@ docker compose --profile dev down -v    # Slett data
 
 ## Database
 
-Begge profiler bruker en **persistent PostgreSQL** database via Docker volume.
-- Data overlever app restart
+Begge profiler bruker en **persistent PostgreSQL**-database via Docker-volume.
+- Data overlever omstart av applikasjonen
 - Slett data: `docker compose --profile <mock|dev> down -v`
-- Se data i Docker Desktop under "gjenlevende-bs-sak" gruppen
+- Se data i Docker Desktop under "gjenlevende-bs-sak"-gruppen
 
 ---
 
 ## Swagger
-Du når Swagger ved å gå til:
 
-**Ingress:**
-- https://gjenlevende-bs-sak.intern.dev.nav.no/swagger-ui/index.html
-
-**Lokalt (dev-profil):**
+**Mock-profil (lokalt):**
 - http://localhost:8082/swagger-ui/index.html
+- Hent token og lim inn i "Authorize"
+
+**Dev-profil (lokalt):**
+- http://localhost:8082/swagger-ui/index.html
+
+**Ingress (deployed):**
+- https://gjenlevende-bs-sak.intern.dev.nav.no/swagger-ui/index.html

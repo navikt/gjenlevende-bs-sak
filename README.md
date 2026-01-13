@@ -96,12 +96,9 @@ kubectl get secrets | grep gjenlevende-bs-sak
 Du vil se noe lignende dette:
 ```
 azure-gjenlevende-bs-sak-1a2345bc-1337-1      Opaque   7      2d
-azuread-gjenlevende-bs-sak-lokal              Opaque   5      30d
 ```
 
 > **VIKTIG:** Kopier navnet på hemmeligheten som starter med `azure-gjenlevende-bs-sak-` og har en roterende ID (f.eks. `azure-gjenlevende-bs-sak-1a2345bc-1337-1`).
->
-> **IKKE** bruk den som heter `azuread-gjenlevende-bs-sak-lokal` - denne er feil!
 
 #### 5. Oppdater hent-og-lagre-miljøvariabler.sh
 

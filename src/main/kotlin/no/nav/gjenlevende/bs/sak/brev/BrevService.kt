@@ -22,7 +22,7 @@ class BrevService(
         )
 
     @Transactional
-    fun opprettBrev(
+    fun mellomlagreBrev(
         behandlingId: UUID,
         brevRequest: BrevRequest,
     ) {

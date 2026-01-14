@@ -63,6 +63,10 @@ pdl:
     url: ${PDL_URL}
     oauth:
         registration-id: pdl-clientcredentials
+oppgave:
+    url: ${OPPGAVE_URL}
+    oauth:
+        registration-id: oppgave-clientcredentials
 saf:
     url: ${SAF_URL}
     oauth:
@@ -74,6 +78,12 @@ familie-dokument:
 
 oauth2:
     clients:
+        oppgave:
+            registration-id: oppgave-clientcredentials
+            client-id: ${AZURE_APP_CLIENT_ID}
+            client-secret: ${AZURE_APP_CLIENT_SECRET}
+            token-endpoint-url: ${AZUREAD_TOKEN_ENDPOINT_URL}
+            scope: ${OPPGAVE_SCOPE}
         pdl:
             registration-id: pdl-clientcredentials
             client-id: ${AZURE_APP_CLIENT_ID}
@@ -116,6 +126,10 @@ FAMILIE_DOKUMENT_SCOPE: api://${DEPLOY_ENV}-gcp.teamfamilie.familie-dokument/.de
 # PDL (Persondataløsningen)
 PDL_URL: https://pdl-api.dev-fss-pub.nais.io
 PDL_SCOPE: api://dev-fss.pdl.pdl-api/.default
+
+# OPPGAVE
+OPPGAVE_URL: https://pdl-api.dev-fss-pub.nais.io
+OPPGAVE_SCOPE=api://dev-fss:oppgavehandtering:oppgave/:default:
 
 #SAF
 SAF_URL: https://saf-q2.dev-fss-pub.nais.io

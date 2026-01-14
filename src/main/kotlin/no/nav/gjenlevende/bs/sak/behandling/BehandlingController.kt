@@ -1,5 +1,7 @@
 package no.nav.gjenlevende.bs.sak.behandling
 
+import no.nav.familie.prosessering.internal.TaskService
+import no.nav.gjenlevende.bs.sak.felles.sikkerhet.SikkerhetContext
 import no.nav.gjenlevende.bs.sak.infrastruktur.exception.Feil
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
@@ -24,6 +26,7 @@ data class HentBehandlingerRequest(
 @RequestMapping(path = ["/api/behandling"])
 class BehandlingController(
     private val behandlingService: BehandlingService,
+    private val taskService: TaskService,
 ) {
     @PostMapping("/opprett")
     fun opprettBehandling(
@@ -36,6 +39,8 @@ class BehandlingController(
         }
 
         val behandling = behandlingService.opprettBehandling(fagsakId)
+        val task = LagBehandleSakOppgaveTask.opprettTask(behandling.id, SikkerhetContext.hentSaksbehandler())
+        taskService.save(task)
         return ResponseEntity.ok(behandling.id)
     }
 

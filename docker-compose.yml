@@ -19,3 +19,18 @@ services:
             AZURE_OPENID_CONFIG_TOKEN_ENDPOINT: https://login.microsoftonline.com/${AZURE_APP_TENANT_ID}/oauth2/v2.0/token
             AZURE_OPENID_CONFIG_JWKS_URI: https://login.microsoftonline.com/${AZURE_APP_TENANT_ID}/discovery/v2.0/keys
         restart: on-failure
+
+    # SQL database
+    postgres:
+        image: "postgres:17.1"
+        volumes:
+            - "gjenlevende-bs-sak-data:/var/lib/postgresql/data"
+        ports:
+            - "5432:5432"
+        environment:
+            POSTGRES_USER: "postgres"
+            POSTGRES_PASSWORD: "test"
+            POSTGRES_DB: "gjenlevende-bs-sak"
+
+volumes:
+    gjenlevende-bs-sak-data:

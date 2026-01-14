@@ -5,6 +5,8 @@ import no.nav.gjenlevende.bs.sak.pdl.PdlService
 import no.nav.gjenlevende.bs.sak.tilgangskontroll.Avvisningskode
 import no.nav.gjenlevende.bs.sak.tilgangskontroll.TilgangsResultat
 import no.nav.gjenlevende.bs.sak.tilgangskontroll.TilgangsmaskinClient
+import no.nav.gjenlevende.bs.sak.unleash.FeatureToggle
+import no.nav.gjenlevende.bs.sak.unleash.UnleashService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
@@ -12,10 +14,21 @@ import org.springframework.stereotype.Service
 class TilgangService(
     private val tilgangsmaskinClient: TilgangsmaskinClient,
     private val pdlService: PdlService,
+    private val unleashService: UnleashService,
 ) {
     private val logger = LoggerFactory.getLogger(TilgangService::class.java)
 
+    fun erTilgangsmaskinEnabled(): Boolean {
+        val featureToggles = unleashService.hentFeatureToggles()
+        return featureToggles[FeatureToggle.TOGGLE_TILGANGSMASKIN_I_DEV.toggleName] ?: true
+    }
+
     fun validerTilgangTilPersonMedRelasjoner(personident: String) {
+        if (!erTilgangsmaskinEnabled()) {
+            logger.info("Tilgangsmaskin er deaktivert via feature toggle, hopper over tilgangskontroll")
+            return
+        }
+
         val brukerToken = SikkerhetContext.hentBrukerToken()
         val barnPersonidenter = pdlService.hentBarnPersonidenter(personident)
         val foreldreAvBarn = barnPersonidenter.flatMap { pdlService.hentForeldrePersonidenter(it) }

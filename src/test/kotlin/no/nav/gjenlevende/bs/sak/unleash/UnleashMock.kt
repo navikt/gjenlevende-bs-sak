@@ -18,4 +18,16 @@ open class UnleashMock {
         every { mockk.isEnabled(any()) } returns true
         return mockk
     }
+
+    @Bean
+    @Primary
+    open fun unleashService(): UnleashService {
+        val mockk = mockk<UnleashService>()
+        every { mockk.hentFeatureToggles() } returns
+            mapOf(
+                "gjenlevende_frontend__test_setup" to true,
+                "gjenlevende_backend_toggle_tilgangsmaskin_i_dev" to false,
+            )
+        return mockk
+    }
 }

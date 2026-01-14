@@ -26,7 +26,7 @@ open class UnleashMock {
         every { mockk.hentFeatureToggles() } returns
             mapOf(
                 "gjenlevende_frontend__test_setup" to true,
-                "gjenlevende_backend_toggle_tilgangsmaskin_i_dev" to false,
+                "gjenlevende_backend_toggle_tilgangsmaskin_i_dev" to true,
             )
         return mockk
     }

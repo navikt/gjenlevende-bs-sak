@@ -63,7 +63,7 @@ PDL_SCOPE: api://dev-fss.pdl.pdl-api/.default
 
 # OPPGAVE
 OPPGAVE_URL: https://oppgave.dev.intern.nav.no
-OPPGAVE_SCOPE=api://dev-fss:oppgavehandtering:oppgave/:default:
+OPPGAVE_SCOPE: api://dev-fss:oppgavehandtering:oppgave/:default
 
 # Tilgangsmaskin (Populasjonstilgangskontroll) - ekstern URL for lokal utvikling
 tilgangsmaskin:

@@ -37,30 +37,30 @@ fun lagHtml(request: BrevRequest): String {
           <meta charset="UTF-8" />
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
           <title>$tittel</title>
-          <style>
+          <style type="text/css">
             body { font-family: Arial, Helvetica, sans-serif; font-size: 12pt; line-height: 1.4; }
-            header { margin-bottom: 1rem; }
-            h1 { font-size: 1.6rem; margin: 0 0 .5rem 0; }
-            h2 { font-size: 1.2rem; margin: 1rem 0 .25rem 0; }
-            h3 { font-size: 1rem; margin: .75rem 0 .25rem 0; }
-            section { margin-bottom: .5rem; }
-            .meta { color: #333; font-size: .9rem; }
+            header { margin-bottom: 12pt; }
+            h1 { font-size: 19pt; margin: 0 0 6pt 0; }
+            h2 { font-size: 14pt; margin: 12pt 0 3pt 0; }
+            h3 { font-size: 12pt; margin: 9pt 0 3pt 0; }
+            section { margin-bottom: 6pt; }
+            .meta { color: #333; font-size: 11pt; }
             .header {
               position: relative;
-              padding-top: 128px;
+              padding-top: 128pt;
             }
             .logo {
               position: absolute;
-              top: 64px;
-              left: 64px;
-              height: 16px;
+              top: 64pt;
+              left: 64pt;
+              height: 16pt;
               width: auto;
             }
           </style>
         </head>
         <body>
           <header class="header">
-            <img class="logo" src="$logo" alt="Logo" height="32" />
+            <img class="logo" src="$logo" alt="Logo" height="16" />
             <h1>$tittel</h1>
                 <div class="meta"><strong>Navn:</strong> $navn
                 <br/>

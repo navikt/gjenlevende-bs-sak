@@ -56,7 +56,7 @@ fun lagHtml(request: BrevRequest): String {
         </head>
         <body>
           <header>
-            <img src="$$logo" alt="Logo" height="32" />
+            <img src="$logo" alt="Logo" height="32" />
             <h1>$tittel</h1>
                 <div class="meta"><strong>Navn:</strong> $navn
                 <br/>

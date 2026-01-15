@@ -1,6 +1,7 @@
 package no.nav.gjenlevende.bs.sak.fagsak
 
 import no.nav.gjenlevende.bs.sak.fagsak.domain.FagsakPerson
+import no.nav.gjenlevende.bs.sak.felles.sikkerhet.TilgangService
 import no.nav.gjenlevende.bs.sak.pdl.Navn
 import no.nav.gjenlevende.bs.sak.pdl.PdlService
 import org.springframework.stereotype.Service
@@ -10,8 +11,10 @@ import java.util.UUID
 class SøkService(
     private val fagsakPersonService: FagsakPersonService,
     private val pdlService: PdlService,
+    private val tilgangService: TilgangService,
 ) {
     fun søkPerson(personident: String): Søkeresultat {
+        tilgangService.validerTilgangTilPersonMedRelasjoner(personident)
         val fagsakPerson = fagsakPersonService.finnPerson(setOf(personident))
 
         if (fagsakPerson == null) {
@@ -31,6 +34,8 @@ class SøkService(
         }
 
         val personident = fagsakPersonService.hentAktivIdent(fagsakPersonId)
+        tilgangService.validerTilgangTilPersonMedRelasjoner(personident)
+
         val navnPdl = pdlService.hentNavn(fagsakPersonId)
 
         return tilSøkeresultat(personident, fagsakPerson, navnPdl)

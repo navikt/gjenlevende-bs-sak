@@ -15,26 +15,19 @@ private fun logoTilBase64(): String {
 }
 
 fun lagHtml(request: BrevRequest): String {
-    fun esc(s: String) =
-        s
-            .replace("&", "&amp;")
-            .replace("<", "&lt;")
-            .replace(">", "&gt;")
-            .replace("\"", "&quot;")
-
-    val tittel = esc(request.brevmal.tittel)
-    val navn = esc(request.brevmal.informasjonOmBruker.navn)
-    val personident = esc(request.brevmal.informasjonOmBruker.fnr)
+    val tittel = request.brevmal.tittel
+    val navn = request.brevmal.informasjonOmBruker.navn
+    val personident = request.brevmal.informasjonOmBruker.fnr
     val logo = logoTilBase64()
     val fritekst =
         request.fritekstbolker.joinToString(separator = "") { bolk ->
-            val under = bolk.underoverskrift?.let { "<h2>${esc(it)}</h2>" } ?: ""
-            "<section>\n\t${under}\n\t<p>${esc(bolk.innhold)}</p>\n</section>\n"
+            val under = bolk.underoverskrift?.let { "<h2>${it}</h2>" } ?: ""
+            "<section>\n\t${under}\n\t<p>${bolk.innhold}</p>\n</section>\n"
         }
     val avslutning =
         request.brevmal.fastTekstAvslutning.joinToString(separator = "") { bolk ->
-            val under = bolk.underoverskrift?.let { "<h3>${esc(it)}</h3>" } ?: ""
-            "<section class=\"avslutning\">\n\t${under}\n\t<p>${esc(bolk.innhold)}</p>\n</section>\n"
+            val under = bolk.underoverskrift?.let { "<h3>${it)}</h3>" } ?: ""
+            "<section class=\"avslutning\">\n\t${under}\n\t<p>${bolk.innhold}</p>\n</section>\n"
         }
 
     return """
@@ -52,11 +45,22 @@ fun lagHtml(request: BrevRequest): String {
             h3 { font-size: 1rem; margin: .75rem 0 .25rem 0; }
             section { margin-bottom: .5rem; }
             .meta { color: #333; font-size: .9rem; }
+            .header {
+              position: relative;
+              padding-top: 128px;
+            }
+            .logo {
+              position: absolute;
+              top: 64px;
+              left: 64px;
+              height: 16px;
+              width: auto;
+            }
           </style>
         </head>
         <body>
-          <header>
-            <img src="$logo" alt="Logo" height="32" />
+          <header class="header">
+            <img class="logo" src="$logo" alt="Logo" height="32" />
             <h1>$tittel</h1>
                 <div class="meta"><strong>Navn:</strong> $navn
                 <br/>

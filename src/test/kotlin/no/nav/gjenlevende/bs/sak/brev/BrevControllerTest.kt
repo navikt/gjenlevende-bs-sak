@@ -71,24 +71,19 @@ open class BrevControllerTest {
             )
 
         every {
-            brevService.opprettBrev(behandlingId, brevRequest)
+            brevService.mellomlagreBrev(behandlingId, brevRequest)
         } returns Unit
         val responseJson =
             mockMvc
-                .post("/api/brev/$behandlingId") {
+                .post("/api/brev/mellomlagre/$behandlingId") {
                     contentType = MediaType.APPLICATION_JSON
                     content = objectMapper.writeValueAsString(brevRequest)
                 }.andExpect {
                     status { isOk() }
-                    content { contentType(MediaType.APPLICATION_JSON) }
-                }.andReturn()
-                .response
-                .contentAsString
-        val response = objectMapper.readValue<UUID>(responseJson)
-        assertThat(response).isEqualTo(behandlingId)
+                }
 
         verify(exactly = 1) {
-            brevService.opprettBrev(behandlingId, brevRequest)
+            brevService.mellomlagreBrev(behandlingId, brevRequest)
         }
     }
 
@@ -97,7 +92,7 @@ open class BrevControllerTest {
         val behandlingId = UUID.randomUUID()
 
         mockMvc
-            .post("/api/brev/$behandlingId") {
+            .post("/api/brev/mellomlagre/$behandlingId") {
                 contentType = MediaType.APPLICATION_JSON
                 content = "ugyldig request"
             }.andExpect {
@@ -105,7 +100,7 @@ open class BrevControllerTest {
             }
 
         verify(exactly = 0) {
-            brevService.opprettBrev(any(), any())
+            brevService.mellomlagreBrev(any(), any())
         }
     }
 }

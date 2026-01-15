@@ -1,6 +1,18 @@
 package no.nav.gjenlevende.bs.sak.brev
 
 import no.nav.gjenlevende.bs.sak.brev.domain.BrevRequest
+import java.util.Base64
+
+private fun logoTilBase64(): String {
+    val bytes =
+        requireNotNull(
+            object {}.javaClass.classLoader.getResourceAsStream("Nav-logo-red-228x63.png"),
+        ) {
+            "Fant ikke Nav-logo i resources"
+        }.use { it.readBytes() }
+    val base64 = Base64.getEncoder().encodeToString(bytes)
+    return "data:image/png;base64,$base64"
+}
 
 fun lagHtml(request: BrevRequest): String {
     fun esc(s: String) =
@@ -13,6 +25,7 @@ fun lagHtml(request: BrevRequest): String {
     val tittel = esc(request.brevmal.tittel)
     val navn = esc(request.brevmal.informasjonOmBruker.navn)
     val personident = esc(request.brevmal.informasjonOmBruker.fnr)
+    val logo = logoTilBase64()
     val fritekst =
         request.fritekstbolker.joinToString(separator = "") { bolk ->
             val under = bolk.underoverskrift?.let { "<h2>${esc(it)}</h2>" } ?: ""
@@ -43,6 +56,7 @@ fun lagHtml(request: BrevRequest): String {
         </head>
         <body>
           <header>
+            <img src="$$logo" alt="Logo" height="32" />
             <h1>$tittel</h1>
                 <div class="meta"><strong>Navn:</strong> $navn
                 <br/>

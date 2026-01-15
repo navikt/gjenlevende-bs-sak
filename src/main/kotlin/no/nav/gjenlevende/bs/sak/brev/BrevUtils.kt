@@ -38,11 +38,11 @@ fun lagHtml(request: BrevRequest): String {
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
           <title>$tittel</title>
           <style type="text/css">
-            body { font-family: Arial, Helvetica, sans-serif; font-size: 12pt; line-height: 1.4; }
+            body { font-family: Arial, Helvetica, sans-serif; font-size: 20px; line-height: 12pt; }
             header { margin-bottom: 12pt; }
-            h1 { font-size: 19pt; margin: 0 0 6pt 0; }
-            h2 { font-size: 14pt; margin: 12pt 0 3pt 0; }
-            h3 { font-size: 12pt; margin: 9pt 0 3pt 0; }
+            h1 { font-size: 12pt; line-height: 15pt; font-weight: 700; }
+            h2 { font-size: 9.75pt; line-height: 12pt; font-weight: 700; }
+            h3 { font-size: 9pt; line-height: 12pt; font-weight: 700; }
             section { margin-bottom: 6pt; }
             .meta { color: #333; font-size: 11pt; }
             .header {

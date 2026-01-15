@@ -1,18 +1,15 @@
 package no.nav.gjenlevende.bs.sak.behandling
 
-import no.nav.familie.prosessering.internal.TaskService
 import no.nav.gjenlevende.bs.sak.felles.sikkerhet.SikkerhetContext
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import tools.jackson.databind.ObjectMapper
 import java.util.UUID
 
 @Service
 class BehandlingService(
     private val behandlingRepository: BehandlingRepository,
-    private val taskService: TaskService,
-    private val objectMapper: ObjectMapper,
+    private val lagBehandleSakOppgaveTask: LagBehandleSakOppgaveTask,
 ) {
     @Transactional
     fun opprettBehandling(
@@ -30,16 +27,10 @@ class BehandlingService(
             behandling,
         )
 
-        opprettBehandleSakOppgaveTask(behandling)
+        // TODO: vurder - Skulle denne ligge i OppgaveService? Mye blir liggende på behandling :D
+        lagBehandleSakOppgaveTask.opprettBehandleSakOppgaveTask(behandling = behandling, saksbehandler = SikkerhetContext.hentSaksbehandler())
 
         return behandling
-    }
-
-    private fun opprettBehandleSakOppgaveTask(behandling: Behandling) {
-        val payload = OpprettOppgavePayload(behandling.id, SikkerhetContext.hentSaksbehandler())
-        val payloadAsString = objectMapper.writeValueAsString(payload)
-        val task = LagBehandleSakOppgaveTask.opprettTask(payloadAsString)
-        taskService.save(task)
     }
 
     fun hentBehandling(behandlingId: UUID): Behandling? = behandlingRepository.findByIdOrNull(behandlingId)

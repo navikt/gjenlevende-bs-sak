@@ -3,6 +3,8 @@ package no.nav.gjenlevende.bs.sak.behandling
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
+import no.nav.familie.prosessering.internal.TaskService
+import no.nav.gjenlevende.bs.sak.felles.sikkerhet.SikkerhetContext
 import no.nav.gjenlevende.bs.sak.oppgave.OppgaveService
 import no.nav.gjenlevende.bs.sak.util.findByIdOrThrow
 import org.slf4j.LoggerFactory
@@ -22,6 +24,7 @@ class LagBehandleSakOppgaveTask(
     private val behandlingRepository: BehandlingRepository,
     private val oppgaveService: OppgaveService,
     private val objectMapper: ObjectMapper,
+    private val taskService: TaskService,
 ) : AsyncTaskStep {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -31,6 +34,13 @@ class LagBehandleSakOppgaveTask(
         logger.info("LagBehandleSakOppgaveTask task: ${payload.behandlingsId}, saksbehandler: ${payload.saksbehandler}")
         val behandling = behandlingRepository.findByIdOrThrow(payload.behandlingsId)
         oppgaveService.opprettBehandleSakOppgave(behandling, payload.saksbehandler)
+    }
+
+    fun opprettBehandleSakOppgaveTask(behandling: Behandling, saksbehandler: String) {
+        val payload = OpprettOppgavePayload(behandling.id, saksbehandler)
+        val payloadAsString = objectMapper.writeValueAsString(payload)
+        val task = opprettTask(payloadAsString)
+        taskService.save(task)
     }
 
     companion object {

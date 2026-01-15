@@ -26,7 +26,6 @@ data class HentBehandlingerRequest(
 @RequestMapping(path = ["/api/behandling"])
 class BehandlingController(
     private val behandlingService: BehandlingService,
-    private val taskService: TaskService,
 ) {
     @PostMapping("/opprett")
     fun opprettBehandling(
@@ -39,8 +38,7 @@ class BehandlingController(
         }
 
         val behandling = behandlingService.opprettBehandling(fagsakId)
-        val task = LagBehandleSakOppgaveTask.opprettTask(behandling.id, SikkerhetContext.hentSaksbehandler())
-        taskService.save(task)
+
         return ResponseEntity.ok(behandling.id)
     }
 

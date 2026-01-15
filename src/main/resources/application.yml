@@ -128,7 +128,7 @@ PDL_URL: https://pdl-api.dev-fss-pub.nais.io
 PDL_SCOPE: api://dev-fss.pdl.pdl-api/.default
 
 # OPPGAVE
-OPPGAVE_URL: https://pdl-api.dev-fss-pub.nais.io
+OPPGAVE_URL: https://oppgave.dev.intern.nav.no
 OPPGAVE_SCOPE=api://dev-fss:oppgavehandtering:oppgave/:default:
 
 #SAF

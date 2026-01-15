@@ -3,9 +3,9 @@ package no.nav.gjenlevende.bs.sak.behandling
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
-import no.nav.gjenlevende.bs.sak.fagsak.dto.FagsakDto
 import no.nav.gjenlevende.bs.sak.oppgave.OppgaveService
 import no.nav.gjenlevende.bs.sak.util.findByIdOrThrow
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import tools.jackson.databind.ObjectMapper
 import tools.jackson.module.kotlin.readValue
@@ -23,10 +23,12 @@ class LagBehandleSakOppgaveTask(
     private val oppgaveService: OppgaveService,
     private val objectMapper: ObjectMapper,
 ) : AsyncTaskStep {
+    private val logger = LoggerFactory.getLogger(this::class.java)
+
     override fun doTask(task: Task) {
         val payload: OpprettOppgavePayload = objectMapper.readValue(task.payload)
 
-        println("Dummy task: ${payload.behandlingsId}, saksbehandler: ${payload.saksbehandler}")
+        logger.info("LagBehandleSakOppgaveTask task: ${payload.behandlingsId}, saksbehandler: ${payload.saksbehandler}")
         val behandling = behandlingRepository.findByIdOrThrow(payload.behandlingsId)
         oppgaveService.opprettBehandleSakOppgave(behandling, payload.saksbehandler)
     }
@@ -34,16 +36,11 @@ class LagBehandleSakOppgaveTask(
     companion object {
         const val TYPE = "LagBehandleSakOppgaveTask"
 
-        fun opprettTask(
-            behandlingsId: UUID,
-            saksbehandler: String,
-        ): Task {
-            val payload = OpprettOppgavePayload(behandlingsId, saksbehandler)
-            return Task(
-                type = TYPE,
-                payload = payload.toString(),
+        fun opprettTask(payload: String): Task =
+            Task(
+                TYPE,
+                payload,
             )
-        }
     }
 }
 

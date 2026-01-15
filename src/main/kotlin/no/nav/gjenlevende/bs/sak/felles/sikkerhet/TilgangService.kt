@@ -18,14 +18,15 @@ class TilgangService(
 ) {
     private val logger = LoggerFactory.getLogger(TilgangService::class.java)
 
-    fun erTilgangsmaskinEnabled(): Boolean {
+    //    TODO: Fjern før prodsetting
+    fun erTilgangsmaskinToggelet(): Boolean {
         val featureToggles = unleashService.hentFeatureToggles()
         return featureToggles[FeatureToggle.TOGGLE_TILGANGSMASKIN_I_DEV.toggleName] ?: true
     }
 
     fun validerTilgangTilPersonMedRelasjoner(personident: String) {
-        if (!erTilgangsmaskinEnabled()) {
-            logger.info("Tilgangsmaskin er deaktivert via feature toggle, hopper over tilgangskontroll")
+        if (!erTilgangsmaskinToggelet()) {
+            logger.info("Tilgangsmaskin er ikke toggelet, hopper over tilgangskontroll")
             return
         }
 

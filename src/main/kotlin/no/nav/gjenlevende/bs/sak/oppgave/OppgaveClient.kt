@@ -15,7 +15,7 @@ class OppgaveClient(
 ) {
     private val logger = LoggerFactory.getLogger(OppgaveClient::class.java)
 
-    //private val restTemplate: RestOperations = oauth2RestFactory.create(registrationId)
+    private val restTemplate: RestOperations = oauth2RestFactory.create(registrationId)
 
     fun opprettOppgave(oppgaveRequest: OppgaveRequest): Long {
         logger.info("Oppretting av oppgave er ikke implementert ennå og derfor ikke opprettet for behandling=${oppgaveRequest.behandlingsId}")

@@ -21,12 +21,12 @@ fun lagHtml(request: BrevRequest): String {
     val logo = logoTilBase64()
     val fritekst =
         request.fritekstbolker.joinToString(separator = "") { bolk ->
-            val under = bolk.underoverskrift?.let { "<h2>${it}</h2>" } ?: ""
+            val under = bolk.underoverskrift?.let { "<h2>$it</h2>" } ?: ""
             "<section>\n\t${under}\n\t<p>${bolk.innhold}</p>\n</section>\n"
         }
     val avslutning =
         request.brevmal.fastTekstAvslutning.joinToString(separator = "") { bolk ->
-            val under = bolk.underoverskrift?.let { "<h3>${it)}</h3>" } ?: ""
+            val under = bolk.underoverskrift?.let { "<h3>$it</h3>" } ?: ""
             "<section class=\"avslutning\">\n\t${under}\n\t<p>${bolk.innhold}</p>\n</section>\n"
         }
 

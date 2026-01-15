@@ -34,40 +34,41 @@ fun lagHtml(request: BrevRequest): String {
         <!DOCTYPE html>
         <html lang="no">
         <head>
-          <meta charset="UTF-8" />
-          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-          <title>$tittel</title>
-          <style type="text/css">
-            body { font-family: Arial, Helvetica, sans-serif; font-size: 20px; line-height: 12pt; }
-            header { margin-bottom: 12pt; }
-            h1 { font-size: 12pt; line-height: 15pt; font-weight: 700; }
-            h2 { font-size: 9.75pt; line-height: 12pt; font-weight: 700; }
-            h3 { font-size: 9pt; line-height: 12pt; font-weight: 700; }
-            section { margin-bottom: 6pt; }
-            .meta { color: #333; font-size: 11pt; }
-            .header {
-              position: relative;
-              padding-top: 128pt;
-            }
-            .logo {
-              position: absolute;
-              top: 64pt;
-              left: 64pt;
-              height: 16pt;
-              width: auto;
-            }
-          </style>
+            <meta charset="UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+            <title>$tittel</title>
+            <style type="text/css">
+                body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; line-height: 12pt; }
+                header { margin-bottom: 12pt; }
+                h1 { font-size: 16pt; line-height: 20pt; font-weight: 700; margin-bottom: 26pt; }
+                h2 { font-size: 13pt; line-height: 16pt; font-weight: 700; margin-bottom: 6pt;}
+                h3 { font-size: 12pt; line-height: 16pt; font-weight: 700; margin-bottom: 6pt;}
+                section { margin-bottom: 26pt; }
+                .infoBruker { color: #333; font-size: 11pt; }
+                .header {
+                    position: relative;
+                    padding-top: 128pt;
+                }
+                .logo {
+                    position: absolute;
+                    top: 64pt;
+                    left: 64pt;
+                    height: 16pt;
+                    width: auto;
+                }
+            </style>
         </head>
         <body>
           <header class="header">
             <img class="logo" src="$logo" alt="Logo" height="16" />
-            <h1>$tittel</h1>
-                <div class="meta"><strong>Navn:</strong> $navn
+            <div class="infoBruker">
+                <strong>Navn:</strong> $navn
                 <br/>
                 <strong>Fødselsnummer:</strong> $personident
             </div>
           </header>
           <main>
+            <h1>$tittel</h1>
             $fritekst
             $avslutning
           </main>

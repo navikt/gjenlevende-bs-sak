@@ -50,17 +50,26 @@ fun lagHtml(request: BrevRequest): String {
                 }
                 .logo {
                     display: block;
-                    margin-bottom: 48pt;
+                }
+                .bruker-info {
+                    display: grid;
+                    grid-template-columns: 140pt auto;
+                    row-gap: 4pt;
+                }
+                .bruker-info .label {
+                    font-weight: 700;
                 }
             </style>
         </head>
         <body>
           <header class="header">
             <img class="logo" src="$logo" alt="Logo" height="16" />
-            <div>
-                <strong>Navn:</strong> $navn
-                <br/>
-                <strong>Fødselsnummer:</strong> $personident
+            <div class="bruker-info">
+                <div class="label">Navn:</div>
+                <div>$$navn</div>
+
+                <div class="label">Fødselsnummer:</div>
+                <div>$$personident</div>
             </div>
           </header>
           <main>

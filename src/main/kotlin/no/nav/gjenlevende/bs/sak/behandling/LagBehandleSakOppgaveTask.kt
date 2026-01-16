@@ -4,7 +4,6 @@ import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.internal.TaskService
-import no.nav.gjenlevende.bs.sak.felles.sikkerhet.SikkerhetContext
 import no.nav.gjenlevende.bs.sak.oppgave.OppgaveService
 import no.nav.gjenlevende.bs.sak.util.findByIdOrThrow
 import org.slf4j.LoggerFactory
@@ -36,25 +35,23 @@ class LagBehandleSakOppgaveTask(
         oppgaveService.opprettBehandleSakOppgave(behandling, payload.saksbehandler)
     }
 
-    fun opprettBehandleSakOppgaveTask(behandling: Behandling, saksbehandler: String) {
-        val payload = OpprettOppgavePayload(behandling.id, saksbehandler)
+    fun opprettBehandleSakOppgaveTask(
+        behandling: Behandling,
+        saksbehandler: String,
+    ) {
+        val payload = OpprettOppgavePayload(behandlingsId = behandling.id, saksbehandler= saksbehandler)
         val payloadAsString = objectMapper.writeValueAsString(payload)
-        val task = opprettTask(payloadAsString)
+        val task =  Task(TYPE, payloadAsString,)
         taskService.save(task)
     }
 
     companion object {
         const val TYPE = "LagBehandleSakOppgaveTask"
-
-        fun opprettTask(payload: String): Task =
-            Task(
-                TYPE,
-                payload,
-            )
     }
 }
 
 data class OpprettOppgavePayload(
     val behandlingsId: UUID,
     val saksbehandler: String,
+    val uniqueTaskPayloadId : UUID = UUID.randomUUID(),
 )

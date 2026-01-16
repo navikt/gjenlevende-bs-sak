@@ -9,8 +9,8 @@ import org.springframework.context.annotation.Primary
 import org.springframework.context.annotation.Profile
 
 @Configuration
-@Profile("integrasjonstest")
-open class UnleashMock {
+@Profile("integrasjonstest", "local")
+ class UnleashMock {
     @Bean
     @Primary
     open fun unleash(): Unleash {

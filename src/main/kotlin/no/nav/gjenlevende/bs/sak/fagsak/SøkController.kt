@@ -2,6 +2,7 @@ package no.nav.gjenlevende.bs.sak.fagsak
 
 import no.nav.gjenlevende.bs.sak.infrastruktur.exception.Feil
 import org.springframework.http.HttpStatus
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -24,6 +25,7 @@ data class SøkRequest(
 const val LENGDE_PERSONIDENT = 11
 
 @RestController
+@PreAuthorize("hasRole('SAKSBEHANDLER')")
 @RequestMapping(path = ["/api/sok"])
 class SøkController(
     private val søkService: SøkService,
@@ -32,10 +34,11 @@ class SøkController(
     fun søkPerson(
         @RequestBody søkRequest: SøkRequest,
     ): Søkeresultat {
+        val personident = søkRequest.personident
         when {
-            søkRequest.personident != null -> {
-                validerErPersonident(søkRequest.personident)
-                return søkService.søkPerson(søkRequest.personident)
+            personident != null -> {
+                validerErPersonident(personident)
+                return søkService.søkPerson(personident)
             }
 
             søkRequest.fagsakPersonId != null -> {

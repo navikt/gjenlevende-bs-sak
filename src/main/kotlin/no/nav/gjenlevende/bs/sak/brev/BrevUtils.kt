@@ -50,7 +50,7 @@ fun lagHtml(request: BrevRequest): String {
                 }
                 .logo {
                     display: block;
-                    margin-bottom: 24pt;
+                    margin-bottom: 48pt;
                 }
             </style>
         </head>

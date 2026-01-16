@@ -1,55 +1,80 @@
 package no.nav.gjenlevende.bs.sak.brev
 
 import no.nav.gjenlevende.bs.sak.brev.domain.BrevRequest
+import java.util.Base64
+
+private fun logoTilBase64(): String {
+    val bytes =
+        requireNotNull(
+            object {}.javaClass.classLoader.getResourceAsStream("Nav-logo-red-228x63.png"),
+        ) {
+            "Fant ikke Nav-logo i resources"
+        }.use { it.readBytes() }
+    val base64 = Base64.getEncoder().encodeToString(bytes)
+    return "data:image/png;base64,$base64"
+}
 
 fun lagHtml(request: BrevRequest): String {
-    fun esc(s: String) =
-        s
-            .replace("&", "&amp;")
-            .replace("<", "&lt;")
-            .replace(">", "&gt;")
-            .replace("\"", "&quot;")
-
-    val tittel = esc(request.brevmal.tittel)
-    val navn = esc(request.brevmal.informasjonOmBruker.navn)
-    val personident = esc(request.brevmal.informasjonOmBruker.fnr)
+    val tittel = request.brevmal.tittel
+    val navn = request.brevmal.informasjonOmBruker.navn
+    val personident = request.brevmal.informasjonOmBruker.fnr
+    val logo = logoTilBase64()
     val fritekst =
         request.fritekstbolker.joinToString(separator = "") { bolk ->
-            val under = bolk.underoverskrift?.let { "<h2>${esc(it)}</h2>" } ?: ""
-            "<section>\n\t${under}\n\t<p>${esc(bolk.innhold)}</p>\n</section>\n"
+            val underoverskrift = bolk.underoverskrift?.let { "<h2>$it</h2>" } ?: ""
+            "<section>\n${underoverskrift}\n<p>${bolk.innhold}</p>\n</section>\n"
         }
     val avslutning =
         request.brevmal.fastTekstAvslutning.joinToString(separator = "") { bolk ->
-            val under = bolk.underoverskrift?.let { "<h3>${esc(it)}</h3>" } ?: ""
-            "<section class=\"avslutning\">\n\t${under}\n\t<p>${esc(bolk.innhold)}</p>\n</section>\n"
+            val underoverskrift = bolk.underoverskrift?.let { "<h2>$it</h2>" } ?: ""
+            "<section class=\"avslutning\">\n${underoverskrift}\n<p>${bolk.innhold}</p>\n</section>\n"
         }
 
     return """
         <!DOCTYPE html>
         <html lang="no">
         <head>
-          <meta charset="UTF-8" />
-          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-          <title>$tittel</title>
-          <style>
-            body { font-family: Arial, Helvetica, sans-serif; font-size: 12pt; line-height: 1.4; }
-            header { margin-bottom: 1rem; }
-            h1 { font-size: 1.6rem; margin: 0 0 .5rem 0; }
-            h2 { font-size: 1.2rem; margin: 1rem 0 .25rem 0; }
-            h3 { font-size: 1rem; margin: .75rem 0 .25rem 0; }
-            section { margin-bottom: .5rem; }
-            .meta { color: #333; font-size: .9rem; }
-          </style>
+            <meta charset="UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+            <title>$tittel</title>
+            <style type="text/css">
+                body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; line-height: 12pt; margin-left: 48pt; margin-right: 48pt; }
+                header { margin-bottom: 12pt; }
+                h1 { font-size: 16pt; line-height: 20pt; font-weight: 700; margin-bottom: 26pt; }
+                h2 { font-size: 13pt; line-height: 16pt; font-weight: 700; margin-bottom: 6pt;}
+                h3 { font-size: 12pt; line-height: 16pt; font-weight: 700; margin-bottom: 6pt;}
+                section { margin-bottom: 26pt; }
+                .header {
+                    padding-top: 32pt;
+                    margin-bottom: 48pt
+                }
+                .logo {
+                    display: block;
+                    margin-bottom: 32pt
+                }
+                .bruker-info { display: table; }
+                .bruker-info .row { display: table-row; }
+                .bruker-info .label {
+                    display: table-cell;
+                    white-space: nowrap;
+                    padding-right: 12pt;
+                }
+                .bruker-info .value {
+                    display: table-cell;
+                    width: 100%;
+                }
+            </style>
         </head>
         <body>
-          <header>
-            <h1>$tittel</h1>
-                <div class="meta"><strong>Navn:</strong> $navn
-                <br/>
-                <strong>Fødselsnummer:</strong> $personident
-            </div>
+          <header class="header">
+            <img class="logo" src="$logo" alt="Logo" height="16" />
+                <div class="bruker-info">
+                    <div class="row"><span class="label">Navn:</span><span class="value">$navn</span></div>
+                    <div class="row"><span class="label">Fødselsnummer:</span><span class="value">$personident</span></div>
+                </div>
           </header>
           <main>
+            <h1>$tittel</h1>
             $fritekst
             $avslutning
           </main>

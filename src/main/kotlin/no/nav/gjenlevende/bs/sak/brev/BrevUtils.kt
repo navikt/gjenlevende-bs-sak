@@ -50,7 +50,8 @@ fun lagHtml(request: BrevRequest): String {
                 h3 { font-size: 12pt; line-height: 16pt; font-weight: 700; margin-bottom: 6pt;}
                 section { margin-bottom: 26pt; }
                 .logo {
-                    badding-bottom: 32pt;
+                    display: block;
+                    padding-bottom: 32pt;
                 .header {
                     position: relative;
                     padding-top: 64pt;

@@ -29,7 +29,12 @@ fun lagHtml(request: BrevRequest): String {
             val underoverskrift = bolk.underoverskrift?.let { "<h2>$it</h2>" } ?: ""
             "<section class=\"avslutning\">\n${underoverskrift}\n<p>${bolk.innhold}</p>\n</section>\n"
         }
-
+    // .logo {
+//    position: absolute;
+//    top: 32pt;
+//    height: 16pt;
+//    width: auto;
+// }
     return """
         <!DOCTYPE html>
         <html lang="no">
@@ -44,6 +49,8 @@ fun lagHtml(request: BrevRequest): String {
                 h2 { font-size: 13pt; line-height: 16pt; font-weight: 700; margin-bottom: 6pt;}
                 h3 { font-size: 12pt; line-height: 16pt; font-weight: 700; margin-bottom: 6pt;}
                 section { margin-bottom: 26pt; }
+                .logo {
+                    badding-bottom: 32pt;
                 .header {
                     position: relative;
                     padding-top: 64pt;

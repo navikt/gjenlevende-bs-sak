@@ -46,18 +46,18 @@ fun lagHtml(request: BrevRequest): String {
                 section { margin-bottom: 26pt; }
                 .header {
                     padding-top: 32pt;
-                    margin-bottom: 32pt
+                    margin-bottom: 48pt
                 }
                 .logo {
                     display: block;
                 }
                 .bruker-info {
                     display: grid;
-                    grid-template-columns: 140pt auto;
-                    row-gap: 4pt;
+                    grid-template-columns: max-content auto;
+                    column-gap: 12px;
                 }
-                .bruker-info .label {
-                    font-weight: 700;
+                .infoWrapper {
+                    display: contents;
                 }
             </style>
         </head>
@@ -65,11 +65,14 @@ fun lagHtml(request: BrevRequest): String {
           <header class="header">
             <img class="logo" src="$logo" alt="Logo" height="16" />
             <div class="bruker-info">
-                <div class="label">Navn:</div>
-                <div>$$navn</div>
-
-                <div class="label">Fødselsnummer:</div>
-                <div>$$personident</div>
+                <div class="infoWrapper">
+                    <p>Navn:</p>
+                    <p>$navn</p>
+                </div>
+                <div class="infoWrapper">
+                    <p>Fødselsnummer:</p>
+                    <p>$personident</p>
+                </div>
             </div>
           </header>
           <main>

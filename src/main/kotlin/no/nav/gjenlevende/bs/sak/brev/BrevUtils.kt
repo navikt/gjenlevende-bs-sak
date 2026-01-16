@@ -38,10 +38,7 @@ fun lagHtml(request: BrevRequest): String {
             <meta name="viewport" content="width=device-width, initial-scale=1.0" />
             <title>$tittel</title>
             <style type="text/css">
-                @page { margin: 0; }
-                html, body { margin: 0; padding: 0; }
-                header, main { margin: 0; padding: 0; }
-                body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; line-height: 12pt; }
+                body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; line-height: 12pt; margin-left: 48pt; }
                 header { margin-bottom: 12pt; }
                 h1 { font-size: 16pt; line-height: 20pt; font-weight: 700; margin-bottom: 26pt; }
                 h2 { font-size: 13pt; line-height: 16pt; font-weight: 700; margin-bottom: 6pt;}
@@ -53,8 +50,8 @@ fun lagHtml(request: BrevRequest): String {
                 }
                 .logo {
                     position: absolute;
-                    top: 64pt;
-                    left: 64pt;
+                    top: 32pt;
+                    left: 48pt;
                     height: 16pt;
                     width: auto;
                 }

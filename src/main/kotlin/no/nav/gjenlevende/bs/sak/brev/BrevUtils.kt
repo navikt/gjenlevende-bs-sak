@@ -50,13 +50,14 @@ fun lagHtml(request: BrevRequest): String {
                 }
                 .logo {
                     display: block;
+                    margin-bottom: 32pt
                 }
                 .bruker-info { display: table; }
                 .bruker-info .row { display: table-row; }
                 .bruker-info .label {
                     display: table-cell;
                     white-space: nowrap;
-                    padding-right: 12px;
+                    padding-right: 12pt;
                 }
                 .bruker-info .value {
                     display: table-cell;

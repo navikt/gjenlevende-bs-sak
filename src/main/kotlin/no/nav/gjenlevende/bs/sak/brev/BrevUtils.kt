@@ -48,12 +48,7 @@ fun lagHtml(request: BrevRequest): String {
                     position: relative;
                     padding-top: 64pt;
                 }
-                .logo {
-                    position: absolute;
-                    top: 32pt;
-                    height: 16pt;
-                    width: auto;
-                }
+
             </style>
         </head>
         <body>

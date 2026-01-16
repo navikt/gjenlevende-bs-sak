@@ -51,29 +51,26 @@ fun lagHtml(request: BrevRequest): String {
                 .logo {
                     display: block;
                 }
-                .bruker-info {
-                    display: grid;
-                    grid-template-columns: max-content auto;
-                    column-gap: 12px;
+                .bruker-info { display: table; }
+                .bruker-info .row { display: table-row; }
+                .bruker-info .label {
+                    display: table-cell;
+                    white-space: nowrap;
+                    padding-right: 12px;
                 }
-                .infoWrapper {
-                    display: contents;
+                .bruker-info .value {
+                    display: table-cell;
+                    width: 100%;
                 }
             </style>
         </head>
         <body>
           <header class="header">
             <img class="logo" src="$logo" alt="Logo" height="16" />
-            <div class="bruker-info">
-                <div class="infoWrapper">
-                    <p>Navn:</p>
-                    <p>$navn</p>
+                <div class="bruker-info">
+                    <div class="row"><span class="label">Navn:</span><span class="value">$navn</span></div>
+                    <div class="row"><span class="label">Fødselsnummer:</span><span class="value">$personident</span></div>
                 </div>
-                <div class="infoWrapper">
-                    <p>Fødselsnummer:</p>
-                    <p>$personident</p>
-                </div>
-            </div>
           </header>
           <main>
             <h1>$tittel</h1>

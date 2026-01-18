@@ -19,17 +19,17 @@ jobs:
 
         steps:
             -   name: Checkout repository
-                uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # ratchet:actions/checkout@v4
+                uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # ratchet:actions/checkout@v4
 
             -   name: Set up JDK 21
-                uses: actions/setup-java@dded0888837ed1f317902acf8a20df0ad188d165 # ratchet:actions/setup-java@v4
+                uses: actions/setup-java@f2beeb24e141e01a676f977032f5a29d81c9e27e # ratchet:actions/setup-java@v4
                 with:
                     distribution: 'temurin'
                     java-version: '21'
                     cache: 'maven'
 
             -   name: Initialize CodeQL
-                uses: github/codeql-action/init@45c373516f557556c15d420e3f5e0aa3d64366bc # ratchet:github/codeql-action/init@v3
+                uses: github/codeql-action/init@cdefb33c0f6224e58673d9004f47f7cb3e328b89 # ratchet:github/codeql-action/init@v3
                 with:
                     languages: java-kotlin
                     build-mode: manual
@@ -45,6 +45,6 @@ jobs:
                       --batch-mode --errors
 
             -   name: Perform CodeQL Analysis
-                uses: github/codeql-action/analyze@45c373516f557556c15d420e3f5e0aa3d64366bc # ratchet:github/codeql-action/analyze@v3
+                uses: github/codeql-action/analyze@cdefb33c0f6224e58673d9004f47f7cb3e328b89 # ratchet:github/codeql-action/analyze@v3
                 with:
                     category: "/language:java-kotlin"

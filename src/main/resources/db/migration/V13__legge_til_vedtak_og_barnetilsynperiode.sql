@@ -8,7 +8,7 @@ CREATE TABLE vedtak (
                      opprettet_tid          TIMESTAMP(3) NOT NULL DEFAULT localtimestamp,
                      opprettet_av           VARCHAR NOT NULL,
 
-                     CONSTRAINT fk_vedtak_behandling_id FOREIGN KEY (behandlingId) REFERENCES behandling (id)
+                     CONSTRAINT fk_vedtak_behandling_id FOREIGN KEY (behandling_id) REFERENCES behandling (id)
 );
 
 CREATE TABLE barnetilsynperiode (
@@ -20,5 +20,5 @@ CREATE TABLE barnetilsynperiode (
                         periodetype         VARCHAR NOT NULL,
                         aktivitetstype      VARCHAR,
 
-                        CONSTRAINT fk_barnetilsynperiode_behandling_id FOREIGN KEY (behandlingId) REFERENCES behandling (id)
+                        CONSTRAINT fk_barnetilsynperiode_behandling_id FOREIGN KEY (behandling_id) REFERENCES behandling (id)
 );

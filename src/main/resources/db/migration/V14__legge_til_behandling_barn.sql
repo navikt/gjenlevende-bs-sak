@@ -9,5 +9,5 @@ CREATE TABLE behandling_barn (
                                     endret_av           VARCHAR       NOT NULL,
                                     endret_tid          TIMESTAMP(3) NOT NULL DEFAULT localtimestamp,
 
-                                    CONSTRAINT fk_behandling_barn_behandling_id FOREIGN KEY (behandlingId) REFERENCES behandling (id)
+                                    CONSTRAINT fk_behandling_barn_behandling_id FOREIGN KEY (behandling_id) REFERENCES behandling (id)
 );

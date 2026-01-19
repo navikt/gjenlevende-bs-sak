@@ -3,7 +3,9 @@ package no.nav.gjenlevende.bs.sak.fagsak
 import no.nav.familie.prosessering.rest.Ressurs
 import no.nav.gjenlevende.bs.sak.fagsak.dto.FagsakDto
 import no.nav.gjenlevende.bs.sak.felles.sikkerhet.TilgangService
+import no.nav.gjenlevende.bs.sak.infrastruktur.exception.Feil
 import org.slf4j.LoggerFactory
+import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -23,33 +25,36 @@ open class FagsakController(
     @PostMapping
     open fun hentEllerOpprettFagsakForPerson(
         @RequestBody fagsakRequest: FagsakRequest,
-    ): Ressurs<FagsakDto> {
+    ): ResponseEntity<FagsakDto> {
         logger.info("kaller hentEllerOpprettFagsakForPerson")
 
         val fagsakDto =
             when {
                 fagsakRequest.personident != null -> {
-                    tilgangService.validerTilgangTilPersonMedBarn(fagsakRequest.personident)
+                    tilgangService.validerTilgangTilPersonMedRelasjoner(fagsakRequest.personident)
+
                     fagsakService.hentEllerOpprettFagsakMedBehandlinger(
-                        fagsakRequest.personident,
-                        fagsakRequest.stønadstype,
+                        personident = fagsakRequest.personident,
+                        stønadstype = fagsakRequest.stønadstype,
                     )
                 }
 
                 fagsakRequest.fagsakPersonId != null -> {
                     val personident = fagsakPersonService.hentAktivIdent(fagsakRequest.fagsakPersonId)
-                    tilgangService.validerTilgangTilPersonMedBarn(personident)
+
+                    tilgangService.validerTilgangTilPersonMedRelasjoner(personident)
+
                     fagsakService.hentEllerOpprettFagsakMedFagsakPersonId(
-                        fagsakRequest.fagsakPersonId,
-                        fagsakRequest.stønadstype,
+                        fagsakPersonId = fagsakRequest.fagsakPersonId,
+                        stønadstype = fagsakRequest.stønadstype,
                     )
                 }
 
                 else -> {
-                    throw IllegalArgumentException("Må oppgi enten personIdent eller fagsakPersonId")
+                    throw Feil("Må oppgi enten personident eller fagsakPersonId")
                 }
             }
 
-        return Ressurs.success(fagsakDto)
+        return ResponseEntity.ok(fagsakDto)
     }
 }

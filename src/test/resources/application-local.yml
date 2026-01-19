@@ -48,13 +48,20 @@ gjenlevende-bs-infotrygd:
     url: https://gjenlevende-bs-infotrygd.dev-fss-pub.nais.io
     audience: ${GJENLEVENDE_BS_INFOTRYGD_SCOPE}
 
-# Familie-integrasjoner
-FAMILIE_INTEGRASJONER_URL: http://localhost:8386
-FAMILIE_INTEGRASJONER_SCOPE: api://${AZURE_APP_CLIENT_ID}/.default
+# Familie-dokument
+FAMILIE_DOKUMENT_URL: http://localhost:8087
+FAMILIE_DOKUMENT_SCOPE: api://dev-gcp.teamfamilie.familie-dokument/.default
 
 # PDL (Persondataløsningen)
 PDL_URL: https://pdl-api.dev-fss-pub.nais.io
 PDL_SCOPE: api://dev-fss.pdl.pdl-api/.default
+
+# Tilgangsmaskin (Populasjonstilgangskontroll) - ekstern URL for lokal utvikling
+tilgangsmaskin:
+    url: ${TILGANGSMASKIN_URL:https://tilgangsmaskin.intern.dev.nav.no}
+    oauth:
+        registration-id: tilgangsmaskin-clientcredentials
+        scope: ${TILGANGSMASKIN_SCOPE:api://dev-gcp.tilgangsmaskin.populasjonstilgangskontroll/.default}
 
 # Database konfigurasjon
 DB_JDBC_URL: jdbc:tc:postgresql:17:///testdb

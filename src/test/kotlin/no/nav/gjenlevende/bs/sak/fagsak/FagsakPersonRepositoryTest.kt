@@ -2,7 +2,7 @@ package no.nav.gjenlevende.bs.sak.fagsak
 
 import no.nav.gjenlevende.bs.sak.SpringContextTest
 import no.nav.gjenlevende.bs.sak.fagsak.domain.FagsakPerson
-import no.nav.gjenlevende.bs.sak.fagsak.domain.PersonIdent
+import no.nav.gjenlevende.bs.sak.fagsak.domain.Personident
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -16,12 +16,12 @@ open class FagsakPersonRepositoryTest : SpringContextTest() {
         val person1 =
             fagsakPersonRepository.insert(
                 FagsakPerson(
-                    identer = setOf(PersonIdent("1"), PersonIdent("3")),
+                    identer = setOf(Personident("1"), Personident("3")),
                 ),
             )
-        val person2 = fagsakPersonRepository.insert(FagsakPerson(identer = setOf(PersonIdent("2"))))
+        val person2 = fagsakPersonRepository.insert(FagsakPerson(identer = setOf(Personident("2"))))
 
-        assertThat(fagsakPersonRepository.findPersonIdenter(person1.id)).containsExactlyInAnyOrderElementsOf(person1.identer)
-        assertThat(fagsakPersonRepository.findPersonIdenter(person2.id)).containsExactlyInAnyOrderElementsOf(person2.identer)
+        assertThat(fagsakPersonRepository.findPersonidenter(person1.id)).containsExactlyInAnyOrderElementsOf(person1.identer)
+        assertThat(fagsakPersonRepository.findPersonidenter(person2.id)).containsExactlyInAnyOrderElementsOf(person2.identer)
     }
 }

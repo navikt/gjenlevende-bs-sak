@@ -18,6 +18,7 @@ class BehandlingService(
             Behandling(
                 fagsakId = fagsakId,
                 status = status,
+                resultat = BehandlingResultat.IKKE_SATT,
             )
 
         behandlingRepository.insert(
@@ -28,4 +29,8 @@ class BehandlingService(
     }
 
     fun hentBehandling(behandlingId: UUID): Behandling? = behandlingRepository.findByIdOrNull(behandlingId)
+
+    fun hentBehandlingerFraFagsak(fagsakId: UUID): List<Behandling>? = behandlingRepository.findAllByFagsakId(fagsakId)
+
+    fun finnesÅpenBehandling(fagsakId: UUID) = behandlingRepository.existsByFagsakIdAndStatusIsNot(fagsakId, BehandlingStatus.FERDIGSTILT)
 }

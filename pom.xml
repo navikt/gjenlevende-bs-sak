@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.0.0</version>
+        <version>4.0.1</version>
         <relativePath/>
     </parent>
     <groupId>no.nav</groupId>
@@ -38,15 +38,15 @@
     </scm>
     <properties>
         <java.version>25</java.version>
-        <kotlin.version>2.2.21</kotlin.version>
+        <kotlin.version>2.3.0</kotlin.version>
         <kotlin.jvm.target>21</kotlin.jvm.target>
         <ktlint.version>1.8.0</ktlint.version>
-        <springdoc.version>3.0.0</springdoc.version>
+        <springdoc.version>3.0.1</springdoc.version>
         <flyway.version>11.15.0</flyway.version>
-        <unleash.version>11.1.1</unleash.version>
-        <mockk.version>1.14.6</mockk.version>
-        <prosessering.version>2.20251127080553_2073bf2</prosessering.version>
-        <kontrakter.version>3.0_20251112142340_c5baa9c</kontrakter.version>
+        <unleash.version>11.2.1</unleash.version>
+        <mockk.version>1.14.7</mockk.version>
+        <prosessering.version>2.20251222111020_cec9344</prosessering.version>
+
     </properties>
     <dependencies>
         <dependency>
@@ -95,7 +95,7 @@
         <dependency>
             <groupId>com.ninja-squad</groupId>
             <artifactId>springmockk</artifactId>
-            <version>4.0.2</version>
+            <version>5.0.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -145,7 +145,7 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>postgresql</artifactId>
-            <version>1.21.3</version>
+            <version>1.21.4</version>
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>
@@ -160,11 +160,6 @@
             <groupId>no.nav.familie</groupId>
             <artifactId>prosessering-core</artifactId>
             <version>${prosessering.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>no.nav.familie.kontrakter</groupId>
-            <artifactId>enslig-forsorger</artifactId>
-            <version>${kontrakter.version}</version>
         </dependency>
 
         <dependency>

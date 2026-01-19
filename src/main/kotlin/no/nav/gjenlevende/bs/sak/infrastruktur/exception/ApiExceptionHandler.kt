@@ -1,6 +1,5 @@
 package no.nav.gjenlevende.bs.sak.infrastruktur.exception
 
-import no.nav.familie.kontrakter.felles.Ressurs
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -13,20 +12,12 @@ import org.springframework.web.servlet.resource.NoResourceFoundException
 class ApiExceptionHandler {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    @ExceptionHandler(ApiFeil::class)
-    fun handleApiFeil(feil: ApiFeil): ResponseEntity<FeilResponse> {
-        logger.warn("ApiFeil: ${feil.feilmelding}", feil)
-        return ResponseEntity
-            .status(feil.httpStatus)
-            .body(FeilResponse(feil.feilmelding, feil.httpStatus.value()))
-    }
-
     @ExceptionHandler(Feil::class)
     fun handleFeil(feil: Feil): ResponseEntity<FeilResponse> {
-        logger.warn("Feil: ${feil.message}", feil)
+        logger.warn("Feil: ${feil.melding}", feil)
         return ResponseEntity
             .status(feil.httpStatus)
-            .body(FeilResponse(feil.frontendFeilmelding ?: feil.message ?: "Ukjent feil", feil.httpStatus.value()))
+            .body(FeilResponse(melding = feil.melding, status = feil.httpStatus.value()))
     }
 
     @ExceptionHandler(IllegalArgumentException::class)
@@ -34,7 +25,7 @@ class ApiExceptionHandler {
         logger.warn("IllegalArgumentException: ${e.message}", e)
         return ResponseEntity
             .status(HttpStatus.BAD_REQUEST)
-            .body(FeilResponse(e.message ?: "Ugyldig request", HttpStatus.BAD_REQUEST.value()))
+            .body(FeilResponse(melding = e.message ?: "Ugyldig request", status = HttpStatus.BAD_REQUEST.value()))
     }
 
     @ExceptionHandler(WebClientResponseException::class)
@@ -49,21 +40,17 @@ class ApiExceptionHandler {
         logger.warn("WebClientResponseException: ${e.statusCode} - $feilmelding")
         return ResponseEntity
             .status(e.statusCode)
-            .body(FeilResponse(feilmelding, e.statusCode.value()))
+            .body(FeilResponse(melding = feilmelding, status = e.statusCode.value()))
     }
 
     @ExceptionHandler(ManglerTilgang::class)
-    fun handleThrowable(manglerTilgang: ManglerTilgang): ResponseEntity<Ressurs<Nothing>> {
+    fun handleManglerTilgang(manglerTilgang: ManglerTilgang): ResponseEntity<ManglerTilgangResponse> {
         logger.warn("En håndtert tilgangsfeil har oppstått")
         return ResponseEntity
             .status(HttpStatus.FORBIDDEN)
             .body(
-                Ressurs(
-                    data = null,
-                    status = Ressurs.Status.IKKE_TILGANG,
-                    frontendFeilmelding = manglerTilgang.frontendFeilmelding,
+                ManglerTilgangResponse(
                     melding = manglerTilgang.melding,
-                    stacktrace = null,
                 ),
             )
     }
@@ -79,4 +66,8 @@ class ApiExceptionHandler {
 data class FeilResponse(
     val melding: String,
     val status: Int,
+)
+
+data class ManglerTilgangResponse(
+    val melding: String?,
 )

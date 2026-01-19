@@ -2,6 +2,7 @@ package no.nav.gjenlevende.bs.sak.fagsak
 
 import no.nav.gjenlevende.bs.sak.infrastruktur.exception.Feil
 import org.springframework.http.HttpStatus
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -24,6 +25,7 @@ data class SøkRequest(
 const val LENGDE_PERSONIDENT = 11
 
 @RestController
+@PreAuthorize("hasRole('SAKSBEHANDLER')")
 @RequestMapping(path = ["/api/sok"])
 class SøkController(
     private val søkService: SøkService,
@@ -32,10 +34,11 @@ class SøkController(
     fun søkPerson(
         @RequestBody søkRequest: SøkRequest,
     ): Søkeresultat {
+        val personident = søkRequest.personident
         when {
-            søkRequest.personident != null -> {
-                validerErPersonident(søkRequest.personident)
-                return søkService.søkPerson(søkRequest.personident)
+            personident != null -> {
+                validerErPersonident(personident)
+                return søkService.søkPerson(personident)
             }
 
             søkRequest.fagsakPersonId != null -> {
@@ -44,8 +47,7 @@ class SøkController(
 
             else -> {
                 throw Feil(
-                    message = "Må oppgi enten personident eller fagsakPersonId",
-                    frontendFeilmelding = "Må oppgi enten personident eller fagsakPersonId",
+                    melding = "Må oppgi enten personident eller fagsakPersonId",
                     httpStatus = HttpStatus.BAD_REQUEST,
                 )
             }
@@ -55,24 +57,21 @@ class SøkController(
     internal fun validerErPersonident(personident: String) {
         if (personident.isBlank()) {
             throw Feil(
-                message = "Personident kan ikke være tom",
-                frontendFeilmelding = "Personident må fylles ut",
+                melding = "Personident kan ikke være tom",
                 httpStatus = HttpStatus.BAD_REQUEST,
             )
         }
 
         if (personident.length != LENGDE_PERSONIDENT) {
             throw Feil(
-                message = "Personident må være $LENGDE_PERSONIDENT siffer, var ${personident.length}",
-                frontendFeilmelding = "Personident må være $LENGDE_PERSONIDENT siffer",
+                melding = "Personident må være $LENGDE_PERSONIDENT siffer",
                 httpStatus = HttpStatus.BAD_REQUEST,
             )
         }
 
         if (!personident.all { it.isDigit() }) {
             throw Feil(
-                message = "Personident kan kun inneholde tall",
-                frontendFeilmelding = "Personident kan kun inneholde tall",
+                melding = "Personident kan kun inneholde tall",
                 httpStatus = HttpStatus.BAD_REQUEST,
             )
         }

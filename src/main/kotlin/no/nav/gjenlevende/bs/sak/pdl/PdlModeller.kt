@@ -46,3 +46,24 @@ data class Navn(
 data class HentNavnRequest(
     val fagsakPersonId: UUID,
 )
+
+data class FamilieRelasjonerResponse(
+    val hentPerson: FamilieRelasjoner?,
+)
+
+data class FamilieRelasjoner(
+    val forelderBarnRelasjon: List<ForelderBarnRelasjon>,
+)
+
+data class ForelderBarnRelasjon(
+    val relatertPersonsIdent: String?,
+    val relatertPersonsRolle: Familierolle,
+    val minRolleForPerson: Familierolle?,
+)
+
+enum class Familierolle {
+    BARN,
+    FAR,
+    MEDMOR,
+    MOR,
+}

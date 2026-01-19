@@ -4,7 +4,6 @@ import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.justRun
 import io.mockk.verify
-import no.nav.familie.prosessering.rest.Ressurs
 import no.nav.gjenlevende.bs.sak.ApplicationLocal
 import no.nav.gjenlevende.bs.sak.fagsak.dto.FagsakDto
 import no.nav.gjenlevende.bs.sak.felles.sikkerhet.TilgangService
@@ -69,7 +68,7 @@ open class FagsakControllerTest {
             fagsakService.hentEllerOpprettFagsakMedBehandlinger(personident, stønadstype)
         } returns forventetFagsak
 
-        justRun { tilgangService.validerTilgangTilPersonMedBarn(any()) }
+        justRun { tilgangService.validerTilgangTilPersonMedRelasjoner(any()) }
 
         val responseJson =
             mockMvc
@@ -82,9 +81,9 @@ open class FagsakControllerTest {
                 }.andReturn()
                 .response.contentAsString
 
-        val ressursFagsakDto: Ressurs<FagsakDto> = objectMapper.readValue(responseJson)
-        assertThat(ressursFagsakDto.data?.personident).isEqualTo(personident)
-        assertThat(ressursFagsakDto.data?.stønadstype).isEqualTo(stønadstype)
+        val fagsakDto: FagsakDto = objectMapper.readValue(responseJson)
+        assertThat(fagsakDto.personident).isEqualTo(personident)
+        assertThat(fagsakDto.stønadstype).isEqualTo(stønadstype)
 
         verify(exactly = 1) {
             fagsakService.hentEllerOpprettFagsakMedBehandlinger(personident, stønadstype)
@@ -118,7 +117,7 @@ open class FagsakControllerTest {
 
         every { fagsakPersonService.hentAktivIdent(any()) } returns personident
 
-        justRun { tilgangService.validerTilgangTilPersonMedBarn(any()) }
+        justRun { tilgangService.validerTilgangTilPersonMedRelasjoner(any()) }
 
         val responseJson =
             mockMvc
@@ -131,9 +130,9 @@ open class FagsakControllerTest {
                 }.andReturn()
                 .response.contentAsString
 
-        val ressursFagsakDto: Ressurs<FagsakDto> = objectMapper.readValue(responseJson)
-        assertThat(ressursFagsakDto.data?.fagsakPersonId).isEqualTo(fagsakPersonId)
-        assertThat(ressursFagsakDto.data?.stønadstype).isEqualTo(stønadstype)
+        val fagsakDto: FagsakDto = objectMapper.readValue(responseJson)
+        assertThat(fagsakDto.fagsakPersonId).isEqualTo(fagsakPersonId)
+        assertThat(fagsakDto.stønadstype).isEqualTo(stønadstype)
 
         verify(exactly = 1) {
             fagsakService.hentEllerOpprettFagsakMedFagsakPersonId(fagsakPersonId, stønadstype)
@@ -154,7 +153,7 @@ open class FagsakControllerTest {
                 contentType = MediaType.APPLICATION_JSON
                 content = objectMapper.writeValueAsString(ugyldigRequest)
             }.andExpect {
-                status { isBadRequest() }
+                status { isInternalServerError() }
             }
     }
 
@@ -181,7 +180,7 @@ open class FagsakControllerTest {
             )
 
         every { fagsakPersonService.hentAktivIdent(any()) } returns "12345678910"
-        justRun { tilgangService.validerTilgangTilPersonMedBarn(any()) }
+        justRun { tilgangService.validerTilgangTilPersonMedRelasjoner(any()) }
 
         mockMvc
             .post("/api/fagsak") {

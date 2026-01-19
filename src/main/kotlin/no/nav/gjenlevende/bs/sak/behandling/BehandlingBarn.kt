@@ -7,7 +7,6 @@ import org.springframework.data.relational.core.mapping.Embedded
 import java.time.LocalDate
 import java.util.UUID
 
-
 data class BehandlingBarn(
     @Id
     val id: UUID = UUID.randomUUID(),

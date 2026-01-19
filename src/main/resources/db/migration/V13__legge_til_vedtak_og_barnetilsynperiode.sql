@@ -1,8 +1,8 @@
 CREATE TABLE vedtak (
-                     behandling_id           UUID         NOT NULL,
-                     resultat_type           VARCHAR      NOT NULL,
+                     behandling_id          UUID         NOT NULL,
+                     resultat_type          VARCHAR      NOT NULL,
                      begrunnelse            VARCHAR,
-                     saksbehandler_ident     VARCHAR      NOT NULL,
+                     saksbehandler_ident    VARCHAR      NOT NULL,
                      opphor_fom             TIMESTAMP(3) DEFAULT localtimestamp,
                      beslutter_ident        VARCHAR,
                      opprettet_tid          TIMESTAMP(3) NOT NULL DEFAULT localtimestamp,

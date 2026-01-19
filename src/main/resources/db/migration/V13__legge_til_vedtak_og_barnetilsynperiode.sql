@@ -1,18 +1,18 @@
 CREATE TABLE vedtak (
-                     behandlingId           UUID         NOT NULL,
-                     resultatType           VARCHAR      NOT NULL,
+                     behandling_id           UUID         NOT NULL,
+                     resultat_type           VARCHAR      NOT NULL,
                      begrunnelse            VARCHAR,
-                     saksbehandlerIdent     VARCHAR      NOT NULL,
+                     saksbehandler_ident     VARCHAR      NOT NULL,
                      opphor_fom             TIMESTAMP(3) DEFAULT localtimestamp,
-                     beslutterIdent         VARCHAR,
+                     beslutter_ident        VARCHAR,
                      opprettet_tid          TIMESTAMP(3) NOT NULL DEFAULT localtimestamp,
-                     opprettetAv            VARCHAR NOT NULL,
+                     opprettet_av           VARCHAR NOT NULL,
 
                      CONSTRAINT fk_vedtak_behandling_id FOREIGN KEY (behandlingId) REFERENCES behandling (id)
 );
 
 CREATE TABLE barnetilsynperiode (
-                        behandlingId        UUID         NOT NULL,
+                        behandling_id       UUID         NOT NULL,
                         dato_fra            TIMESTAMP(3) NOT NULL DEFAULT localtimestamp,
                         dato_til            TIMESTAMP(3) NOT NULL DEFAULT localtimestamp,
                         utgifter            INT NOT NULL,

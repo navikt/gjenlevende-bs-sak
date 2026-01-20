@@ -41,7 +41,7 @@
         <kotlin.version>2.3.0</kotlin.version>
         <kotlin.jvm.target>21</kotlin.jvm.target>
         <ktlint.version>1.8.0</ktlint.version>
-        <springdoc.version>3.0.0</springdoc.version>
+        <springdoc.version>3.0.1</springdoc.version>
         <flyway.version>11.15.0</flyway.version>
         <unleash.version>11.2.1</unleash.version>
         <mockk.version>1.14.7</mockk.version>

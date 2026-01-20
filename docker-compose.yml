@@ -1,5 +1,5 @@
 services:
-    # Shared: PostgreSQL (brukes av både mock og dev profiler)
+    # Delt: PostgreSQL (brukes av både mock og dev profiler)
     postgres:
         image: postgres:17
         container_name: gjenlevende-bs-sak-postgres-1
@@ -45,7 +45,7 @@ services:
         labels:
             - "com.docker.compose.project=gjenlevende-bs-sak"
 
-    # Dev profil: Texas (ekte Azure AD token exchange)
+    # Dev profil: Texas (Azure AD token exchange)
     texas:
         image: ghcr.io/nais/texas:latest
         container_name: gjenlevende-bs-sak-texas-1

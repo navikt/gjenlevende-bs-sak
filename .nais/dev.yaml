@@ -58,11 +58,14 @@ spec:
                     # Team Logs
                 -   application: logging
                     namespace: nais-system
+                -   application: oppgave
+                    namespace: opphavehandtering
             external:
                 -   host: gjenlevende-bs-infotrygd.dev-fss-pub.nais.io
                 -   host: etterlatte-unleash-api.nav.cloud.nais.io
                 -   host: familie-integrasjoner.dev-fss-pub.nais.io
                 -   host: saf-q2.dev-fss-pub.nais.io
+                -   host: oppgave.intern.dev.nav.no
 
     # Toggle
     envFrom:

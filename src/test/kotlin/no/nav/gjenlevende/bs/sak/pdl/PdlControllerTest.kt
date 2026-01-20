@@ -3,7 +3,7 @@ package no.nav.gjenlevende.bs.sak.pdl
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.verify
-import no.nav.gjenlevende.bs.sak.ApplicationLocal
+import no.nav.gjenlevende.bs.sak.ApplicationLocalSetup
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -21,7 +21,7 @@ import java.util.UUID
 @WebMvcTest(
     PdlController::class,
 )
-@ContextConfiguration(classes = [ApplicationLocal::class])
+@ContextConfiguration(classes = [ApplicationLocalSetup::class])
 @AutoConfigureMockMvc(addFilters = false)
 @ActiveProfiles("integrasjonstest")
 open class PdlControllerTest {

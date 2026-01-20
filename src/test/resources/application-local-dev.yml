@@ -6,10 +6,21 @@
 server:
     port: 8082
 
+# Logging - ren konsoll-output (legg til 'verbose' profil for full logging)
+logging:
+    level:
+        root: WARN
+        no.nav.gjenlevende: INFO
+        no.nav.familie: INFO
+
 # Spring konfigurasjon
 spring:
     main:
         allow-bean-definition-overriding: true
+        log-startup-info: false
+    output:
+        ansi:
+            enabled: always
     datasource:
         # Bruker persistent Postgres
         url: jdbc:postgresql://localhost:5432/gjenlevende-bs-sak

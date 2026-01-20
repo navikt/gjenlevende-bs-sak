@@ -1,10 +1,18 @@
-<configuration>
-    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+<configuration debug="false">
+    <statusListener class="ch.qos.logback.core.status.NopStatusListener" />
+
+    <!-- SILENT CONSOLE - Kun ERROR vises under tester -->
+    <appender name="SILENT" class="ch.qos.logback.core.ConsoleAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
         <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <pattern>%msg%n</pattern>
         </encoder>
     </appender>
-    <root level="info">
-        <appender-ref ref="STDOUT" />
+
+    <!-- Alt settes til ERROR - kun feil vises -->
+    <root level="ERROR">
+        <appender-ref ref="SILENT" />
     </root>
 </configuration>

@@ -1,5 +1,8 @@
 <configuration>
-    <springProfile name="!dev">
+    <!-- ═══════════════════════════════════════════════════════════════════════════════
+         PRODUKSJON - JSON logging til stdout og team-logs
+         ═══════════════════════════════════════════════════════════════════════════════ -->
+    <springProfile name="!dev &amp; !local-mock &amp; !local-dev">
         <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
             <encoder class="net.logstash.logback.encoder.LogstashEncoder" />
         </appender>
@@ -9,6 +12,9 @@
         </root>
     </springProfile>
 
+    <!-- ═══════════════════════════════════════════════════════════════════════════════
+         DEV (NAIS) - Standard Spring Boot logging + team-logs
+         ═══════════════════════════════════════════════════════════════════════════════ -->
     <springProfile name="dev">
         <include resource="org/springframework/boot/logging/logback/base.xml"/>
         <include resource="org/springframework/boot/logging/logback/defaults.xml" />
@@ -17,6 +23,97 @@
         </root>
     </springProfile>
 
+    <!-- ═══════════════════════════════════════════════════════════════════════════════
+         LOKAL UTVIKLING - Ren og minimalistisk konsoll-output
+         Inspirert av moderne CLI-verktøy som Claude Code og Gemini CLI
+
+         Bruk LOG_MODE=verbose for full logging (debugging)
+         Default er clean mode med kun viktige meldinger
+         ═══════════════════════════════════════════════════════════════════════════════ -->
+    <springProfile name="local-mock | local-dev">
+        <!-- CLEAN CONSOLE - Kun melding, ingen metadata -->
+        <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder>
+                <pattern>%msg%n</pattern>
+            </encoder>
+        </appender>
+
+        <!-- Dempe støyende biblioteker for ren opplevelse -->
+        <!-- Spring Framework internals -->
+        <logger name="org.springframework" level="WARN" />
+        <logger name="org.springframework.boot.autoconfigure" level="WARN" />
+        <logger name="org.springframework.boot.web.servlet" level="WARN" />
+        <logger name="org.springframework.web" level="WARN" />
+        <logger name="org.springframework.security" level="WARN" />
+        <logger name="org.springframework.data" level="WARN" />
+        <logger name="org.springframework.jdbc" level="WARN" />
+        <logger name="org.springframework.transaction" level="WARN" />
+        <logger name="org.springframework.orm" level="WARN" />
+        <logger name="org.springframework.aop" level="WARN" />
+        <logger name="org.springframework.beans" level="WARN" />
+        <logger name="org.springframework.context" level="WARN" />
+        <logger name="org.springframework.core" level="WARN" />
+
+        <!-- Database og connection pools -->
+        <logger name="com.zaxxer.hikari" level="WARN" />
+        <logger name="org.hibernate" level="WARN" />
+        <logger name="org.flywaydb" level="WARN" />
+        <logger name="org.postgresql" level="WARN" />
+        <logger name="liquibase" level="WARN" />
+
+        <!-- Web og nettverk -->
+        <logger name="org.apache" level="WARN" />
+        <logger name="io.netty" level="WARN" />
+        <logger name="reactor" level="WARN" />
+
+        <!-- Diverse -->
+        <logger name="io.micrometer" level="WARN" />
+        <logger name="io.getunleash" level="WARN" />
+        <logger name="jakarta" level="WARN" />
+        <logger name="sun.rmi" level="WARN" />
+        <logger name="jdk.event" level="WARN" />
+
+        <!-- OAuth/Security -->
+        <logger name="org.springframework.security.oauth2" level="WARN" />
+        <logger name="org.springframework.boot.actuate" level="WARN" />
+
+        <!-- Swagger/OpenAPI -->
+        <logger name="org.springdoc" level="ERROR" />
+        <logger name="io.swagger" level="WARN" />
+
+        <!-- Alltid vis våre egne logger -->
+        <logger name="no.nav.gjenlevende" level="INFO" />
+        <logger name="no.nav.familie" level="INFO" />
+
+        <root level="INFO">
+            <appender-ref ref="CONSOLE" />
+        </root>
+    </springProfile>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════════════
+         VERBOSE LOKAL UTVIKLING - Full logging for debugging
+         Aktiver med: -Dspring.profiles.active=local-mock,verbose
+         ═══════════════════════════════════════════════════════════════════════════════ -->
+    <springProfile name="verbose">
+        <appender name="VERBOSE_CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder>
+                <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            </encoder>
+        </appender>
+
+        <!-- Overstyr til INFO for alle loggere -->
+        <logger name="org.springframework" level="INFO" />
+        <logger name="com.zaxxer.hikari" level="INFO" />
+        <logger name="org.flywaydb" level="INFO" />
+
+        <root level="INFO">
+            <appender-ref ref="VERBOSE_CONSOLE" />
+        </root>
+    </springProfile>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════════════
+         TEAM-LOGS APPENDER - Delt mellom profiler (kun for NAIS)
+         ═══════════════════════════════════════════════════════════════════════════════ -->
     <appender name="team-logs" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
         <destination>team-logs.nais-system:5170</destination>
         <encoder class="net.logstash.logback.encoder.LogstashEncoder">

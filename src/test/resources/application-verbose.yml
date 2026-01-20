@@ -1,0 +1,21 @@
+# Verbose profil - Aktiverer full logging for debugging
+# Bruk: Legg til 'verbose' i tillegg til local-mock eller local-dev
+# Eksempel i IntelliJ: spring.profiles.active=local-mock,verbose
+
+# Overstyr logging til full INFO for alle komponenter
+logging:
+    level:
+        root: INFO
+        org.springframework: INFO
+        org.springframework.security: DEBUG
+        com.zaxxer.hikari: INFO
+        org.flywaydb: INFO
+        org.postgresql: INFO
+        io.netty: INFO
+        reactor: INFO
+        no.nav.gjenlevende: DEBUG
+        no.nav.familie: DEBUG
+
+spring:
+    main:
+        log-startup-info: true

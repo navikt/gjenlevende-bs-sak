@@ -5,6 +5,8 @@
 spring:
     main:
         allow-bean-definition-overriding: true
+        banner-mode: off
+        log-startup-info: false
     datasource:
         driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
         url: jdbc:tc:postgresql:17:///testdb

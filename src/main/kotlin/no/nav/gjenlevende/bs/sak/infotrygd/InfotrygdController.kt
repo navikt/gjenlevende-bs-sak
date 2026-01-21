@@ -7,6 +7,7 @@ import no.nav.gjenlevende.bs.sak.infotrygd.dto.PersonPerioderResponse
 import no.nav.gjenlevende.bs.sak.infotrygd.dto.PersonidentRequest
 import no.nav.gjenlevende.bs.sak.util.PersonidentValidator
 import org.slf4j.LoggerFactory
+import org.springframework.context.annotation.Profile
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.annotation.AuthenticationPrincipal
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/test/infotrygd")
+@Profile("dev")
 @Tag(
     name = "Infotrygd integrasjon test",
     description = "Endepunkter for å teste integrasjon mot gjenlevende-bs-infotrygd",

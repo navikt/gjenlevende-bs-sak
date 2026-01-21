@@ -12,11 +12,9 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import org.springframework.web.reactive.function.client.bodyToMono
 
 @Service
-open class TexasClient(
-    @Value("\${NAIS_TOKEN_EXCHANGE_ENDPOINT}")
+class TexasClient(
+    @Value("\${NAIS_TOKEN_EXCHANGE_ENDPOINT:http://localhost:7575/api/v1/token/exchange}")
     private val tokenExchangeEndpoint: String,
-    @Value("\${NAIS_TOKEN_MACHINE_ENDPOINT}")
-    private val tokenMachineEndpoint: String,
 ) {
     private val logger = LoggerFactory.getLogger(TexasClient::class.java)
 
@@ -25,7 +23,7 @@ open class TexasClient(
             .builder()
             .build()
 
-    open fun hentOboToken(
+    fun hentOboToken(
         brukerToken: String,
         targetAudience: String,
     ): String {
@@ -34,7 +32,7 @@ open class TexasClient(
         val response =
             try {
                 val formData: MultiValueMap<String, String> = LinkedMultiValueMap()
-                formData.add("identity_provider", "entra_id")
+                formData.add("identity_provider", "azuread")
                 formData.add("target", targetAudience)
                 formData.add("user_token", brukerToken)
 
@@ -43,7 +41,7 @@ open class TexasClient(
                     .uri(tokenExchangeEndpoint)
                     .body(BodyInserters.fromFormData(formData))
                     .retrieve()
-                    .bodyToMono<TexasTokenResponse>()
+                    .bodyToMono<TexasOboResponse>()
                     .block()
             } catch (e: WebClientResponseException) {
                 logger.error("Texas API feilet med status ${e.statusCode} og response body: ${e.responseBodyAsString}")
@@ -61,42 +59,9 @@ open class TexasClient(
 
         return token
     }
-
-    open fun hentMaskinToken(targetAudience: String): String {
-        logger.info("Henter maskin token fra Texas. Endpoint: $tokenMachineEndpoint, target: $targetAudience")
-
-        val response =
-            try {
-                val formData: MultiValueMap<String, String> = LinkedMultiValueMap()
-                formData.add("identity_provider", "entra_id")
-                formData.add("target", targetAudience)
-
-                webClient
-                    .post()
-                    .uri(tokenMachineEndpoint)
-                    .body(BodyInserters.fromFormData(formData))
-                    .retrieve()
-                    .bodyToMono<TexasTokenResponse>()
-                    .block()
-            } catch (e: WebClientResponseException) {
-                logger.error("Texas API feilet med status ${e.statusCode} og response body: ${e.responseBodyAsString}")
-                throw RuntimeException("Kunne ikke hente maskintoken via Texas: HTTP ${e.statusCode}", e)
-            } catch (e: Exception) {
-                logger.error("Uventet feil ved henting av maskintoken fra Texas: ${e.message}", e)
-                throw RuntimeException("Kunne ikke hente maskintoken via Texas", e)
-            }
-
-        val token = response?.accessToken
-
-        if (token.isNullOrBlank()) {
-            throw RuntimeException("Texas returnerte tomt access_token")
-        }
-
-        return token
-    }
 }
 
-data class TexasTokenResponse(
+data class TexasOboResponse(
     @JsonProperty("access_token")
     val accessToken: String,
     @JsonProperty("expires_in")

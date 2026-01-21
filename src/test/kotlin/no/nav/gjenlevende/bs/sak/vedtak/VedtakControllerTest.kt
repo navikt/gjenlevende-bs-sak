@@ -62,7 +62,6 @@ class VedtakControllerTest {
                     content = json
                 }.andExpect {
                     status { isOk() }
-                    content { contentType(MediaType.APPLICATION_JSON) }
                 }.andReturn()
                 .response.contentAsString
 

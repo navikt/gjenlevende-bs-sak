@@ -29,6 +29,6 @@ class VedtakController(
     ): ResponseEntity<String> {
         vedtakService.slettVedtakHvisFinnes(behandlingId)
         val behandlingId = vedtakService.lagreVedtak(vedtakDto = vedtakDto, behandlingId = behandlingId)
-        return ResponseEntity.ok(behandlingId.toString())
+        return ResponseEntity.ok("\"$behandlingId\"")
     }
 }

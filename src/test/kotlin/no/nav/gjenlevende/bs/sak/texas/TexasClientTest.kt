@@ -27,7 +27,7 @@ class TexasClientTest {
             client =
                 TexasClient(
                     tokenExchangeEndpoint = "http://localhost:${wireMockServer.port()}/token/exchange",
-                    tokenMachineEndpoint = "http://localhost:${wireMockServer.port()}/token/machine",
+                    tokenMachineEndpoint = "http://localhost:${wireMockServer.port()}/token",
                 )
         }
 
@@ -135,7 +135,7 @@ class TexasClientTest {
             val forventetToken = "test-maskin-token-456"
 
             wireMockServer.stubFor(
-                post(urlEqualTo("/token/machine"))
+                post(urlEqualTo("/token"))
                     .willReturn(
                         aResponse()
                             .withHeader("Content-Type", "application/json")
@@ -159,7 +159,7 @@ class TexasClientTest {
         @Test
         fun `kaster exception ved tomt access_token`() {
             wireMockServer.stubFor(
-                post(urlEqualTo("/token/machine"))
+                post(urlEqualTo("/token"))
                     .willReturn(
                         aResponse()
                             .withHeader("Content-Type", "application/json")
@@ -186,7 +186,7 @@ class TexasClientTest {
         @Test
         fun `kaster exception ved HTTP feil fra Texas`() {
             wireMockServer.stubFor(
-                post(urlEqualTo("/token/machine"))
+                post(urlEqualTo("/token"))
                     .willReturn(
                         aResponse()
                             .withStatus(500)

@@ -17,12 +17,10 @@ import java.time.Duration
 class OppgaveClient(
     private val webClient: WebClient,
     private val texasClient: TexasClient,
-
     @Value("\${OPPGAVE_URL}")
     private val oppgaveUrl: URI,
     @Value("\${OPPGAVE_SCOPE}")
     private val oppgaveScope: URI,
-
 ) {
     private val logger = LoggerFactory.getLogger(OppgaveClient::class.java)
 
@@ -31,18 +29,16 @@ class OppgaveClient(
         private const val API_BASE_URL = "/api/v1/oppgaver"
     }
 
-    fun opprettOppgave(oppgave: Oppgave) : Oppgave{
-        logger.info("Lag oppgave=${oppgave}")
+    fun opprettOppgave(oppgave: Oppgave): Oppgave {
+        logger.info("Lag oppgave=$oppgave")
         val uri = lagBehandleSakOppgaveURI()
         logger.info("Sender opprettOppgave request til Oppgave-service ")
         val maskinToken = texasClient.hentMaskinToken(oppgaveScope.toString())
 
-
-
         return webClient
             .post()
             .uri(uri)
-            .header( "Authorization", "Bearer $maskinToken")
+            .header("Authorization", "Bearer $maskinToken")
             .header("X-Correlation-ID", MDC.get("callId") ?: "test")
             .bodyValue(oppgave)
             .retrieve()
@@ -54,14 +50,12 @@ class OppgaveClient(
             }.doOnError {
                 logger.error("Feil: å hente perioder for person: $it")
             }.block() ?: throw RuntimeException("Klarte ikke opprette oppgave")
-
     }
 
-    private fun lagBehandleSakOppgaveURI(): URI = UriComponentsBuilder
-        .fromUri(oppgaveUrl)
-        .path(API_BASE_URL)
-        .build()
-        .toUri()
-
-
+    private fun lagBehandleSakOppgaveURI(): URI =
+        UriComponentsBuilder
+            .fromUri(oppgaveUrl)
+            .path(API_BASE_URL)
+            .build()
+            .toUri()
 }

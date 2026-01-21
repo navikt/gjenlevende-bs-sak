@@ -18,9 +18,11 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 @Service
-class OppgaveService(private val fagsakRepository: FagsakRepository,
-                     private val fagsakPersonRepository: FagsakPersonRepository,
-                     private val oppgaveClient: OppgaveClient) {
+class OppgaveService(
+    private val fagsakRepository: FagsakRepository,
+    private val fagsakPersonRepository: FagsakPersonRepository,
+    private val oppgaveClient: OppgaveClient,
+) {
     private val logger = LoggerFactory.getLogger(OppgaveService::class.java)
 
     fun opprettBehandleSakOppgave(
@@ -86,18 +88,16 @@ fun lagFristForOppgave(gjeldendeTid: LocalDateTime = now()): LocalDate {
 
 fun now(): LocalDateTime = LocalDateTime.now()
 
-private fun fristBasertPåKlokkeslett(gjeldendeTid: LocalDateTime): LocalDate {
-    return if (gjeldendeTid.hour >= 12) {
+private fun fristBasertPåKlokkeslett(gjeldendeTid: LocalDateTime): LocalDate =
+    if (gjeldendeTid.hour >= 12) {
         gjeldendeTid.plusDays(2).toLocalDate()
     } else {
         gjeldendeTid.plusDays(1).toLocalDate()
     }
-}
 
-fun FagsakPerson.aktivIdent(): Personident {
-    return this.identer.maxByOrNull { it.sporbar.endret.endretTid }
+fun FagsakPerson.aktivIdent(): Personident =
+    this.identer.maxByOrNull { it.sporbar.endret.endretTid }
         ?: throw IllegalStateException("FagsakPerson har ingen identer")
-}
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -146,13 +146,11 @@ enum class StatusEnum {
     FEILREGISTRERT,
 }
 
-
 enum class OppgavePrioritet {
     HOY,
     NORM,
     LAV,
 }
-
 
 enum class Oppgavetype(
     val value: String,
@@ -193,6 +191,6 @@ enum class IdentGruppe {
     SAMHANDLERNR,
 }
 
-enum class Tema{
+enum class Tema {
     ENF, // TODO slett eksempel;
 }

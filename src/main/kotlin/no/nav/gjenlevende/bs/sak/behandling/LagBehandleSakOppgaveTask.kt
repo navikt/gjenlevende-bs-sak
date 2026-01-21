@@ -39,9 +39,9 @@ class LagBehandleSakOppgaveTask(
         behandling: Behandling,
         saksbehandler: String,
     ) {
-        val payload = OpprettOppgavePayload(behandlingsId = behandling.id, saksbehandler= saksbehandler)
+        val payload = OpprettOppgavePayload(behandlingsId = behandling.id, saksbehandler = saksbehandler)
         val payloadAsString = objectMapper.writeValueAsString(payload)
-        val task =  Task(TYPE, payloadAsString,)
+        val task = Task(TYPE, payloadAsString)
         taskService.save(task)
     }
 
@@ -53,5 +53,5 @@ class LagBehandleSakOppgaveTask(
 data class OpprettOppgavePayload(
     val behandlingsId: UUID,
     val saksbehandler: String,
-    val uniqueTaskPayloadId : UUID = UUID.randomUUID(),
+    val uniqueTaskPayloadId: UUID = UUID.randomUUID(),
 )

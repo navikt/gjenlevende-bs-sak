@@ -108,6 +108,7 @@ oauth2:
 
 # Texas mock
 NAIS_TOKEN_EXCHANGE_ENDPOINT: http://localhost:8090/texas/api/v1/token/exchange
+NAIS_TOKEN_ENDPOINT: http://localhost:8090/texas/api/v1/token/token
 
 # Swagger/OpenAPI konfigurasjon
 springdoc:

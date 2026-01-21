@@ -46,7 +46,7 @@ class TexasClientTest {
     @Nested
     inner class HentOboToken {
         @Test
-        fun `returnerer access_token ved vellykket respons`() {
+        fun `returnerer token ved vellykket kall`() {
             val forventetToken = "test-obo-token-123"
 
             wireMockServer.stubFor(
@@ -76,7 +76,7 @@ class TexasClientTest {
         }
 
         @Test
-        fun `kaster exception ved tomt access_token`() {
+        fun `kaster exception ved tomt token`() {
             wireMockServer.stubFor(
                 post(urlEqualTo("/token/exchange"))
                     .willReturn(
@@ -131,7 +131,7 @@ class TexasClientTest {
     @Nested
     inner class HentMaskinToken {
         @Test
-        fun `returnerer access_token ved vellykket respons`() {
+        fun `returnerer token ved vellykket respons`() {
             val forventetToken = "test-maskin-token-456"
 
             wireMockServer.stubFor(
@@ -157,7 +157,7 @@ class TexasClientTest {
         }
 
         @Test
-        fun `kaster exception ved tomt access_token`() {
+        fun `kaster exception ved tomt token`() {
             wireMockServer.stubFor(
                 post(urlEqualTo("/token"))
                     .willReturn(

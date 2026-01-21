@@ -15,7 +15,7 @@ import org.springframework.web.reactive.function.client.bodyToMono
 open class TexasClient(
     @Value("\${NAIS_TOKEN_EXCHANGE_ENDPOINT}")
     private val tokenExchangeEndpoint: String,
-    @Value("\${NAIS_TOKEN_MACHINE_ENDPOINT}")
+    @Value("\${NAIS_TOKEN_ENDPOINT}")
     private val tokenMachineEndpoint: String,
 ) {
     private val logger = LoggerFactory.getLogger(TexasClient::class.java)

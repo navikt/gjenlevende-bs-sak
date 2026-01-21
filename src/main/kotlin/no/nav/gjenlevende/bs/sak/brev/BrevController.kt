@@ -45,8 +45,8 @@ class BrevController(
     fun lagBrevTask(
         @PathVariable behandlingId: UUID,
     ): ResponseEntity<String> {
-        val saksbehandler = SikkerhetContext.hentSaksbehandlerEllerSystembruker()
-        brevService.oppdaterBeslutter(behandlingId, saksbehandler)
+        val beslutter = SikkerhetContext.hentSaksbehandlerEllerSystembruker()
+        brevService.oppdaterBeslutter(behandlingId, beslutter)
         val task = brevService.lagBrevPdfTask(behandlingId)
         taskService.save(task)
 

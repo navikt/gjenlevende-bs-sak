@@ -1,9 +1,9 @@
 package no.nav.gjenlevende.bs.sak.brev
 
-import no.nav.gjenlevende.bs.sak.brev.domain.BrevRequest
+import no.nav.gjenlevende.bs.sak.brev.domain.TekstbolkDto
 import java.util.Base64
 
-private fun logoTilBase64(): String {
+fun logoTilBase64(): String {
     val bytes =
         requireNotNull(
             object {}.javaClass.classLoader.getResourceAsStream("Nav-logo-red-228x63.png"),
@@ -14,71 +14,8 @@ private fun logoTilBase64(): String {
     return "data:image/png;base64,$base64"
 }
 
-fun lagHtml(request: BrevRequest): String {
-    val tittel = request.brevmal.tittel
-    val navn = request.brevmal.informasjonOmBruker.navn
-    val personident = request.brevmal.informasjonOmBruker.fnr
-    val logo = logoTilBase64()
-    val fritekst =
-        request.fritekstbolker.joinToString(separator = "") { bolk ->
-            val underoverskrift = bolk.underoverskrift?.let { "<h2>$it</h2>" } ?: ""
-            "<section>\n${underoverskrift}\n<p>${bolk.innhold}</p>\n</section>\n"
-        }
-    val avslutning =
-        request.brevmal.fastTekstAvslutning.joinToString(separator = "") { bolk ->
-            val underoverskrift = bolk.underoverskrift?.let { "<h2>$it</h2>" } ?: ""
-            "<section class=\"avslutning\">\n${underoverskrift}\n<p>${bolk.innhold}</p>\n</section>\n"
-        }
-
-    return """
-        <!DOCTYPE html>
-        <html lang="no">
-        <head>
-            <meta charset="UTF-8" />
-            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-            <title>$tittel</title>
-            <style type="text/css">
-                body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; line-height: 12pt; margin-left: 48pt; margin-right: 48pt; }
-                header { margin-bottom: 12pt; }
-                h1 { font-size: 16pt; line-height: 20pt; font-weight: 700; margin-bottom: 26pt; }
-                h2 { font-size: 13pt; line-height: 16pt; font-weight: 700; margin-bottom: 6pt;}
-                h3 { font-size: 12pt; line-height: 16pt; font-weight: 700; margin-bottom: 6pt;}
-                section { margin-bottom: 26pt; }
-                .header {
-                    padding-top: 32pt;
-                    margin-bottom: 48pt
-                }
-                .logo {
-                    display: block;
-                    margin-bottom: 32pt
-                }
-                .bruker-info { display: table; }
-                .bruker-info .row { display: table-row; }
-                .bruker-info .label {
-                    display: table-cell;
-                    white-space: nowrap;
-                    padding-right: 12pt;
-                }
-                .bruker-info .value {
-                    display: table-cell;
-                    width: 100%;
-                }
-            </style>
-        </head>
-        <body>
-          <header class="header">
-            <img class="logo" src="$logo" alt="Logo" height="16" />
-                <div class="bruker-info">
-                    <div class="row"><span class="label">Navn:</span><span class="value">$navn</span></div>
-                    <div class="row"><span class="label">Fødselsnummer:</span><span class="value">$personident</span></div>
-                </div>
-          </header>
-          <main>
-            <h1>$tittel</h1>
-            $fritekst
-            $avslutning
-          </main>
-        </body>
-        </html>
-        """.trimIndent()
-}
+fun lagHtmlTekstbolker(tekstbolker: List<TekstbolkDto>): String =
+    tekstbolker.joinToString(separator = "") { bolk ->
+        val underoverskrift = bolk.underoverskrift?.let { "<h2>$it</h2>" } ?: ""
+        "<section>\n${underoverskrift}\n<p>${bolk.innhold}</p>\n</section>\n"
+    }

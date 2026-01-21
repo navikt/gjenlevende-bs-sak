@@ -33,7 +33,8 @@ class OppgaveClient(
         logger.info("Lag oppgave=$oppgave")
         val uri = lagBehandleSakOppgaveURI()
         logger.info("Sender opprettOppgave request til Oppgave-service ")
-        val maskinToken = texasClient.hentMaskinToken(oppgaveScope.toString())
+        //val maskinToken = texasClient.hentMaskinToken(oppgaveScope.toString())
+        val maskinToken = texasClient.hentMaskinToken("dev-fss.oppgavehandtering.oppgave")
 
         return webClient
             .post()

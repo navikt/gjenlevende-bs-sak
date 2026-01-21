@@ -51,6 +51,10 @@ PDL_SCOPE: test-scope
 FAMILIE_DOKUMENT_URL: http://localhost:8087
 FAMILIE_DOKUMENT_SCOPE: test-scope
 
+# Texas token endpoints (Mock-verdier for tester)
+NAIS_TOKEN_EXCHANGE_ENDPOINT: http://localhost:7575/api/v1/token/exchange
+NAIS_TOKEN_MACHINE_ENDPOINT: http://localhost:7575/api/v1/token
+
 # Database konfigurasjon
 DB_JDBC_URL: jdbc:tc:postgresql:17:///testdb
 

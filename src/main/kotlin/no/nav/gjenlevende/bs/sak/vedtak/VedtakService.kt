@@ -14,4 +14,8 @@ class VedtakService(
         vedtakDto: VedtakDto,
         behandlingId: UUID,
     ): UUID = vedtakRepository.insert(vedtakDto.tilVedtak(behandlingId)).behandlingId
+
+    fun slettVedtakHvisFinnes(behandlingId: UUID) {
+        vedtakRepository.deleteById(behandlingId)
+    }
 }

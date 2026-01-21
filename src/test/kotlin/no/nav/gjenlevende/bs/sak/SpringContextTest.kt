@@ -1,10 +1,18 @@
 package no.nav.gjenlevende.bs.sak
 
 import com.github.tomakehurst.wiremock.WireMockServer
+import no.nav.familie.prosessering.domene.Task
+import no.nav.familie.prosessering.domene.TaskLogg
+import no.nav.gjenlevende.bs.sak.behandling.Behandling
+import no.nav.gjenlevende.bs.sak.brev.Brev
+import no.nav.gjenlevende.bs.sak.fagsak.domain.Fagsak
+import no.nav.gjenlevende.bs.sak.fagsak.domain.FagsakPerson
+import no.nav.gjenlevende.bs.sak.vedtak.Vedtak
 import org.junit.jupiter.api.AfterEach
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.ApplicationContext
+import org.springframework.data.jdbc.core.JdbcAggregateOperations
 import org.springframework.test.context.ActiveProfiles
 
 @SpringBootTest(classes = [ApplicationLocalSetup::class], webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -15,9 +23,25 @@ open class SpringContextTest {
     @Autowired
     private lateinit var applicationContext: ApplicationContext
 
+    @Autowired
+    private lateinit var jdbcAggregateOperations: JdbcAggregateOperations
+
     @AfterEach
     fun reset() {
         resetWiremockServers()
+        resetDatabase()
+    }
+
+    private fun resetDatabase() {
+        listOf(
+            Behandling::class,
+            Brev::class,
+            Fagsak::class,
+            FagsakPerson::class,
+            Task::class,
+            TaskLogg::class,
+            Vedtak::class,
+        ).forEach { jdbcAggregateOperations.deleteAll(it.java) }
     }
 
     private fun resetWiremockServers() {

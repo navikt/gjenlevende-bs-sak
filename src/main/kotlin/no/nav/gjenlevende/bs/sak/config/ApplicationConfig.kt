@@ -6,6 +6,8 @@ import org.springframework.boot.SpringBootConfiguration
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
+import tools.jackson.databind.ObjectMapper
+import tools.jackson.module.kotlin.jacksonObjectMapper
 
 @SpringBootConfiguration
 @ConfigurationPropertiesScan
@@ -23,4 +25,7 @@ open class ApplicationConfig {
 
         override fun harTilgang(): Boolean = true
     }
+
+    @Bean
+    fun objectMapper(): ObjectMapper = jacksonObjectMapper()
 }

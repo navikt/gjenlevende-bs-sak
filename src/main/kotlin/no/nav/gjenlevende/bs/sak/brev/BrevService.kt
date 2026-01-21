@@ -52,4 +52,28 @@ class BrevService(
         val oppdatertBrevPdf = eksisterendeBrev.copy(brevPdf = pdf)
         brevRepository.update(oppdatertBrevPdf)
     }
+
+    @Transactional
+    fun oppdaterSaksbehandler(
+        behandlingId: UUID,
+        saksbehandler: String?,
+    ) {
+        val eksisterendeBrev =
+            brevRepository.findByIdOrNull(behandlingId)
+                ?: error("Fant ikke brev for behandlingId=$behandlingId ved oppdatering av saksbehandler")
+        val oppdatert = eksisterendeBrev.copy(saksbehandler = saksbehandler)
+        brevRepository.update(oppdatert)
+    }
+
+    @Transactional
+    fun oppdaterBeslutter(
+        behandlingId: UUID,
+        beslutter: String?,
+    ) {
+        val eksisterendeBrev =
+            brevRepository.findByIdOrNull(behandlingId)
+                ?: error("Fant ikke brev for behandlingId=$behandlingId ved oppdatering av beslutter")
+        val oppdatert = eksisterendeBrev.copy(beslutter = beslutter)
+        brevRepository.update(oppdatert)
+    }
 }

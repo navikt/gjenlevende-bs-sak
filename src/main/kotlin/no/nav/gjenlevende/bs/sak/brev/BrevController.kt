@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import no.nav.familie.prosessering.internal.TaskService
 import no.nav.gjenlevende.bs.sak.brev.domain.BrevRequest
+import no.nav.gjenlevende.bs.sak.felles.sikkerhet.SikkerhetContext
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
@@ -23,7 +24,20 @@ class BrevController(
     private val brevService: BrevService,
     private val taskService: TaskService,
 ) {
-    @PostMapping("/lag-task/{behandlingId}")
+    @PostMapping("/send-til-beslutter/{behandlingId}")
+    @Operation(
+        summary = "Oppretter brev-task",
+        description = "Lager task som genererer pdf-brev",
+    )
+    fun sendTilBeslutter(
+        @PathVariable behandlingId: UUID,
+    ): ResponseEntity<String> {
+        val saksbehandler = SikkerhetContext.hentSaksbehandlerEllerSystembruker()
+        brevService.oppdaterSaksbehandler(behandlingId, saksbehandler) // TODO en eller annen task som sender til beslutter
+        return ResponseEntity.ok("OK")
+    }
+
+    @PostMapping("/lag-task/{behandlingId}") // TODO renames til beslutte-behandling elr noe sånt
     @Operation(
         summary = "Oppretter brev-task",
         description = "Lager task som genererer pdf-brev",
@@ -31,8 +45,11 @@ class BrevController(
     fun lagBrevTask(
         @PathVariable behandlingId: UUID,
     ): ResponseEntity<String> {
+        val saksbehandler = SikkerhetContext.hentSaksbehandlerEllerSystembruker()
+        brevService.oppdaterBeslutter(behandlingId, saksbehandler)
         val task = brevService.lagBrevPdfTask(behandlingId)
         taskService.save(task)
+
         return ResponseEntity.ok("OK")
     }
 

@@ -1,6 +1,6 @@
-# Lokal utviklings-konfigurasjon
-# Trekker in miljøvariabler fra .env.local-filen
-# Kjør ./start-local.sh for å sette opp lokalt miljø
+# Dev profil - Kobler mot ekte dev-tjenester
+# Krever: nais login + ./hent-og-lagre-miljøvariabler.sh
+# Start: ./start-dev.sh, konfigurer .env.local i IntelliJ, kjør ApplicationLocalDev
 
 # Server konfigurasjon
 server:
@@ -11,9 +11,10 @@ spring:
     main:
         allow-bean-definition-overriding: true
     datasource:
-        driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
-        url: jdbc:tc:postgresql:17:///testdb
-        username: test
+        # Bruker persistent Postgres
+        url: jdbc:postgresql://localhost:5432/gjenlevende-bs-sak
+        driver-class-name: org.postgresql.Driver
+        username: postgres
         password: test
         hikari:
             maximum-pool-size: 3
@@ -56,15 +57,16 @@ FAMILIE_DOKUMENT_SCOPE: api://dev-gcp.teamfamilie.familie-dokument/.default
 PDL_URL: https://pdl-api.dev-fss-pub.nais.io
 PDL_SCOPE: api://dev-fss.pdl.pdl-api/.default
 
+# SAF
+SAF_URL: https://saf-q2.dev-fss-pub.nais.io
+SAF_SCOPE: api://dev-fss.teamdokumenthandtering.saf/.default
+
 # Tilgangsmaskin (Populasjonstilgangskontroll) - ekstern URL for lokal utvikling
 tilgangsmaskin:
     url: ${TILGANGSMASKIN_URL:https://tilgangsmaskin.intern.dev.nav.no}
     oauth:
         registration-id: tilgangsmaskin-clientcredentials
         scope: ${TILGANGSMASKIN_SCOPE:api://dev-gcp.tilgangsmaskin.populasjonstilgangskontroll/.default}
-
-# Database konfigurasjon
-DB_JDBC_URL: jdbc:tc:postgresql:17:///testdb
 
 # Swagger/OpenAPI konfigurasjon
 springdoc:

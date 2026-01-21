@@ -5,7 +5,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder
 import org.springframework.context.annotation.Configuration
 import org.springframework.scheduling.annotation.EnableScheduling
 
-class ApplicationLocal : ApplicationLocalSetup()
+class ApplicationLocalDev : ApplicationLocalSetup()
 
 @Configuration(proxyBeanMethods = false)
 @EnableScheduling
@@ -17,9 +17,7 @@ class ApplicationLocal : ApplicationLocalSetup()
 class SchedulingConfiguration
 
 fun main(args: Array<String>) {
-    SpringApplicationBuilder(ApplicationLocal::class.java)
-        .initializers(DbContainerInitializer())
-        .profiles(
-            "local",
-        ).run(*args)
+    SpringApplicationBuilder(ApplicationLocalDev::class.java)
+        .profiles("local-dev")
+        .run(*args)
 }

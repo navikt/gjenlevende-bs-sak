@@ -37,7 +37,7 @@ internal class VedtakRepositoryTest : SpringContextTest() {
 
     @Test
     internal fun `skal lagre vedtak med riktige felter`() {
-        val ident = "01010199999"
+        val ident = "01010199998"
         val fagsakPerson = fagsakPersonRepository.insert(FagsakPerson(identer = setOf(Personident(ident))))
 
         val fagsak = fagsakRepository.insert(Fagsak(fagsakPersonId = fagsakPerson.id, stønadstype = StønadType.BARNETILSYN))

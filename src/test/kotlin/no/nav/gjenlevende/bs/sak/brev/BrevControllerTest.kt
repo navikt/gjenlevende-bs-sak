@@ -4,12 +4,11 @@ import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.verify
 import no.nav.familie.prosessering.internal.TaskService
-import no.nav.gjenlevende.bs.sak.ApplicationLocal
+import no.nav.gjenlevende.bs.sak.ApplicationLocalSetup
 import no.nav.gjenlevende.bs.sak.brev.domain.BrevRequest
 import no.nav.gjenlevende.bs.sak.brev.domain.BrevmalDto
 import no.nav.gjenlevende.bs.sak.brev.domain.InformasjonOmBrukerDto
 import no.nav.gjenlevende.bs.sak.brev.domain.TekstbolkDto
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc
@@ -20,11 +19,10 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.post
 import tools.jackson.databind.ObjectMapper
-import tools.jackson.module.kotlin.readValue
 import java.util.UUID
 
 @WebMvcTest(BrevController::class)
-@ContextConfiguration(classes = [ApplicationLocal::class])
+@ContextConfiguration(classes = [ApplicationLocalSetup::class])
 @AutoConfigureMockMvc(addFilters = false)
 @ActiveProfiles("integrasjonstest")
 open class BrevControllerTest {

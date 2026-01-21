@@ -3,6 +3,7 @@ package no.nav.gjenlevende.bs.sak.config
 import no.nav.gjenlevende.bs.sak.security.AzureJwtAuthenticationConverter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Profile
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
@@ -14,6 +15,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
+@Profile("!local-mock")
 open class SecurityConfig(
     private val jwtAuthenticationConverter: AzureJwtAuthenticationConverter,
 ) {

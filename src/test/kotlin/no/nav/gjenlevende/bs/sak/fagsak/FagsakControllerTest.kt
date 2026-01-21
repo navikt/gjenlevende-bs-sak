@@ -4,7 +4,7 @@ import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.justRun
 import io.mockk.verify
-import no.nav.gjenlevende.bs.sak.ApplicationLocal
+import no.nav.gjenlevende.bs.sak.ApplicationLocalSetup
 import no.nav.gjenlevende.bs.sak.fagsak.dto.FagsakDto
 import no.nav.gjenlevende.bs.sak.felles.sikkerhet.TilgangService
 import no.nav.gjenlevende.bs.sak.infotrygd.dto.StønadType
@@ -25,7 +25,7 @@ import java.util.UUID
 @WebMvcTest(
     FagsakController::class,
 )
-@ContextConfiguration(classes = [ApplicationLocal::class])
+@ContextConfiguration(classes = [ApplicationLocalSetup::class])
 @AutoConfigureMockMvc(addFilters = false)
 @ActiveProfiles("integrasjonstest")
 open class FagsakControllerTest {

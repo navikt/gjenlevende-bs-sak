@@ -1,7 +1,7 @@
 package no.nav.gjenlevende.bs.sak.task
 
 import no.nav.familie.prosessering.internal.TaskService
-import no.nav.gjenlevende.bs.sak.ApplicationLocal
+import no.nav.gjenlevende.bs.sak.ApplicationLocalSetup
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 
-@SpringBootTest(classes = [ApplicationLocal::class], properties = ["scheduling.enabled=true"])
+@SpringBootTest(classes = [ApplicationLocalSetup::class], properties = ["scheduling.enabled=true"])
 @ActiveProfiles("integrasjonstest")
 class DummyTaskTest {
     @Autowired

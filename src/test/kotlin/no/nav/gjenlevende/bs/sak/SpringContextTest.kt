@@ -34,13 +34,13 @@ open class SpringContextTest {
 
     private fun resetDatabase() {
         listOf(
+            Vedtak::class,
             Behandling::class,
             Brev::class,
             Fagsak::class,
             FagsakPerson::class,
-            Task::class,
             TaskLogg::class,
-            Vedtak::class,
+            Task::class,
         ).forEach { jdbcAggregateOperations.deleteAll(it.java) }
     }
 

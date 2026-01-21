@@ -46,6 +46,9 @@ spec:
                 -   application: gjenlevende-bs-sak-frontend
                 -   application: gjenlevende-bs-sak-frontend-lokal
                 -   application: etterlatte-prosessering
+                -   application: azure-token-generator
+                    namespace: nais
+                    cluster: dev-gcp
         outbound:
             rules:
                 -   application: gjenlevende-bs-sak-frontend

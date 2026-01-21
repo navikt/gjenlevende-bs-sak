@@ -26,9 +26,9 @@ class VedtakController(
     fun lagreVedtak(
         @PathVariable behandlingId: UUID,
         @RequestBody vedtakDto: VedtakDto,
-    ): ResponseEntity<String> {
+    ): ResponseEntity<UUID> {
         vedtakService.slettVedtakHvisFinnes(behandlingId)
         val behandlingId = vedtakService.lagreVedtak(vedtakDto = vedtakDto, behandlingId = behandlingId)
-        return ResponseEntity.ok("\"$behandlingId\"")
+        return ResponseEntity.ok(behandlingId)
     }
 }

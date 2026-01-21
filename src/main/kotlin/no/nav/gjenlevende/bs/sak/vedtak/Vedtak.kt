@@ -4,6 +4,7 @@ import no.nav.gjenlevende.bs.sak.felles.sikkerhet.SikkerhetContext
 import no.nav.gjenlevende.bs.sak.felles.sporbar.SporbarUtils
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column
+import org.springframework.data.relational.core.mapping.MappedCollection
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.YearMonth
@@ -14,6 +15,8 @@ data class Vedtak(
     val behandlingId: UUID,
     val resultatType: ResultatType,
     val begrunnelse: String? = null,
+    @MappedCollection(idColumn = "behandling_id", "behandling_id")
+    val barnetilsynperioder: List<Barnetilsynperiode>,
     val saksbehandlerIdent: String,
     @Column("opphor_fom")
     val opphørFom: YearMonth? = null,
@@ -49,3 +52,33 @@ enum class AktivitetstypeBarnetilsyn {
     I_ARBEID,
     FORBIGÅENDE_SYKDOM,
 }
+
+data class VedtakDto(
+    val resultatType: ResultatType,
+    val begrunnelse: String? = null,
+    val barnetilsynperioder: List<Barnetilsynperiode>,
+    val saksbehandlerIdent: String? = null,
+    val opphørFom: YearMonth? = null,
+    val beslutterIdent: String? = null,
+)
+
+fun VedtakDto.tilVedtak(behandlingId: UUID): Vedtak =
+    Vedtak(
+        behandlingId = behandlingId,
+        resultatType = this.resultatType,
+        begrunnelse = this.begrunnelse,
+        barnetilsynperioder = this.barnetilsynperioder,
+        saksbehandlerIdent = SikkerhetContext.hentSaksbehandlerEllerSystembruker(),
+        opphørFom = this.opphørFom,
+        beslutterIdent = this.beslutterIdent,
+    )
+
+fun Vedtak.tilDto(): VedtakDto =
+    VedtakDto(
+        resultatType = this.resultatType,
+        begrunnelse = this.begrunnelse,
+        barnetilsynperioder = this.barnetilsynperioder,
+        saksbehandlerIdent = this.saksbehandlerIdent,
+        opphørFom = this.opphørFom,
+        beslutterIdent = this.beslutterIdent,
+    )

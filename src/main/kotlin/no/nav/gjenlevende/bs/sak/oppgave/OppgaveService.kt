@@ -36,7 +36,7 @@ class OppgaveService(
         val gjeldendePersonIdent: Personident = fagsakPerson.aktivIdent()
 
         val oppgave = lagOpprettBehandleSakOppgaveRequest(gjeldendePersonIdent, fagsak, behandling, saksbehandler)
-        oppgaveClient.opprettOppgave(oppgave = oppgave)
+        oppgaveClient.opprettOppgaveM2M(oppgave = oppgave)
     }
 }
 
@@ -120,9 +120,9 @@ data class Oppgave(
     val tilordnetRessurs: String? = null,
     val beskrivelse: String? = null,
     val temagruppe: String? = null,
-    val tema: Tema? = null,
+    val tema: Tema,
     val behandlingstema: String? = null,
-    val oppgavetype: String? = null,
+    val oppgavetype: String,
     val behandlingstype: String? = null,
     val versjon: Int? = null,
     val mappeId: Long? = null,

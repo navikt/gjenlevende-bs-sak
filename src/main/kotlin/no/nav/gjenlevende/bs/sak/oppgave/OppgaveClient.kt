@@ -4,7 +4,6 @@ import no.nav.gjenlevende.bs.sak.texas.TexasClient
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
@@ -29,12 +28,35 @@ class OppgaveClient(
         private const val API_BASE_URL = "/api/v1/oppgaver"
     }
 
-    fun opprettOppgave(oppgave: Oppgave): Oppgave {
+    fun opprettOppgaveOBO(oppgave: Oppgave, jwt: String): Oppgave {
         logger.info("Lag oppgave=$oppgave")
         val uri = lagBehandleSakOppgaveURI()
         logger.info("Sender opprettOppgave request til Oppgave-service ")
-        //val maskinToken = texasClient.hentMaskinToken(oppgaveScope.toString())
-        val maskinToken = texasClient.hentMaskinToken("dev-fss.oppgavehandtering.oppgave")
+        val obo = texasClient.hentOboToken(jwt,oppgaveScope.toString(), )
+
+        return webClient
+            .post()
+            .uri(uri)
+            .header("Authorization", "Bearer $obo")
+            .header("X-Correlation-ID", MDC.get("callId") ?: "test")
+            .bodyValue(oppgave)
+            .retrieve()
+            .bodyToMono<Oppgave>()
+            .switchIfEmpty(Mono.error(NoSuchElementException("Tom respons fra oppgave")))
+            .timeout(Duration.ofSeconds(TIMEOUT_SEKUNDER))
+            .doOnNext { response ->
+                logger.info("Oppgave opprettet med id: ${response.id} ")
+            }.doOnError {
+                logger.error("Feil: å hente perioder for person: $it")
+            }.block() ?: throw RuntimeException("Klarte ikke opprette oppgave")
+    }
+
+
+    fun opprettOppgaveM2M(oppgave: Oppgave): Oppgave {
+        logger.info("Lag oppgave=$oppgave")
+        val uri = lagBehandleSakOppgaveURI()
+        logger.info("Sender opprettOppgave request til Oppgave-service ")
+        val maskinToken = texasClient.hentMaskinToken(oppgaveScope.toString())
 
         return webClient
             .post()

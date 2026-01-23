@@ -28,11 +28,13 @@ class OppgaveClient(
         private const val API_BASE_URL = "/api/v1/oppgaver"
     }
 
-    fun opprettOppgaveOBO(oppgave: Oppgave, jwt: String): Oppgave {
+    fun opprettOppgaveOBO(
+        oppgave: LagOppgaveRequest,
+        jwt: String,
+    ): Oppgave {
         logger.info("Lag oppgave=$oppgave")
         val uri = lagBehandleSakOppgaveURI()
-        logger.info("Sender opprettOppgave request til Oppgave-service ")
-        val obo = texasClient.hentOboToken(jwt,oppgaveScope.toString(), )
+        val obo = texasClient.hentOboToken(jwt, oppgaveScope.toString())
 
         return webClient
             .post()
@@ -47,10 +49,9 @@ class OppgaveClient(
             .doOnNext { response ->
                 logger.info("Oppgave opprettet med id: ${response.id} ")
             }.doOnError {
-                logger.error("Feil: å hente perioder for person: $it")
+                logger.error("Feil: klarte ikke lage oppgave")
             }.block() ?: throw RuntimeException("Klarte ikke opprette oppgave")
     }
-
 
     fun opprettOppgaveM2M(oppgave: Oppgave): Oppgave {
         logger.info("Lag oppgave=$oppgave")
@@ -62,7 +63,7 @@ class OppgaveClient(
             .post()
             .uri(uri)
             .header("Authorization", "Bearer $maskinToken")
-            .header("X-Correlation-ID", MDC.get("callId") ?: "test")
+            .header("X-Correlation-ID", MDC.get("callId") ?: "test-gjenlevende-bs-sak") // TODO fix callId for m2m
             .bodyValue(oppgave)
             .retrieve()
             .bodyToMono<Oppgave>()

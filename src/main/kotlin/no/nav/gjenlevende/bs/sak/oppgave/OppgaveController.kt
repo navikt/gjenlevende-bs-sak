@@ -15,13 +15,14 @@ import org.springframework.web.bind.annotation.RestController
     name = "Oppgave integrasjoonstest",
     description = "Endepunkter for å teste integrasjon mot oppgave",
 )
-class OppgaveController (private val oppgaveClient: OppgaveClient,){
-
+class OppgaveController(
+    private val oppgaveClient: OppgaveClient,
+) {
     @PostMapping("/lagOppgave")
     fun lagOppgave(
         @RequestBody request: PersonidentRequest,
-        @AuthenticationPrincipal jwt: Jwt,): Long {
-
+        @AuthenticationPrincipal jwt: Jwt,
+    ): Long {
 //        Denne fingerer i oppgave swagger:
 //        {
 //            "personident": "**********",
@@ -32,20 +33,32 @@ class OppgaveController (private val oppgaveClient: OppgaveClient,){
 //            "aktivDato": "2026-01-22"
 //        }
 //
-        val oppgave = Oppgave(personident = request.personident,
-            tema = Tema.ENF,
-            tildeltEnhetsnr = "4489", // TODO finn enhetsnummer for BARNETILSYN GJENLEVENDE 4817 4806 ??? 4817
-            behandlingstema = "ab0028",
-            beskrivelse = "Henvendelse - teste vil prøve å opprette oppgave.",
-            oppgavetype = Oppgavetype.VurderKonsekvensForYtelse.value,
-            aktivDato = "2026-01-21",
-            prioritet = OppgavePrioritet.NORM
-        )
+        val oppgave =
+            LagOppgaveRequest(
+                personident = request.personident,
+                tema = Tema.ENF,
+                tildeltEnhetsnr = "4489", // TODO finn enhetsnummer for BARNETILSYN GJENLEVENDE 4817 4806 ??? 4817
+                behandlingstema = "ab0028",
+                beskrivelse = "Henvendelse - teste vil prøve å opprette oppgave.",
+                oppgavetype = Oppgavetype.VurderKonsekvensForYtelse.value,
+                aktivDato = "2026-01-21",
+                prioritet = OppgavePrioritet.NORM,
+            )
 
         val oppgaveOpprettet = oppgaveClient.opprettOppgaveOBO(oppgave, jwt.tokenValue)
 
         return oppgaveOpprettet.id!!
     }
-
-
 }
+
+data class
+LagOppgaveRequest(
+    val personident: String,
+    val tema: Tema,
+    val tildeltEnhetsnr: String,
+    val behandlingstema: String,
+    val beskrivelse: String,
+    val oppgavetype: String,
+    val aktivDato: String,
+    val prioritet: OppgavePrioritet,
+)

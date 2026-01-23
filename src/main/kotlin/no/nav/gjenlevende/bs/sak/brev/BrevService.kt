@@ -57,11 +57,12 @@ class BrevService(
     fun oppdaterSaksbehandler(
         behandlingId: UUID,
         saksbehandler: String?,
+        saksbehandlerEnhet: String? = null,
     ) {
         val eksisterendeBrev =
             brevRepository.findByIdOrNull(behandlingId)
                 ?: error("Fant ikke brev for behandlingId=$behandlingId ved oppdatering av saksbehandler")
-        val oppdatert = eksisterendeBrev.copy(saksbehandler = saksbehandler)
+        val oppdatert = eksisterendeBrev.copy(saksbehandler = saksbehandler, saksbehandlerEnhet = saksbehandlerEnhet)
         brevRepository.update(oppdatert)
     }
 
@@ -69,11 +70,12 @@ class BrevService(
     fun oppdaterBeslutter(
         behandlingId: UUID,
         beslutter: String?,
+        beslutterEnhet: String? = null,
     ) {
         val eksisterendeBrev =
             brevRepository.findByIdOrNull(behandlingId)
                 ?: error("Fant ikke brev for behandlingId=$behandlingId ved oppdatering av beslutter")
-        val oppdatert = eksisterendeBrev.copy(beslutter = beslutter)
+        val oppdatert = eksisterendeBrev.copy(beslutter = beslutter, beslutterEnhet = beslutterEnhet)
         brevRepository.update(oppdatert)
     }
 

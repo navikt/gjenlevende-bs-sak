@@ -28,9 +28,6 @@ open class SpringContextTest {
     @Autowired
     private lateinit var jdbcAggregateOperations: JdbcAggregateOperations
 
-    @MockkBean
-    private lateinit var azureGraphClient: AzureGraphClient
-
     @AfterEach
     fun reset() {
         resetWiremockServers()

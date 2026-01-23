@@ -56,7 +56,7 @@ class AzureGraphClient(
                 ?: error("Tom response ved søk etter saksbehandler")
         } catch (e: Exception) {
             throw OppslagException(
-                "Feil ved henting av saksbehandler med nav ident",
+                "Feil ved henting av saksbehandler med nav ident $e",
             )
         }
 

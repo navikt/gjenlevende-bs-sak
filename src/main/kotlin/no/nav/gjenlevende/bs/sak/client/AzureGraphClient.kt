@@ -17,10 +17,9 @@ import java.net.URI
 @Component
 class AzureGraphClient(
     @Value("\${AAD_GRAPH_API_URI}") private val aadGraphURI: URI,
-    @Value("\${AZURE_APP_CLIENT_ID}") clientId: String,
     oauth2RestFactory: OAuth2RestOperationsFactory,
 ) {
-    private val restTemplate: RestOperations = oauth2RestFactory.create(clientId)
+    private val restTemplate: RestOperations = oauth2RestFactory.create("aad-graph-clientcredentials")
 
     private fun saksbehandlerUri(id: String): URI =
         UriComponentsBuilder

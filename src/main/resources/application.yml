@@ -74,6 +74,12 @@ familie-dokument:
 
 oauth2:
     clients:
+        aad-graph:
+            registration-id: aad-graph-clientcredentials
+            client-id: ${AZURE_APP_CLIENT_ID}
+            client-secret: ${AZURE_APP_CLIENT_SECRET}
+            token-endpoint-url: ${AZUREAD_TOKEN_ENDPOINT_URL}
+            scope: ${AAD_GRAPH_SCOPE}
         pdl:
             registration-id: pdl-clientcredentials
             client-id: ${AZURE_APP_CLIENT_ID}
@@ -115,6 +121,7 @@ FAMILIE_DOKUMENT_SCOPE: api://${DEPLOY_ENV}-gcp.teamfamilie.familie-dokument/.de
 
 # Azure
 AAD_GRAPH_API_URI: https://graph.microsoft.com/v1.0/
+AAD_GRAPH_SCOPE: https://graph.microsoft.com/.default
 
 # PDL (Persondataløsningen)
 PDL_URL: https://pdl-api.dev-fss-pub.nais.io

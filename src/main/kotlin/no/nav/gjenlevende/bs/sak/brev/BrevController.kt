@@ -4,10 +4,7 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import no.nav.familie.prosessering.internal.TaskService
 import no.nav.gjenlevende.bs.sak.brev.domain.BrevRequest
-import no.nav.gjenlevende.bs.sak.client.domain.Saksbehandler
 import no.nav.gjenlevende.bs.sak.felles.sikkerhet.SikkerhetContext
-import no.nav.gjenlevende.bs.sak.saksbehandler.SaksbehandlerService
-import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.GetMapping
@@ -25,7 +22,6 @@ import java.util.UUID
 class BrevController(
     private val brevService: BrevService,
     private val taskService: TaskService,
-    private val saksbehandlerService: SaksbehandlerService,
 ) {
     @PostMapping("/send-til-beslutter/{behandlingId}")
     @Operation(
@@ -79,17 +75,5 @@ class BrevController(
     ): ResponseEntity<BrevRequest> {
         val brev = brevService.hentBrev(behandlingId) ?: return ResponseEntity.noContent().build()
         return ResponseEntity.ok(brev.brevJson)
-    }
-
-    @GetMapping("/test/{navident}")
-    @Operation(
-        summary = "Henter mellomlagret brev",
-        description = "Returnerer brevJson for gitt behandlingId",
-    )
-    fun hentSaksbehandler(
-        @PathVariable navident: String,
-    ): ResponseEntity<Saksbehandler> {
-        val saksbehandler = saksbehandlerService.hentSaksbehandler(navident)
-        return ResponseEntity.ok(saksbehandler)
     }
 }

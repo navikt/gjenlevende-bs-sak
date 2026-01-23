@@ -22,12 +22,24 @@ class OppgaveController (private val oppgaveClient: OppgaveClient,){
         @RequestBody request: PersonidentRequest,
         @AuthenticationPrincipal jwt: Jwt,): Long {
 
+//        Denne fingerer i oppgave swagger:
+//        {
+//            "personident": "**********",
+//            "tema": "ENF",
+//            "behandlingstema": "ab0028",
+//            "oppgavetype": "VUR_KONS_YTE",
+//            "prioritet": "NORM",
+//            "aktivDato": "2026-01-22"
+//        }
+//
         val oppgave = Oppgave(personident = request.personident,
             tema = Tema.ENF,
             tildeltEnhetsnr = "4489", // TODO finn enhetsnummer for BARNETILSYN GJENLEVENDE 4817 4806 ??? 4817
             behandlingstema = "ab0028",
             beskrivelse = "Henvendelse - teste vil prøve å opprette oppgave.",
             oppgavetype = Oppgavetype.VurderKonsekvensForYtelse.value,
+            aktivDato = "2026-01-21",
+            prioritet = OppgavePrioritet.NORM
         )
 
         val oppgaveOpprettet = oppgaveClient.opprettOppgaveOBO(oppgave, jwt.tokenValue)

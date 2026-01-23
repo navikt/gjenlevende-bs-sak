@@ -8,7 +8,7 @@ import java.util.UUID
 
 @Service
 class SaksbehandlerService(
-    private val azureGraphRestClient: AzureGraphClient,
+    private val azureGraphClient: AzureGraphClient,
 ) {
     private val lengdeNavIdent = 7
 
@@ -24,14 +24,14 @@ class SaksbehandlerService(
         }
         val azureAdBruker =
             if (id.length == lengdeNavIdent) {
-                val azureAdBrukere = azureGraphRestClient.finnSaksbehandler(id)
+                val azureAdBrukere = azureGraphClient.finnSaksbehandler(id)
 
                 if (azureAdBrukere.value.size != 1) {
                     error("Feil ved søk. Oppslag på navIdent $id returnerte ${azureAdBrukere.value.size} forekomster.")
                 }
                 azureAdBrukere.value.first()
             } else {
-                azureGraphRestClient.hentSaksbehandler(id)
+                azureGraphClient.hentSaksbehandler(id)
             }
 
         return Saksbehandler(

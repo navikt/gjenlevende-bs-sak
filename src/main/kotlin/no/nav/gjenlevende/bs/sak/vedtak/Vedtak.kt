@@ -33,7 +33,7 @@ data class Barnetilsynperiode(
     val utgifter: Int,
     val barn: List<UUID>,
     val periodetype: PeriodetypeBarnetilsyn,
-    val aktivitetstype: AktivitetstypeBarnetilsyn? = null,
+    val aktivitetstype: AktivitetstypeBarnetilsyn,
 )
 
 enum class ResultatType {

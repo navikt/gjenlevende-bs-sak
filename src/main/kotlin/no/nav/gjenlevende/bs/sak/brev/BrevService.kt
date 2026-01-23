@@ -122,6 +122,20 @@ class BrevService(
                         display: table-cell;
                         width: 100%;
                     }
+                    .signatur {
+                        display: table;
+                        margin-top: 24pt;
+                    }
+
+                    .signatur .row {
+                        display: table-row;
+                    }
+
+                    .signatur .cell {
+                        display: table-cell;
+                        padding-right: 100pt;
+                        white-space: nowrap;
+                    }
                 </style>
             </head>
             <body>
@@ -139,14 +153,14 @@ class BrevService(
                 </main>
                 <footer>
                 <p> Med vennlig hilsen,</p>
-                <div class="bruker-info">
+                    <div class="signatur">
                         <div class="row">
-                            <span class="label">$beslutterNavn</span>
-                            <span class="value">$saksbehandlerNavn</span>
+                            <span class="cell">$beslutterNavn</span>
+                            <span class="cell">$saksbehandlerNavn</span>
                         </div>
                         <div class="row">
-                            <span class="label">$beslutterEnhet</span>
-                            <span class="value">$saksbehandlerEnhet</span>
+                            <span class="cell">$beslutterEnhet</span>
+                            <span class="cell">$saksbehandlerEnhet</span>
                         </div>
                     </div>
               </footer>

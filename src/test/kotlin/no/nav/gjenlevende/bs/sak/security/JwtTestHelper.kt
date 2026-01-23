@@ -151,4 +151,33 @@ object JwtTestHelper {
                     AZURE_GROUP_ID_LES,
                 ),
         )
+
+    fun opprettMaskinTilMaskinToken(
+        applikasjonNavn: String = "dev-gcp:etterlatte:gjenlevende-kul-applikasjon",
+        applikasjonId: String = "test-client-id-123",
+    ): Jwt {
+        val nå = Instant.now()
+        val utløper = nå.plus(3600, ChronoUnit.SECONDS)
+
+        val headers =
+            mapOf(
+                "alg" to "RS256",
+                "typ" to "JWT",
+                "kid" to "test-key-id",
+            )
+
+        return Jwt
+            .withTokenValue("test-m2m-token-value")
+            .headers { h -> h.putAll(headers) }
+            .issuedAt(nå)
+            .expiresAt(utløper)
+            .notBefore(nå)
+            .issuer(TEST_ISSUER)
+            .subject(applikasjonId)
+            .audience(listOf(TEST_AUDIENCE))
+            .claim("idtyp", "app")
+            .claim("azp", applikasjonId)
+            .claim("azp_name", applikasjonNavn)
+            .build()
+    }
 }

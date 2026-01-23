@@ -6,6 +6,7 @@ enum class Rolle(
     SAKSBEHANDLER("Kan saksbehandle i saksbehandler-løsningen"),
     ATTESTERING("Kan attestere vedtak i saksbehandling-løsningen"),
     LES("Kan lese og se informasjon i saksbehandling-løsningen"),
+    SYSTEM("System eller maskin-til-maskin integrasjon"),
     ;
 
     fun authority(): String = "ROLE_$name"

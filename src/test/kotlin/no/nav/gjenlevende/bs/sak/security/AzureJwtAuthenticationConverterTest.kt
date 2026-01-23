@@ -162,4 +162,33 @@ class AzureJwtAuthenticationConverterTest {
         assertTrue(authorities.contains("ROLE_SAKSBEHANDLER"))
         assertTrue(authorities.contains("ROLE_ATTESTERING"))
     }
+
+    @Test
+    fun `skal konvertere maskin-til-maskin token med SYSTEM rolle`() {
+        val jwt =
+            JwtTestHelper.opprettMaskinTilMaskinToken(
+                applikasjonNavn = "dev-gcp:etterlatte:test-app",
+                applikasjonId = "test-app-id",
+            )
+
+        val resultat = converter.convert(jwt)
+
+        assertNotNull(resultat)
+        val authToken = resultat as JwtAuthenticationToken
+
+        val authorities = authToken.authorities.map { it.authority }
+
+        assertEquals(1, authorities.size)
+        assertTrue(authorities.contains("ROLE_SYSTEM"))
+    }
+
+    @Test
+    fun `skal bevare JWT token for maskin-til-maskin token`() {
+        val jwt = JwtTestHelper.opprettMaskinTilMaskinToken()
+
+        val resultat = converter.convert(jwt) as JwtAuthenticationToken
+
+        assertEquals(jwt, resultat.token)
+        assertEquals("app", resultat.token.getClaimAsString("idtyp"))
+    }
 }

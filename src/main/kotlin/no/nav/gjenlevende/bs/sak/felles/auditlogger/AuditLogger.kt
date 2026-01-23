@@ -3,6 +3,7 @@ package no.nav.gjenlevende.bs.sak.felles.auditlogger
 import jakarta.servlet.http.HttpServletRequest
 import no.nav.familie.prosessering.util.MDCConstants
 import no.nav.gjenlevende.bs.sak.felles.sikkerhet.SikkerhetContext
+import no.nav.gjenlevende.bs.sak.felles.sikkerhet.TokenInfo
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
 import org.springframework.beans.factory.annotation.Value
@@ -50,10 +51,18 @@ class AuditLogger(
     fun log(data: Sporingsdata) {
         val request = getRequest() ?: throw IllegalArgumentException("Ikke brukt i context av en HTTP request")
 
-        if (!SikkerhetContext.erMaskinTilMaskinToken()) {
-            audit.info(createAuditLogString(data, request))
-        } else {
-            logger.debug("Maskin til maskin token i request")
+        val tokenInfo = SikkerhetContext.hentTokenInfo()
+
+        when (tokenInfo) {
+            is TokenInfo.BrukerToken -> {
+                audit.info(createAuditLogString(data, request, tokenInfo.navIdent))
+            }
+
+            is TokenInfo.ApplikasjonToken -> {
+                logger.debug(
+                    "Maskin til maskin token fra ${tokenInfo.applikasjonNavn}, audit-logging hoppes over",
+                )
+            }
         }
     }
 
@@ -67,11 +76,12 @@ class AuditLogger(
     private fun createAuditLogString(
         data: Sporingsdata,
         request: HttpServletRequest,
+        navIdent: String,
     ): String {
         val timestamp = System.currentTimeMillis()
         val name = "Saksbehandling"
         return "CEF:0|Familie|$applicationName|1.0|audit:${data.event.type}|$name|INFO|end=$timestamp " +
-            "suid=${SikkerhetContext.hentSaksbehandler()} " +
+            "suid=$navIdent " +
             "duid=${data.personIdent} " +
             "sproc=${getCallId()} " +
             "requestMethod=${request.method} " +

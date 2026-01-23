@@ -1,15 +1,15 @@
 package no.nav.gjenlevende.bs.sak
 
 import com.github.tomakehurst.wiremock.WireMockServer
+import com.ninjasquad.springmockk.MockkBean
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.domene.TaskLogg
 import no.nav.gjenlevende.bs.sak.behandling.Behandling
 import no.nav.gjenlevende.bs.sak.brev.Brev
+import no.nav.gjenlevende.bs.sak.client.AzureGraphClient
 import no.nav.gjenlevende.bs.sak.fagsak.domain.Fagsak
 import no.nav.gjenlevende.bs.sak.fagsak.domain.FagsakPerson
 import no.nav.gjenlevende.bs.sak.vedtak.Vedtak
-import com.ninjasquad.springmockk.MockkBean
-import no.nav.gjenlevende.bs.sak.client.AzureGraphClient
 import org.junit.jupiter.api.AfterEach
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest

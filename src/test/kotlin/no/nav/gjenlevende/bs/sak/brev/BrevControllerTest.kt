@@ -9,6 +9,7 @@ import no.nav.gjenlevende.bs.sak.brev.domain.BrevRequest
 import no.nav.gjenlevende.bs.sak.brev.domain.BrevmalDto
 import no.nav.gjenlevende.bs.sak.brev.domain.InformasjonOmBrukerDto
 import no.nav.gjenlevende.bs.sak.brev.domain.TekstbolkDto
+import no.nav.gjenlevende.bs.sak.client.AzureGraphClient
 import no.nav.gjenlevende.bs.sak.saksbehandler.SaksbehandlerService
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -41,6 +42,9 @@ open class BrevControllerTest {
 
     @MockkBean
     private lateinit var saksbehandlerService: SaksbehandlerService
+
+    @MockkBean
+    private lateinit var azureGraphClient: AzureGraphClient
 
     @Test
     fun `opprettBrev returnerer 200 OK og behandlingId`() {

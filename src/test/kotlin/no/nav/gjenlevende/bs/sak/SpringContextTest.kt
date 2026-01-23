@@ -8,6 +8,8 @@ import no.nav.gjenlevende.bs.sak.brev.Brev
 import no.nav.gjenlevende.bs.sak.fagsak.domain.Fagsak
 import no.nav.gjenlevende.bs.sak.fagsak.domain.FagsakPerson
 import no.nav.gjenlevende.bs.sak.vedtak.Vedtak
+import com.ninjasquad.springmockk.MockkBean
+import no.nav.gjenlevende.bs.sak.client.AzureGraphClient
 import org.junit.jupiter.api.AfterEach
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -25,6 +27,9 @@ open class SpringContextTest {
 
     @Autowired
     private lateinit var jdbcAggregateOperations: JdbcAggregateOperations
+
+    @MockkBean
+    private lateinit var azureGraphClient: AzureGraphClient
 
     @AfterEach
     fun reset() {

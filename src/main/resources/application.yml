@@ -113,6 +113,9 @@ gjenlevende-bs-infotrygd:
 FAMILIE_DOKUMENT_URL: http://familie-dokument.teamfamilie
 FAMILIE_DOKUMENT_SCOPE: api://${DEPLOY_ENV}-gcp.teamfamilie.familie-dokument/.default
 
+# Azure
+AAD_GRAPH_API_URI: https://graph.microsoft.com/v1.0/
+
 # PDL (Persondataløsningen)
 PDL_URL: https://pdl-api.dev-fss-pub.nais.io
 PDL_SCOPE: api://dev-fss.pdl.pdl-api/.default

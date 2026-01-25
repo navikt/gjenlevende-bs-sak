@@ -43,7 +43,7 @@
         <ktlint.version>1.8.0</ktlint.version>
         <springdoc.version>3.0.1</springdoc.version>
         <flyway.version>11.15.0</flyway.version>
-        <unleash.version>11.2.1</unleash.version>
+        <unleash.version>12.0.1</unleash.version>
         <mockk.version>1.14.7</mockk.version>
         <prosessering.version>2.20251222111020_cec9344</prosessering.version>
 

@@ -1,24 +1,36 @@
 package no.nav.gjenlevende.bs.sak.oppgave
 
-import no.nav.gjenlevende.bs.sak.felles.sikkerhet.SikkerhetContext
 import no.nav.gjenlevende.bs.sak.texas.TexasClient
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
-import org.springframework.web.util.UriComponentsBuilder
 import reactor.core.publisher.Mono
 import java.net.URI
 import java.time.Duration
 
+@Configuration
+ class OppgaveWebClientConfig {
+    @Bean
+    open fun oppgaveWebClient(
+        @Value("\${OPPGAVE_URL}")
+        oppgaveUrl: String,
+    ): WebClient =
+        WebClient
+            .builder()
+            .baseUrl(oppgaveUrl)
+            .defaultHeader("Content-Type", "application/json")
+            .build()
+}
+
 @Component
 class OppgaveClient(
-    private val webClient: WebClient,
+    private val oppgaveWebClient: WebClient,
     private val texasClient: TexasClient,
-    @Value("\${OPPGAVE_URL}")
-    private val oppgaveUrl: URI,
     @Value("\${OPPGAVE_SCOPE}")
     private val oppgaveScope: URI,
 ) {
@@ -31,18 +43,22 @@ class OppgaveClient(
 
     fun opprettOppgaveOBO(
         oppgave: LagOppgaveRequest,
-    ): Oppgave {
+    ): Mono<Oppgave?>? {
         logger.info("Lag oppgave=$oppgave")
-        val uri = lagBehandleSakOppgaveURI()
 
-        val obo = texasClient.hentOboToken(SikkerhetContext.hentBrukerToken(), oppgaveScope.toString())
+        val obo = texasClient.hentOboToken(oppgaveScope.toString())
 
-        return webClient
-            .post()
-            .uri(uri)
-            .header("Authorization", "Bearer $obo")
-            .header("X-Correlation-ID", MDC.get("callId") ?: "test")
-            .bodyValue(oppgave)
+        val request =
+            oppgaveWebClient
+                .post()
+                .uri(API_BASE_URL)
+                .header("Authorization", "Bearer $obo")
+                .header("X-Correlation-ID", MDC.get("callId") ?: "test")
+                .bodyValue(oppgave)
+
+        logger.info("Sender opprettOppgave request til Oppgave $request")
+
+        return request
             .retrieve()
             .bodyToMono<Oppgave>()
             .switchIfEmpty(Mono.error(NoSuchElementException("Tom respons fra oppgave")))
@@ -51,18 +67,18 @@ class OppgaveClient(
                 logger.info("Oppgave opprettet med id: ${response.id} ")
             }.doOnError {
                 logger.error("Feil: klarte ikke lage oppgave")
-            }.block() ?: throw RuntimeException("Klarte ikke opprette oppgave")
+            }
     }
 
     fun opprettOppgaveM2M(oppgave: Oppgave): Oppgave {
         logger.info("Lag oppgave=$oppgave")
-        val uri = lagBehandleSakOppgaveURI()
+        // val uri = lagBehandleSakOppgaveURI()
         logger.info("Sender opprettOppgave request til Oppgave-service ")
         val maskinToken = texasClient.hentMaskinToken(oppgaveScope.toString())
 
-        return webClient
+        return oppgaveWebClient
             .post()
-            .uri(uri)
+            .uri(API_BASE_URL)
             .header("Authorization", "Bearer $maskinToken")
             .header("X-Correlation-ID", MDC.get("callId") ?: "test-gjenlevende-bs-sak") // TODO fix callId for m2m
             .bodyValue(oppgave)
@@ -77,10 +93,10 @@ class OppgaveClient(
             }.block() ?: throw RuntimeException("Klarte ikke opprette oppgave")
     }
 
-    private fun lagBehandleSakOppgaveURI(): URI =
-        UriComponentsBuilder
-            .fromUri(oppgaveUrl)
-            .path(API_BASE_URL)
-            .build()
-            .toUri()
+//    private fun lagBehandleSakOppgaveURI(): URI =
+//        UriComponentsBuilder
+//            .fromUri(oppgaveUrl)
+//            .path(API_BASE_URL)
+//            .build()
+//            .toUri()
 }

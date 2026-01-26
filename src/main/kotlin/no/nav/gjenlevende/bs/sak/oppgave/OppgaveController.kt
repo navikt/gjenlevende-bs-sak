@@ -2,8 +2,6 @@ package no.nav.gjenlevende.bs.sak.oppgave
 
 import io.swagger.v3.oas.annotations.tags.Tag
 import no.nav.gjenlevende.bs.sak.infotrygd.dto.PersonidentRequest
-import org.springframework.security.core.annotation.AuthenticationPrincipal
-import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -21,7 +19,6 @@ class OppgaveController(
     @PostMapping("/lagOppgave")
     fun lagOppgave(
         @RequestBody request: PersonidentRequest,
-        @AuthenticationPrincipal jwt: Jwt,
     ): Long {
 //        Denne fingerer i oppgave swagger:
 //        {
@@ -45,7 +42,7 @@ class OppgaveController(
                 prioritet = OppgavePrioritet.NORM,
             )
 
-        val oppgaveOpprettet = oppgaveClient.opprettOppgaveOBO(oppgave, jwt.tokenValue)
+        val oppgaveOpprettet = oppgaveClient.opprettOppgaveOBO(oppgave)!!.block() ?: throw RuntimeException("Klarte ikke opprette oppgave")
 
         return oppgaveOpprettet.id!!
     }

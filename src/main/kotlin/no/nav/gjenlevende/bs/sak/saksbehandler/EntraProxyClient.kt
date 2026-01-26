@@ -28,10 +28,8 @@ class EntraProxyClient(
     }
 
     fun hentSaksbehandlerInfo(navIdent: String): SaksbehandlerResponse {
-        val brukerToken = SikkerhetContext.hentBrukerToken()
         val oboToken =
             texasClient.hentOboToken(
-                brukerToken = brukerToken,
                 targetAudience = entraProxyAudience,
             )
 

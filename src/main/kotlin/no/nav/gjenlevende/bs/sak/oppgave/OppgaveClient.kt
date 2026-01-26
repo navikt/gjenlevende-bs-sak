@@ -43,7 +43,7 @@ class OppgaveClient(
 
     fun opprettOppgaveOBO(
         oppgave: LagOppgaveRequest,
-    ): Mono<Oppgave?>? {
+    ): Mono<Oppgave> {
         logger.info("Lag oppgave=$oppgave")
 
         val obo = texasClient.hentOboToken(oppgaveScope.toString())

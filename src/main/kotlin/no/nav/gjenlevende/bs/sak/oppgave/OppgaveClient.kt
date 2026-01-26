@@ -48,26 +48,18 @@ class OppgaveClient(
 
         val obo = texasClient.hentOboToken(oppgaveScope.toString())
 
-        val request =
-            oppgaveWebClient
-                .post()
-                .uri(API_BASE_URL)
-                .header("Authorization", "Bearer $obo")
-                .header("X-Correlation-ID", MDC.get("callId") ?: "test")
-                .bodyValue(oppgave)
 
-        logger.info("Sender opprettOppgave request til Oppgave $request")
-
-        return request
+        return oppgaveWebClient
+            .post()
+            .uri(API_BASE_URL)
+            .headers() { headers ->
+                headers.setBearerAuth(obo)
+                headers.set("X-Correlation-ID", MDC.get("callId") ?: "test-gjenlevende-bs-sak")
+            }
+            .bodyValue(oppgave)
             .retrieve()
             .bodyToMono<Oppgave>()
-            .switchIfEmpty(Mono.error(NoSuchElementException("Tom respons fra oppgave")))
             .timeout(Duration.ofSeconds(TIMEOUT_SEKUNDER))
-            .doOnNext { response ->
-                logger.info("Oppgave opprettet med id: ${response.id} ")
-            }.doOnError {
-                logger.error("Feil: klarte ikke lage oppgave")
-            }
     }
 
     fun opprettOppgaveM2M(oppgave: Oppgave): Oppgave {

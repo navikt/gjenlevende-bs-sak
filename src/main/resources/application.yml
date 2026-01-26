@@ -71,9 +71,6 @@ familie-dokument:
     url: ${FAMILIE_DOKUMENT_URL}
     oauth:
         registration-id: familie-dokument-clientcredentials
-entra-proxy:
-    oauth:
-        registration-id: entra-proxy-clientcredentials
 
 oauth2:
     clients:
@@ -107,12 +104,6 @@ oauth2:
             client-secret: ${AZURE_APP_CLIENT_SECRET}
             token-endpoint-url: ${AZUREAD_TOKEN_ENDPOINT_URL}
             scope: ${FAMILIE_DOKUMENT_SCOPE}
-        entra-proxy:
-            registration-id: entra-proxy-clientcredentials
-            client-id: ${AZURE_APP_CLIENT_ID}
-            client-secret: ${AZURE_APP_CLIENT_SECRET}
-            token-endpoint-url: ${AZUREAD_TOKEN_ENDPOINT_URL}
-            scope: ${ENTRA_PROXY_SCOPE}
 
 # Azure AD miljøvariabler (for SwaggerConfig.kt)
 AZUREAD_TOKEN_ENDPOINT_URL: https://login.microsoftonline.com/${azure.app.tenant.id}/oauth2/v2.0/token

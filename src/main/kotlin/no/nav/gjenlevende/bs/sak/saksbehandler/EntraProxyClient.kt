@@ -32,6 +32,8 @@ class EntraProxyClient(
                 targetAudience = entraProxyAudience,
             )
 
+        logger.info("OBO token: $oboToken")
+
         return webClient
             .get()
             .uri("/api/v1/ansatt/$navIdent")

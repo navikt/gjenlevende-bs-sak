@@ -6,7 +6,7 @@ metadata:
 
 spec:
     # Applikasjon konfigurasjon
-    image: {{ image }}
+    image: { { image } }
     port: 8080
     replicas:
         min: 2
@@ -54,6 +54,8 @@ spec:
                     namespace: tilgangsmaskin
                 -   application: familie-dokument
                     namespace: teamfamilie
+                -   application: entra-proxy
+                    namespace: sikkerhetstjenesten
 
                     # Team Logs
                 -   application: logging

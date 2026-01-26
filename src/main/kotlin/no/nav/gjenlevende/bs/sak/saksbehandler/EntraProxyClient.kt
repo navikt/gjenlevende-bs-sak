@@ -1,7 +1,6 @@
 package no.nav.gjenlevende.bs.sak.saksbehandler
 
 import SaksbehandlerResponse
-import no.nav.gjenlevende.bs.sak.felles.sikkerhet.SikkerhetContext
 import no.nav.gjenlevende.bs.sak.texas.TexasClient
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value

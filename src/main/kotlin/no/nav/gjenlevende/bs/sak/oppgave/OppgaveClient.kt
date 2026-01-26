@@ -14,7 +14,7 @@ import java.net.URI
 import java.time.Duration
 
 @Configuration
- class OppgaveWebClientConfig {
+class OppgaveWebClientConfig {
     @Bean
     open fun oppgaveWebClient(
         @Value("\${OPPGAVE_URL}")
@@ -56,7 +56,7 @@ class OppgaveClient(
                 .header("X-Correlation-ID", MDC.get("callId") ?: "test")
                 .bodyValue(oppgave)
 
-        logger.info("Sender opprettOppgave request til Oppgave ${request.toString()}")
+        logger.info("Sender opprettOppgave request til Oppgave $request")
 
         return request
             .retrieve()

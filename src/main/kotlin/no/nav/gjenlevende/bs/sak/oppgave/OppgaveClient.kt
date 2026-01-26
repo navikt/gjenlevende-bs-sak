@@ -1,5 +1,6 @@
 package no.nav.gjenlevende.bs.sak.oppgave
 
+import no.nav.gjenlevende.bs.sak.felles.sikkerhet.SikkerhetContext
 import no.nav.gjenlevende.bs.sak.texas.TexasClient
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
@@ -30,11 +31,11 @@ class OppgaveClient(
 
     fun opprettOppgaveOBO(
         oppgave: LagOppgaveRequest,
-        jwt: String,
     ): Oppgave {
         logger.info("Lag oppgave=$oppgave")
         val uri = lagBehandleSakOppgaveURI()
-        val obo = texasClient.hentOboToken(jwt, oppgaveScope.toString())
+
+        val obo = texasClient.hentOboToken(SikkerhetContext.hentBrukerToken(), oppgaveScope.toString())
 
         return webClient
             .post()

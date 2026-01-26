@@ -35,7 +35,7 @@ class BearerTokenInterceptor(
             throw IllegalStateException("Kunne ikke hente token for $registrationId")
         }
 
-        request.headers.setBearerAuth(accessToken)
+        //request.headers.setBearerAuth(accessToken)
         return execution.execute(request, body)
     }
 }

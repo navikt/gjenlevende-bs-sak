@@ -56,7 +56,7 @@ class OppgaveClient(
                 .header("X-Correlation-ID", MDC.get("callId") ?: "test")
                 .bodyValue(oppgave)
 
-        logger.info("Sender opprettOppgave request til Oppgave $request")
+        logger.info("Sender opprettOppgave request til Oppgave ${request.toString()}")
 
         return request
             .retrieve()

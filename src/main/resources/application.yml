@@ -129,7 +129,6 @@ PDL_SCOPE: api://dev-fss.pdl.pdl-api/.default
 
 # OPPGAVE
 OPPGAVE_URL: https://oppgave.intern.dev.nav.no
-#OPPGAVE_SCOPE: api://dev-gcp.oppgavehandtering.oppgave/.default
 OPPGAVE_SCOPE: api://dev-fss.oppgavehandtering.oppgave/.default
 
 #SAF

@@ -33,7 +33,7 @@ class SikkerhetContextTest {
         val brukerToken = tokenInfo as TokenInfo.BrukerToken
 
         assertEquals("Z123456", brukerToken.navIdent)
-        assertEquals(jwt.tokenValue, brukerToken.tokenValue)
+        assertEquals(jwt.tokenValue, brukerToken.tokenVerdi)
     }
 
     @Test
@@ -52,7 +52,7 @@ class SikkerhetContextTest {
 
         assertEquals("dev-gcp:team-gjenlevende:test-app", appToken.applikasjonNavn)
         assertEquals("test-client-id", appToken.applikasjonId)
-        assertEquals(jwt.tokenValue, appToken.tokenValue)
+        assertEquals(jwt.tokenValue, appToken.tokenVerdi)
     }
 
     @Test

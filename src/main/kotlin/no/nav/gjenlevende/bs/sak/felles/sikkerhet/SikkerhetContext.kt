@@ -4,17 +4,17 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 
 sealed class TokenInfo {
-    abstract val tokenValue: String
+    abstract val tokenVerdi: String
 
     data class BrukerToken(
         val navIdent: String,
-        override val tokenValue: String,
+        override val tokenVerdi: String,
     ) : TokenInfo()
 
     data class ApplikasjonToken(
         val applikasjonNavn: String,
         val applikasjonId: String,
-        override val tokenValue: String,
+        override val tokenVerdi: String,
     ) : TokenInfo()
 }
 
@@ -44,7 +44,7 @@ object SikkerhetContext {
                 TokenInfo.ApplikasjonToken(
                     applikasjonNavn = azpName,
                     applikasjonId = azp,
-                    tokenValue = jwt.tokenValue,
+                    tokenVerdi = jwt.tokenValue,
                 )
             }
 
@@ -53,7 +53,7 @@ object SikkerhetContext {
 
                 TokenInfo.BrukerToken(
                     navIdent = navIdent,
-                    tokenValue = jwt.tokenValue,
+                    tokenVerdi = jwt.tokenValue,
                 )
             }
         }
@@ -64,10 +64,7 @@ object SikkerhetContext {
     fun hentSaksbehandler(): String =
         when (val tokenInfo = hentTokenInfo()) {
             is TokenInfo.BrukerToken -> tokenInfo.navIdent
-
-            is TokenInfo.ApplikasjonToken -> throw IllegalStateException(
-                "Forventet brukertoken, men fikk applikasjonstoken fra ${tokenInfo.applikasjonNavn}",
-            )
+            is TokenInfo.ApplikasjonToken -> throw IllegalStateException("Forventet brukertoken, men fikk applikasjonstoken fra ${tokenInfo.applikasjonNavn}")
         }
 
     fun hentSaksbehandlerEllerSystembruker(): String {
@@ -89,7 +86,7 @@ object SikkerhetContext {
         val tokenInfo = hentTokenInfo()
 
         return when (tokenInfo) {
-            is TokenInfo.BrukerToken -> tokenInfo.tokenValue
+            is TokenInfo.BrukerToken -> tokenInfo.tokenVerdi
             is TokenInfo.ApplikasjonToken -> throw IllegalStateException("Forventet brukertoken, men fikk applikasjonstoken fra ${tokenInfo.applikasjonNavn}")
         }
     }

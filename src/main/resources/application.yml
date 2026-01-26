@@ -115,13 +115,17 @@ gjenlevende-bs-infotrygd:
     url: https://gjenlevende-bs-infotrygd.dev-fss-pub.nais.io
     audience: api://dev-fss.etterlatte.gjenlevende-bs-infotrygd/.default
 
-# FAMILIE DOKUMENT
-FAMILIE_DOKUMENT_URL: http://familie-dokument.teamfamilie
-FAMILIE_DOKUMENT_SCOPE: api://${DEPLOY_ENV}-gcp.teamfamilie.familie-dokument/.default
-
 # Azure
 AAD_GRAPH_API_URI: https://graph.microsoft.com/v1.0/
 AAD_GRAPH_SCOPE: https://graph.microsoft.com/.default
+
+# Entra proxy
+ENTRA_PROXY_URL: https://entraproxy.intern.dev.nav.no
+ENTRA_PROXY_SCOPE: api://dev-gcp.sikkerhetstjenesten.entra-proxy/.default
+
+# FAMILIE DOKUMENT
+FAMILIE_DOKUMENT_URL: http://familie-dokument.teamfamilie
+FAMILIE_DOKUMENT_SCOPE: api://${DEPLOY_ENV}-gcp.teamfamilie.familie-dokument/.default
 
 # PDL (Persondataløsningen)
 PDL_URL: https://pdl-api.dev-fss-pub.nais.io

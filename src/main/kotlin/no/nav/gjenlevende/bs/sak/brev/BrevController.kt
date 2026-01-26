@@ -1,11 +1,13 @@
 package no.nav.gjenlevende.bs.sak.brev
 
+import SaksbehandlerResponse
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import no.nav.familie.prosessering.internal.TaskService
 import no.nav.gjenlevende.bs.sak.brev.domain.BrevRequest
 import no.nav.gjenlevende.bs.sak.client.domain.Saksbehandler
 import no.nav.gjenlevende.bs.sak.felles.sikkerhet.SikkerhetContext
+import no.nav.gjenlevende.bs.sak.saksbehandler.EntraProxyClient
 import no.nav.gjenlevende.bs.sak.saksbehandler.SaksbehandlerService
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
@@ -24,7 +26,7 @@ import java.util.UUID
 class BrevController(
     private val brevService: BrevService,
     private val taskService: TaskService,
-    private val saksbehandlerService: SaksbehandlerService,
+    private val entraProxyClient: EntraProxyClient,
 ) {
     @PostMapping("/send-til-beslutter/{behandlingId}")
     @Operation(
@@ -87,8 +89,8 @@ class BrevController(
     )
     fun hentSaksbehandler(
         @PathVariable navident: String,
-    ): ResponseEntity<Saksbehandler> {
-        val saksbehandler = saksbehandlerService.hentSaksbehandler(navident)
+    ): ResponseEntity<SaksbehandlerResponse> {
+        val saksbehandler = entraProxyClient.hentSaksbehandlerInfo(navident)
         return ResponseEntity.ok(saksbehandler)
     }
 }

@@ -74,12 +74,6 @@ familie-dokument:
 
 oauth2:
     clients:
-        aad-graph:
-            registration-id: aad-graph-clientcredentials
-            client-id: ${AZURE_APP_CLIENT_ID}
-            client-secret: ${AZURE_APP_CLIENT_SECRET}
-            token-endpoint-url: ${AZUREAD_TOKEN_ENDPOINT_URL}
-            scope: ${AAD_GRAPH_SCOPE}
         pdl:
             registration-id: pdl-clientcredentials
             client-id: ${AZURE_APP_CLIENT_ID}
@@ -114,10 +108,6 @@ API_SCOPE: api://${azure.app.client.id}/.default
 gjenlevende-bs-infotrygd:
     url: https://gjenlevende-bs-infotrygd.dev-fss-pub.nais.io
     audience: api://dev-fss.etterlatte.gjenlevende-bs-infotrygd/.default
-
-# Azure
-AAD_GRAPH_API_URI: https://graph.microsoft.com/v1.0/
-AAD_GRAPH_SCOPE: https://graph.microsoft.com/.default
 
 # Entra proxy
 ENTRA_PROXY_URL: https://entraproxy.intern.dev.nav.no

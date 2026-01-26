@@ -52,7 +52,6 @@ class TilgangsmaskinControllerTest {
             every { SikkerhetContext.hentSaksbehandler() } returns navIdent
             every {
                 tilgangsmaskinClient.sjekkTilgangBulk(
-                    brukerToken = any(),
                     personidenter = any(),
                     regelType = RegelType.KJERNE_REGELTYPE,
                 )
@@ -92,7 +91,7 @@ class TilgangsmaskinControllerTest {
                     personidenter = listOf(personidentMedTilgang, personidentUtenTilgang, personidentEgenFamilie),
                 )
 
-            val resultat = controller.sjekkTilgangBulkForenklet(request, mockJwt)
+            val resultat = controller.sjekkTilgangBulkForenklet(request)
 
             assertEquals(navIdent, resultat.navIdent)
             assertEquals(3, resultat.resultater.size)
@@ -119,10 +118,8 @@ class TilgangsmaskinControllerTest {
             val personident1 = "12345678901"
             val personident2 = "12345678902"
 
-            every { SikkerhetContext.hentSaksbehandler() } returns navIdent
             every {
                 tilgangsmaskinClient.sjekkTilgangBulk(
-                    brukerToken = any(),
                     personidenter = any(),
                     regelType = RegelType.KJERNE_REGELTYPE,
                 )
@@ -138,7 +135,7 @@ class TilgangsmaskinControllerTest {
 
             val request = BulkTilgangsRequest(personidenter = listOf(personident1, personident2))
 
-            val resultat = controller.sjekkTilgangBulkForenklet(request, mockJwt)
+            val resultat = controller.sjekkTilgangBulkForenklet(request)
 
             assertEquals(2, resultat.resultater.size)
             assertTrue(resultat.resultater.all { it.harTilgang })
@@ -155,7 +152,6 @@ class TilgangsmaskinControllerTest {
             every { SikkerhetContext.hentSaksbehandler() } returns navIdent
             every {
                 tilgangsmaskinClient.sjekkTilgangBulk(
-                    brukerToken = any(),
                     personidenter = any(),
                     regelType = RegelType.KJERNE_REGELTYPE,
                 )
@@ -196,7 +192,7 @@ class TilgangsmaskinControllerTest {
 
             val request = BulkTilgangsRequest(personidenter = listOf(egenIdent, barnIdent, partnerIdent))
 
-            val resultat = controller.sjekkTilgangBulkForenklet(request, mockJwt)
+            val resultat = controller.sjekkTilgangBulkForenklet(request)
 
             assertEquals(3, resultat.resultater.size)
             assertTrue(resultat.resultater.none { it.harTilgang })
@@ -210,7 +206,6 @@ class TilgangsmaskinControllerTest {
             every { SikkerhetContext.hentSaksbehandler() } returns navIdent
             every {
                 tilgangsmaskinClient.sjekkTilgangBulk(
-                    brukerToken = any(),
                     personidenter = any(),
                     regelType = RegelType.KJERNE_REGELTYPE,
                 )
@@ -218,7 +213,7 @@ class TilgangsmaskinControllerTest {
 
             val request = BulkTilgangsRequest(personidenter = emptyList())
 
-            val resultat = controller.sjekkTilgangBulkForenklet(request, mockJwt)
+            val resultat = controller.sjekkTilgangBulkForenklet(request)
 
             assertEquals(navIdent, resultat.navIdent)
             assertTrue(resultat.resultater.isEmpty())
@@ -235,7 +230,6 @@ class TilgangsmaskinControllerTest {
             every { SikkerhetContext.hentSaksbehandler() } returns navIdent
             every {
                 tilgangsmaskinClient.sjekkTilgangBulk(
-                    brukerToken = any(),
                     personidenter = any(),
                     regelType = RegelType.KJERNE_REGELTYPE,
                 )
@@ -288,7 +282,7 @@ class TilgangsmaskinControllerTest {
                     personidenter = listOf(strengtFortrolig, fortrolig, skjermet, geografisk),
                 )
 
-            val resultat = controller.sjekkTilgangBulkForenklet(request, mockJwt)
+            val resultat = controller.sjekkTilgangBulkForenklet(request)
 
             assertEquals(4, resultat.resultater.size)
 

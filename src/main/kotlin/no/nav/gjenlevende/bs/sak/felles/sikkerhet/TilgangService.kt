@@ -30,7 +30,6 @@ class TilgangService(
             return
         }
 
-        val brukerToken = SikkerhetContext.hentBrukerToken()
         val barnPersonidenter = pdlService.hentBarnPersonidenter(personident)
         val foreldreAvBarn = barnPersonidenter.flatMap { pdlService.hentForeldrePersonidenter(it) }
 
@@ -40,7 +39,6 @@ class TilgangService(
 
         val respons =
             tilgangsmaskinClient.sjekkTilgangBulk(
-                brukerToken = brukerToken,
                 personidenter = allePersonidenter,
             )
 

@@ -26,12 +26,10 @@ class InfotrygdClient(
     }
 
     fun hentPerioderForPerson(
-        brukerToken: String,
         personident: String,
     ): Mono<PersonPerioderResponse> {
         val oboToken =
             texasClient.hentOboToken(
-                brukerToken = brukerToken,
                 targetAudience = gjenlevendeBsInfotrygdAudience,
             )
 
@@ -50,11 +48,9 @@ class InfotrygdClient(
     }
 
     fun hentPerioderForPersonSync(
-        brukerToken: String,
         personident: String,
     ): PersonPerioderResponse =
         hentPerioderForPerson(
-            brukerToken = brukerToken,
             personident = personident,
         ).block() ?: throw RuntimeException("Klarte ikke å hente perioder for person fra gjenlevende-bs-infotrygd")
 }

@@ -2,7 +2,6 @@ package no.nav.gjenlevende.bs.sak.saksbehandler
 
 import SaksbehandlerResponse
 import java.time.Duration
-import no.nav.gjenlevende.bs.sak.felles.sikkerhet.SikkerhetContext
 import no.nav.gjenlevende.bs.sak.texas.TexasClient
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -28,16 +27,15 @@ class EntraProxyClient(
     }
 
     fun hentSaksbehandlerInfo(navIdent: String): SaksbehandlerResponse {
-//        val oboToken =
-//            texasClient.hentOboToken(
-//                targetAudience = entraProxyAudience,
-//            )
-        val token = SikkerhetContext.hentBrukerToken()
-//        logger.info("OBO token: $oboToken")
+        val oboToken =
+            texasClient.hentOboToken(
+                targetAudience = entraProxyAudience,
+            )
+
         return webClient
             .get()
             .uri("/api/v1/ansatt/$navIdent")
-            .header("Authorization", "Bearer $token")
+            .header("Authorization", "Bearer $oboToken")
             .retrieve()
             .bodyToMono<SaksbehandlerResponse>()
             .timeout(Duration.ofSeconds(TIMEOUT_SEKUNDER))

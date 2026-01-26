@@ -61,13 +61,11 @@ class TilgangsmaskinController(
     @PostMapping("/sjekk/bulk", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun sjekkTilgangBulkForenklet(
         @RequestBody request: BulkTilgangsRequest,
-        @AuthenticationPrincipal jwt: Jwt,
     ): ForenkletBulkTilgangsResponse {
         val navIdent = SikkerhetContext.hentSaksbehandler()
         logger.info("Bulk sjekker tilgang (kjerne) for saksbehandler $navIdent til ${request.personidenter.size} brukere")
         val respons =
             tilgangsmaskinClient.sjekkTilgangBulk(
-                brukerToken = jwt.tokenValue,
                 personidenter = request.personidenter,
                 regelType = RegelType.KJERNE_REGELTYPE,
             )
@@ -90,12 +88,10 @@ class TilgangsmaskinController(
     @PostMapping("/sjekk/bulk/komplett", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun sjekkTilgangBulkKomplett(
         @RequestBody request: BulkTilgangsRequest,
-        @AuthenticationPrincipal jwt: Jwt,
     ): BulkTilgangsResponse {
         val navIdent = SikkerhetContext.hentSaksbehandler()
         logger.info("Bulk-sjekker tilgang (komplett) for saksbehandler $navIdent til ${request.personidenter.size} brukere")
         return tilgangsmaskinClient.sjekkTilgangBulk(
-            brukerToken = jwt.tokenValue,
             personidenter = request.personidenter,
             regelType = RegelType.KOMPLETT_REGELTYPE,
         )

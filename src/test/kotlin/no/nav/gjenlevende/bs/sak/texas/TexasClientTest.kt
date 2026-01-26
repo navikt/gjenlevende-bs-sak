@@ -5,11 +5,16 @@ import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.client.WireMock.post
 import com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
+import io.mockk.every
+import io.mockk.mockkObject
+import io.mockk.unmockkObject
+import no.nav.gjenlevende.bs.sak.felles.sikkerhet.SikkerhetContext
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
@@ -17,6 +22,8 @@ class TexasClientTest {
     companion object {
         private lateinit var wireMockServer: WireMockServer
         private lateinit var client: TexasClient
+
+        val brukerToken = "test-user-token-xyz"
 
         @BeforeAll
         @JvmStatic
@@ -38,8 +45,16 @@ class TexasClientTest {
         }
     }
 
+
+    @BeforeEach
+    fun setupEachTest() {
+        mockkObject(SikkerhetContext)
+        every { SikkerhetContext.hentBrukerToken() } returns brukerToken
+    }
+
     @AfterEach
     fun tearDownEachTest() {
+        unmockkObject(SikkerhetContext)
         wireMockServer.resetAll()
     }
 
@@ -47,7 +62,6 @@ class TexasClientTest {
     inner class HentOboToken {
         @Test
         fun `returnerer token ved vellykket kall`() {
-            val forventetToken = "test-obo-token-123"
 
             wireMockServer.stubFor(
                 post(urlEqualTo("/token/exchange"))
@@ -57,7 +71,7 @@ class TexasClientTest {
                             .withBody(
                                 """
                                 {
-                                    "access_token": "$forventetToken",
+                                    "access_token": "$brukerToken",
                                     "expires_in": 3600,
                                     "token_type": "Bearer"
                                 }
@@ -68,11 +82,10 @@ class TexasClientTest {
 
             val token =
                 client.hentOboToken(
-                    brukerToken = "original-token",
                     targetAudience = "api://target/.default",
                 )
 
-            assertEquals(forventetToken, token)
+            assertEquals(brukerToken, token)
         }
 
         @Test
@@ -97,7 +110,6 @@ class TexasClientTest {
             val exception =
                 assertThrows(RuntimeException::class.java) {
                     client.hentOboToken(
-                        brukerToken = "original-token",
                         targetAudience = "api://target/.default",
                     )
                 }
@@ -119,7 +131,6 @@ class TexasClientTest {
             val exception =
                 assertThrows(RuntimeException::class.java) {
                     client.hentOboToken(
-                        brukerToken = "invalid-token",
                         targetAudience = "api://target/.default",
                     )
                 }

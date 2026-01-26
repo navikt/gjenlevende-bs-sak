@@ -17,7 +17,6 @@ class MockTexasClient :
     private val logger = LoggerFactory.getLogger(MockTexasClient::class.java)
 
     override fun hentOboToken(
-        brukerToken: String,
         targetAudience: String,
     ): String {
         logger.info("MockTexasClient: Returnerer mock OBO token for target: $targetAudience")

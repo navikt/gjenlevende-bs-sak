@@ -45,7 +45,6 @@ class TexasClientTest {
         }
     }
 
-
     @BeforeEach
     fun setupEachTest() {
         mockkObject(SikkerhetContext)
@@ -62,7 +61,6 @@ class TexasClientTest {
     inner class HentOboToken {
         @Test
         fun `returnerer token ved vellykket kall`() {
-
             wireMockServer.stubFor(
                 post(urlEqualTo("/token/exchange"))
                     .willReturn(

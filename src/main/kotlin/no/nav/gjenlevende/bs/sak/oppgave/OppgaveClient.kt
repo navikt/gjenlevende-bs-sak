@@ -48,15 +48,13 @@ class OppgaveClient(
 
         val obo = texasClient.hentOboToken(oppgaveScope.toString())
 
-
         return oppgaveWebClient
             .post()
             .uri(API_BASE_URL)
-            .headers() { headers ->
+            .headers { headers ->
                 headers.setBearerAuth(obo)
                 headers.set("X-Correlation-ID", MDC.get("callId") ?: "test-gjenlevende-bs-sak")
-            }
-            .bodyValue(oppgave)
+            }.bodyValue(oppgave)
             .retrieve()
             .bodyToMono<Oppgave>()
             .timeout(Duration.ofSeconds(TIMEOUT_SEKUNDER))

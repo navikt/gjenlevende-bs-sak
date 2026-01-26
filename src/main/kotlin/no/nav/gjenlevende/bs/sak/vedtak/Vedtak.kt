@@ -5,7 +5,6 @@ import no.nav.gjenlevende.bs.sak.felles.sporbar.SporbarUtils
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.MappedCollection
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.YearMonth
 import java.util.UUID
@@ -28,8 +27,8 @@ data class Vedtak(
 data class Barnetilsynperiode(
     @Id
     val behandlingId: UUID,
-    val datoFra: LocalDate,
-    val datoTil: LocalDate,
+    val datoFra: YearMonth,
+    val datoTil: YearMonth,
     val utgifter: Int,
     val barn: List<UUID>,
     val periodetype: PeriodetypeBarnetilsyn,

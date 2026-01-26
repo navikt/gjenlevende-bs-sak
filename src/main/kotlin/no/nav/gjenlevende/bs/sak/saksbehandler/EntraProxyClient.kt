@@ -1,13 +1,14 @@
 package no.nav.gjenlevende.bs.sak.saksbehandler
 
 import SaksbehandlerResponse
+import java.time.Duration
+import no.nav.gjenlevende.bs.sak.felles.sikkerhet.SikkerhetContext
 import no.nav.gjenlevende.bs.sak.texas.TexasClient
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
-import java.time.Duration
 
 @Service
 class EntraProxyClient(
@@ -27,17 +28,16 @@ class EntraProxyClient(
     }
 
     fun hentSaksbehandlerInfo(navIdent: String): SaksbehandlerResponse {
-        val oboToken =
-            texasClient.hentOboToken(
-                targetAudience = entraProxyAudience,
-            )
-
-        logger.info("OBO token: $oboToken")
-
+//        val oboToken =
+//            texasClient.hentOboToken(
+//                targetAudience = entraProxyAudience,
+//            )
+        val token = SikkerhetContext.hentBrukerToken()
+//        logger.info("OBO token: $oboToken")
         return webClient
             .get()
             .uri("/api/v1/ansatt/$navIdent")
-            .header("Authorization", "Bearer $oboToken")
+            .header("Authorization", "Bearer $token")
             .retrieve()
             .bodyToMono<SaksbehandlerResponse>()
             .timeout(Duration.ofSeconds(TIMEOUT_SEKUNDER))

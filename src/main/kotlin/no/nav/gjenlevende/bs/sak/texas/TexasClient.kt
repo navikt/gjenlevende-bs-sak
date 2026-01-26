@@ -1,6 +1,7 @@
 package no.nav.gjenlevende.bs.sak.texas
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import no.nav.gjenlevende.bs.sak.felles.sikkerhet.SikkerhetContext
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
@@ -26,7 +27,6 @@ open class TexasClient(
             .build()
 
     open fun hentOboToken(
-        brukerToken: String,
         targetAudience: String,
     ): String {
         logger.info("Henter OBO token fra Texas. Endpoint: $tokenExchangeEndpoint, target: $targetAudience")
@@ -36,7 +36,7 @@ open class TexasClient(
                 val formData: MultiValueMap<String, String> = LinkedMultiValueMap()
                 formData.add("identity_provider", "entra_id")
                 formData.add("target", targetAudience)
-                formData.add("user_token", brukerToken)
+                formData.add("user_token", SikkerhetContext.hentBrukerToken())
 
                 webClient
                     .post()

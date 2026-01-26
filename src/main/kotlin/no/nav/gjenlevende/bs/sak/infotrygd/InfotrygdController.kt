@@ -36,7 +36,6 @@ class InfotrygdController(
     )
     fun hentPerioderForPerson(
         @RequestBody request: PersonidentRequest,
-        @AuthenticationPrincipal jwt: Jwt,
     ): ResponseEntity<PersonPerioderResponse> {
         logger.info("Henter perioder for person fra gjenlevende-bs-infotrygd")
 
@@ -45,7 +44,6 @@ class InfotrygdController(
 
             val response =
                 infotrygdClient.hentPerioderForPersonSync(
-                    brukerToken = jwt.tokenValue,
                     personident = request.personident,
                 )
 

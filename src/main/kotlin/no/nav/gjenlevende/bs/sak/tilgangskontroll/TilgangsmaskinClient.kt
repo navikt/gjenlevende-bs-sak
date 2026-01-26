@@ -102,7 +102,6 @@ class TilgangsmaskinClient(
     }
 
     fun sjekkTilgangBulk(
-        brukerToken: String,
         personidenter: List<String>,
         regelType: RegelType = RegelType.KJERNE_REGELTYPE,
     ): BulkTilgangsResponse {
@@ -115,7 +114,6 @@ class TilgangsmaskinClient(
 
         val oboToken =
             texasClient.hentOboToken(
-                brukerToken = brukerToken,
                 targetAudience = tilgangsmaskinScope,
             )
 

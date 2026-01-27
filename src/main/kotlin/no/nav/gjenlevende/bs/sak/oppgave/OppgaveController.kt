@@ -1,7 +1,8 @@
 package no.nav.gjenlevende.bs.sak.oppgave
 
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.tags.Tag
-import no.nav.gjenlevende.bs.sak.infotrygd.dto.PersonidentRequest
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -16,46 +17,39 @@ import org.springframework.web.bind.annotation.RestController
 class OppgaveController(
     private val oppgaveClient: OppgaveClient,
 ) {
+    @Operation(
+        summary = "Opprett en ny oppgave",
+        description = "Oppretter en ny oppgave",
+        parameters = [
+            Parameter(
+                name = "request",
+                description = "Request med personident og oppgavedetaljer",
+                example =
+                    "{\n" +
+                        "  \"personident\": \"yourPersonidentValue\",\n" +
+                        "  \"tema\": \"EYO\",\n" +
+                        "  \"behandlingstema\": \"ab0028\",\n" +
+                        "  \"beskrivelse\": \"Test: vil prøve å opprette oppgave.\",\n" +
+                        "  \"oppgavetype\": \"GEN\",\n" +
+                        "  \"aktivDato\": \"2026-01-21\",\n" +
+                        "  \"prioritet\": \"NORM\"\n" +
+                        "}",
+            ),
+        ],
+    )
     @PostMapping("/lagOppgave")
     fun lagOppgave(
-        @RequestBody request: PersonidentRequest,
-    ): Long {
-//        Denne fingerer i oppgave swagger:
-//        {
-//            "personident": "**********",
-//            "tema": "ENF",
-//            "behandlingstema": "ab0028",
-//            "oppgavetype": "VUR_KONS_YTE",
-//            "prioritet": "NORM",
-//            "aktivDato": "2026-01-22"
-//        }
-//
-        val oppgave =
-            LagOppgaveRequest(
-                personident = request.personident,
-                tema = Tema.ENF,
-                tildeltEnhetsnr = "4489", // TODO finn enhetsnummer for BARNETILSYN GJENLEVENDE 4817 4806 ??? 4817
-                behandlingstema = "ab0028",
-                beskrivelse = "Henvendelse - teste vil prøve å opprette oppgave.",
-                oppgavetype = Oppgavetype.VurderKonsekvensForYtelse.value,
-                aktivDato = "2026-01-21",
-                prioritet = OppgavePrioritet.NORM,
-            )
-
-        val oppgaveOpprettet = oppgaveClient.opprettOppgaveOBO(oppgave)!!.block() ?: throw RuntimeException("Klarte ikke opprette oppgave")
-
-        return oppgaveOpprettet.id!!
-    }
+        @RequestBody request: LagEnkelTestOppgaveRequest,
+    ): Oppgave = oppgaveClient.opprettOppgaveOBO(request).block() ?: throw RuntimeException("Klarte ikke opprette oppgave")
 }
 
 data class
-LagOppgaveRequest(
+LagEnkelTestOppgaveRequest(
     val personident: String,
     val tema: Tema,
-    val tildeltEnhetsnr: String,
     val behandlingstema: String,
     val beskrivelse: String,
-    val oppgavetype: String,
+    val oppgavetype: OppgavetypeEYO,
     val aktivDato: String,
     val prioritet: OppgavePrioritet,
 )

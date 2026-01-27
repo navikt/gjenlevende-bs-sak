@@ -27,7 +27,6 @@ class BehandlingService(
             behandling,
         )
 
-        // TODO: vurder - Skulle denne ligge i OppgaveService? Mye blir liggende på behandling :D
         lagBehandleSakOppgaveTask.opprettBehandleSakOppgaveTask(behandling = behandling, saksbehandler = SikkerhetContext.hentSaksbehandler())
 
         return behandling

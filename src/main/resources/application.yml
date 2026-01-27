@@ -78,12 +78,6 @@ familie-dokument:
 
 oauth2:
     clients:
-        oppgave:
-            registration-id: oppgave-clientcredentials
-            client-id: ${AZURE_APP_CLIENT_ID}
-            client-secret: ${AZURE_APP_CLIENT_SECRET}
-            token-endpoint-url: ${AZUREAD_TOKEN_ENDPOINT_URL}
-            scope: ${OPPGAVE_SCOPE}
         pdl:
             registration-id: pdl-clientcredentials
             client-id: ${AZURE_APP_CLIENT_ID}

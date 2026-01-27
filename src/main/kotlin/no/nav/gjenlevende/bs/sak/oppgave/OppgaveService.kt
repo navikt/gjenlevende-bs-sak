@@ -36,7 +36,7 @@ class OppgaveService(
         val gjeldendePersonIdent: Personident = fagsakPerson.aktivIdent()
 
         val oppgave = lagOpprettBehandleSakOppgaveRequest(gjeldendePersonIdent, fagsak, behandling, saksbehandler)
-        oppgaveClient.opprettOppgaveM2M(oppgave = oppgave)
+        oppgaveClient.opprettOppgaveM2M(oppgaveRequest = oppgave)
     }
 }
 
@@ -45,30 +45,22 @@ private fun lagOpprettBehandleSakOppgaveRequest(
     fagsak: Fagsak,
     behandling: Behandling,
     saksbehandler: String,
-): Oppgave {
-    val oppgave =
-        Oppgave(
-            aktoerId = null,
-            personident = gjeldendePersonIdent.ident,
-            orgnr = null,
-            samhandlernr = null,
-            saksreferanse = fagsak.eksternId.toString(), // TODO sjekk om dette burde være behandling-eksternid?
-            journalpostId = null,
-            prioritet = OppgavePrioritet.NORM,
-            tema = Tema.ENF, // TODO finn tema for BARNETILSYN GJENLEVENDE EYO = omstilling
-            tildeltEnhetsnr = "4489", // TODO finn enhetsnummer for BARNETILSYN GJENLEVENDE 4817 4806 ??? 4817
-            behandlingstema = "ab0028", // TODO finn behandlingstema for BARNETILSYN GJENLEVENDE, ab0224 ab0028(Hører til ENF - barnetilsyn)? ab0224
-            behandlingstype = null,
-            fristFerdigstillelse = lagFristForOppgave().format(DateTimeFormatter.ISO_DATE),
-            aktivDato = LocalDate.now().format(DateTimeFormatter.ISO_DATE),
-            oppgavetype = Oppgavetype.BehandleSak.value,
-            beskrivelse = "Behandle sak oppgave for behandling=${behandling.id}-${fagsak.stønadstype.name}",
-            tilordnetRessurs = saksbehandler,
-            behandlesAvApplikasjon = null, // TODO sett behandlesAvApplikasjon for BARNETILSYN GJENLEVENDE
-            mappeId = null,
-        )
-    return oppgave
-}
+): LagOppgaveRequest =
+    LagOppgaveRequest(
+        personident = gjeldendePersonIdent.ident,
+        saksreferanse = fagsak.eksternId.toString(), // TODO sjekk om dette burde være "behandling-eksternid"?
+        prioritet = OppgavePrioritet.NORM,
+        tema = Tema.EYO, // TODO finn tema for BARNETILSYN GJENLEVENDE EYO = omstilling
+        behandlingstema = "ae0290", // Samhandling EM-PE-OM ... TODO finn behandlingstema for BARNETILSYN GJENLEVENDE, ab0224 ab0028(Hører til ENF - barnetilsyn)? ab0224
+        fristFerdigstillelse = lagFristForOppgave().format(DateTimeFormatter.ISO_DATE),
+        aktivDato = LocalDate.now().format(DateTimeFormatter.ISO_DATE),
+        oppgavetype = OppgavetypeEYO.GEN, // TODO legg inn BehandleSak som option,
+        beskrivelse = "Behandle sak oppgave for barnetilsynbehandling=${behandling.id}-${fagsak.stønadstype.name}",
+        tilordnetRessurs = saksbehandler,
+        behandlesAvApplikasjon = "gjenlevende-bs-sak", // TODO sett behandlesAvApplikasjon for BARNETILSYN GJENLEVENDE
+        // mappeId = null, // TODO sett mappeId for BARNETILSYN GJENLEVENDE? kanskje ikke nødvendig
+        // tildeltEnhetsnr = null, // TODO finn enhetsnummer for BARNETILSYN GJENLEVENDE 4817 4806 ??? 4817
+    )
 
 fun lagFristForOppgave(gjeldendeTid: LocalDateTime = now()): LocalDate {
     val frist =
@@ -152,30 +144,26 @@ enum class OppgavePrioritet {
     LAV,
 }
 
-enum class Oppgavetype(
-    val value: String,
-) {
-    BehandleSak("BEH_SAK"),
-    Journalføring("JFR"),
-    GodkjenneVedtak("GOD_VED"),
-    BehandleUnderkjentVedtak("BEH_UND_VED"),
-    Fordeling("FDR"),
-    BehandleReturpost("RETUR"),
-    BehandleSED("BEH_SED"),
-    FordelingSED("FDR_SED"),
-    Fremlegg("FREM"),
-    Generell("GEN"),
-    InnhentDokumentasjon("INNH_DOK"),
-    JournalføringUtgående("JFR_UT"),
-    KontaktBruker("KONT_BRUK"),
-    KontrollerUtgåendeSkannetDokument("KON_UTG_SCA_DOK"),
-    SvarIkkeMottatt("SVAR_IK_MOT"),
-    VurderDokument("VUR"),
-    VurderHenvendelse("VURD_HENV"),
-    VurderInntekt("VURD_INNT"),
-    VurderKonsekvensForYtelse("VUR_KONS_YTE"),
-    VurderLivshendelse("VURD_LIVS"),
-    VurderSvar("VUR_SVAR"),
+// mulige oppgavetyper for tema EYO - vil legge in behandle sak og beslutter oppgave her:
+// https://github.com/navikt/oppgave/blob/70715a7b37e619be0e30079f5fdcf957effe2ba2/src/main/resources/data/oppgavetyper.json#L577
+enum class OppgavetypeEYO {
+    INNH_DOK,
+    VURD_NOTAT,
+    VURD_BREV,
+    GEN,
+    VURD_HENV,
+    VUR_KONS_YTE,
+    KONT_BRUK,
+    KRA_DOD,
+    BEH_SED,
+    TVU_FOR,
+    RETUR,
+    JFR,
+    KON_UTG_SCA_DOK,
+    FDR,
+    JFR_UT,
+    VUR_SVAR,
+    SVAR_IK_MOT,
 }
 
 data class OppgaveIdentV2(
@@ -192,5 +180,5 @@ enum class IdentGruppe {
 }
 
 enum class Tema {
-    ENF, // TODO slett eksempel;
+    EYO,
 }

@@ -29,7 +29,6 @@ class LagBehandleSakOppgaveTask(
 
     override fun doTask(task: Task) {
         val payload: OpprettOppgavePayload = objectMapper.readValue(task.payload)
-
         logger.info("LagBehandleSakOppgaveTask task: ${payload.behandlingsId}, saksbehandler: ${payload.saksbehandler}")
         val behandling = behandlingRepository.findByIdOrThrow(payload.behandlingsId)
         oppgaveService.opprettBehandleSakOppgave(behandling, payload.saksbehandler)

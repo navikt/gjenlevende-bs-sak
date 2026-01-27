@@ -12,11 +12,12 @@ import org.springframework.web.reactive.function.client.bodyToMono
 import reactor.core.publisher.Mono
 import java.net.URI
 import java.time.Duration
+import java.util.UUID
 
 @Configuration
 class OppgaveWebClientConfig {
     @Bean
-     fun oppgaveWebClient(
+    fun oppgaveWebClient(
         @Value("\${OPPGAVE_URL}")
         oppgaveUrl: String,
     ): WebClient =
@@ -41,11 +42,10 @@ class OppgaveClient(
         private const val API_BASE_URL = "/api/v1/oppgaver"
     }
 
+    // TODO Brukes kun til testing - fjern når mulig
     fun opprettOppgaveOBO(
-        oppgave: LagOppgaveRequest,
+        oppgave: LagEnkelTestOppgaveRequest,
     ): Mono<Oppgave> {
-        logger.info("Lag oppgave=$oppgave")
-
         val obo = texasClient.hentOboToken(oppgaveScope.toString())
 
         return oppgaveWebClient
@@ -60,7 +60,7 @@ class OppgaveClient(
             .timeout(Duration.ofSeconds(TIMEOUT_SEKUNDER))
     }
 
-    fun opprettOppgaveM2M(oppgave: Oppgave): Oppgave {
+    fun opprettOppgaveM2M(oppgaveRequest: LagOppgaveRequest): Oppgave {
         logger.info("Sender opprettOppgave request til Oppgave-service ")
         val maskinToken = texasClient.hentMaskinToken(oppgaveScope.toString())
 
@@ -68,8 +68,8 @@ class OppgaveClient(
             .post()
             .uri(API_BASE_URL)
             .header("Authorization", "Bearer $maskinToken")
-            .header("X-Correlation-ID", MDC.get("callId") ?: "test-gjenlevende-bs-sak")
-            .bodyValue(oppgave)
+            .header("X-Correlation-ID", MDC.get("callId") ?: "${UUID.randomUUID()}")
+            .bodyValue(oppgaveRequest)
             .retrieve()
             .bodyToMono<Oppgave>()
             .switchIfEmpty(Mono.error(NoSuchElementException("Tom respons fra oppgave")))
@@ -77,7 +77,23 @@ class OppgaveClient(
             .doOnNext { response ->
                 logger.info("Oppgave opprettet med id: ${response.id} ")
             }.doOnError {
-                logger.error("Feil: å hente perioder for person: $it")
+                logger.error("Feil: klarte ikke opprette oppgave med $oppgaveRequest")
             }.block() ?: throw RuntimeException("Klarte ikke opprette oppgave")
     }
 }
+
+data class LagOppgaveRequest(
+    val personident: String,
+    val saksreferanse: String,
+    val prioritet: OppgavePrioritet = OppgavePrioritet.NORM,
+    val tema: Tema,
+    val behandlingstema: String,
+    val fristFerdigstillelse: String,
+    val aktivDato: String,
+    val oppgavetype: OppgavetypeEYO,
+    val beskrivelse: String,
+    val tilordnetRessurs: String,
+    val behandlesAvApplikasjon: String,
+    // val tildeltEnhetsnr: String?,
+    // val mappeId:  String?,
+)

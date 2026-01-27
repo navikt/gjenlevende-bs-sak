@@ -145,6 +145,9 @@ class BrevService(
                         padding-right: 100pt;
                         white-space: nowrap;
                     }
+                    .signaturWrapper {
+                      break-inside: avoid;
+                    }
                 </style>
             </head>
             <body>
@@ -161,17 +164,20 @@ class BrevService(
                     $avslutning
                 </main>
                 <footer>
-                <p> Med vennlig hilsen,</p>
-                    <div class="signatur">
-                        <div class="row">
-                            <span class="cell">$beslutterNavn</span>
-                            <span class="cell">$saksbehandlerNavn</span>
-                        </div>
-                        <div class="row">
-                            <span class="cell">$beslutterEnhet</span>
+                <div class="signaturWrapper">
+                    <p> Med vennlig hilsen,</p>
+                        <div class="signatur">
+                            <div class="row">
+                                <span class="cell">$beslutterNavn</span>
+                                <span class="cell">$saksbehandlerNavn</span>
+                            </div>
+                            <br />
+                            <div class="row">
+                                <span class="cell">$beslutterEnhet</span>
+                            </div>
                         </div>
                     </div>
-              </footer>
+            </footer>
             </body>
             </html>
             """.trimIndent()

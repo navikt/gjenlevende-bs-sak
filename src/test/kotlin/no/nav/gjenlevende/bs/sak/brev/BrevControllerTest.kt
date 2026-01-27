@@ -39,9 +39,6 @@ open class BrevControllerTest {
     @Autowired
     private lateinit var objectMapper: ObjectMapper
 
-    @MockkBean
-    private lateinit var entraProxyClient: EntraProxyClient
-
     @Test
     fun `opprettBrev returnerer 200 OK og behandlingId`() {
         val behandlingId = UUID.randomUUID()

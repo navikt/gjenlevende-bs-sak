@@ -131,6 +131,11 @@ class BrevService(
                         display: table-cell;
                         width: 100%;
                     }
+                    footer {
+                        display: block;
+                        page-break-inside: avoid;
+                        break-inside: avoid;
+                    }
                     .signatur {
                         display: table;
                         margin-top: 24pt;
@@ -144,9 +149,6 @@ class BrevService(
                         display: table-cell;
                         padding-right: 100pt;
                         white-space: nowrap;
-                    }
-                    .signaturWrapper {
-                      break-inside: avoid;
                     }
                 </style>
             </head>
@@ -164,20 +166,18 @@ class BrevService(
                     $avslutning
                 </main>
                 <footer>
-                <div class="signaturWrapper">
                     <p> Med vennlig hilsen,</p>
-                        <div class="signatur">
-                            <div class="row">
-                                <span class="cell">$beslutterNavn</span>
-                                <span class="cell">$saksbehandlerNavn</span>
-                            </div>
-                            <br />
-                            <div class="row">
-                                <span class="cell">$beslutterEnhet</span>
-                            </div>
+                    <div class="signatur">
+                        <div class="row">
+                            <span class="cell">$beslutterNavn</span>
+                            <span class="cell">$saksbehandlerNavn</span>
+                        </div>
+                        <br />
+                        <div class="row">
+                            <span class="cell">$beslutterEnhet</span>
                         </div>
                     </div>
-            </footer>
+                </footer>
             </body>
             </html>
             """.trimIndent()

@@ -95,7 +95,6 @@ class BrevService(
         val fritekst = lagHtmlTekstbolker(brevInnhold.fritekstbolker)
         val avslutning = lagHtmlTekstbolker(brevInnhold.brevmal.fastTekstAvslutning)
         val saksbehandlerNavn = brev.saksbehandler ?: ""
-        val saksbehandlerEnhet = "Nav familie- og pensjonsytelser ${brev.saksbehandlerEnhet ?: ""}"
         val beslutterNavn = brev.beslutter
         val beslutterEnhet = "Nav familie- og pensjonsytelser ${brev.beslutterEnhet ?: ""}"
 
@@ -170,7 +169,6 @@ class BrevService(
                         </div>
                         <div class="row">
                             <span class="cell">$beslutterEnhet</span>
-                            <span class="cell">$saksbehandlerEnhet</span>
                         </div>
                     </div>
               </footer>

@@ -78,4 +78,96 @@ class BrevService(
         val oppdatert = eksisterendeBrev.copy(beslutter = beslutter, beslutterEnhet = beslutterEnhet)
         brevRepository.update(oppdatert)
     }
+
+    fun lagHtml(request: BrevRequest): String {
+        val tittel = request.brevmal.tittel
+        val navn = request.brevmal.informasjonOmBruker.navn
+        val personident = request.brevmal.informasjonOmBruker.fnr
+        val logo = logoTilBase64()
+        val fritekst = lagHtmlTekstbolker(request.fritekstbolker)
+        val avslutning = lagHtmlTekstbolker(request.brevmal.fastTekstAvslutning)
+        val saksbehandlerNavn = "saksbehandler navn"
+        val saksbehandlerEnhet = "Nav familie- og pensjonsytelser" // TODO hente enhet og appende
+        val beslutterNavn = "beslutter navn"
+        val beslutterEnhet = "Nav familie- og pensjonsytelser" // TODO hente enhet og appende
+
+        return """
+            <!DOCTYPE html>
+            <html lang="no">
+            <head>
+                <meta charset="UTF-8" />
+                <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+                <title>$tittel</title>
+                <style type="text/css">
+                    body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; line-height: 12pt; margin-left: 48pt; margin-right: 48pt; }
+                    header { margin-bottom: 12pt; }
+                    h1 { font-size: 16pt; line-height: 20pt; font-weight: 700; margin-bottom: 26pt; }
+                    h2 { font-size: 13pt; line-height: 16pt; font-weight: 700; margin-bottom: 6pt;}
+                    h3 { font-size: 12pt; line-height: 16pt; font-weight: 700; margin-bottom: 6pt;}
+                    section { margin-bottom: 26pt; }
+                    .header {
+                        padding-top: 32pt;
+                        margin-bottom: 48pt
+                    }
+                    .logo {
+                        display: block;
+                        margin-bottom: 32pt
+                    }
+                    .bruker-info { display: table; }
+                    .bruker-info .row { display: table-row; }
+                    .bruker-info .label {
+                        display: table-cell;
+                        white-space: nowrap;
+                        padding-right: 12pt;
+                    }
+                    .bruker-info .value {
+                        display: table-cell;
+                        width: 100%;
+                    }
+                    .signatur {
+                        display: table;
+                        margin-top: 24pt;
+                    }
+
+                    .signatur .row {
+                        display: table-row;
+                    }
+
+                    .signatur .cell {
+                        display: table-cell;
+                        padding-right: 100pt;
+                        white-space: nowrap;
+                    }
+                </style>
+            </head>
+            <body>
+                <header class="header">
+                    <img class="logo" src="$logo" alt="Logo" height="16" />
+                    <div class="bruker-info">
+                        <div class="row"><span class="label">Navn:</span><span class="value">$navn</span></div>
+                        <div class="row"><span class="label">Fødselsnummer:</span><span class="value">$personident</span></div>
+                    </div>
+                </header>
+                <main>
+                    <h1>$tittel</h1>
+                    $fritekst
+                    $avslutning
+                </main>
+                <footer>
+                <p> Med vennlig hilsen,</p>
+                    <div class="signatur">
+                        <div class="row">
+                            <span class="cell">$beslutterNavn</span>
+                            <span class="cell">$saksbehandlerNavn</span>
+                        </div>
+                        <div class="row">
+                            <span class="cell">$beslutterEnhet</span>
+                            <span class="cell">$saksbehandlerEnhet</span>
+                        </div>
+                    </div>
+              </footer>
+            </body>
+            </html>
+            """.trimIndent()
+    }
 }

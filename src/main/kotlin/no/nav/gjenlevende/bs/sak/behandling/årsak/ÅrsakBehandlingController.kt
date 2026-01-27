@@ -20,7 +20,7 @@ data class ÅrsakBehandlingRequest(
 )
 
 @RestController
-@RequestMapping("/årsak")
+@RequestMapping("/arsak")
 class ÅrsakBehandlingController(
     private val årsakBehandlingService: ÅrsakBehandlingService,
 ) {

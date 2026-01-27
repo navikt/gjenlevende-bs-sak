@@ -20,7 +20,7 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.post
 import tools.jackson.databind.ObjectMapper
-import java.util.*
+import java.util.UUID
 
 @WebMvcTest(BrevController::class)
 @ContextConfiguration(classes = [ApplicationLocalSetup::class])

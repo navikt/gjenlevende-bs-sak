@@ -7,7 +7,7 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import tools.jackson.databind.ObjectMapper
-import java.util.*
+import java.util.UUID
 
 @Service
 class BrevService(

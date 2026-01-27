@@ -5,7 +5,7 @@ import no.nav.gjenlevende.bs.sak.felles.sporbar.Sporbar
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Embedded
 import org.springframework.data.relational.core.mapping.Table
-import java.util.*
+import java.util.UUID
 
 @Table("brev")
 data class Brev(

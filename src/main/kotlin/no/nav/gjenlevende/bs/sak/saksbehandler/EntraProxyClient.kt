@@ -1,13 +1,14 @@
 package no.nav.gjenlevende.bs.sak.saksbehandler
 
 import SaksbehandlerResponse
+import java.time.Duration
 import no.nav.gjenlevende.bs.sak.texas.TexasClient
 import org.slf4j.LoggerFactory
+import org.slf4j.MDC
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
-import java.time.Duration
 
 @Service
 class EntraProxyClient(
@@ -35,8 +36,10 @@ class EntraProxyClient(
         return webClient
             .get()
             .uri("/api/v1/ansatt/$navIdent")
-            .header("Authorization", "Bearer $oboToken")
-            .retrieve()
+            .headers { headers ->
+                headers.setBearerAuth(oboToken)
+                headers.set("X-Correlation-ID", MDC.get("callId") ?: "gjenlevende-bs-sak")
+            }.retrieve()
             .bodyToMono<SaksbehandlerResponse>()
             .timeout(Duration.ofSeconds(TIMEOUT_SEKUNDER))
             .doOnNext { response ->

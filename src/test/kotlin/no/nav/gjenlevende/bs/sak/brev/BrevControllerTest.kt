@@ -9,7 +9,6 @@ import no.nav.gjenlevende.bs.sak.brev.domain.BrevRequest
 import no.nav.gjenlevende.bs.sak.brev.domain.BrevmalDto
 import no.nav.gjenlevende.bs.sak.brev.domain.InformasjonOmBrukerDto
 import no.nav.gjenlevende.bs.sak.brev.domain.TekstbolkDto
-import no.nav.gjenlevende.bs.sak.saksbehandler.EntraProxyClient
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc
@@ -38,9 +37,6 @@ open class BrevControllerTest {
 
     @Autowired
     private lateinit var objectMapper: ObjectMapper
-
-    @MockkBean
-    private lateinit var entraProxyClient: EntraProxyClient
 
     @Test
     fun `opprettBrev returnerer 200 OK og behandlingId`() {

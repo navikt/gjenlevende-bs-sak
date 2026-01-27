@@ -5,7 +5,6 @@ import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
 import no.nav.gjenlevende.bs.sak.brev.BrevService
 import no.nav.gjenlevende.bs.sak.brev.FamilieDokumentClient
-import no.nav.gjenlevende.bs.sak.brev.lagHtml
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import tools.jackson.databind.ObjectMapper
@@ -32,7 +31,7 @@ class BrevTask(
         val brev =
             brevService.hentBrev(behandlingId)
                 ?: error("Fant ikke brev for behandlingId=$behandlingId")
-        val html = lagHtml(brev.brevJson)
+        val html = brevService.lagHtml(brev.brevJson)
         val pdf = familieDokumentClient.genererPdfFraHtml(html)
         brevService.oppdatereBrevPdf(behandlingId, pdf)
 

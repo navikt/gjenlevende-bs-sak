@@ -13,6 +13,10 @@ data class Brev(
     val behandlingId: UUID,
     val brevJson: BrevRequest,
     val brevPdf: ByteArray? = null,
+    val saksbehandler: String? = null,
+    val saksbehandlerEnhet: String? = null,
+    val beslutter: String? = null,
+    val beslutterEnhet: String? = null,
     @Embedded(onEmpty = Embedded.OnEmpty.USE_EMPTY)
     val sporbar: Sporbar = Sporbar(),
 )

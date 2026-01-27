@@ -1,6 +1,7 @@
 package no.nav.gjenlevende.bs.sak.behandling.årsak
 
 import no.nav.gjenlevende.bs.sak.fagsak.FagsakController
+import no.nav.gjenlevende.bs.sak.infrastruktur.exception.Feil
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -28,10 +29,15 @@ class ÅrsakBehandlingController(
     @GetMapping("/{behandlingId}")
     fun hentÅrsakBehandling(
         @PathVariable behandlingId: UUID,
-    ): ResponseEntity<ÅrsakBehandlingDto?> {
+    ): ResponseEntity<ÅrsakBehandlingDto> {
         logger.info("kaller hentÅrsakForBehandling for behandlingId: $behandlingId")
         val årsak = årsakBehandlingService.hentÅrsakBehandling(behandlingId)
-        return ResponseEntity.ok(årsak?.tilDto())
+
+        if (årsak == null) {
+            throw Feil("Finner ingen årsak for behandling med id: $behandlingId")
+        }
+
+        ResponseEntity.ok(årsak.tilDto())
     }
 
     @PostMapping("/{behandlingId}")

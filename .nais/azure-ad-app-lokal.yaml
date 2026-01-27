@@ -3,7 +3,6 @@
 #
 # Kjøres en gang eller ved endringer med:
 # kubectl apply -f .nais/azure-ad-app-lokal.yaml
-
 apiVersion: nais.io/v1
 kind: AzureAdApplication
 
@@ -23,7 +22,7 @@ spec:
         -   url: "http://localhost:8080/swagger-ui/oauth2-redirect.html"
     claims:
         extra:
-            -   "NAVident"
+            - "NAVident"
         groups:
             -   id: 5b6745de-b65d-40eb-a6f5-860c8b61c27f # 0000-GA-GJENNY_SAKSBEHANDLER
             -   id: 70cfce24-7865-4676-9fdc-b676e90bfc92 # 0000-GA-GJENNY_ATTESTERING

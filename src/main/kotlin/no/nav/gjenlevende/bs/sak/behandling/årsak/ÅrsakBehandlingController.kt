@@ -26,15 +26,16 @@ class ÅrsakBehandlingController(
     private val logger = LoggerFactory.getLogger(FagsakController::class.java)
 
     @GetMapping("/{behandlingId}")
-    fun hentÅrsakForBehandling(
+    fun hentÅrsakBehandling(
         @PathVariable behandlingId: UUID,
     ): ResponseEntity<ÅrsakBehandlingDto?> {
         logger.info("kaller hentÅrsakForBehandling for behandlingId: $behandlingId")
-        return årsakBehandlingService.hentÅrsakForBehandling(behandlingId)?.tilDto()
+        val årsak = årsakBehandlingService.hentÅrsakBehandling(behandlingId)
+        return ResponseEntity.ok(årsak?.tilDto())
     }
 
     @PostMapping("/{behandlingId}")
-    fun lagreÅrsakForBehandling(
+    fun lagreÅrsakBehandling(
         @PathVariable behandlingId: UUID,
         @RequestBody årsakBehandlingRequest: ÅrsakBehandlingRequest,
     ): ResponseEntity<ÅrsakBehandlingDto> {

@@ -7,13 +7,13 @@ import java.util.UUID
 class ÅrsakBehandlingService(
     private val årsakBehandlingRepository: ÅrsakBehandlingRepository,
 ) {
-    fun hentÅrsakForBehandling(behandlingId: UUID): ÅrsakBehandling? = årsakBehandlingRepository.findById(behandlingId).orElse(null)
+    fun hentÅrsakBehandling(behandlingId: UUID): ÅrsakBehandling? = årsakBehandlingRepository.findById(behandlingId).orElse(null)
 
     fun lagreÅrsakForBehandling(
         behandlingId: UUID,
         årsakBehandlingRequest: ÅrsakBehandlingRequest,
     ): ÅrsakBehandling {
-        val eksisterendeÅrsak = hentÅrsakForBehandling(behandlingId)
+        val eksisterendeÅrsak = hentÅrsakBehandling(behandlingId)
 
         if (eksisterendeÅrsak == null) {
             return årsakBehandlingRepository.insert(

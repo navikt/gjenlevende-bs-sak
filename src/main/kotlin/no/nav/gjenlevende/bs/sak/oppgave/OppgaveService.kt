@@ -51,7 +51,8 @@ private fun lagOpprettBehandleSakOppgaveRequest(
         saksreferanse = fagsak.eksternId.toString(), // TODO sjekk om dette burde være "behandling-eksternid"?
         prioritet = OppgavePrioritet.NORM,
         tema = Tema.EYO, // TODO finn tema for BARNETILSYN GJENLEVENDE EYO = omstilling
-        behandlingstema = "ae0290", // Samhandling EM-PE-OM ... TODO finn behandlingstema for BARNETILSYN GJENLEVENDE, ab0224 ab0028(Hører til ENF - barnetilsyn)? ab0224
+        //behandlingstema = "ae0290", // Samhandling EM-PE-OM ... TODO finn behandlingstema for BARNETILSYN GJENLEVENDE, ab0224 ab0028(Hører til ENF - barnetilsyn)? ab0224
+        behandlingstype = "ae0290", // TODO vil legge inn behandlings_tema_ Gjenlevende bs når det er på plass - her bruker vi kun type.
         fristFerdigstillelse = lagFristForOppgave().format(DateTimeFormatter.ISO_DATE),
         aktivDato = LocalDate.now().format(DateTimeFormatter.ISO_DATE),
         oppgavetype = OppgavetypeEYO.GEN, // TODO legg inn BehandleSak som option,

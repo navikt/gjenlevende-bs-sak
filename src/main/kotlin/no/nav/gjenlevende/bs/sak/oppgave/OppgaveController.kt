@@ -28,7 +28,8 @@ class OppgaveController(
                     "{\n" +
                         "  \"personident\": \"yourPersonidentValue\",\n" +
                         "  \"tema\": \"EYO\",\n" +
-                        "  \"behandlingstema\": \"ab0028\",\n" +
+                        "  \"behandlingstema\": \"xyz\",\n" +
+                        "  \"behandlingstype\": \"ae0290\",\n" +
                         "  \"beskrivelse\": \"Test: vil prøve å opprette oppgave.\",\n" +
                         "  \"oppgavetype\": \"GEN\",\n" +
                         "  \"aktivDato\": \"2026-01-21\",\n" +
@@ -47,7 +48,8 @@ data class
 LagEnkelTestOppgaveRequest(
     val personident: String,
     val tema: Tema,
-    val behandlingstema: String,
+    val behandlingstema: String? = null,
+    val behandlingstype: String? = null,
     val beskrivelse: String,
     val oppgavetype: OppgavetypeEYO,
     val aktivDato: String,

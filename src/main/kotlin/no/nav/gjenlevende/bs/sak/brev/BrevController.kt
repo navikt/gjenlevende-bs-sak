@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import no.nav.familie.prosessering.internal.TaskService
 import no.nav.gjenlevende.bs.sak.brev.domain.BrevRequest
-import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.GetMapping
@@ -13,7 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import java.util.UUID
+import java.util.*
 
 @RestController
 @RequestMapping(path = ["/api/brev"])
@@ -59,5 +58,17 @@ class BrevController(
     ): ResponseEntity<BrevRequest> {
         val brev = brevService.hentBrev(behandlingId) ?: return ResponseEntity.noContent().build()
         return ResponseEntity.ok(brev.brevJson)
+    }
+
+    @GetMapping("/test/{navident}")
+    @Operation(
+        summary = "Henter mellomlagret brev",
+        description = "Returnerer brevJson for gitt behandlingId",
+    )
+    fun hentSaksbehandler(
+        @PathVariable navident: String,
+    ): ResponseEntity<SaksbehandlerResponse> {
+        val saksbehandler = entraProxyClient.hentSaksbehandlerInfo(navident)
+        return ResponseEntity.ok(saksbehandler)
     }
 }

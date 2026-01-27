@@ -14,7 +14,7 @@ class OAuth2RestOperationsFactory(
         principalName: String = "application",
     ): RestOperations {
         val restTemplate = RestTemplate()
-        restTemplate.interceptors.add(BearerTokenInterceptor(authorizedClientManager, registrationId, principalName))
+//        restTemplate.interceptors.add(BearerTokenInterceptor(authorizedClientManager, registrationId, principalName))
         return restTemplate
     }
 }

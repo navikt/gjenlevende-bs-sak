@@ -7,7 +7,7 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import tools.jackson.databind.ObjectMapper
-import java.util.UUID
+import java.util.*
 
 @Service
 class BrevService(
@@ -51,5 +51,31 @@ class BrevService(
                 ?: error("Fant ikke brev for behandlingId=$behandlingId ved lagring av PDF")
         val oppdatertBrevPdf = eksisterendeBrev.copy(brevPdf = pdf)
         brevRepository.update(oppdatertBrevPdf)
+    }
+
+    @Transactional
+    fun oppdaterSaksbehandler(
+        behandlingId: UUID,
+        saksbehandler: String?,
+        saksbehandlerEnhet: String? = null,
+    ) {
+        val eksisterendeBrev =
+            brevRepository.findByIdOrNull(behandlingId)
+                ?: error("Fant ikke brev for behandlingId=$behandlingId ved oppdatering av saksbehandler")
+        val oppdatert = eksisterendeBrev.copy(saksbehandler = saksbehandler, saksbehandlerEnhet = saksbehandlerEnhet)
+        brevRepository.update(oppdatert)
+    }
+
+    @Transactional
+    fun oppdaterBeslutter(
+        behandlingId: UUID,
+        beslutter: String?,
+        beslutterEnhet: String? = null,
+    ) {
+        val eksisterendeBrev =
+            brevRepository.findByIdOrNull(behandlingId)
+                ?: error("Fant ikke brev for behandlingId=$behandlingId ved oppdatering av beslutter")
+        val oppdatert = eksisterendeBrev.copy(beslutter = beslutter, beslutterEnhet = beslutterEnhet)
+        brevRepository.update(oppdatert)
     }
 }

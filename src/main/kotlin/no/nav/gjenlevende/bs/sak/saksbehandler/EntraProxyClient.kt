@@ -35,7 +35,7 @@ class EntraProxyClient(
 
         return webClient
             .get()
-            .uri("/ansatt/$navIdent")
+            .uri("/api/v1/ansatt/$navIdent")
             .headers { headers ->
                 headers.setBearerAuth(oboToken)
                 headers.set("X-Correlation-ID", MDC.get("callId") ?: "gjenlevende-bs-sak")

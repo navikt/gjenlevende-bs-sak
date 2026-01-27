@@ -110,7 +110,7 @@ gjenlevende-bs-infotrygd:
     audience: api://dev-fss.etterlatte.gjenlevende-bs-infotrygd/.default
 
 # Entra proxy
-ENTRA_PROXY_URL: https://entraproxy.intern.dev.nav.no
+ENTRA_PROXY_URL: http://entra-proxy.sikkerhetstjenesten.svc.cluster.local/api/v1
 ENTRA_PROXY_SCOPE: api://dev-gcp.sikkerhetstjenesten.entra-proxy/.default
 
 # FAMILIE DOKUMENT

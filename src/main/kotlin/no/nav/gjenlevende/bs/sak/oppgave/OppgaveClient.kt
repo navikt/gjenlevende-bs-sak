@@ -95,6 +95,4 @@ data class LagOppgaveRequest(
     val beskrivelse: String,
     val tilordnetRessurs: String,
     val behandlesAvApplikasjon: String,
-    // val tildeltEnhetsnr: String?,
-    // val mappeId:  String?,
 )

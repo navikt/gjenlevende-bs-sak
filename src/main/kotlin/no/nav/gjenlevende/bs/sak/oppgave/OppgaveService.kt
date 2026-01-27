@@ -58,9 +58,7 @@ private fun lagOpprettBehandleSakOppgaveRequest(
         oppgavetype = OppgavetypeEYO.GEN, // TODO legg inn BehandleSak som option,
         beskrivelse = "Behandle sak oppgave for barnetilsynbehandling=${behandling.id}-${fagsak.stønadstype.name}",
         tilordnetRessurs = saksbehandler,
-        behandlesAvApplikasjon = "gjenlevende-bs-sak", // TODO sett behandlesAvApplikasjon for BARNETILSYN GJENLEVENDE
-        // mappeId = null, // TODO sett mappeId for BARNETILSYN GJENLEVENDE? kanskje ikke nødvendig
-        // tildeltEnhetsnr = null, // TODO finn enhetsnummer for BARNETILSYN GJENLEVENDE 4817 4806 ??? 4817
+        behandlesAvApplikasjon = "gjenlevende-bs-sak", // Kan kun feilregistreres av saksbehandler i gosys? Må ferdigstilles av applikasjon?
     )
 
 fun lagFristForOppgave(gjeldendeTid: LocalDateTime = now()): LocalDate {

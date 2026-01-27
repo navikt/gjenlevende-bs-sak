@@ -54,6 +54,9 @@ spec:
                     namespace: tilgangsmaskin
                 -   application: familie-dokument
                     namespace: teamfamilie
+                -   application: entra-proxy
+                    namespace: sikkerhetstjenesten
+
 
                     # Team Logs
                 -   application: logging

@@ -16,7 +16,7 @@ import java.time.Duration
 @Configuration
 class OppgaveWebClientConfig {
     @Bean
-    open fun oppgaveWebClient(
+     fun oppgaveWebClient(
         @Value("\${OPPGAVE_URL}")
         oppgaveUrl: String,
     ): WebClient =
@@ -61,8 +61,6 @@ class OppgaveClient(
     }
 
     fun opprettOppgaveM2M(oppgave: Oppgave): Oppgave {
-        logger.info("Lag oppgave=$oppgave")
-        // val uri = lagBehandleSakOppgaveURI()
         logger.info("Sender opprettOppgave request til Oppgave-service ")
         val maskinToken = texasClient.hentMaskinToken(oppgaveScope.toString())
 
@@ -70,7 +68,7 @@ class OppgaveClient(
             .post()
             .uri(API_BASE_URL)
             .header("Authorization", "Bearer $maskinToken")
-            .header("X-Correlation-ID", MDC.get("callId") ?: "test-gjenlevende-bs-sak") // TODO fix callId for m2m
+            .header("X-Correlation-ID", MDC.get("callId") ?: "test-gjenlevende-bs-sak")
             .bodyValue(oppgave)
             .retrieve()
             .bodyToMono<Oppgave>()
@@ -82,11 +80,4 @@ class OppgaveClient(
                 logger.error("Feil: å hente perioder for person: $it")
             }.block() ?: throw RuntimeException("Klarte ikke opprette oppgave")
     }
-
-//    private fun lagBehandleSakOppgaveURI(): URI =
-//        UriComponentsBuilder
-//            .fromUri(oppgaveUrl)
-//            .path(API_BASE_URL)
-//            .build()
-//            .toUri()
 }

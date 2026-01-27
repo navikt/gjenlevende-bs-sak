@@ -37,7 +37,7 @@ class ÅrsakBehandlingController(
             throw Feil("Finner ingen årsak for behandling med id: $behandlingId")
         }
 
-        ResponseEntity.ok(årsak.tilDto())
+        return ResponseEntity.ok(årsak.tilDto())
     }
 
     @PostMapping("/{behandlingId}")

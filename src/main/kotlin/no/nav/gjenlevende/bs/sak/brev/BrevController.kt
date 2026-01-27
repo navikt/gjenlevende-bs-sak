@@ -25,14 +25,13 @@ class BrevController(
 ) {
     @PostMapping("/send-til-beslutter/{behandlingId}")
     @Operation(
-        summary = "Oppretter brev-task",
-        description = "Lager task som genererer pdf-brev",
+        summary = "Sender behandling til beslutter",
+        description = "Sender behandling til beslutter.",
     )
     fun sendTilBeslutter(
         @PathVariable behandlingId: UUID,
     ): ResponseEntity<String> {
-        val saksbehandler = SikkerhetContext.hentSaksbehandlerEllerSystembruker()
-        brevService.oppdaterSaksbehandler(behandlingId, saksbehandler) // TODO en eller annen task som sender til beslutter
+        brevService.oppdaterSaksbehandler(behandlingId) // TODO en eller annen task som sender til beslutter
         return ResponseEntity.ok("OK")
     }
 
@@ -44,8 +43,7 @@ class BrevController(
     fun lagBrevTask(
         @PathVariable behandlingId: UUID,
     ): ResponseEntity<String> {
-        val beslutter = SikkerhetContext.hentSaksbehandlerEllerSystembruker()
-        brevService.oppdaterBeslutter(behandlingId, beslutter)
+        brevService.oppdaterBeslutter(behandlingId)
         val task = brevService.lagBrevPdfTask(behandlingId)
         taskService.save(task)
 

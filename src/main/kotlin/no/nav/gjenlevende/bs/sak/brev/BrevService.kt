@@ -9,6 +9,8 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import tools.jackson.databind.ObjectMapper
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.UUID
 
 @Service
@@ -90,6 +92,7 @@ class BrevService(
         val brevInnhold = brev.brevJson
         val brukerNavn = brevInnhold.brevmal.informasjonOmBruker.navn
         val brukerPersonident = brevInnhold.brevmal.informasjonOmBruker.fnr
+        val dagensDato = LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
         val tittel = brevInnhold.brevmal.tittel
         val logo = logoTilBase64()
         val fritekst = lagHtmlTekstbolker(brevInnhold.fritekstbolker)
@@ -120,7 +123,7 @@ class BrevService(
                         display: block;
                         margin-bottom: 32pt
                     }
-                    .bruker-info { display: table; }
+                    .bruker-info { display: table; width: 100%; }
                     .bruker-info .row { display: table-row; }
                     .bruker-info .label {
                         display: table-cell;
@@ -129,7 +132,10 @@ class BrevService(
                     }
                     .bruker-info .value {
                         display: table-cell;
-                        width: 100%;
+                    }
+                    .bruker-info .date {
+                        display: table-cell;
+                        text-align: right;
                     }
                     footer {
                         display: block;
@@ -157,7 +163,7 @@ class BrevService(
                     <img class="logo" src="$logo" alt="Logo" height="16" />
                     <div class="bruker-info">
                         <div class="row"><span class="label">Navn:</span><span class="value">$brukerNavn</span></div>
-                        <div class="row"><span class="label">Fødselsnummer:</span><span class="value">$brukerPersonident</span></div>
+                        <div class="row"><span class="label">Fødselsnummer:</span><span class="value">$brukerPersonident</span><span class="date">$dagensDato</span></div>
                     </div>
                 </header>
                 <main>

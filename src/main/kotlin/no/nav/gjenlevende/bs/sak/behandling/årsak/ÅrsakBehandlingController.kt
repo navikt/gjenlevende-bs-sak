@@ -1,6 +1,5 @@
 package no.nav.gjenlevende.bs.sak.behandling.årsak
 
-import no.nav.gjenlevende.bs.sak.infrastruktur.exception.Feil
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.GetMapping
@@ -30,11 +29,11 @@ class ÅrsakBehandlingController(
     ): ResponseEntity<ÅrsakBehandlingDto> {
         val årsak = årsakBehandlingService.hentÅrsakBehandling(behandlingId)
 
-        if (årsak == null) {
-            throw Feil("Finner ingen årsak for behandling med id: $behandlingId")
+        return if (årsak == null) {
+            ResponseEntity.noContent().build()
+        } else {
+            ResponseEntity.ok(årsak.tilDto())
         }
-
-        return ResponseEntity.ok(årsak.tilDto())
     }
 
     @PostMapping("/{behandlingId}")

@@ -4,6 +4,7 @@ import com.github.tomakehurst.wiremock.WireMockServer
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.domene.TaskLogg
 import no.nav.gjenlevende.bs.sak.behandling.Behandling
+import no.nav.gjenlevende.bs.sak.behandling.årsak.ÅrsakBehandling
 import no.nav.gjenlevende.bs.sak.brev.Brev
 import no.nav.gjenlevende.bs.sak.fagsak.domain.Fagsak
 import no.nav.gjenlevende.bs.sak.fagsak.domain.FagsakPerson
@@ -33,15 +34,14 @@ open class SpringContextTest {
     }
 
     private fun resetDatabase() {
-        listOf(
-            Vedtak::class,
-            Behandling::class,
-            Brev::class,
-            Fagsak::class,
-            FagsakPerson::class,
-            TaskLogg::class,
-            Task::class,
-        ).forEach { jdbcAggregateOperations.deleteAll(it.java) }
+        jdbcAggregateOperations.deleteAll(Vedtak::class.java)
+        jdbcAggregateOperations.deleteAll(ÅrsakBehandling::class.java)
+        jdbcAggregateOperations.deleteAll(Brev::class.java)
+        jdbcAggregateOperations.deleteAll(Behandling::class.java)
+        jdbcAggregateOperations.deleteAll(TaskLogg::class.java)
+        jdbcAggregateOperations.deleteAll(Task::class.java)
+        jdbcAggregateOperations.deleteAll(Fagsak::class.java)
+        jdbcAggregateOperations.deleteAll(FagsakPerson::class.java)
     }
 
     private fun resetWiremockServers() {

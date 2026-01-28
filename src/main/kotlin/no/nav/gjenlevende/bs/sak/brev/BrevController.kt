@@ -17,13 +17,13 @@ import java.util.UUID
 
 @RestController
 @RequestMapping(path = ["/api/brev"])
-@PreAuthorize("hasRole('SAKSBEHANDLER')")
 @Tag(name = "BrevController", description = "Endepunkter for håndtering av brev")
 class BrevController(
     private val brevService: BrevService,
     private val taskService: TaskService,
 ) {
     @PostMapping("/send-til-beslutter/{behandlingId}")
+    @PreAuthorize("hasRole('SAKSBEHANDLER')")
     @Operation(
         summary = "Sender behandling til beslutter",
         description = "Sender behandling til beslutter.",
@@ -36,6 +36,7 @@ class BrevController(
     }
 
     @PostMapping("/lag-task/{behandlingId}") // TODO renames til beslutte-behandling elr noe sånt
+    @PreAuthorize("hasRole('ATTESTERING')")
     @Operation(
         summary = "Oppretter brev-task",
         description = "Lager task som genererer pdf-brev",
@@ -51,6 +52,7 @@ class BrevController(
     }
 
     @PostMapping("/mellomlagre/{behandlingId}")
+    @PreAuthorize("hasRole('SAKSBEHANDLER')")
     @Operation(
         summary = "Mellomlagrer brev",
         description = "Mellomlagrer brevJson for gitt behandlingId",
@@ -64,6 +66,7 @@ class BrevController(
     }
 
     @GetMapping("/hentMellomlagretBrev/{behandlingId}")
+    @PreAuthorize("hasRole('SAKSBEHANDLER') and hasRole('ATTESTERING')")
     @Operation(
         summary = "Henter mellomlagret brev",
         description = "Returnerer brevJson for gitt behandlingId",

@@ -99,7 +99,7 @@ class BrevService(
         val avslutning = lagHtmlTekstbolker(brevInnhold.brevmal.fastTekstAvslutning)
         val saksbehandlerNavn = brev.saksbehandler ?: ""
         val beslutterNavn = brev.beslutter
-        val saksbehandlerEnhet = "Nav familie- og pensjonsytelser ${brev.saksbehandlerEnhet ?: ""}"
+        val beslutterEnhet = "Nav familie- og pensjonsytelser ${brev.beslutterEnhet ?: ""}"
 
         return """
             <!DOCTYPE html>
@@ -125,15 +125,10 @@ class BrevService(
                     }
                     .bruker-info {
                         display: grid;
-                        grid-template-columns: 1fr auto;
-                        column-gap: 24pt;
-                        align-items: start;
-                    }
-                    .bruker-info .venstre { display: block; }
-                    .bruker-info .venstre .row {
-                        display: grid;
-                        grid-template-columns: 120pt 1fr;
+                        grid-template-columns: 110pt 1fr auto;
                         column-gap: 12pt;
+                        row-gap: 4pt;
+                        align-items: baseline;
                     }
                     .bruker-info .label {
                         white-space: nowrap;
@@ -141,7 +136,8 @@ class BrevService(
                     .bruker-info .value {
                         white-space: nowrap;
                     }
-                    .bruker-info .høyre {
+                    .bruker-info .dato {
+                        white-space: nowrap;
                         text-align: right;
                     }
                     footer {
@@ -169,19 +165,12 @@ class BrevService(
                 <header class="header">
                     <img class="logo" src="$logo" alt="Logo" height="16" />
                     <div class="bruker-info">
-                        <div class="venstre">
-                            <div class="row">
-                                <span class="label">Navn:</span>
-                                <span class="value">$brukerNavn</span>
-                            </div>
-                            <div class="row">
-                                <span class="label">Fødselsnummer:</span>
-                                <span class="value">$brukerPersonident</span>
-                            </div>
-                        </div>
-                        <div class="høyre">
-                            <span>$dagensDato</span>
-                        </div>
+                        <span class="label">Navn:</span>
+                        <span class="value">$brukerNavn</span>
+                        <span></span>
+                        <span class="label">Fødselsnummer:</span>
+                        <span class="value">$brukerPersonident</span>
+                        <span>$dagensDato</span>
                     </div>
                 </header>
                 <main>
@@ -198,7 +187,7 @@ class BrevService(
                         </div>
                         <br />
                         <div class="row">
-                            <span class="cell">$saksbehandlerEnhet</span>
+                            <span class="cell">$beslutterEnhet</span>
                         </div>
                     </div>
                 </footer>

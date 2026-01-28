@@ -63,10 +63,6 @@ pdl:
     url: ${PDL_URL}
     oauth:
         registration-id: pdl-clientcredentials
-oppgave:
-    url: ${OPPGAVE_URL}
-    oauth:
-        registration-id: oppgave-clientcredentials
 saf:
     url: ${SAF_URL}
     oauth:

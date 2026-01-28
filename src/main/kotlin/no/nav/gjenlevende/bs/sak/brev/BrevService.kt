@@ -123,7 +123,7 @@ class BrevService(
                         display: block;
                         margin-bottom: 32pt
                     }
-                    .bruker-info { display: flex; justify-content: space-between; }
+                    .bruker-info { display: flex; flex-direction: row; justify-content: space-between; align-items: flex-start; }
                     .bruker-info .venstre { display: table; }
                     .bruker-info .venstre .row { display: table-row; }
                     .bruker-info .label {

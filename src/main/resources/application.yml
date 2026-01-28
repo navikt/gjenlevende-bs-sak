@@ -59,10 +59,6 @@ azure:
 
 
 # OAuth2 klient konfigurering
-pdl:
-    url: ${PDL_URL}
-    oauth:
-        registration-id: pdl-clientcredentials
 saf:
     url: ${SAF_URL}
     oauth:
@@ -74,12 +70,6 @@ familie-dokument:
 
 oauth2:
     clients:
-        pdl:
-            registration-id: pdl-clientcredentials
-            client-id: ${AZURE_APP_CLIENT_ID}
-            client-secret: ${AZURE_APP_CLIENT_SECRET}
-            token-endpoint-url: ${AZUREAD_TOKEN_ENDPOINT_URL}
-            scope: ${PDL_SCOPE}
         saf:
             registration-id: saf-clientcredentials
             client-id: ${AZURE_APP_CLIENT_ID}
@@ -118,7 +108,7 @@ FAMILIE_DOKUMENT_URL: http://familie-dokument.teamfamilie
 FAMILIE_DOKUMENT_SCOPE: api://${DEPLOY_ENV}-gcp.teamfamilie.familie-dokument/.default
 
 # PDL (Persondataløsningen)
-PDL_URL: https://pdl-api.dev-fss-pub.nais.io
+PDL_URL: https://pdl-api.dev-fss-pub.nais.io/graphql
 PDL_SCOPE: api://dev-fss.pdl.pdl-api/.default
 
 #SAF

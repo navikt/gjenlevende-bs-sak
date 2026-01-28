@@ -3,7 +3,6 @@ package no.nav.gjenlevende.bs.sak.pdl
 import no.nav.gjenlevende.bs.sak.fagsak.FagsakPersonService
 import org.apache.commons.lang3.StringUtils
 import org.slf4j.LoggerFactory
-import org.springframework.core.ParameterizedTypeReference
 import org.springframework.stereotype.Service
 import java.util.UUID
 
@@ -16,11 +15,10 @@ class PdlService(
 
     fun hentNavn(fagsakPersonId: UUID): Navn? {
         val ident = fagsakPersonService.hentAktivIdent(fagsakPersonId)
-        val data =
+        val data: HentPersonData =
             pdlClient.utførQuery(
                 query = graphqlQuery("/pdl/hent_navn.graphql"),
                 variables = mapOf("ident" to ident),
-                responstype = object : ParameterizedTypeReference<PdlResponse<HentPersonData>>() {},
                 operasjon = "hentNavn",
             ) ?: throw PdlException("Fant ingen person i PDL for ident")
 
@@ -50,11 +48,10 @@ class PdlService(
             ?: emptyList()
 
     private fun hentFamilieRelasjoner(personident: String): List<ForelderBarnRelasjon>? {
-        val data =
+        val data: FamilieRelasjonerResponse =
             pdlClient.utførQuery(
                 query = graphqlQuery("/pdl/hent_familie_relasjoner.graphql"),
                 variables = mapOf("ident" to personident),
-                responstype = object : ParameterizedTypeReference<PdlResponse<FamilieRelasjonerResponse>>() {},
                 operasjon = "hentFamilieRelasjoner",
             ) ?: return null
 
@@ -64,8 +61,8 @@ class PdlService(
     fun graphqlQuery(path: String) =
         PdlService::class.java
             .getResource(path)
-            .readText()
-            .graphqlCompatible()
+            ?.readText()
+            ?.graphqlCompatible() ?: throw PdlException("Kunne ikke lese graphql query fra path: $path")
 
     private fun String.graphqlCompatible(): String = StringUtils.normalizeSpace(this.replace("\n", ""))
 }

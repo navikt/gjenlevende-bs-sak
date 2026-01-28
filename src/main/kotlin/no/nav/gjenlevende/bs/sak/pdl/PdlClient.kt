@@ -1,21 +1,16 @@
 package no.nav.gjenlevende.bs.sak.pdl
 
-import no.nav.gjenlevende.bs.sak.felles.OAuth2RestOperationsFactory
 import no.nav.gjenlevende.bs.sak.texas.TexasClient
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.core.ParameterizedTypeReference
-import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
-import org.springframework.http.HttpMethod
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
-import org.springframework.web.client.RestOperations
 import org.springframework.web.reactive.function.client.WebClient
-import org.springframework.web.util.UriComponentsBuilder
-import java.net.URI
+import org.springframework.web.reactive.function.client.bodyToMono
+import reactor.core.publisher.Mono
 
 @Configuration
 class PdlWebClientConfig {
@@ -36,65 +31,38 @@ class PdlClient(
     private val pdlWebClient: WebClient,
     private val texasClient: TexasClient,
     @Value("\${PDL_SCOPE}")
-    private val pdlScope: String
+    private val pdlScope: String,
 ) {
     private val logger = LoggerFactory.getLogger(PdlClient::class.java)
-
-//    val pdlPath: URI =
-//        UriComponentsBuilder
-//            .fromUri(pdlUrl)
-//            .pathSegment("graphql")
-//            .build()
-//            .toUri()
-
-    val obo = texasClient.hentOboToken(pdlScope)
-
 
     fun <T> utførQuery(
         query: String,
         variables: Map<String, String>,
-        responstype: ParameterizedTypeReference<PdlResponse<T>>,
         operasjon: String,
     ): T? {
+        val obo = texasClient.hentOboToken(pdlScope)
         val request =
             PdlRequest(
                 query = query,
                 variables = variables,
             )
 
-        val headers = lagPdlHeaders()
-        val entity = HttpEntity(request, headers)
-
         logger.info("Utfører PDL-operasjon: $operasjon")
 
-        return try {
-            val response =
-                restTemplate.exchange(
-                    pdlPath,
-                    HttpMethod.POST,
-                    entity,
-                    responstype,
-                )
+        val pdlResponse =
+            pdlWebClient
+                .post()
+                .header("Authorization", "Bearer $obo")
+                .headers { it.addAll(lagPdlHeaders()) }
+                .bodyValue(request)
+                .retrieve()
+                .bodyToMono<PdlResponse<T>>()
+                .switchIfEmpty(Mono.error(NoSuchElementException("Tom respons fra PDL")))
+                .block() ?: throw RuntimeException("Klarte ikke å hente data fra PDL for operasjon: $operasjon")
 
-            val pdlResponse =
-                response.body
-                    ?: throw PdlException("Ingen respons fra PDL for $operasjon")
+        håndterPdlErrors(pdlResponse.errors, operasjon)
 
-            håndterPdlErrors(pdlResponse.errors, operasjon)
-
-            pdlResponse.data
-        } catch (e: Exception) {
-            when (e) {
-                is PdlException -> {
-                    throw e
-                }
-
-                else -> {
-                    logger.error("Teknisk feil ved PDL-operasjon: $operasjon", e)
-                    throw PdlException("Teknisk feil ved $operasjon", e)
-                }
-            }
-        }
+        return pdlResponse.data
     }
 
     private fun lagPdlHeaders(): HttpHeaders =

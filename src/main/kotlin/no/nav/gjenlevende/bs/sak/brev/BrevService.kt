@@ -130,11 +130,13 @@ class BrevService(
                         align-items: start;
                     }
                     .bruker-info .venstre { display: block; }
-                    .bruker-info .venstre .row { display: flex; }
+                    .bruker-info .venstre .row {
+                        display: grid;
+                        grid-template-columns: 120pt 1fr;
+                        column-gap: 12pt;
+                    }
                     .bruker-info .label {
-                        min-width: 110pt;
                         white-space: nowrap;
-                        padding-right: 12pt;
                     }
                     .bruker-info .value {
                         white-space: nowrap;

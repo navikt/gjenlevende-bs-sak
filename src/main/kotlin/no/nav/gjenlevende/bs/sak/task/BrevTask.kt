@@ -31,7 +31,7 @@ class BrevTask(
         val brev =
             brevService.hentBrev(behandlingId)
                 ?: error("Fant ikke brev for behandlingId=$behandlingId")
-        val html = brevService.lagHtml(brev.brevJson)
+        val html = brevService.lagHtml(brev)
         val pdf = familieDokumentClient.genererPdfFraHtml(html)
         brevService.oppdatereBrevPdf(behandlingId, pdf)
 

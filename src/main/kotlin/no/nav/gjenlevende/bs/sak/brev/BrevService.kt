@@ -123,16 +123,21 @@ class BrevService(
                         display: block;
                         margin-bottom: 32pt
                     }
-                    .bruker-info { display: flex; flex-direction: row; justify-content: space-between; align-items: flex-start; }
-                    .bruker-info .venstre { display: table; }
-                    .bruker-info .venstre .row { display: table-row; }
+                    .bruker-info {
+                        display: grid;
+                        grid-template-columns: 1fr auto;
+                        column-gap: 24pt;
+                        align-items: start;
+                    }
+                    .bruker-info .venstre { display: block; }
+                    .bruker-info .venstre .row { display: flex; }
                     .bruker-info .label {
-                        display: table-cell;
+                        min-width: 110pt;
                         white-space: nowrap;
                         padding-right: 12pt;
                     }
                     .bruker-info .value {
-                        display: table-cell;
+                        white-space: nowrap;
                     }
                     .bruker-info .høyre {
                         text-align: right;
@@ -163,8 +168,14 @@ class BrevService(
                     <img class="logo" src="$logo" alt="Logo" height="16" />
                     <div class="bruker-info">
                         <div class="venstre">
-                            <div class="row"><span class="label">Navn:</span><span class="value">$brukerNavn</span></div>
-                            <div class="row"><span class="label">Fødselsnummer:</span><span class="value">$brukerPersonident</span></div>
+                            <div class="row">
+                                <span class="label">Navn:</span>
+                                <span class="value">$brukerNavn</span>
+                            </div>
+                            <div class="row">
+                                <span class="label">Fødselsnummer:</span>
+                                <span class="value">$brukerPersonident</span>
+                            </div>
                         </div>
                         <div class="høyre">
                             <span>$dagensDato</span>

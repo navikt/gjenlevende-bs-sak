@@ -124,8 +124,8 @@ class BrevService(
                         margin-bottom: 32pt
                     }
                     .bruker-info { display: flex; justify-content: space-between; }
-                    .bruker-info .left { display: table; }
-                    .bruker-info .left .row { display: table-row; }
+                    .bruker-info .venstre { display: table; }
+                    .bruker-info .venstre .row { display: table-row; }
                     .bruker-info .label {
                         display: table-cell;
                         white-space: nowrap;
@@ -134,7 +134,7 @@ class BrevService(
                     .bruker-info .value {
                         display: table-cell;
                     }
-                    .bruker-info .date {
+                    .bruker-info .høyre {
                         text-align: right;
                     }
                     footer {
@@ -162,11 +162,13 @@ class BrevService(
                 <header class="header">
                     <img class="logo" src="$logo" alt="Logo" height="16" />
                     <div class="bruker-info">
-                        <div class="left">
+                        <div class="venstre">
                             <div class="row"><span class="label">Navn:</span><span class="value">$brukerNavn</span></div>
                             <div class="row"><span class="label">Fødselsnummer:</span><span class="value">$brukerPersonident</span></div>
                         </div>
-                        <span class="date">$dagensDato</span>
+                        <div class="høyre">
+                            <span>$dagensDato</span>
+                        </div>
                     </div>
                 </header>
                 <main>

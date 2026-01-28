@@ -56,5 +56,5 @@ data class OpprettOppgavePayload(
     val behandlingsId: UUID,
     val saksbehandler: String,
     val uniqueTaskPayloadId: UUID = UUID.randomUUID(),
-    val tildeltEnhetsnr: String
+    val tildeltEnhetsnr: String,
 )

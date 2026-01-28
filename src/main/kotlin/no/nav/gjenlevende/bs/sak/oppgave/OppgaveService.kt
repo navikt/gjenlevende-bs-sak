@@ -28,6 +28,7 @@ class OppgaveService(
     fun opprettBehandleSakOppgave(
         behandling: Behandling,
         saksbehandler: String,
+        tildeltEnhetsnr: String,
     ) {
         logger.info("Skal opprette behandle sak oppgave for behandling=${behandling.id} saksbehandler=$saksbehandler")
 
@@ -35,7 +36,7 @@ class OppgaveService(
         val fagsakPerson = fagsakPersonRepository.findByIdOrThrow(fagsak.fagsakPersonId)
         val gjeldendePersonIdent: Personident = fagsakPerson.aktivIdent()
 
-        val oppgave = lagOpprettBehandleSakOppgaveRequest(gjeldendePersonIdent, fagsak, behandling, saksbehandler)
+        val oppgave = lagOpprettBehandleSakOppgaveRequest(gjeldendePersonIdent, fagsak, behandling, saksbehandler, tildeltEnhetsnr)
         oppgaveClient.opprettOppgaveM2M(oppgaveRequest = oppgave)
     }
 }
@@ -45,6 +46,7 @@ private fun lagOpprettBehandleSakOppgaveRequest(
     fagsak: Fagsak,
     behandling: Behandling,
     saksbehandler: String,
+    tildeltEnhetsnr: String,
 ): LagOppgaveRequest =
     LagOppgaveRequest(
         personident = gjeldendePersonIdent.ident,
@@ -59,6 +61,7 @@ private fun lagOpprettBehandleSakOppgaveRequest(
         beskrivelse = "Behandle sak oppgave for barnetilsynbehandling=${behandling.id}-${fagsak.stønadstype.name}",
         tilordnetRessurs = saksbehandler,
         behandlesAvApplikasjon = "gjenlevende-bs-sak", // Kan kun feilregistreres av saksbehandler i gosys? Må ferdigstilles av applikasjon?
+        tildeltEnhetsnr = tildeltEnhetsnr,
     )
 
 fun lagFristForOppgave(gjeldendeTid: LocalDateTime = now()): LocalDate {

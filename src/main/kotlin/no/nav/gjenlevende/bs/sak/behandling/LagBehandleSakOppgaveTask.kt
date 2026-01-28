@@ -5,6 +5,7 @@ import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.internal.TaskService
 import no.nav.gjenlevende.bs.sak.oppgave.OppgaveService
+import no.nav.gjenlevende.bs.sak.saksbehandler.EntraProxyClient
 import no.nav.gjenlevende.bs.sak.util.findByIdOrThrow
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -24,6 +25,7 @@ class LagBehandleSakOppgaveTask(
     private val oppgaveService: OppgaveService,
     private val objectMapper: ObjectMapper,
     private val taskService: TaskService,
+    private val entryProxyClient: EntraProxyClient,
 ) : AsyncTaskStep {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -31,14 +33,15 @@ class LagBehandleSakOppgaveTask(
         val payload: OpprettOppgavePayload = objectMapper.readValue(task.payload)
         logger.info("LagBehandleSakOppgaveTask task: ${payload.behandlingsId}, saksbehandler: ${payload.saksbehandler}")
         val behandling = behandlingRepository.findByIdOrThrow(payload.behandlingsId)
-        oppgaveService.opprettBehandleSakOppgave(behandling, payload.saksbehandler)
+        oppgaveService.opprettBehandleSakOppgave(behandling, payload.saksbehandler, payload.tildeltEnhetsnr)
     }
 
     fun opprettBehandleSakOppgaveTask(
         behandling: Behandling,
         saksbehandler: String,
     ) {
-        val payload = OpprettOppgavePayload(behandlingsId = behandling.id, saksbehandler = saksbehandler)
+        val enhetnummer = entryProxyClient.hentSaksbehandlerInfo(saksbehandler).enhet.enhetnummer
+        val payload = OpprettOppgavePayload(behandlingsId = behandling.id, saksbehandler = saksbehandler, tildeltEnhetsnr = enhetnummer)
         val payloadAsString = objectMapper.writeValueAsString(payload)
         val task = Task(TYPE, payloadAsString)
         taskService.save(task)
@@ -53,4 +56,5 @@ data class OpprettOppgavePayload(
     val behandlingsId: UUID,
     val saksbehandler: String,
     val uniqueTaskPayloadId: UUID = UUID.randomUUID(),
+    val tildeltEnhetsnr: String
 )

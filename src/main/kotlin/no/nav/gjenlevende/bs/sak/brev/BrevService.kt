@@ -2,6 +2,8 @@ package no.nav.gjenlevende.bs.sak.brev
 
 import no.nav.familie.prosessering.domene.Task
 import no.nav.gjenlevende.bs.sak.brev.domain.BrevRequest
+import no.nav.gjenlevende.bs.sak.felles.sikkerhet.SikkerhetContext
+import no.nav.gjenlevende.bs.sak.saksbehandler.EntraProxyClient
 import no.nav.gjenlevende.bs.sak.task.BrevTask
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -13,6 +15,7 @@ import java.util.UUID
 class BrevService(
     private val brevRepository: BrevRepository,
     private val objectMapper: ObjectMapper,
+    private val entraProxyClient: EntraProxyClient,
 ) {
     fun lagBrevPdfTask(behandlingId: UUID): Task =
         BrevTask.opprettTask(
@@ -56,40 +59,44 @@ class BrevService(
     @Transactional
     fun oppdaterSaksbehandler(
         behandlingId: UUID,
-        saksbehandler: String?,
-        saksbehandlerEnhet: String? = null,
     ) {
+        val saksbehandler = SikkerhetContext.hentSaksbehandlerEllerSystembruker()
+        val saksbehandlerInfo = entraProxyClient.hentSaksbehandlerInfo(saksbehandler)
+        val saksbehandlerNavn = "${saksbehandlerInfo.fornavn} ${saksbehandlerInfo.etternavn}"
+        val saksbehandlerEnhet = saksbehandlerInfo.enhet.navn
         val eksisterendeBrev =
             brevRepository.findByIdOrNull(behandlingId)
                 ?: error("Fant ikke brev for behandlingId=$behandlingId ved oppdatering av saksbehandler")
-        val oppdatert = eksisterendeBrev.copy(saksbehandler = saksbehandler, saksbehandlerEnhet = saksbehandlerEnhet)
+        val oppdatert = eksisterendeBrev.copy(saksbehandler = saksbehandlerNavn, saksbehandlerEnhet = saksbehandlerEnhet)
         brevRepository.update(oppdatert)
     }
 
     @Transactional
     fun oppdaterBeslutter(
         behandlingId: UUID,
-        beslutter: String?,
-        beslutterEnhet: String? = null,
     ) {
+        val beslutter = SikkerhetContext.hentSaksbehandlerEllerSystembruker()
+        val beslutterInfo = entraProxyClient.hentSaksbehandlerInfo(beslutter)
+        val beslutterNavn = "${beslutterInfo.fornavn} ${beslutterInfo.etternavn}"
+        val beslutterEnhet = beslutterInfo.enhet.navn
         val eksisterendeBrev =
             brevRepository.findByIdOrNull(behandlingId)
                 ?: error("Fant ikke brev for behandlingId=$behandlingId ved oppdatering av beslutter")
-        val oppdatert = eksisterendeBrev.copy(beslutter = beslutter, beslutterEnhet = beslutterEnhet)
+        val oppdatert = eksisterendeBrev.copy(beslutter = beslutterNavn, beslutterEnhet = beslutterEnhet)
         brevRepository.update(oppdatert)
     }
 
-    fun lagHtml(request: BrevRequest): String {
-        val tittel = request.brevmal.tittel
-        val navn = request.brevmal.informasjonOmBruker.navn
-        val personident = request.brevmal.informasjonOmBruker.fnr
+    fun lagHtml(brev: Brev): String {
+        val brevInnhold = brev.brevJson
+        val brukerNavn = brevInnhold.brevmal.informasjonOmBruker.navn
+        val brukerPersonident = brevInnhold.brevmal.informasjonOmBruker.fnr
+        val tittel = brevInnhold.brevmal.tittel
         val logo = logoTilBase64()
-        val fritekst = lagHtmlTekstbolker(request.fritekstbolker)
-        val avslutning = lagHtmlTekstbolker(request.brevmal.fastTekstAvslutning)
-        val saksbehandlerNavn = "saksbehandler navn"
-        val saksbehandlerEnhet = "Nav familie- og pensjonsytelser" // TODO hente enhet og appende
-        val beslutterNavn = "beslutter navn"
-        val beslutterEnhet = "Nav familie- og pensjonsytelser" // TODO hente enhet og appende
+        val fritekst = lagHtmlTekstbolker(brevInnhold.fritekstbolker)
+        val avslutning = lagHtmlTekstbolker(brevInnhold.brevmal.fastTekstAvslutning)
+        val saksbehandlerNavn = brev.saksbehandler ?: ""
+        val beslutterNavn = brev.beslutter
+        val beslutterEnhet = "Nav familie- og pensjonsytelser ${brev.beslutterEnhet ?: ""}"
 
         return """
             <!DOCTYPE html>
@@ -124,6 +131,11 @@ class BrevService(
                         display: table-cell;
                         width: 100%;
                     }
+                    footer {
+                        display: block;
+                        page-break-inside: avoid;
+                        break-inside: avoid;
+                    }
                     .signatur {
                         display: table;
                         margin-top: 24pt;
@@ -144,8 +156,8 @@ class BrevService(
                 <header class="header">
                     <img class="logo" src="$logo" alt="Logo" height="16" />
                     <div class="bruker-info">
-                        <div class="row"><span class="label">Navn:</span><span class="value">$navn</span></div>
-                        <div class="row"><span class="label">Fødselsnummer:</span><span class="value">$personident</span></div>
+                        <div class="row"><span class="label">Navn:</span><span class="value">$brukerNavn</span></div>
+                        <div class="row"><span class="label">Fødselsnummer:</span><span class="value">$brukerPersonident</span></div>
                     </div>
                 </header>
                 <main>
@@ -154,18 +166,18 @@ class BrevService(
                     $avslutning
                 </main>
                 <footer>
-                <p> Med vennlig hilsen,</p>
+                    <p> Med vennlig hilsen,</p>
                     <div class="signatur">
                         <div class="row">
                             <span class="cell">$beslutterNavn</span>
                             <span class="cell">$saksbehandlerNavn</span>
                         </div>
+                        <br />
                         <div class="row">
                             <span class="cell">$beslutterEnhet</span>
-                            <span class="cell">$saksbehandlerEnhet</span>
                         </div>
                     </div>
-              </footer>
+                </footer>
             </body>
             </html>
             """.trimIndent()

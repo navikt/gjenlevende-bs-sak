@@ -8,6 +8,7 @@ import no.nav.gjenlevende.bs.sak.brev.domain.BrevRequest
 import no.nav.gjenlevende.bs.sak.brev.domain.BrevmalDto
 import no.nav.gjenlevende.bs.sak.brev.domain.InformasjonOmBrukerDto
 import no.nav.gjenlevende.bs.sak.brev.domain.TekstbolkDto
+import no.nav.gjenlevende.bs.sak.saksbehandler.EntraProxyClient
 import org.assertj.core.api.Assertions.assertThat
 import org.springframework.data.repository.findByIdOrNull
 import tools.jackson.databind.ObjectMapper
@@ -17,7 +18,8 @@ import kotlin.test.Test
 class BrevServiceTest {
     private val brevRepository = mockk<BrevRepository>(relaxed = true)
     private val objectMapper = mockk<ObjectMapper>()
-    private val brevService = BrevService(brevRepository, objectMapper)
+    private val entraProxyClient = mockk<EntraProxyClient>()
+    private val brevService = BrevService(brevRepository, objectMapper, entraProxyClient)
 
     @Test
     fun `mellomlagreBrev insert når brev ikke finnes`() {

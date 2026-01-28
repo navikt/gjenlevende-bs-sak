@@ -66,7 +66,7 @@ class BrevController(
     }
 
     @GetMapping("/hentMellomlagretBrev/{behandlingId}")
-    @PreAuthorize("hasRole('SAKSBEHANDLER') and hasRole('ATTESTERING')")
+    @PreAuthorize("hasRole('SAKSBEHANDLER') or hasRole('ATTESTERING')")
     @Operation(
         summary = "Henter mellomlagret brev",
         description = "Returnerer brevJson for gitt behandlingId",

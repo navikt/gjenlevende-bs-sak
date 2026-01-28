@@ -36,8 +36,8 @@ open class SpringContextTest {
     private fun resetDatabase() {
         jdbcAggregateOperations.deleteAll(Vedtak::class.java)
         jdbcAggregateOperations.deleteAll(ÅrsakBehandling::class.java)
-        jdbcAggregateOperations.deleteAll(Behandling::class.java)
         jdbcAggregateOperations.deleteAll(Brev::class.java)
+        jdbcAggregateOperations.deleteAll(Behandling::class.java)
         jdbcAggregateOperations.deleteAll(TaskLogg::class.java)
         jdbcAggregateOperations.deleteAll(Task::class.java)
         jdbcAggregateOperations.deleteAll(Fagsak::class.java)

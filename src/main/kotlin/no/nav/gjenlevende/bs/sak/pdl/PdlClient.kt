@@ -1,8 +1,11 @@
 package no.nav.gjenlevende.bs.sak.pdl
 
 import no.nav.gjenlevende.bs.sak.felles.OAuth2RestOperationsFactory
+import no.nav.gjenlevende.bs.sak.texas.TexasClient
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
@@ -10,24 +13,42 @@ import org.springframework.http.HttpMethod
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestOperations
+import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
 
+@Configuration
+class PdlWebClientConfig {
+    @Bean
+    fun pdlWebClient(
+        @Value("\${PDL_URL}")
+        pdlUrl: String,
+    ): WebClient =
+        WebClient
+            .builder()
+            .baseUrl(pdlUrl)
+            .defaultHeader("Content-Type", "application/json")
+            .build()
+}
+
 @Component
 class PdlClient(
-    @Value("\${PDL_URL}") private val pdlUrl: URI,
-    @Value("\${pdl.oauth.registration-id}") registrationId: String,
-    oauth2RestFactory: OAuth2RestOperationsFactory,
+    private val pdlWebClient: WebClient,
+    private val texasClient: TexasClient,
+    @Value("\${PDL_SCOPE}")
+    private val pdlScope: String
 ) {
     private val logger = LoggerFactory.getLogger(PdlClient::class.java)
-    private val restTemplate: RestOperations = oauth2RestFactory.create(registrationId)
 
-    val pdlPath: URI =
-        UriComponentsBuilder
-            .fromUri(pdlUrl)
-            .pathSegment("graphql")
-            .build()
-            .toUri()
+//    val pdlPath: URI =
+//        UriComponentsBuilder
+//            .fromUri(pdlUrl)
+//            .pathSegment("graphql")
+//            .build()
+//            .toUri()
+
+    val obo = texasClient.hentOboToken(pdlScope)
+
 
     fun <T> utførQuery(
         query: String,

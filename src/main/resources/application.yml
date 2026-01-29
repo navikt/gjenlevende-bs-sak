@@ -121,6 +121,10 @@ FAMILIE_DOKUMENT_SCOPE: api://${DEPLOY_ENV}-gcp.teamfamilie.familie-dokument/.de
 PDL_URL: https://pdl-api.dev-fss-pub.nais.io
 PDL_SCOPE: api://dev-fss.pdl.pdl-api/.default
 
+# OPPGAVE
+OPPGAVE_URL: https://oppgave.dev-fss-pub.nais.io
+OPPGAVE_SCOPE: api://dev-fss.oppgavehandtering.oppgave/.default
+
 #SAF
 SAF_URL: https://saf-q2.dev-fss-pub.nais.io
 SAF_SCOPE: api://dev-fss.teamdokumenthandtering.saf/.default

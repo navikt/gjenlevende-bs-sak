@@ -36,6 +36,7 @@ class BehandlingController(
         }
 
         val behandling = behandlingService.opprettBehandling(fagsakId)
+
         return ResponseEntity.ok(behandling.id)
     }
 

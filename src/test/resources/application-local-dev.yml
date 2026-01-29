@@ -65,7 +65,6 @@ SAF_SCOPE: api://dev-fss.teamdokumenthandtering.saf/.default
 tilgangsmaskin:
     url: ${TILGANGSMASKIN_URL:https://tilgangsmaskin.intern.dev.nav.no}
     oauth:
-        registration-id: tilgangsmaskin-clientcredentials
         scope: ${TILGANGSMASKIN_SCOPE:api://dev-gcp.tilgangsmaskin.populasjonstilgangskontroll/.default}
 
 # Swagger/OpenAPI konfigurasjon

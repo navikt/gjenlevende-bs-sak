@@ -62,7 +62,6 @@ SAF_SCOPE: mock-scope
 tilgangsmaskin:
     url: http://localhost:8090
     oauth:
-        registration-id: tilgangsmaskin-clientcredentials
         scope: mock-scope
 
 # OAuth2 klienter (mock verdier)
@@ -94,7 +93,6 @@ oauth2:
             token-endpoint-url: http://localhost:8089/default/token
             scope: mock-scope
         tilgangsmaskin:
-            registration-id: tilgangsmaskin-clientcredentials
             client-id: mock-client-id
             client-secret: mock-client-secret
             token-endpoint-url: http://localhost:8089/default/token

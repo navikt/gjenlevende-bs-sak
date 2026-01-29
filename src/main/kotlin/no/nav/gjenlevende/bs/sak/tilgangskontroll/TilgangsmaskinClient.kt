@@ -11,8 +11,8 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
-import org.springframework.web.client.RestOperations
-import org.springframework.web.client.RestTemplate
+import org.springframework.web.client.RestClient
+
 import org.springframework.web.client.exchange
 import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
@@ -20,13 +20,20 @@ import java.net.URI
 @Component
 class TilgangsmaskinClient(
     @Value("\${tilgangsmaskin.url}") private val tilgangsmaskinUrl: URI,
-    @Value("\${tilgangsmaskin.oauth.registration-id}") private val registrationId: String,
     @Value("\${tilgangsmaskin.oauth.scope}") private val tilgangsmaskinScope: String,
     private val texasClient: TexasClient,
-    oauth2RestFactory: OAuth2RestOperationsFactory,
 ) {
     private val logger = LoggerFactory.getLogger(TilgangsmaskinClient::class.java)
-    private val restTemplate: RestOperations = oauth2RestFactory.create(registrationId)
+
+
+
+    val tilgangsmaskinRestClient =
+        RestClient
+            .builder()
+            .baseUrl(tilgangsmaskinUrl)
+            .defaultHeader("Content-Type", "application/json")
+            .build()
+
     private val objectMapper =
         jacksonObjectMapper().apply {
             configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)

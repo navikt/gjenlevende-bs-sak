@@ -129,16 +129,17 @@ class BrevService(
                     justify-content: space-between;
                     align-items: flex-start;
                     }
-                    .venstreSidenAvHeader { display: table; }
-                    .label {
+                    .bruker-info .venstre { display: table; }
+                    .bruker-info .venstre .row { display: table-row; }
+                    .bruker-info .label {
                         display: table-cell;
                         white-space: nowrap;
                         padding-right: 12pt;
                     }
-                    .verdi {
+                    .bruker-info .value {
                         display: table-cell;
                     }
-                    .dato {
+                    .bruker-info .høyre {
                         text-align: right;
                         position: relative;
                         top: -12pt;
@@ -153,7 +154,7 @@ class BrevService(
                         margin-top: 24pt;
                     }
 
-                    .row {
+                    .signatur .row {
                         display: table-row;
                     }
 
@@ -168,11 +169,13 @@ class BrevService(
                 <header class="header">
                     <img class="logo" src="$logo" alt="Logo" height="16" />
                     <div class="bruker-info">
-                        <div class="venstreSidenAvHeader">
-                            <div class="row"><span class="label">Navn:</span><span class="verdi">$brukerNavn</span></div>
-                            <div class="row"><span class="label">Fødselsnummer:</span><span class="verdi">$brukerPersonident</span></div>
+                        <div class="venstre">
+                            <div class="row"><span class="label">Navn:</span><span class="value">$brukerNavn</span></div>
+                            <div class="row"><span class="label">Fødselsnummer:</span><span class="value">$brukerPersonident</span></div>
                         </div>
-                        <span> class="dato"$dagensDato</span>
+                        <div class="høyre">
+                            <span>$dagensDato</span>
+                        </div>
                     </div>
                 </header>
                 <main>

@@ -124,31 +124,24 @@ class BrevService(
                         margin-bottom: 32pt
                     }
                     .bruker-info {
-                        display: grid;
-                        grid-template-columns: 110pt 1fr auto;
-                        column-gap: 12pt;
-                        row-gap: 4pt;
-                        align-items: baseline;
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: space-between;
+                    align-items: flex-start;
                     }
+                    .bruker-info .venstre { display: table; }
+                    .bruker-info .venstre .row { display: table-row; }
                     .bruker-info .label {
+                        display: table-cell;
                         white-space: nowrap;
+                        padding-right: 12pt;
                     }
                     .bruker-info .value {
-                        white-space: nowrap;
+                        display: table-cell;
                     }
-                    .bruker-info .dato {
-                        white-space: nowrap;
+                    .bruker-info .høyre {
                         text-align: right;
                     }
-                    .bruker-row{
-                      display:flex;
-                      align-items:baseline;
-                      gap:12pt;
-                      width:100%;
-                    }
-                    .bruker-row .label{ width:110pt; white-space:nowrap; flex:0 0 110pt; }
-                    .bruker-row .value{ white-space:nowrap; flex:0 0 auto; }
-                    .bruker-row .dato{ white-space:nowrap; margin-left:auto; text-align:right; }
                     footer {
                         display: block;
                         page-break-inside: avoid;
@@ -174,15 +167,12 @@ class BrevService(
                 <header class="header">
                     <img class="logo" src="$logo" alt="Logo" height="16" />
                     <div class="bruker-info">
-                        <div class="bruker-row">
-                            <span class="label">Navn:</span>
-                            <span class="value">$brukerNavn</span>
-                            <span class="dato"></span>
+                        <div class="venstre">
+                            <div class="row"><span class="label">Navn:</span><span class="value">$brukerNavn</span></div>
+                            <div class="row"><span class="label">Fødselsnummer:</span><span class="value">$brukerPersonident</span></div>
                         </div>
-                            <div class="bruker-row">
-                            <span class="label">Fødselsnummer:</span>
-                            <span class="value">$brukerPersonident</span>
-                            <span class="dato">$dagensDato</span>
+                        <div class="høyre">
+                            <span>$dagensDato</span>
                         </div>
                     </div>
                 </header>

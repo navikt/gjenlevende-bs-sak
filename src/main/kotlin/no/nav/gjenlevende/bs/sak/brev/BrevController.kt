@@ -17,26 +17,26 @@ import java.util.UUID
 
 @RestController
 @RequestMapping(path = ["/api/brev"])
-@PreAuthorize("hasRole('SAKSBEHANDLER')")
 @Tag(name = "BrevController", description = "Endepunkter for håndtering av brev")
 class BrevController(
     private val brevService: BrevService,
     private val taskService: TaskService,
 ) {
     @PostMapping("/send-til-beslutter/{behandlingId}")
+    @PreAuthorize("hasRole('SAKSBEHANDLER')")
     @Operation(
-        summary = "Oppretter brev-task",
-        description = "Lager task som genererer pdf-brev",
+        summary = "Sender behandling til beslutter",
+        description = "Sender behandling til beslutter.",
     )
     fun sendTilBeslutter(
         @PathVariable behandlingId: UUID,
     ): ResponseEntity<String> {
-        val saksbehandler = SikkerhetContext.hentSaksbehandlerEllerSystembruker()
-        brevService.oppdaterSaksbehandler(behandlingId, saksbehandler) // TODO en eller annen task som sender til beslutter
+        brevService.oppdaterSaksbehandler(behandlingId) // TODO en eller annen task som sender til beslutter
         return ResponseEntity.ok("OK")
     }
 
     @PostMapping("/lag-task/{behandlingId}") // TODO renames til beslutte-behandling elr noe sånt
+    @PreAuthorize("hasRole('ATTESTERING')")
     @Operation(
         summary = "Oppretter brev-task",
         description = "Lager task som genererer pdf-brev",
@@ -44,8 +44,7 @@ class BrevController(
     fun lagBrevTask(
         @PathVariable behandlingId: UUID,
     ): ResponseEntity<String> {
-        val beslutter = SikkerhetContext.hentSaksbehandlerEllerSystembruker()
-        brevService.oppdaterBeslutter(behandlingId, beslutter)
+        brevService.oppdaterBeslutter(behandlingId)
         val task = brevService.lagBrevPdfTask(behandlingId)
         taskService.save(task)
 
@@ -53,6 +52,7 @@ class BrevController(
     }
 
     @PostMapping("/mellomlagre/{behandlingId}")
+    @PreAuthorize("hasRole('SAKSBEHANDLER')")
     @Operation(
         summary = "Mellomlagrer brev",
         description = "Mellomlagrer brevJson for gitt behandlingId",
@@ -66,6 +66,7 @@ class BrevController(
     }
 
     @GetMapping("/hentMellomlagretBrev/{behandlingId}")
+    @PreAuthorize("hasRole('SAKSBEHANDLER') or hasRole('ATTESTERING')")
     @Operation(
         summary = "Henter mellomlagret brev",
         description = "Returnerer brevJson for gitt behandlingId",

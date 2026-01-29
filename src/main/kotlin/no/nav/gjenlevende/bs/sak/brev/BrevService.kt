@@ -9,6 +9,8 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import tools.jackson.databind.ObjectMapper
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.UUID
 
 @Service
@@ -90,13 +92,14 @@ class BrevService(
         val brevInnhold = brev.brevJson
         val brukerNavn = brevInnhold.brevmal.informasjonOmBruker.navn
         val brukerPersonident = brevInnhold.brevmal.informasjonOmBruker.fnr
+        val dagensDato = LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
         val tittel = brevInnhold.brevmal.tittel
         val logo = logoTilBase64()
         val fritekst = lagHtmlTekstbolker(brevInnhold.fritekstbolker)
         val avslutning = lagHtmlTekstbolker(brevInnhold.brevmal.fastTekstAvslutning)
         val saksbehandlerNavn = brev.saksbehandler ?: ""
         val beslutterNavn = brev.beslutter
-        val saksbehandlerEnhet = "Nav familie- og pensjonsytelser ${brev.saksbehandlerEnhet ?: ""}"
+        val beslutterEnhet = "Nav familie- og pensjonsytelser ${brev.beslutterEnhet ?: ""}"
 
         return """
             <!DOCTYPE html>
@@ -120,8 +123,14 @@ class BrevService(
                         display: block;
                         margin-bottom: 32pt
                     }
-                    .bruker-info { display: table; }
-                    .bruker-info .row { display: table-row; }
+                    .bruker-info {
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: space-between;
+                    align-items: flex-start;
+                    }
+                    .bruker-info .venstre { display: table; }
+                    .bruker-info .venstre .row { display: table-row; }
                     .bruker-info .label {
                         display: table-cell;
                         white-space: nowrap;
@@ -129,7 +138,11 @@ class BrevService(
                     }
                     .bruker-info .value {
                         display: table-cell;
-                        width: 100%;
+                    }
+                    .bruker-info .høyre {
+                        text-align: right;
+                        position: relative;
+                        bottom: 12pt;
                     }
                     footer {
                         display: block;
@@ -156,8 +169,13 @@ class BrevService(
                 <header class="header">
                     <img class="logo" src="$logo" alt="Logo" height="16" />
                     <div class="bruker-info">
-                        <div class="row"><span class="label">Navn:</span><span class="value">$brukerNavn</span></div>
-                        <div class="row"><span class="label">Fødselsnummer:</span><span class="value">$brukerPersonident</span></div>
+                        <div class="venstre">
+                            <div class="row"><span class="label">Navn:</span><span class="value">$brukerNavn</span></div>
+                            <div class="row"><span class="label">Fødselsnummer:</span><span class="value">$brukerPersonident</span></div>
+                        </div>
+                        <div class="høyre">
+                            <span>$dagensDato</span>
+                        </div>
                     </div>
                 </header>
                 <main>
@@ -174,7 +192,7 @@ class BrevService(
                         </div>
                         <br />
                         <div class="row">
-                            <span class="cell">$saksbehandlerEnhet</span>
+                            <span class="cell">$beslutterEnhet</span>
                         </div>
                     </div>
                 </footer>

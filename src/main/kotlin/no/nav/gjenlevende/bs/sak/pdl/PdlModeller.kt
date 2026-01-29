@@ -7,8 +7,13 @@ data class PdlRequest(
     val variables: Map<String, String>,
 )
 
-data class PdlResponse<T>(
-    val data: T?,
+data class PdlResponseHentPersonData(
+    val data: HentPersonData?,
+    val errors: List<PdlError>? = null,
+)
+
+data class PdlResponseFamilierelasjoner(
+    val data: FamilieRelasjonerResponse?,
     val errors: List<PdlError>? = null,
 )
 

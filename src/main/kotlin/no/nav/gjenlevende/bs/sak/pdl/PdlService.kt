@@ -3,7 +3,6 @@ package no.nav.gjenlevende.bs.sak.pdl
 import no.nav.gjenlevende.bs.sak.fagsak.FagsakPersonService
 import org.apache.commons.lang3.StringUtils
 import org.slf4j.LoggerFactory
-import org.springframework.core.ParameterizedTypeReference
 import org.springframework.stereotype.Service
 import java.util.UUID
 
@@ -16,12 +15,14 @@ class PdlService(
 
     fun hentNavn(fagsakPersonId: UUID): Navn? {
         val ident = fagsakPersonService.hentAktivIdent(fagsakPersonId)
-        val data =
-            pdlClient.utførQuery(
+        val request =
+            PdlRequest(
                 query = graphqlQuery("/pdl/hent_navn.graphql"),
                 variables = mapOf("ident" to ident),
-                responstype = object : ParameterizedTypeReference<PdlResponse<HentPersonData>>() {},
-                operasjon = "hentNavn",
+            )
+        val data: HentPersonData =
+            pdlClient.hentPersonData(
+                request = request,
             ) ?: throw PdlException("Fant ingen person i PDL for ident")
 
         val hentPerson =
@@ -50,13 +51,13 @@ class PdlService(
             ?: emptyList()
 
     private fun hentFamilieRelasjoner(personident: String): List<ForelderBarnRelasjon>? {
-        val data =
-            pdlClient.utførQuery(
+        val request =
+            PdlRequest(
                 query = graphqlQuery("/pdl/hent_familie_relasjoner.graphql"),
                 variables = mapOf("ident" to personident),
-                responstype = object : ParameterizedTypeReference<PdlResponse<FamilieRelasjonerResponse>>() {},
-                operasjon = "hentFamilieRelasjoner",
-            ) ?: return null
+            )
+
+        val data: FamilieRelasjonerResponse = pdlClient.hentFamilieRelasjoner(request = request) ?: return null
 
         return data.hentPerson?.forelderBarnRelasjon
     }
@@ -64,8 +65,8 @@ class PdlService(
     fun graphqlQuery(path: String) =
         PdlService::class.java
             .getResource(path)
-            .readText()
-            .graphqlCompatible()
+            ?.readText()
+            ?.graphqlCompatible() ?: throw PdlException("Kunne ikke lese graphql query fra path: $path")
 
     private fun String.graphqlCompatible(): String = StringUtils.normalizeSpace(this.replace("\n", ""))
 }

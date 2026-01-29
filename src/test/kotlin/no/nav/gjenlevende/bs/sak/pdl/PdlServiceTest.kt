@@ -4,7 +4,6 @@ import io.mockk.every
 import io.mockk.mockk
 import no.nav.gjenlevende.bs.sak.fagsak.FagsakPersonService
 import org.assertj.core.api.Assertions.assertThat
-import org.springframework.core.ParameterizedTypeReference
 import java.util.UUID
 import kotlin.test.Test
 
@@ -17,7 +16,7 @@ class PdlServiceTest {
     fun `hent første navn ved response fra pdl`() {
         every { fagsakPersonService.hentAktivIdent(any()) } returns "01010199999"
 
-        every { pdlClient.utførQuery(any(), any(), any<ParameterizedTypeReference<PdlResponse<HentPersonData>>>(), any()) } returns
+        every { pdlClient.hentPersonData(any()) } returns
             HentPersonData(
                 hentPerson =
                     HentPerson(

@@ -42,24 +42,6 @@ class OppgaveClient(
         private const val API_BASE_URL = "/api/v1/oppgaver"
     }
 
-    // TODO Brukes kun til testing - fjern når mulig
-    fun opprettOppgaveOBO(
-        oppgave: LagEnkelTestOppgaveRequest,
-    ): Mono<Oppgave> {
-        val obo = texasClient.hentOboToken(oppgaveScope.toString())
-
-        return oppgaveWebClient
-            .post()
-            .uri(API_BASE_URL)
-            .headers { headers ->
-                headers.setBearerAuth(obo)
-                headers.set("X-Correlation-ID", MDC.get("callId") ?: "test-gjenlevende-bs-sak")
-            }.bodyValue(oppgave)
-            .retrieve()
-            .bodyToMono<Oppgave>()
-            .timeout(Duration.ofSeconds(TIMEOUT_SEKUNDER))
-    }
-
     fun opprettOppgaveM2M(oppgaveRequest: LagOppgaveRequest): Oppgave {
         logger.info("Sender opprettOppgave request til Oppgave-service ")
         val maskinToken = texasClient.hentMaskinToken(oppgaveScope.toString())

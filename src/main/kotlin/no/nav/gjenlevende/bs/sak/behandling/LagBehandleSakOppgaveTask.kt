@@ -25,7 +25,7 @@ class LagBehandleSakOppgaveTask(
     private val oppgaveService: OppgaveService,
     private val objectMapper: ObjectMapper,
     private val taskService: TaskService,
-    private val entryProxyClient: EntraProxyClient,
+    private val entraProxyClient: EntraProxyClient,
 ) : AsyncTaskStep {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -40,7 +40,7 @@ class LagBehandleSakOppgaveTask(
         behandling: Behandling,
         saksbehandler: String,
     ) {
-        val enhetnummer = entryProxyClient.hentSaksbehandlerInfo(saksbehandler).enhet.enhetnummer
+        val enhetnummer = entraProxyClient.hentSaksbehandlerInfo(saksbehandler).enhet.enhetnummer
         val payload = OpprettOppgavePayload(behandlingsId = behandling.id, saksbehandler = saksbehandler, tildeltEnhetsnr = enhetnummer)
         val payloadAsString = objectMapper.writeValueAsString(payload)
         val task = Task(TYPE, payloadAsString)

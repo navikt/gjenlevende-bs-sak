@@ -141,6 +141,8 @@ class BrevService(
                     }
                     .bruker-info .høyre {
                         text-align: right;
+                        position: relative;
+                        top: 12pt;
                     }
                     footer {
                         display: block;

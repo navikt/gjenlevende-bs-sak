@@ -15,11 +15,14 @@ class PdlService(
 
     fun hentNavn(fagsakPersonId: UUID): Navn? {
         val ident = fagsakPersonService.hentAktivIdent(fagsakPersonId)
-        val data: HentPersonData =
-            pdlClient.utførQuery(
+        val request =
+            PdlRequest(
                 query = graphqlQuery("/pdl/hent_navn.graphql"),
                 variables = mapOf("ident" to ident),
-                operasjon = "hentNavn",
+            )
+        val data: HentPersonData =
+            pdlClient.hentPersonData(
+                request = request,
             ) ?: throw PdlException("Fant ingen person i PDL for ident")
 
         val hentPerson =
@@ -48,12 +51,13 @@ class PdlService(
             ?: emptyList()
 
     private fun hentFamilieRelasjoner(personident: String): List<ForelderBarnRelasjon>? {
-        val data: FamilieRelasjonerResponse =
-            pdlClient.utførQuery(
+        val request =
+            PdlRequest(
                 query = graphqlQuery("/pdl/hent_familie_relasjoner.graphql"),
                 variables = mapOf("ident" to personident),
-                operasjon = "hentFamilieRelasjoner",
-            ) ?: return null
+            )
+
+        val data: FamilieRelasjonerResponse = pdlClient.hentFamilieRelasjoner(request = request) ?: return null
 
         return data.hentPerson?.forelderBarnRelasjon
     }

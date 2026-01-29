@@ -108,7 +108,7 @@ FAMILIE_DOKUMENT_URL: http://familie-dokument.teamfamilie
 FAMILIE_DOKUMENT_SCOPE: api://${DEPLOY_ENV}-gcp.teamfamilie.familie-dokument/.default
 
 # PDL (Persondataløsningen)
-PDL_URL: https://pdl-api.dev-fss-pub.nais.io/graphql
+PDL_URL: https://pdl-api.dev-fss-pub.nais.io
 PDL_SCOPE: api://dev-fss.pdl.pdl-api/.default
 
 #SAF

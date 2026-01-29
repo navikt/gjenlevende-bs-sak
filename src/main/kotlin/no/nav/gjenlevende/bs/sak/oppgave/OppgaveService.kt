@@ -55,7 +55,7 @@ private fun lagOpprettBehandleSakOppgaveRequest(
         tema = Tema.EYO, // TODO finn tema for BARNETILSYN GJENLEVENDE EYO = omstilling
         // behandlingstema = "ae0290", // Samhandling EM-PE-OM ... TODO finn behandlingstema for BARNETILSYN GJENLEVENDE, ab0224 ab0028(Hører til ENF - barnetilsyn)? ab0224
         behandlingstype = "ae0290", // TODO vil legge inn behandlings_tema_ Gjenlevende bs når det er på plass - her bruker vi kun type.
-        fristFerdigstillelse = lagFristForOppgave().format(DateTimeFormatter.ISO_DATE),
+        fristFerdigstillelse = OppgaveUtil.lagFristForOppgave().format(DateTimeFormatter.ISO_DATE),
         aktivDato = LocalDate.now().format(DateTimeFormatter.ISO_DATE),
         oppgavetype = OppgavetypeEYO.GEN, // TODO legg inn BehandleSak som option,
         beskrivelse = "Behandle sak oppgave for barnetilsynbehandling=${behandling.id}-${fagsak.stønadstype.name}",
@@ -63,31 +63,6 @@ private fun lagOpprettBehandleSakOppgaveRequest(
         behandlesAvApplikasjon = "gjenlevende-bs-sak", // Kan kun feilregistreres av saksbehandler i gosys? Må ferdigstilles av applikasjon?
         tildeltEnhetsnr = tildeltEnhetsnr,
     )
-
-fun lagFristForOppgave(gjeldendeTid: LocalDateTime = now()): LocalDate {
-    val frist =
-        when (gjeldendeTid.dayOfWeek) {
-            DayOfWeek.FRIDAY -> fristBasertPåKlokkeslett(gjeldendeTid.plusDays(2))
-            DayOfWeek.SATURDAY -> fristBasertPåKlokkeslett(gjeldendeTid.plusDays(2).withHour(8))
-            DayOfWeek.SUNDAY -> fristBasertPåKlokkeslett(gjeldendeTid.plusDays(1).withHour(8))
-            else -> fristBasertPåKlokkeslett(gjeldendeTid)
-        }
-
-    return when (frist.dayOfWeek) {
-        DayOfWeek.SATURDAY -> frist.plusDays(2)
-        DayOfWeek.SUNDAY -> frist.plusDays(1)
-        else -> frist
-    }
-}
-
-fun now(): LocalDateTime = LocalDateTime.now()
-
-private fun fristBasertPåKlokkeslett(gjeldendeTid: LocalDateTime): LocalDate =
-    if (gjeldendeTid.hour >= 12) {
-        gjeldendeTid.plusDays(2).toLocalDate()
-    } else {
-        gjeldendeTid.plusDays(1).toLocalDate()
-    }
 
 fun FagsakPerson.aktivIdent(): Personident =
     this.identer.maxByOrNull { it.sporbar.endret.endretTid }

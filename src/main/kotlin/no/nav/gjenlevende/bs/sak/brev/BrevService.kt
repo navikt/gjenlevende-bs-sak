@@ -142,7 +142,7 @@ class BrevService(
                     .bruker-info .høyre {
                         text-align: right;
                         position: relative;
-                        bottom: 12pt;
+                        top: -12pt;
                     }
                     footer {
                         display: block;

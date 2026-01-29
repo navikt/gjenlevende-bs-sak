@@ -144,10 +144,11 @@ class BrevService(
                       display:flex;
                       align-items:baseline;
                       gap:12pt;
+                      width:100%;
                     }
                     .bruker-row .label{ width:110pt; white-space:nowrap; flex:0 0 110pt; }
-                    .bruker-row .value{ white-space:nowrap; flex:1 1 auto; }
-                    .bruker-row .dato{ white-space:nowrap; flex:0 0 auto; margin-left:auto; text-align:right; }
+                    .bruker-row .value{ white-space:nowrap; flex:0 0 auto; }
+                    .bruker-row .dato{ white-space:nowrap; margin-left:auto; text-align:right; }
                     footer {
                         display: block;
                         page-break-inside: avoid;

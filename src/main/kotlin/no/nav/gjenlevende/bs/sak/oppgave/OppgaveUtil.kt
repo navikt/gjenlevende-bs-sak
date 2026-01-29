@@ -12,31 +12,33 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 object OppgaveUtil {
-    fun lagFristForOppgave(tid: LocalDateTime = LocalDateTime.now()): LocalDate {
-        return when (tid.dayOfWeek) {
-                MONDAY, TUESDAY, WEDNESDAY -> {
-                    when {
-                        tid.erEtter12 -> tid.plusDays(2)
-                        else -> tid.plusDays(1)
-                    }
+    fun lagFristForOppgave(tid: LocalDateTime = LocalDateTime.now()): LocalDate =
+        when (tid.dayOfWeek) {
+            MONDAY, TUESDAY, WEDNESDAY -> {
+                when {
+                    tid.erEtter12 -> tid.plusDays(2)
+                    else -> tid.plusDays(1)
                 }
-                THURSDAY -> {
-                    when {
-                        tid.erEtter12 -> tid.finnNeste(MONDAY)
-                        else -> tid.plusDays(1)
-                    }
+            }
+
+            THURSDAY -> {
+                when {
+                    tid.erEtter12 -> tid.finnNeste(MONDAY)
+                    else -> tid.plusDays(1)
                 }
-                FRIDAY -> {
-                    when {
-                        tid.erEtter12 -> tid.finnNeste(TUESDAY)
-                        else -> tid.finnNeste(MONDAY)
-                    }
+            }
+
+            FRIDAY -> {
+                when {
+                    tid.erEtter12 -> tid.finnNeste(TUESDAY)
+                    else -> tid.finnNeste(MONDAY)
                 }
-                SATURDAY, SUNDAY -> {
-                    tid.finnNeste(TUESDAY)
-                }
-            }.toLocalDate()
-    }
+            }
+
+            SATURDAY, SUNDAY -> {
+                tid.finnNeste(TUESDAY)
+            }
+        }.toLocalDate()
 
     private val LocalDateTime.erEtter12: Boolean get() = this.hour >= 12
 
@@ -44,13 +46,13 @@ object OppgaveUtil {
         val idag = this.dayOfWeek.value
         val target = dagMål.value
 
-        val antallDagerViSkalLeggeTil = if (target <= idag) {
-           7 + (target - idag)
-        } else {
-            target - idag
-        }.toLong()
+        val antallDagerViSkalLeggeTil =
+            if (target <= idag) {
+                7 + (target - idag)
+            } else {
+                target - idag
+            }.toLong()
 
         return this.plusDays(antallDagerViSkalLeggeTil)
     }
 }
-

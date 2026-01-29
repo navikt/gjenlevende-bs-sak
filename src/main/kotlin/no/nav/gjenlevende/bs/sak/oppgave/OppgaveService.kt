@@ -9,12 +9,10 @@ import no.nav.gjenlevende.bs.sak.fagsak.FagsakRepository
 import no.nav.gjenlevende.bs.sak.fagsak.domain.Fagsak
 import no.nav.gjenlevende.bs.sak.fagsak.domain.FagsakPerson
 import no.nav.gjenlevende.bs.sak.fagsak.domain.Personident
-import no.nav.gjenlevende.bs.sak.util.findByIdOrThrow
 import org.slf4j.LoggerFactory
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
-import java.time.DayOfWeek
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 @Service
@@ -32,24 +30,25 @@ class OppgaveService(
     ) {
         logger.info("Skal opprette behandle sak oppgave for behandling=${behandling.id} saksbehandler=$saksbehandler")
 
-        val fagsak = fagsakRepository.findByIdOrThrow(behandling.fagsakId)
-        val fagsakPerson = fagsakPersonRepository.findByIdOrThrow(fagsak.fagsakPersonId)
-        val gjeldendePersonIdent: Personident = fagsakPerson.aktivIdent()
+        val fagsak = fagsakRepository.findByIdOrNull(behandling.fagsakId) ?: throw IllegalStateException("Finner ikke fagsak med id=${behandling.fagsakId}")
+        val fagsakPerson = fagsakPersonRepository.findByIdOrNull(fagsak.fagsakPersonId) ?: throw IllegalStateException("Finner ikke fagsakPerson med id=${fagsak.fagsakPersonId}")
+        val personident: Personident = fagsakPerson.aktivIdent()
 
-        val oppgave = lagOpprettBehandleSakOppgaveRequest(gjeldendePersonIdent, fagsak, behandling, saksbehandler, tildeltEnhetsnr)
+        val oppgave = lagOpprettBehandleSakOppgaveRequest(personident, fagsak, behandling, saksbehandler, tildeltEnhetsnr)
+
         oppgaveClient.opprettOppgaveM2M(oppgaveRequest = oppgave)
     }
 }
 
 private fun lagOpprettBehandleSakOppgaveRequest(
-    gjeldendePersonIdent: Personident,
+    personident: Personident,
     fagsak: Fagsak,
     behandling: Behandling,
     saksbehandler: String,
     tildeltEnhetsnr: String,
 ): LagOppgaveRequest =
     LagOppgaveRequest(
-        personident = gjeldendePersonIdent.ident,
+        personident = personident.ident,
         saksreferanse = fagsak.eksternId.toString(), // TODO sjekk om dette burde være "behandling-eksternid"?
         prioritet = OppgavePrioritet.NORM,
         tema = Tema.EYO, // TODO finn tema for BARNETILSYN GJENLEVENDE EYO = omstilling
@@ -72,7 +71,7 @@ fun FagsakPerson.aktivIdent(): Personident =
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class Oppgave(
     val id: Long? = null,
-    val identer: List<OppgaveIdentV2>? = null,
+    val identer: List<OppgavePersonident>? = null,
     val tildeltEnhetsnr: String? = null,
     val endretAvEnhetsnr: String? = null,
     val opprettetAvEnhetsnr: String? = null,
@@ -143,7 +142,7 @@ enum class OppgavetypeEYO {
     SVAR_IK_MOT,
 }
 
-data class OppgaveIdentV2(
+data class OppgavePersonident(
     val ident: String?,
     val gruppe: IdentGruppe?,
 )

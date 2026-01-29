@@ -6,8 +6,8 @@ import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.internal.TaskService
 import no.nav.gjenlevende.bs.sak.oppgave.OppgaveService
 import no.nav.gjenlevende.bs.sak.saksbehandler.EntraProxyClient
-import no.nav.gjenlevende.bs.sak.util.findByIdOrThrow
 import org.slf4j.LoggerFactory
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import tools.jackson.databind.ObjectMapper
 import tools.jackson.module.kotlin.readValue
@@ -32,7 +32,7 @@ class LagBehandleSakOppgaveTask(
     override fun doTask(task: Task) {
         val payload: OpprettOppgavePayload = objectMapper.readValue(task.payload)
         logger.info("LagBehandleSakOppgaveTask task: ${payload.behandlingsId}, saksbehandler: ${payload.saksbehandler}")
-        val behandling = behandlingRepository.findByIdOrThrow(payload.behandlingsId)
+        val behandling = behandlingRepository.findByIdOrNull(payload.behandlingsId) ?: throw IllegalStateException("Finner ikke behandling med id=${payload.behandlingsId}")
         oppgaveService.opprettBehandleSakOppgave(behandling, payload.saksbehandler, payload.tildeltEnhetsnr)
     }
 

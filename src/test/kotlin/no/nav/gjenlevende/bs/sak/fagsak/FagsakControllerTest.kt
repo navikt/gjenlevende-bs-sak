@@ -2,7 +2,6 @@ package no.nav.gjenlevende.bs.sak.fagsak
 
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
-import io.mockk.justRun
 import io.mockk.verify
 import no.nav.gjenlevende.bs.sak.ApplicationLocalSetup
 import no.nav.gjenlevende.bs.sak.fagsak.dto.FagsakDto

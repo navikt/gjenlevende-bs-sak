@@ -1,6 +1,6 @@
 CREATE TABLE behandling
 (
-    id            UUID         PRIMARY KEY,
+    id            UUID PRIMARY KEY,
     fagsak_id     UUID         NOT NULL,
     status        VARCHAR      NOT NULL,
 

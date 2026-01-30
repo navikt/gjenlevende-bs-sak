@@ -1,1 +1,2 @@
-${ignoreIfProd} ALTER SEQUENCE fagsak_ekstern_id_seq RESTART with 200000000;
+${ignoreIfProd}
+ALTER SEQUENCE fagsak_ekstern_id_seq RESTART with 200000000;

@@ -1,6 +1,5 @@
 package no.nav.gjenlevende.bs.sak.vilkår
 
-import no.nav.gjenlevende.bs.sak.felles.sikkerhet.Tilgangskontroll
 import org.springframework.stereotype.Service
 import java.util.UUID
 
@@ -8,10 +7,8 @@ import java.util.UUID
 class VilkårVurderingService(
     private val vilkårVurderingRepository: VilkårVurderingRepository,
 ) {
-    @Tilgangskontroll
     fun hentVilkårVurderinger(behandlingId: UUID): List<VilkårVurdering> = vilkårVurderingRepository.findByBehandlingId(behandlingId)
 
-    @Tilgangskontroll
     fun lagreVilkårVurdering(
         behandlingId: UUID,
         request: VilkårVurderingRequest,

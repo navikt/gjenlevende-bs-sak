@@ -1,6 +1,6 @@
 package no.nav.gjenlevende.bs.sak.felles.sikkerhet
 
-@Target(AnnotationTarget.FUNCTION)
+@Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
 annotation class Tilgangskontroll(
     val auditLogMelding: String = "",

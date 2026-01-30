@@ -14,10 +14,10 @@ Saksbehandler-app som tar for seg barnetilsyn og skolepenger for etterlatte/gjen
 
 Applikasjonen har to lokale utviklingsprofiler:
 
-| Profil | Bruk | Fordeler |
-|--------|------|----------|
-| **Mock** (anbefalt) | Daglig utvikling | Ingen secrets, fullt offline, rask oppstart |
-| **Dev** | Testing mot ekte dev-tjenester | Ekte data fra PDL, SAF, etc. |
+| Profil              | Bruk                           | Fordeler                                    |
+|---------------------|--------------------------------|---------------------------------------------|
+| **Mock** (anbefalt) | Daglig utvikling               | Ingen secrets, fullt offline, rask oppstart |
+| **Dev**             | Testing mot ekte dev-tjenester | Ekte data fra PDL, SAF, etc.                |
 
 ---
 
@@ -26,18 +26,23 @@ Applikasjonen har to lokale utviklingsprofiler:
 Denne profilen krever **ingen secrets** og fungerer fullt offline.
 
 #### 1. Start mock-miljøet
+
 ```bash
 ./start-mock.sh
 ```
+
 Dette starter følgende Docker-containere:
+
 - PostgreSQL (persistent database)
 - mock-oauth2-server (for token-validering)
 - WireMock (mocker alle eksterne tjenester)
 
 #### 2. Kjør applikasjonen
+
 Kjør **ApplicationLocalMock** fra IntelliJ (ingen miljøvariabel-konfigurasjon nødvendig).
 
 #### 3. Test med mock-token
+
 ```bash
 # Hent token
 TOKEN=$(curl -s -X POST http://localhost:8089/default/token \
@@ -48,6 +53,7 @@ curl -H "Authorization: Bearer $TOKEN" http://localhost:8082/internal/health
 ```
 
 #### 4. Stopp tjenestene
+
 ```bash
 docker compose --profile mock down      # Behold data
 docker compose --profile mock down -v   # Slett data
@@ -94,11 +100,13 @@ kubectl get secrets | grep gjenlevende-bs-sak
 ```
 
 Du vil se noe lignende dette:
+
 ```
 azure-gjenlevende-bs-sak-1a2345bc-1337-1      Opaque   7      2d
 ```
 
-> **VIKTIG:** Kopier navnet på hemmeligheten som starter med `azure-gjenlevende-bs-sak-` og har en roterende ID (f.eks. `azure-gjenlevende-bs-sak-1a2345bc-1337-1`).
+> **VIKTIG:** Kopier navnet på hemmeligheten som starter med `azure-gjenlevende-bs-sak-` og har en roterende ID (f.eks.
+`azure-gjenlevende-bs-sak-1a2345bc-1337-1`).
 
 #### 5. Oppdater hent-og-lagre-miljøvariabler.sh
 
@@ -157,6 +165,7 @@ docker compose --profile dev down -v    # Slett data
 ## Database
 
 Begge profiler bruker en **persistent PostgreSQL**-database via Docker-volume.
+
 - Data overlever omstart av applikasjonen
 - Slett data: `docker compose --profile <mock|dev> down -v`
 - Se data i Docker Desktop under "gjenlevende-bs-sak"-gruppen
@@ -166,11 +175,14 @@ Begge profiler bruker en **persistent PostgreSQL**-database via Docker-volume.
 ## Swagger
 
 **Mock-profil (lokalt):**
+
 - http://localhost:8082/swagger-ui/index.html
 - Hent token og lim inn i "Authorize"
 
 **Dev-profil (lokalt):**
+
 - http://localhost:8082/swagger-ui/index.html
 
 **Ingress (deployed):**
+
 - https://gjenlevende-bs-sak.intern.dev.nav.no/swagger-ui/index.html

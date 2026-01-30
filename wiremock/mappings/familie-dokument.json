@@ -1,15 +1,15 @@
 {
-  "name": "Familie-dokument - HTML til PDF",
-  "request": {
-    "method": "POST",
-    "urlPath": "/api/html-til-pdf"
-  },
-  "response": {
-    "status": 200,
-    "headers": {
-      "Content-Type": "application/pdf"
+    "name": "Familie-dokument - HTML til PDF",
+    "request": {
+        "method": "POST",
+        "urlPath": "/api/html-til-pdf"
     },
-    "bodyFileName": "sample.pdf"
-  },
-  "priority": 10
+    "response": {
+        "status": 200,
+        "headers": {
+            "Content-Type": "application/pdf"
+        },
+        "bodyFileName": "sample.pdf"
+    },
+    "priority": 10
 }

@@ -1,6 +1,5 @@
 package no.nav.gjenlevende.bs.sak.fagsak
 
-import no.nav.familie.prosessering.rest.Ressurs
 import no.nav.gjenlevende.bs.sak.fagsak.dto.FagsakDto
 import no.nav.gjenlevende.bs.sak.felles.sikkerhet.TilgangService
 import no.nav.gjenlevende.bs.sak.infrastruktur.exception.Feil

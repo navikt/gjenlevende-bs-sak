@@ -3,7 +3,6 @@ package no.nav.gjenlevende.bs.sak.saf
 import no.nav.gjenlevende.bs.sak.config.SafConfig
 import no.nav.gjenlevende.bs.sak.felles.OAuth2RestOperationsFactory
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpEntity
@@ -13,7 +12,6 @@ import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestOperations
 import java.util.UUID
-import kotlin.collections.isNotEmpty
 
 @Service
 class SafClient(

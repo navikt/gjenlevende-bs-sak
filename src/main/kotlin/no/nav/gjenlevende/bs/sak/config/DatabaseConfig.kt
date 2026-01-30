@@ -17,7 +17,6 @@ import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import tools.jackson.databind.ObjectMapper
 import javax.sql.DataSource
-import kotlin.collections.contains
 
 @Configuration
 @EnableJdbcRepositories("no.nav.familie", "no.nav.gjenlevende")

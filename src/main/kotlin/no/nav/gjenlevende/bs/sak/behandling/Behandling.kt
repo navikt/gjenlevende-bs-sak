@@ -2,7 +2,6 @@ package no.nav.gjenlevende.bs.sak.behandling
 
 import no.nav.gjenlevende.bs.sak.felles.sporbar.Sporbar
 import org.springframework.data.annotation.Id
-import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Embedded
 import org.springframework.data.relational.core.mapping.Table
 import java.util.UUID

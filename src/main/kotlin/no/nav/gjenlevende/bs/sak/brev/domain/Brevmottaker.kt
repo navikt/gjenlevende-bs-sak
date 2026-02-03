@@ -11,7 +11,7 @@ data class Brevmottaker(
     val behandlingId: UUID,
     val personRolle: BrevmottakerRolle,
     val mottakerType: MottakerType,
-    val personIdent: String? = null,
+    val personident: String? = null,
     val orgnr: String? = null,
     val navnHosOrganisasjon: String? = null,
 )

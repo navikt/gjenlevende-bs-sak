@@ -18,7 +18,7 @@ CREATE TABLE brevmottaker
         )
 );
 
-CREATE INDEX idx_brev_mottaker_behandling_id ON brevmottaker (behandling_id);
-CREATE INDEX idx_brev_mottaker_rolle ON brevmottaker (person_rolle);
-CREATE INDEX idx_brev_mottaker_orgnr ON brevmottaker (orgnr) WHERE orgnr IS NOT NULL;
-CREATE INDEX idx_brev_mottaker_person_ident ON brevmottaker (personident) WHERE personident IS NOT NULL;
+CREATE INDEX idx_brevmottaker_behandling_id ON brevmottaker (behandling_id);
+CREATE INDEX idx_brevmottaker_rolle ON brevmottaker (person_rolle);
+CREATE INDEX idx_brevmottaker_orgnr ON brevmottaker (orgnr) WHERE orgnr IS NOT NULL;
+CREATE INDEX idx_brevmottaker_person_ident ON brevmottaker (personident) WHERE personident IS NOT NULL;

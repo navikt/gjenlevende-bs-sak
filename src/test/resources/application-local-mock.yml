@@ -67,21 +67,11 @@ saf:
     url: http://localhost:8090
     oauth:
         registration-id: saf-clientcredentials
-familie-dokument:
-    url: http://localhost:8090
-    oauth:
-        registration-id: familie-dokument-clientcredentials
 
 oauth2:
     clients:
         saf:
             registration-id: saf-clientcredentials
-            client-id: mock-client-id
-            client-secret: mock-client-secret
-            token-endpoint-url: http://localhost:8089/default/token
-            scope: mock-scope
-        familie-dokument:
-            registration-id: familie-dokument-clientcredentials
             client-id: mock-client-id
             client-secret: mock-client-secret
             token-endpoint-url: http://localhost:8089/default/token

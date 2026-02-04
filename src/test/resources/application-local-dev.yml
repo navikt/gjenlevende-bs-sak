@@ -62,11 +62,8 @@ SAF_URL: https://saf-q2.dev-fss-pub.nais.io
 SAF_SCOPE: api://dev-fss.teamdokumenthandtering.saf/.default
 
 # Tilgangsmaskin (Populasjonstilgangskontroll) - ekstern URL for lokal utvikling
-tilgangsmaskin:
-    url: ${TILGANGSMASKIN_URL:https://tilgangsmaskin.intern.dev.nav.no}
-    oauth:
-        registration-id: tilgangsmaskin-clientcredentials
-        scope: ${TILGANGSMASKIN_SCOPE:api://dev-gcp.tilgangsmaskin.populasjonstilgangskontroll/.default}
+TILGANGSMASKIN_URL: https://tilgangsmaskin.intern.dev.nav.no
+TILGANGSMASKIN_SCOPE: api://dev-gcp.tilgangsmaskin.populasjonstilgangskontroll/.default
 
 # Swagger/OpenAPI konfigurasjon
 springdoc:

@@ -76,12 +76,6 @@ oauth2:
             client-secret: ${AZURE_APP_CLIENT_SECRET}
             token-endpoint-url: ${AZUREAD_TOKEN_ENDPOINT_URL}
             scope: ${SAF_SCOPE}
-        tilgangsmaskin:
-            registration-id: tilgangsmaskin-clientcredentials
-            client-id: ${AZURE_APP_CLIENT_ID}
-            client-secret: ${AZURE_APP_CLIENT_SECRET}
-            token-endpoint-url: ${AZUREAD_TOKEN_ENDPOINT_URL}
-            scope: ${tilgangsmaskin.oauth.scope}
         familie-dokument:
             registration-id: familie-dokument-clientcredentials
             client-id: ${AZURE_APP_CLIENT_ID}
@@ -120,11 +114,8 @@ SAF_URL: https://saf-q2.dev-fss-pub.nais.io
 SAF_SCOPE: api://dev-fss.teamdokumenthandtering.saf/.default
 
 # Tilgangsmaskin (Populasjonstilgangskontroll)
-tilgangsmaskin:
-    url: ${TILGANGSMASKIN_URL:http://populasjonstilgangskontroll.tilgangsmaskin}
-    oauth:
-        registration-id: tilgangsmaskin-clientcredentials
-        scope: ${TILGANGSMASKIN_SCOPE:api://dev-gcp.tilgangsmaskin.populasjonstilgangskontroll/.default}
+TILGANGSMASKIN_URL: http://populasjonstilgangskontroll.tilgangsmaskin
+TILGANGSMASKIN_SCOPE: api://dev-gcp.tilgangsmaskin.populasjonstilgangskontroll/.default
 
 # Swagger/OpenAPI konfigurasjon
 springdoc:

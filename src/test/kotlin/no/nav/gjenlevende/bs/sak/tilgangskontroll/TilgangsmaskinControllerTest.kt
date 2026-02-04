@@ -13,21 +13,10 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.springframework.security.oauth2.jwt.Jwt
-import java.time.Instant
 
 class TilgangsmaskinControllerTest {
     private val tilgangsmaskinClient = mockk<TilgangsmaskinClient>()
     private val controller = TilgangsmaskinController(tilgangsmaskinClient)
-
-    private val mockJwt =
-        Jwt
-            .withTokenValue("test-token")
-            .header("alg", "RS256")
-            .claim("NAVident", "Z123456")
-            .issuedAt(Instant.now())
-            .expiresAt(Instant.now().plusSeconds(3600))
-            .build()
 
     @BeforeEach
     fun setup() {

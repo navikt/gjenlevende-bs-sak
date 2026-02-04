@@ -4,28 +4,40 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import no.nav.gjenlevende.bs.sak.texas.TexasClient
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
-import org.springframework.web.client.RestClient
+import org.springframework.web.client.HttpClientErrorException
+import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.bodyToMono
 import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
+
+@Configuration
+class TilgangsmaskinWebClientConfig {
+    @Bean
+    fun tilgangsmaskinWebClient(
+        @Value("\${tilgangsmaskin.url}") tilgangsmaskinUrl: String,
+    ): WebClient =
+        WebClient
+            .builder()
+            .baseUrl(tilgangsmaskinUrl)
+            .defaultHeader("Content-Type", "application/json")
+            .build()
+}
 
 @Component
 class TilgangsmaskinClient(
     @Value("\${tilgangsmaskin.url}") private val tilgangsmaskinUrl: URI,
     @Value("\${tilgangsmaskin.oauth.scope}") private val tilgangsmaskinScope: String,
     private val texasClient: TexasClient,
+    @Qualifier("tilgangsmaskinWebClient") private val tilgangsmaskinWebClient: WebClient,
 ) {
     private val logger = LoggerFactory.getLogger(TilgangsmaskinClient::class.java)
-
-    val tilgangsmaskinRestClient =
-        RestClient
-            .builder()
-            .baseUrl(tilgangsmaskinUrl)
-            .defaultHeader("Content-Type", "application/json")
-            .build()
 
     private val objectMapper =
         jacksonObjectMapper().apply {
@@ -53,13 +65,14 @@ class TilgangsmaskinClient(
             }
 
         return try {
-            return tilgangsmaskinRestClient
+            return tilgangsmaskinWebClient
                 .get()
                 .uri(uri)
                 .headers { it.addAll(headers) }
                 .retrieve()
-                .body(EnkelTilgangsResponse::class.java) ?: throw TilgangsmaskinException("Ingen respons fra tilgangsmaskinen")
-        } catch (e: org.springframework.web.client.HttpClientErrorException.Forbidden) {
+                .bodyToMono<EnkelTilgangsResponse>()
+                .block() ?: throw TilgangsmaskinException("Ingen respons fra tilgangsmaskinen")
+        } catch (e: HttpClientErrorException.Forbidden) {
             logger.info("Tilgang avvist for ansatt $navIdent til bruker $personident")
             val feilRespons = parseFeilRespons(e.responseBodyAsString)
             EnkelTilgangsResponse(
@@ -88,12 +101,13 @@ class TilgangsmaskinClient(
         val headers = HttpHeaders().apply { contentType = MediaType.APPLICATION_JSON }
 
         try {
-            return tilgangsmaskinRestClient
+            return tilgangsmaskinWebClient
                 .get()
                 .uri(uri)
                 .headers { it.addAll(headers) }
                 .retrieve()
-                .body(AnsattInfoResponse::class.java) ?: throw TilgangsmaskinException("Ingen respons fra tilgangsmaskinen")
+                .bodyToMono<AnsattInfoResponse>()
+                .block() ?: throw TilgangsmaskinException("Ingen respons fra tilgangsmaskinen")
         } catch (e: Exception) {
             logger.error("Feil ved henting av ansattinfo fra tilgangsmaskinen: ${e.message}")
             throw TilgangsmaskinException("Feil ved henting av ansattinfo: ${e.message}", e)
@@ -123,13 +137,14 @@ class TilgangsmaskinClient(
             }
 
         try {
-            return tilgangsmaskinRestClient
+            return tilgangsmaskinWebClient
                 .post()
                 .uri(uri)
-                .body(personidenter.toSet())
+                .bodyValue(personidenter.toSet())
                 .headers { it.addAll(headers) }
                 .retrieve()
-                .body(BulkTilgangsResponse::class.java) ?: throw TilgangsmaskinException("Ingen respons fra tilgangsmaskinen (bulk)")
+                .bodyToMono<BulkTilgangsResponse>()
+                .block() ?: throw TilgangsmaskinException("Ingen respons fra tilgangsmaskinen (bulk)")
         } catch (e: Exception) {
             logger.error("Feil ved bulk sjekk av tilgang mot tilgangsmaskinen: ${e.message}")
             throw TilgangsmaskinException("Feil ved bulk-tilgangssjekk: ${e.message}", e)

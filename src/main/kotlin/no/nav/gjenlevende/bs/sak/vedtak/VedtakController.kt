@@ -33,4 +33,10 @@ class VedtakController(
         vedtakService.lagreVedtak(vedtakDto = vedtakDto, behandlingId = behandlingId)
         return ResponseEntity.ok(behandlingId)
     }
+
+    @PostMapping("/{behandlingId}/beregn")
+    fun beregn(
+        @PathVariable behandlingId: UUID,
+        @RequestBody barnetilsynBeregningRequest: BarnetilsynBeregningRequest,
+    ): ResponseEntity<List<BeløpsperioderDto>> = ResponseEntity.ok(vedtakService.lagBeløpsperioder(barnetilsynBeregningRequest))
 }

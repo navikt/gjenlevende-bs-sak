@@ -21,7 +21,7 @@ import java.net.URI
 class TilgangsmaskinWebClientConfig {
     @Bean
     fun tilgangsmaskinWebClient(
-        @Value("\${tilgangsmaskin.url}") tilgangsmaskinUrl: String,
+        @Value("\${TILGANGSMASKIN_URL}") tilgangsmaskinUrl: String,
     ): WebClient =
         WebClient
             .builder()
@@ -32,8 +32,8 @@ class TilgangsmaskinWebClientConfig {
 
 @Component
 class TilgangsmaskinClient(
-    @Value("\${tilgangsmaskin.url}") private val tilgangsmaskinUrl: URI,
-    @Value("\${tilgangsmaskin.oauth.scope}") private val tilgangsmaskinScope: String,
+    @Value("\${TILGANGSMASKIN_URL}") private val tilgangsmaskinUrl: URI,
+    @Value("\${TILGANGSMASKIN_SCOPE}") private val tilgangsmaskinScope: String,
     private val texasClient: TexasClient,
     @Qualifier("tilgangsmaskinWebClient") private val tilgangsmaskinWebClient: WebClient,
 ) {

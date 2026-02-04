@@ -59,10 +59,8 @@ SAF_URL: http://localhost:8090
 SAF_SCOPE: mock-scope
 
 # Tilgangsmaskin -> WireMock
-tilgangsmaskin:
-    url: http://localhost:8090
-    oauth:
-        scope: mock-scope
+TILGANGSMASKIN_URL: http://localhost:8090
+TILGANGSMASKIN_SCOPE: mock-scope
 
 # OAuth2 klienter (mock verdier)
 saf:
@@ -78,11 +76,6 @@ oauth2:
     clients:
         saf:
             registration-id: saf-clientcredentials
-            client-id: mock-client-id
-            client-secret: mock-client-secret
-            token-endpoint-url: http://localhost:8089/default/token
-            scope: mock-scope
-        tilgangsmaskin:
             client-id: mock-client-id
             client-secret: mock-client-secret
             token-endpoint-url: http://localhost:8089/default/token

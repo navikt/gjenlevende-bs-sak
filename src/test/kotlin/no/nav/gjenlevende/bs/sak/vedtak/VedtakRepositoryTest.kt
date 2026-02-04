@@ -8,7 +8,7 @@ import no.nav.gjenlevende.bs.sak.fagsak.FagsakRepository
 import no.nav.gjenlevende.bs.sak.fagsak.domain.Fagsak
 import no.nav.gjenlevende.bs.sak.fagsak.domain.FagsakPerson
 import no.nav.gjenlevende.bs.sak.fagsak.domain.Personident
-import no.nav.gjenlevende.bs.sak.infotrygd.dto.StønadType
+import no.nav.gjenlevende.bs.sak.fagsak.domain.StønadType
 import no.nav.gjenlevende.bs.sak.vedtak.AktivitetstypeBarnetilsyn
 import no.nav.gjenlevende.bs.sak.vedtak.Barnetilsynperiode
 import no.nav.gjenlevende.bs.sak.vedtak.PeriodetypeBarnetilsyn

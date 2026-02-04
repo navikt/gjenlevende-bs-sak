@@ -1,7 +1,7 @@
 package no.nav.gjenlevende.bs.sak.fagsak.dto
 
 import no.nav.gjenlevende.bs.sak.fagsak.domain.Fagsak
-import no.nav.gjenlevende.bs.sak.infotrygd.dto.StønadType
+import no.nav.gjenlevende.bs.sak.fagsak.domain.StønadType
 import java.util.UUID
 
 data class FagsakDto(

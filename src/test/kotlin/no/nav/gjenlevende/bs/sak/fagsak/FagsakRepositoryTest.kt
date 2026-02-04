@@ -4,7 +4,7 @@ import no.nav.gjenlevende.bs.sak.SpringContextTest
 import no.nav.gjenlevende.bs.sak.fagsak.domain.Fagsak
 import no.nav.gjenlevende.bs.sak.fagsak.domain.FagsakPerson
 import no.nav.gjenlevende.bs.sak.fagsak.domain.Personident
-import no.nav.gjenlevende.bs.sak.infotrygd.dto.StønadType
+import no.nav.gjenlevende.bs.sak.fagsak.domain.StønadType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired

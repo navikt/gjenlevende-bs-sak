@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional
 import tools.jackson.databind.ObjectMapper
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 import java.util.UUID
 
 @Service
@@ -92,7 +93,7 @@ class BrevService(
         val brevInnhold = brev.brevJson
         val brukerNavn = brevInnhold.brevmal.informasjonOmBruker.navn
         val brukerPersonident = brevInnhold.brevmal.informasjonOmBruker.fnr
-        val dagensDato = LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+        val dagensDato = LocalDate.now().format(DateTimeFormatter.ofPattern("d. MMMM yyyy", Locale.forLanguageTag("no")))
         val tittel = brevInnhold.brevmal.tittel
         val logo = logoTilBase64()
         val fritekst = lagHtmlTekstbolker(brevInnhold.fritekstbolker)

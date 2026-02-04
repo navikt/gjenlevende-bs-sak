@@ -2,9 +2,9 @@ package no.nav.gjenlevende.bs.sak.fagsak
 
 import no.nav.gjenlevende.bs.sak.fagsak.domain.Fagsak
 import no.nav.gjenlevende.bs.sak.fagsak.domain.FagsakPerson
+import no.nav.gjenlevende.bs.sak.fagsak.domain.StønadType
 import no.nav.gjenlevende.bs.sak.fagsak.dto.FagsakDto
 import no.nav.gjenlevende.bs.sak.fagsak.dto.tilDto
-import no.nav.gjenlevende.bs.sak.infotrygd.dto.StønadType
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional

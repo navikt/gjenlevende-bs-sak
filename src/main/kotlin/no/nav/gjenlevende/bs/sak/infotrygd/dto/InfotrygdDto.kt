@@ -1,17 +1,11 @@
 package no.nav.gjenlevende.bs.sak.infotrygd.dto
 
+import no.nav.gjenlevende.bs.sak.fagsak.domain.StønadType
 import java.time.LocalDate
 
 data class PersonidentRequest(
     val personident: String,
 )
-
-enum class StønadType(
-    val kodeRutine: String,
-) {
-    BARNETILSYN("GB"),
-    SKOLEPENGER("GU"),
-}
 
 data class PeriodeResponse(
     val stønadType: StønadType,

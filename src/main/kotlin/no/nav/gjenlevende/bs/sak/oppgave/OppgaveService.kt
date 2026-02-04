@@ -51,12 +51,11 @@ private fun lagOpprettBehandleSakOppgaveRequest(
         personident = personident.ident,
         saksreferanse = fagsak.eksternId.toString(), // TODO sjekk om dette burde være "behandling-eksternid"?
         prioritet = OppgavePrioritet.NORM,
-        tema = Tema.EYO, // TODO finn tema for BARNETILSYN GJENLEVENDE EYO = omstilling
-        // behandlingstema = "ae0290", // Samhandling EM-PE-OM ... TODO finn behandlingstema for BARNETILSYN GJENLEVENDE, ab0224 ab0028(Hører til ENF - barnetilsyn)? ab0224
-        behandlingstype = "ae0290", // TODO vil legge inn behandlings_tema_ Gjenlevende bs når det er på plass - her bruker vi kun type.
+        tema = Tema.EYO,
+        behandlingstema = fagsak.stønadstype.behandlingstema,
         fristFerdigstillelse = OppgaveUtil.lagFristForOppgave().format(DateTimeFormatter.ISO_DATE),
         aktivDato = LocalDate.now().format(DateTimeFormatter.ISO_DATE),
-        oppgavetype = OppgavetypeEYO.GEN, // TODO legg inn BehandleSak som option,
+        oppgavetype = OppgavetypeEYO.BEH_SAK,
         beskrivelse = "Behandle sak oppgave for barnetilsynbehandling=${behandling.id}-${fagsak.stønadstype.name}",
         tilordnetRessurs = saksbehandler,
         behandlesAvApplikasjon = "gjenlevende-bs-sak", // Kan kun feilregistreres av saksbehandler i gosys? Må ferdigstilles av applikasjon?
@@ -120,26 +119,70 @@ enum class OppgavePrioritet {
     LAV,
 }
 
-// mulige oppgavetyper for tema EYO - vil legge in behandle sak og beslutter oppgave her:
-// https://github.com/navikt/oppgave/blob/70715a7b37e619be0e30079f5fdcf957effe2ba2/src/main/resources/data/oppgavetyper.json#L577
-enum class OppgavetypeEYO {
-    INNH_DOK,
-    VURD_NOTAT,
-    VURD_BREV,
-    GEN,
-    VURD_HENV,
-    VUR_KONS_YTE,
-    KONT_BRUK,
-    KRA_DOD,
-    BEH_SED,
-    TVU_FOR,
-    RETUR,
-    JFR,
-    KON_UTG_SCA_DOK,
-    FDR,
-    JFR_UT,
-    VUR_SVAR,
-    SVAR_IK_MOT,
+// mulige oppgavetyper for tema EYO (Februar 2026)
+enum class OppgavetypeEYO(
+    val term: String,
+) {
+    BEH_SAK(
+        term = "Behandle sak",
+    ),
+    GOD_VED(
+        term = "Godkjenne vedtak",
+    ),
+    BEH_UND_VED(
+        term = "Behandle underkjent vedtak",
+    ),
+    INNH_DOK(
+        term = "Innhent dokumentasjon",
+    ),
+    VURD_NOTAT(
+        term = "Vurder notat",
+    ),
+    VURD_BREV(
+        term = "Vurder brev",
+    ),
+    GEN(
+        term = "Generell",
+    ),
+    VURD_HENV(
+        term = "Vurder henvendelse",
+    ),
+    VUR_KONS_YTE(
+        term = "Vurder konsekvens for ytelse",
+    ),
+    KONT_BRUK(
+        term = "Kontakt bruker",
+    ),
+    KRA_DOD(
+        term = "Død",
+    ),
+    BEH_SED(
+        term = "Behandle SED",
+    ),
+    TVU_FOR(
+        term = "Tvungen forvaltning",
+    ),
+    RETUR(
+        term = "Behandle returpost",
+    ),
+    JFR(
+        term = "Journalføring",
+    ),
+    KON_UTG_SCA_DOK(
+        term = "Kontroller utgående skannet dokument",
+    ),
+    FDR(
+        term = "Fordeling",
+    ),
+    JFR_UT(
+        term = "Journalføring utgående",
+    ),
+    VUR_SVAR(
+        term = "Vurder svar",
+    ),
+    SVAR_IK_MOT(
+        term = "Svar ikke mottatt",
+    ),
 }
 
 data class OppgavePersonident(

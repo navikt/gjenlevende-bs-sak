@@ -58,20 +58,6 @@ azure:
 
 
 
-# OAuth2 klient konfigurering
-saf:
-    url: ${SAF_URL}
-    oauth:
-        registration-id: saf-clientcredentials
-
-oauth2:
-    clients:
-        saf:
-            registration-id: saf-clientcredentials
-            client-id: ${AZURE_APP_CLIENT_ID}
-            client-secret: ${AZURE_APP_CLIENT_SECRET}
-            token-endpoint-url: ${AZUREAD_TOKEN_ENDPOINT_URL}
-            scope: ${SAF_SCOPE}
 
 # Azure AD miljøvariabler (for SwaggerConfig.kt)
 AZUREAD_TOKEN_ENDPOINT_URL: https://login.microsoftonline.com/${azure.app.tenant.id}/oauth2/v2.0/token

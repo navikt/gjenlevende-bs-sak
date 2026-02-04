@@ -62,20 +62,6 @@ SAF_SCOPE: mock-scope
 TILGANGSMASKIN_URL: http://localhost:8090
 TILGANGSMASKIN_SCOPE: mock-scope
 
-# OAuth2 klienter (mock verdier)
-saf:
-    url: http://localhost:8090
-    oauth:
-        registration-id: saf-clientcredentials
-
-oauth2:
-    clients:
-        saf:
-            registration-id: saf-clientcredentials
-            client-id: mock-client-id
-            client-secret: mock-client-secret
-            token-endpoint-url: http://localhost:8089/default/token
-            scope: mock-scope
 
 # Texas mock
 NAIS_TOKEN_EXCHANGE_ENDPOINT: http://localhost:8090/texas/api/v1/token/exchange

@@ -2,11 +2,10 @@ package no.nav.gjenlevende.bs.sak.fagsak
 
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
-import io.mockk.justRun
 import io.mockk.verify
 import no.nav.gjenlevende.bs.sak.ApplicationLocalSetup
+import no.nav.gjenlevende.bs.sak.fagsak.domain.StønadType
 import no.nav.gjenlevende.bs.sak.fagsak.dto.FagsakDto
-import no.nav.gjenlevende.bs.sak.infotrygd.dto.StønadType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired

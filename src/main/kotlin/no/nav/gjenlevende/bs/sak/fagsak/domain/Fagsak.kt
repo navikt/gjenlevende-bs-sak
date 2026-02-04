@@ -1,7 +1,6 @@
 package no.nav.gjenlevende.bs.sak.fagsak.domain
 
 import no.nav.gjenlevende.bs.sak.felles.sporbar.Sporbar
-import no.nav.gjenlevende.bs.sak.infotrygd.dto.StønadType
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Embedded
@@ -19,3 +18,11 @@ data class Fagsak(
     @Embedded(onEmpty = Embedded.OnEmpty.USE_EMPTY)
     val sporbar: Sporbar = Sporbar(),
 )
+
+enum class StønadType(
+    val kodeRutine: String,
+    val behandlingstema: String,
+) {
+    BARNETILSYN("GB", behandlingstema = "ab0028"),
+    SKOLEPENGER("GU", behandlingstema = "ab0177"),
+}

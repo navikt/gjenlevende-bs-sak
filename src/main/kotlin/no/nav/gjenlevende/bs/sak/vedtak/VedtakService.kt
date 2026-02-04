@@ -20,7 +20,5 @@ class VedtakService(
         vedtakRepository.deleteById(behandlingId)
     }
 
-    fun lagBeløpsperioder(barnetilsynBeregningRequest : BarnetilsynBeregningRequest) : List<BeløpsperioderDto>{
-        return beregnBarnetilsynperiode(barnetilsynBeregningRequest.barnetilsynBeregning)
-    }
+    fun lagBeløpsperioder(barnetilsynBeregningRequest: BarnetilsynBeregningRequest): List<BeløpsperioderDto> = beregnBarnetilsynperiode(barnetilsynBeregningRequest.barnetilsynBeregning)
 }

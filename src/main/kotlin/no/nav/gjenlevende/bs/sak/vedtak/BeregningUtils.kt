@@ -87,7 +87,7 @@ object BeregningUtils {
                 utgifter = beregning.utgifter,
                 antallBarn = antallBarn,
                 beløp = beløp.roundUp().toInt(),
-                periodetype = beregning.periodetype
+                periodetype = beregning.periodetype,
             )
         }
 }

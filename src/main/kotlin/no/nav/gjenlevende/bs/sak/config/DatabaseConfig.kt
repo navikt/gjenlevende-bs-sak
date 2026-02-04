@@ -16,6 +16,9 @@ import org.springframework.data.jdbc.repository.config.AbstractJdbcConfiguration
 import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import tools.jackson.databind.ObjectMapper
+import java.sql.Date
+import java.time.LocalDate
+import java.time.YearMonth
 import javax.sql.DataSource
 
 @Configuration
@@ -32,6 +35,8 @@ open class DatabaseConfig(
             StringTilPropertiesWrapperConverter(),
             BrevRequestTilJsonbConverter(objectMapper),
             JsonbTilBrevRequestConverter(objectMapper),
+            YearMonthTilDateConverter(),
+            DateTilYearMonthConverter(),
         )
 
     @Bean
@@ -67,5 +72,15 @@ open class DatabaseConfig(
         private val objectMapper: ObjectMapper,
     ) : Converter<PGobject, BrevRequest> {
         override fun convert(source: PGobject): BrevRequest = objectMapper.readValue(source.value, BrevRequest::class.java)
+    }
+
+    @WritingConverter
+    class YearMonthTilDateConverter : Converter<YearMonth, LocalDate> {
+        override fun convert(source: YearMonth): LocalDate = source.atDay(1)
+    }
+
+    @ReadingConverter
+    class DateTilYearMonthConverter : Converter<Date, YearMonth> {
+        override fun convert(source: Date): YearMonth = YearMonth.from(source.toLocalDate())
     }
 }

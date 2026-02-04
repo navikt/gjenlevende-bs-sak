@@ -55,7 +55,7 @@ data class BeløpsperioderDto(
     val utgifter: BigDecimal,
     val antallBarn: Int,
     val beløp: Int,
-    val periodetype: PeriodetypeBarnetilsyn
+    val periodetype: PeriodetypeBarnetilsyn,
 )
 
 enum class ResultatType {

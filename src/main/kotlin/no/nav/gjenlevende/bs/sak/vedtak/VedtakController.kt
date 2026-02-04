@@ -38,7 +38,5 @@ class VedtakController(
     fun beregn(
         @PathVariable behandlingId: UUID,
         @RequestBody barnetilsynBeregningRequest: BarnetilsynBeregningRequest,
-    ): ResponseEntity<List<BeløpsperioderDto>> {
-        return ResponseEntity.ok(vedtakService.lagBeløpsperioder(barnetilsynBeregningRequest))
-    }
+    ): ResponseEntity<List<BeløpsperioderDto>> = ResponseEntity.ok(vedtakService.lagBeløpsperioder(barnetilsynBeregningRequest))
 }

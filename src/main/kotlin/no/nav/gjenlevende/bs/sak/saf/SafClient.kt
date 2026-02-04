@@ -24,18 +24,16 @@ class SafClient(
             .defaultHeader("Content-Type", "application/json")
             .build()
 
-    fun utførQuery(
-        query: String,
+    fun hentSafJournalpostBrukerData(
         variables: JournalposterForBrukerRequest,
-        operasjon: String,
     ): SafJournalpostBrukerData {
         val request =
             SafJournalpostRequest(
-                query = query,
+                query = SafConfig.hentJournalposterBrukerQuery,
                 variables = variables.tilSafRequestForBruker(),
             )
 
-        logger.info("Utfører SAF-operasjon: $operasjon")
+        logger.info("Utfører SAF-operasjon: hentSafJournalpostBrukerData")
 
         return try {
             val response =
@@ -45,11 +43,11 @@ class SafClient(
                     .bodyValue(request)
                     .retrieve()
                     .bodyToMono<SafJournalpostResponse>()
-                    .block() ?: throw SafException("Ingen respons fra SAF for $operasjon")
+                    .block() ?: throw SafException("Ingen respons fra SAF for hentSafJournalpostBrukerData")
 
             val safResponse = response
 
-            håndterSafErrrors(safResponse.errors, operasjon)
+            håndterSafErrrors(safResponse.errors, "hentSafJournalpostBrukerData")
 
             safResponse.data ?: throw SafException("Fant ingen person i SAF for brukerId")
         } catch (e: Exception) {
@@ -59,8 +57,8 @@ class SafClient(
                 }
 
                 else -> {
-                    logger.error("Teknisk feil ved SAF-operasjon: $operasjon", e)
-                    throw SafException("Teknisk feil ved $operasjon", e)
+                    logger.error("Teknisk feil ved SAF-operasjon: hentSafJournalpostBrukerData", e)
+                    throw SafException("Teknisk feil ved hentSafJournalpostBrukerData", e)
                 }
             }
         }

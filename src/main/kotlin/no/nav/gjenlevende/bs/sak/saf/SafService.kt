@@ -13,10 +13,9 @@ class SafService(
 ) {
     fun hentJournalposterForIdent(ident: String): List<Journalpost>? {
         val data: SafJournalpostBrukerData =
-            safClient.utførQuery(
-                query = SafConfig.hentJournalposterBrukerQuery,
+            safClient.hentSafJournalpostBrukerData(
                 variables = JournalposterForBrukerRequest(Bruker(ident, BrukerIdType.FNR), emptyList(), emptyList(), 200),
-                operasjon = "hentJournalposterForBrukerId",
+
             )
 
         return data.dokumentoversiktBruker.journalposter

@@ -37,8 +37,8 @@ class VedtakControllerTest {
   "barnetilsynperioder": [
     {
       "behandlingId": "86460749-53d4-481b-8909-7286efc7eaad",
-      "datoFra": "2024-01-01",
-      "datoTil": "2024-01-01",
+      "datoFra": "2024-01",
+      "datoTil": "2024-01",
       "utgifter": 1000,
       "barn": [
         "b1e1d2c3-1111-2222-3333-444455556666"

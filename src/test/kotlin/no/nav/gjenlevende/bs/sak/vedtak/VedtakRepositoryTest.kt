@@ -18,8 +18,9 @@ import no.nav.gjenlevende.bs.sak.vedtak.VedtakRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import java.time.LocalDate
+import java.math.BigDecimal
 import java.time.LocalDateTime
+import java.time.YearMonth
 import java.util.UUID
 
 internal class VedtakRepositoryTest : SpringContextTest() {
@@ -52,9 +53,9 @@ internal class VedtakRepositoryTest : SpringContextTest() {
                     listOf(
                         Barnetilsynperiode(
                             behandlingId = behandling.id,
-                            datoFra = LocalDate.now(),
-                            datoTil = LocalDate.now(),
-                            utgifter = 1000,
+                            datoFra = YearMonth.now(),
+                            datoTil = YearMonth.now(),
+                            utgifter = BigDecimal(1000),
                             barn = listOf(UUID.randomUUID()),
                             periodetype = PeriodetypeBarnetilsyn.ORDINÆR,
                             aktivitetstype = AktivitetstypeBarnetilsyn.I_ARBEID,

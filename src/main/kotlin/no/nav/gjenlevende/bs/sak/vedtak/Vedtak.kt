@@ -5,6 +5,7 @@ import no.nav.gjenlevende.bs.sak.felles.sporbar.SporbarUtils
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.MappedCollection
+import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.YearMonth
@@ -28,12 +29,33 @@ data class Vedtak(
 data class Barnetilsynperiode(
     @Id
     val behandlingId: UUID,
-    val datoFra: LocalDate,
-    val datoTil: LocalDate,
-    val utgifter: Int,
+    val datoFra: YearMonth,
+    val datoTil: YearMonth,
+    val utgifter: BigDecimal,
     val barn: List<UUID>,
     val periodetype: PeriodetypeBarnetilsyn,
     val aktivitetstype: AktivitetstypeBarnetilsyn,
+)
+
+data class BarnetilsynBeregningRequest(
+    val barnetilsynBeregning: List<BarnetilsynBeregning>,
+)
+
+data class BarnetilsynBeregning(
+    val datoFra: YearMonth,
+    val datoTil: YearMonth,
+    val utgifter: BigDecimal,
+    val barn: List<UUID>,
+    val periodetype: PeriodetypeBarnetilsyn,
+)
+
+data class BeløpsperioderDto(
+    val datoFra: YearMonth,
+    val datoTil: YearMonth,
+    val utgifter: BigDecimal,
+    val antallBarn: Int,
+    val beløp: Int,
+    val periodetype: PeriodetypeBarnetilsyn
 )
 
 enum class ResultatType {

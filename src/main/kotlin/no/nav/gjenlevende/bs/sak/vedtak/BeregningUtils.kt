@@ -1,6 +1,7 @@
 package no.nav.gjenlevende.bs.sak.vedtak
 
 import java.math.BigDecimal
+import java.math.RoundingMode
 import java.time.YearMonth
 
 data class MaxbeløpBarnetilsynSats(
@@ -74,6 +75,21 @@ object BeregningUtils {
 
         return maxOf(BigDecimal.ZERO, minBeløp)
     }
+
+    fun beregnBarnetilsynperiode(barnetilsynBeregninger: List<BarnetilsynBeregning>): List<BeløpsperioderDto> =
+        barnetilsynBeregninger.map { beregning ->
+            val antallBarn = beregning.barn.size
+            val beløp = beregnPeriodeBeløp(beregning.utgifter, antallBarn, beregning.datoFra)
+
+            BeløpsperioderDto(
+                datoFra = beregning.datoFra,
+                datoTil = beregning.datoTil,
+                utgifter = beregning.utgifter,
+                antallBarn = antallBarn,
+                beløp = beløp.roundUp().toInt(),
+                periodetype = beregning.periodetype
+            )
+        }
 }
 
 fun List<MaxbeløpBarnetilsynSats>.hentSatsFor(
@@ -91,3 +107,5 @@ fun List<MaxbeløpBarnetilsynSats>.hentSatsFor(
     return maxbeløpBarnetilsynSats.maxbeløp[minOf(antallBarn, 3)]
         ?: error { "Kunne ikke finne barnetilsyn sats for antallBarn: $antallBarn periode: $årMåned " }
 }
+
+fun BigDecimal.roundUp(): BigDecimal = this.setScale(0, RoundingMode.UP)

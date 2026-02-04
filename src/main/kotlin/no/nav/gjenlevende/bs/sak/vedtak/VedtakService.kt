@@ -1,5 +1,6 @@
 package no.nav.gjenlevende.bs.sak.vedtak
 
+import no.nav.gjenlevende.bs.sak.vedtak.BeregningUtils.beregnBarnetilsynperiode
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import java.util.UUID
@@ -17,5 +18,9 @@ class VedtakService(
 
     fun slettVedtakHvisFinnes(behandlingId: UUID) {
         vedtakRepository.deleteById(behandlingId)
+    }
+
+    fun lagBeløpsperioder(barnetilsynBeregningRequest : BarnetilsynBeregningRequest) : List<BeløpsperioderDto>{
+        return beregnBarnetilsynperiode(barnetilsynBeregningRequest.barnetilsynBeregning)
     }
 }

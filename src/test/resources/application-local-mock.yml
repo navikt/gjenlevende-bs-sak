@@ -63,10 +63,6 @@ TILGANGSMASKIN_URL: http://localhost:8090
 TILGANGSMASKIN_SCOPE: mock-scope
 
 # OAuth2 klienter (mock verdier)
-saf:
-    url: http://localhost:8090
-    oauth:
-        registration-id: saf-clientcredentials
 familie-dokument:
     url: http://localhost:8090
     oauth:
@@ -74,12 +70,6 @@ familie-dokument:
 
 oauth2:
     clients:
-        saf:
-            registration-id: saf-clientcredentials
-            client-id: mock-client-id
-            client-secret: mock-client-secret
-            token-endpoint-url: http://localhost:8089/default/token
-            scope: mock-scope
         familie-dokument:
             registration-id: familie-dokument-clientcredentials
             client-id: mock-client-id

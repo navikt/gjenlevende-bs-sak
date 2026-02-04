@@ -9,7 +9,9 @@ import java.net.URI
 @Configuration
 open class SafConfig(
     @Value("\${SAF_URL}") safUri: URI,
+    @Value("\${SAF_SCOPE}") val safScope: String,
 ) {
+
     val safUri: URI =
         UriComponentsBuilder
             .fromUri(safUri)
@@ -24,9 +26,9 @@ open class SafConfig(
 
         private fun graphqlQuery(path: String) =
             SafConfig::class.java
-                .getResource(path)
-                .readText()
-                .graphqlCompatible()
+                ?.getResource(path)
+                ?.readText()
+                ?.graphqlCompatible() ?: throw IllegalStateException("Kunne ikke lese inn GraphQL query fra $path")
 
         private fun String.graphqlCompatible(): String = StringUtils.normalizeSpace(this.replace("\n", ""))
     }

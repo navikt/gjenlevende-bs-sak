@@ -20,8 +20,8 @@ data class Journalpostliste(
     val journalposter: List<Journalpost>?,
 )
 
-data class SafJournalpostResponse<T>(
-    val data: T? = null,
+data class SafJournalpostResponse(
+    val data: SafJournalpostBrukerData? = null,
     val errors: List<SafError>? = null,
 )
 

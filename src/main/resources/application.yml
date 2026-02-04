@@ -59,10 +59,6 @@ azure:
 
 
 # OAuth2 klient konfigurering
-saf:
-    url: ${SAF_URL}
-    oauth:
-        registration-id: saf-clientcredentials
 familie-dokument:
     url: ${FAMILIE_DOKUMENT_URL}
     oauth:
@@ -70,12 +66,6 @@ familie-dokument:
 
 oauth2:
     clients:
-        saf:
-            registration-id: saf-clientcredentials
-            client-id: ${AZURE_APP_CLIENT_ID}
-            client-secret: ${AZURE_APP_CLIENT_SECRET}
-            token-endpoint-url: ${AZUREAD_TOKEN_ENDPOINT_URL}
-            scope: ${SAF_SCOPE}
         familie-dokument:
             registration-id: familie-dokument-clientcredentials
             client-id: ${AZURE_APP_CLIENT_ID}

@@ -1,60 +1,57 @@
 package no.nav.gjenlevende.bs.sak.saf
 
 import no.nav.gjenlevende.bs.sak.config.SafConfig
-import no.nav.gjenlevende.bs.sak.felles.OAuth2RestOperationsFactory
+import no.nav.gjenlevende.bs.sak.texas.TexasClient
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Value
-import org.springframework.core.ParameterizedTypeReference
-import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
-import org.springframework.http.HttpMethod
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
-import org.springframework.web.client.RestOperations
+import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.bodyToMono
 import java.util.UUID
 
 @Service
 class SafClient(
     val safConfig: SafConfig,
-    @Value("\${saf.oauth.registration-id}") registrationId: String,
-    oauth2RestFactory: OAuth2RestOperationsFactory,
+    private val texasClient: TexasClient,
 ) {
     private val logger = LoggerFactory.getLogger(SafClient::class.java)
-    private val restTemplate: RestOperations = oauth2RestFactory.create(registrationId)
 
-    fun <T> utførQuery(
+    val safWebClient =
+        WebClient
+            .builder()
+            .baseUrl(safConfig.safUri.toString())
+            .defaultHeader("Content-Type", "application/json")
+            .build()
+
+    fun utførQuery(
         query: String,
         variables: JournalposterForBrukerRequest,
-        responstype: ParameterizedTypeReference<SafJournalpostResponse<T>>,
         operasjon: String,
-    ): T? {
+    ): SafJournalpostBrukerData {
         val request =
             SafJournalpostRequest(
                 query = query,
                 variables = variables.tilSafRequestForBruker(),
             )
 
-        val headers = lagSafHeaders()
-        val entity = HttpEntity(request, headers)
-
         logger.info("Utfører SAF-operasjon: $operasjon")
 
         return try {
             val response =
-                restTemplate.exchange(
-                    safConfig.safUri,
-                    HttpMethod.POST,
-                    entity,
-                    responstype,
-                )
+                safWebClient
+                    .post()
+                    .headers { it.addAll(lagSafHeaders()) }
+                    .bodyValue(request)
+                    .retrieve()
+                    .bodyToMono<SafJournalpostResponse>()
+                    .block() ?: throw SafException("Ingen respons fra SAF for $operasjon")
 
-            val safResponse =
-                response.body
-                    ?: throw SafException("Ingen respons fra SAF for $operasjon")
+            val safResponse = response
 
             håndterSafErrrors(safResponse.errors, operasjon)
 
-            safResponse.data
+            safResponse.data ?: throw SafException("Fant ingen person i SAF for brukerId")
         } catch (e: Exception) {
             when (e) {
                 is SafException -> {
@@ -84,6 +81,7 @@ class SafClient(
 
     private fun lagSafHeaders(): HttpHeaders =
         HttpHeaders().apply {
+            setBearerAuth(texasClient.hentOboToken(safConfig.safScope))
             contentType = MediaType.APPLICATION_JSON
             accept = listOf(MediaType.APPLICATION_JSON)
             add(NAV_CALL_ID, UUID.randomUUID().toString())

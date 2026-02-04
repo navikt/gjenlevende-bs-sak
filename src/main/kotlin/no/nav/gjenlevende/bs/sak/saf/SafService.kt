@@ -2,9 +2,6 @@ package no.nav.gjenlevende.bs.sak.saf
 
 import no.nav.gjenlevende.bs.sak.config.SafConfig
 import no.nav.gjenlevende.bs.sak.fagsak.FagsakPersonService
-import no.nav.gjenlevende.bs.sak.pdl.PdlService
-import org.slf4j.LoggerFactory
-import org.springframework.core.ParameterizedTypeReference
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import java.util.UUID
@@ -14,16 +11,13 @@ class SafService(
     private val safClient: SafClient,
     private val fagsakPersonService: FagsakPersonService,
 ) {
-    private val logger = LoggerFactory.getLogger(PdlService::class.java)
-
     fun hentJournalposterForIdent(ident: String): List<Journalpost>? {
-        val data =
+        val data: SafJournalpostBrukerData =
             safClient.utførQuery(
                 query = SafConfig.hentJournalposterBrukerQuery,
                 variables = JournalposterForBrukerRequest(Bruker(ident, BrukerIdType.FNR), emptyList(), emptyList(), 200),
-                responstype = object : ParameterizedTypeReference<SafJournalpostResponse<SafJournalpostBrukerData>>() {},
                 operasjon = "hentJournalposterForBrukerId",
-            ) ?: throw SafException("Fant ingen person i SAF for brukerId")
+            )
 
         return data.dokumentoversiktBruker.journalposter
     }

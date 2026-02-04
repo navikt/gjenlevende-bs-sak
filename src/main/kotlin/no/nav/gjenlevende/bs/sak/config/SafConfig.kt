@@ -11,7 +11,6 @@ open class SafConfig(
     @Value("\${SAF_URL}") safUri: URI,
     @Value("\${SAF_SCOPE}") val safScope: String,
 ) {
-
     val safUri: URI =
         UriComponentsBuilder
             .fromUri(safUri)

@@ -22,25 +22,6 @@ class TilgangsmaskinController(
 ) {
     private val logger = LoggerFactory.getLogger(TilgangsmaskinController::class.java)
 
-    @Operation(summary = "Sjekk tilgang til en enkelt bruker")
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "200",
-                description = "Tilgangssjekk fungerte",
-                content = [Content(schema = Schema(implementation = EnkelTilgangsResponse::class))],
-            ),
-        ],
-    )
-    @PostMapping("/sjekk", produces = [MediaType.APPLICATION_JSON_VALUE])
-    fun sjekkTilgangEnkel(
-        @RequestBody request: TilgangssjekkRequest,
-    ): EnkelTilgangsResponse {
-        val navIdent = SikkerhetContext.hentSaksbehandler()
-        logger.info("Sjekker tilgang for saksbehandler $navIdent til bruker")
-        return tilgangsmaskinClient.sjekkTilgangEnkel(navIdent, request.personident)
-    }
-
     @Operation(
         summary = "Bulk-sjekk tilgang til flere brukere (forenklet)",
         description = "Sjekker kjerneregelsett (habilitet) og returnerer forenklet respons med harTilgang-flagg",

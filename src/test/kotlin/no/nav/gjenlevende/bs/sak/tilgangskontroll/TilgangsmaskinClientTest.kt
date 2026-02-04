@@ -392,7 +392,6 @@ class TilgangsmaskinClientTest {
 
     @Nested
     inner class SjekkTilgangBulk {
-
         @Test
         fun `saksbehandler har ikke tilgang til brukere - returnerer ikke 204`() {
             val personidenter = listOf("12345678901", "12345678901")
@@ -416,17 +415,19 @@ class TilgangsmaskinClientTest {
         private fun lagBulkRespons(
             personident: List<String>,
             status: Int,
-        ): BulkTilgangsResponse = BulkTilgangsResponse(
-            navIdent = "Z123456",
-            resultater =
-                personident.map {  pid ->
-                    TilgangsResultat(
-                        personident = pid,
-                        status = status,
-                        detaljer = null,
-                    )
-                }.toSet(),
-        )
+        ): BulkTilgangsResponse =
+            BulkTilgangsResponse(
+                navIdent = "Z123456",
+                resultater =
+                    personident
+                        .map { pid ->
+                            TilgangsResultat(
+                                personident = pid,
+                                status = status,
+                                detaljer = null,
+                            )
+                        }.toSet(),
+            )
 
         private fun mockkWebclientBulk(
             expectedResponse: BulkTilgangsResponse,

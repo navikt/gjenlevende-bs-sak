@@ -25,7 +25,7 @@ class FamilieDokumentClient(
     fun genererPdfFraHtml(html: String): ByteArray {
         val headers =
             HttpHeaders().apply {
-                setBearerAuth(texasClient.hentOboToken(targetAudience = familieDokumentScope.toString()))
+                setBearerAuth(texasClient.hentMaskinToken(targetAudience = familieDokumentScope.toString()))
                 this.contentType = MediaType.TEXT_HTML
                 this.accept = listOf(MediaType.APPLICATION_PDF)
             }

@@ -1,6 +1,5 @@
 package no.nav.gjenlevende.bs.sak.saf
 
-import no.nav.gjenlevende.bs.sak.config.SafConfig
 import no.nav.gjenlevende.bs.sak.fagsak.FagsakPersonService
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime

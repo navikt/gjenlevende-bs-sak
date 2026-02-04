@@ -15,10 +15,9 @@ import java.net.URI
 @Component
 class FamilieDokumentClient(
     @Value("\${FAMILIE_DOKUMENT_URL}") private val familieDokumentUrl: URI,
-    @Value("\${familie-dokument.oauth.registration-id}") registrationId: String,
-    oauth2RestFactory: OAuth2RestOperationsFactory,
+    @Value("\${FAMILIE_DOKUMENT_SCOPE}") private val familieDokumentScope: URI,
+
 ) {
-    private val restTemplate: RestOperations = oauth2RestFactory.create(registrationId)
 
     fun genererPdfFraHtml(html: String): ByteArray {
         val htmlTilPdfURI: URI =

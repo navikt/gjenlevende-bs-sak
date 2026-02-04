@@ -6,7 +6,6 @@ import io.mockk.justRun
 import io.mockk.verify
 import no.nav.gjenlevende.bs.sak.ApplicationLocalSetup
 import no.nav.gjenlevende.bs.sak.fagsak.dto.FagsakDto
-import no.nav.gjenlevende.bs.sak.felles.sikkerhet.TilgangService
 import no.nav.gjenlevende.bs.sak.infotrygd.dto.StønadType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -34,9 +33,6 @@ open class FagsakControllerTest {
 
     @MockkBean
     private lateinit var fagsakService: FagsakService
-
-    @MockkBean
-    private lateinit var tilgangService: TilgangService
 
     @MockkBean
     private lateinit var fagsakPersonService: FagsakPersonService
@@ -67,8 +63,6 @@ open class FagsakControllerTest {
         every {
             fagsakService.hentEllerOpprettFagsakMedBehandlinger(personident, stønadstype)
         } returns forventetFagsak
-
-        justRun { tilgangService.validerTilgangTilPersonMedRelasjoner(any()) }
 
         val responseJson =
             mockMvc
@@ -116,8 +110,6 @@ open class FagsakControllerTest {
         } returns forventetFagsak
 
         every { fagsakPersonService.hentAktivIdent(any()) } returns personident
-
-        justRun { tilgangService.validerTilgangTilPersonMedRelasjoner(any()) }
 
         val responseJson =
             mockMvc
@@ -180,7 +172,6 @@ open class FagsakControllerTest {
             )
 
         every { fagsakPersonService.hentAktivIdent(any()) } returns "12345678910"
-        justRun { tilgangService.validerTilgangTilPersonMedRelasjoner(any()) }
 
         mockMvc
             .post("/api/fagsak") {

@@ -14,7 +14,6 @@ class SafService(
         val data: SafJournalpostBrukerData =
             safClient.hentSafJournalpostBrukerData(
                 variables = JournalposterForBrukerRequest(Bruker(ident, BrukerIdType.FNR), emptyList(), emptyList(), 200),
-
             )
 
         return data.dokumentoversiktBruker.journalposter

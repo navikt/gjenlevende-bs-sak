@@ -56,23 +56,6 @@ azure:
             id: ${AZURE_APP_CLIENT_ID}
             secret: ${AZURE_APP_CLIENT_SECRET}
 
-
-
-# OAuth2 klient konfigurering
-familie-dokument:
-    url: ${FAMILIE_DOKUMENT_URL}
-    oauth:
-        registration-id: familie-dokument-clientcredentials
-
-oauth2:
-    clients:
-        familie-dokument:
-            registration-id: familie-dokument-clientcredentials
-            client-id: ${AZURE_APP_CLIENT_ID}
-            client-secret: ${AZURE_APP_CLIENT_SECRET}
-            token-endpoint-url: ${AZUREAD_TOKEN_ENDPOINT_URL}
-            scope: ${FAMILIE_DOKUMENT_SCOPE}
-
 # Azure AD miljøvariabler (for SwaggerConfig.kt)
 AZUREAD_TOKEN_ENDPOINT_URL: https://login.microsoftonline.com/${azure.app.tenant.id}/oauth2/v2.0/token
 AUTHORIZATION_URL: https://login.microsoftonline.com/${azure.app.tenant.id}/oauth2/v2.0/authorize

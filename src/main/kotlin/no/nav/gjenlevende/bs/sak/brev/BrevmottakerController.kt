@@ -3,6 +3,7 @@ package no.nav.gjenlevende.bs.sak.brev
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import no.nav.gjenlevende.bs.sak.brev.domain.Brevmottaker
+import no.nav.gjenlevende.bs.sak.brev.domain.BrevmottakerRequest
 import no.nav.gjenlevende.bs.sak.felles.sikkerhet.Tilgangskontroll
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
@@ -20,7 +21,7 @@ import java.util.UUID
 class BrevmottakerController(
     private val brevmottakerService: BrevmottakerService,
 ) {
-    @PostMapping("/{behandlingId}")
+    @PostMapping("/settMottakere/{behandlingId}")
     @PreAuthorize("hasRole('SAKSBEHANDLER')")
     @Operation(
         summary = "Oppdaterer brevmottakere",
@@ -28,9 +29,12 @@ class BrevmottakerController(
     )
     fun oppdaterBrevmottakere(
         @PathVariable behandlingId: UUID,
-        @RequestBody brevmottakere: List<Brevmottaker>,
+        @RequestBody brevmottakere: List<BrevmottakerRequest>,
     ): ResponseEntity<List<Brevmottaker>> {
-        val oppdaterteBrevmottakere = brevmottakerService.oppdaterBrevmottakere(behandlingId, brevmottakere)
+        val oppdaterteBrevmottakere = brevmottakerService.oppdaterBrevmottakere(
+            behandlingId,
+            brevmottakere.map { it.tilBrevmottaker(behandlingId) },
+        )
         return ResponseEntity.ok(oppdaterteBrevmottakere)
     }
 }

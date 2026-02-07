@@ -9,12 +9,13 @@ data class BrevmottakerRequest(
     val orgnr: String? = null,
     val navnHosOrganisasjon: String? = null,
 ) {
-    fun tilBrevmottaker(behandlingId: UUID) = Brevmottaker(
-        behandlingId = behandlingId,
-        personRolle = personRolle,
-        mottakerType = mottakerType,
-        personident = personident,
-        orgnr = orgnr,
-        navnHosOrganisasjon = navnHosOrganisasjon,
-    )
+    fun tilBrevmottaker(behandlingId: UUID) =
+        Brevmottaker(
+            behandlingId = behandlingId,
+            personRolle = personRolle,
+            mottakerType = mottakerType,
+            personident = personident,
+            orgnr = orgnr,
+            navnHosOrganisasjon = navnHosOrganisasjon,
+        )
 }

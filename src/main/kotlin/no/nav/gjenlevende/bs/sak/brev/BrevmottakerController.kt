@@ -7,6 +7,7 @@ import no.nav.gjenlevende.bs.sak.brev.domain.BrevmottakerRequest
 import no.nav.gjenlevende.bs.sak.felles.sikkerhet.Tilgangskontroll
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -21,6 +22,19 @@ import java.util.UUID
 class BrevmottakerController(
     private val brevmottakerService: BrevmottakerService,
 ) {
+    @GetMapping("/{behandlingId}")
+    @PreAuthorize("hasRole('SAKSBEHANDLER')")
+    @Operation(
+        summary = "Henter brevmottakere",
+        description = "Henter alle brevmottakere for gitt behandlingId",
+    )
+    fun hentBrevmottakere(
+        @PathVariable behandlingId: UUID,
+    ): ResponseEntity<List<Brevmottaker>> {
+        val brevmottakere = brevmottakerService.hentBrevmottakere(behandlingId)
+        return ResponseEntity.ok(brevmottakere)
+    }
+
     @PostMapping("/settMottakere/{behandlingId}")
     @PreAuthorize("hasRole('SAKSBEHANDLER')")
     @Operation(

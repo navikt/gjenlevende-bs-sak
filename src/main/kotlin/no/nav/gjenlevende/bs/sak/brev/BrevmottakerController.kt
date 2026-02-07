@@ -45,10 +45,11 @@ class BrevmottakerController(
         @PathVariable behandlingId: UUID,
         @RequestBody brevmottakere: List<BrevmottakerRequest>,
     ): ResponseEntity<List<Brevmottaker>> {
-        val oppdaterteBrevmottakere = brevmottakerService.oppdaterBrevmottakere(
-            behandlingId,
-            brevmottakere.map { it.tilBrevmottaker(behandlingId) },
-        )
+        val oppdaterteBrevmottakere =
+            brevmottakerService.oppdaterBrevmottakere(
+                behandlingId,
+                brevmottakere.map { it.tilBrevmottaker(behandlingId) },
+            )
         return ResponseEntity.ok(oppdaterteBrevmottakere)
     }
 }

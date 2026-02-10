@@ -14,7 +14,6 @@ open class FagsakService(
     private val fagsakRepository: FagsakRepository,
     private val fagsakPersonService: FagsakPersonService,
 ) {
-
     @Transactional
     fun hentEllerOpprettFagsak(
         request: FagsakRequest,

@@ -21,16 +21,16 @@ class BeslutterController(
     @PostMapping("/send-til-beslutter/{behandlingId}")
     fun sendTilBeslutter(
         @PathVariable behandlingId: UUID,
-    ): ResponseEntity<String> {
+    ): ResponseEntity<Map<String, String>> {
         beslutterService.sendTilBeslutter(behandlingId)
-        return ResponseEntity.ok("OK")
+        return ResponseEntity.ok(mapOf("status" to "OK"))
     }
 
     @PostMapping("/angre-send-til-beslutter/{behandlingId}")
     fun angreSendTilBeslutter(
         @PathVariable behandlingId: UUID,
-    ): ResponseEntity<String> {
+    ): ResponseEntity<Map<String, String>>  {
         beslutterService.angreSendTilBeslutter(behandlingId)
-        return ResponseEntity.ok("OK")
+        return ResponseEntity.ok(mapOf("status" to "OK"))
     }
 }

@@ -1,6 +1,5 @@
 package no.nav.gjenlevende.bs.sak.beslutter
 
-import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import no.nav.gjenlevende.bs.sak.felles.sikkerhet.Tilgangskontroll
 import org.springframework.http.ResponseEntity
@@ -13,17 +12,25 @@ import java.util.UUID
 
 @RestController
 @Tilgangskontroll
+@PreAuthorize("hasRole('SAKSBEHANDLER')")
 @RequestMapping(path = ["/api/beslutter"])
 @Tag(name = "BeslutterController", description = "Endepunkter for beslutter-funksjonalitet")
 class BeslutterController(
     private val beslutterService: BeslutterService,
 ) {
     @PostMapping("/send-til-beslutter/{behandlingId}")
-    @PreAuthorize("hasRole('SAKSBEHANDLER')")
     fun sendTilBeslutter(
         @PathVariable behandlingId: UUID,
     ): ResponseEntity<String> {
         beslutterService.sendTilBeslutter(behandlingId)
+        return ResponseEntity.ok("OK")
+    }
+
+    @PostMapping("/angre-send-til-beslutter/{behandlingId}")
+    fun angreSendTilBeslutter(
+        @PathVariable behandlingId: UUID,
+    ): ResponseEntity<String> {
+        beslutterService.angreSendTilBeslutter(behandlingId)
         return ResponseEntity.ok("OK")
     }
 }

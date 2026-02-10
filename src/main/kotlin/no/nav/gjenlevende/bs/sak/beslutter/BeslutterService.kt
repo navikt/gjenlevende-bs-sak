@@ -1,24 +1,28 @@
 package no.nav.gjenlevende.bs.sak.beslutter
 
-import no.nav.gjenlevende.bs.sak.behandling.Behandling
-import no.nav.gjenlevende.bs.sak.behandling.BehandlingRepository
+import no.nav.gjenlevende.bs.sak.behandling.BehandlingService
 import no.nav.gjenlevende.bs.sak.behandling.BehandlingStatus
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
 
 @Service
 class BeslutterService(
-    private val behandlingRepository: BehandlingRepository,
+    private val behandlingService: BehandlingService,
 ) {
     @Transactional
-    fun sendTilBeslutter(behandlingId: UUID): Behandling {
-        val behandling =
-            behandlingRepository.findByIdOrNull(behandlingId)
-                ?: error("Fant ikke behandling med id=$behandlingId")
+    fun sendTilBeslutter(behandlingId: UUID) {
+        behandlingService.oppdaterBehandlingStatus(
+            behandlingId = behandlingId,
+            status = BehandlingStatus.FATTER_VEDTAK,
+        )
+    }
 
-        val oppdatertBehandling = behandling.copy(status = BehandlingStatus.FATTER_VEDTAK)
-        return behandlingRepository.update(oppdatertBehandling)
+    @Transactional
+    fun angreSendTilBeslutter(behandlingId: UUID) {
+        behandlingService.oppdaterBehandlingStatus(
+            behandlingId = behandlingId,
+            status = BehandlingStatus.UTREDES,
+        )
     }
 }

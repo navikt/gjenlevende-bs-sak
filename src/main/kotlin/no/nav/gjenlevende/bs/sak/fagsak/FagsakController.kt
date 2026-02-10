@@ -21,32 +21,10 @@ open class FagsakController(
     private val logger = LoggerFactory.getLogger(FagsakController::class.java)
 
     @PostMapping
-    open fun hentEllerOpprettFagsakForPerson(
-        @RequestBody fagsakRequest: FagsakRequest,
+    fun hentEllerOpprettFagsakForPerson(
+        @RequestBody request: FagsakRequest,
     ): ResponseEntity<FagsakDto> {
-        logger.info("kaller hentEllerOpprettFagsakForPerson")
-
-        val fagsakDto =
-            when {
-                fagsakRequest.personident != null -> {
-                    fagsakService.hentEllerOpprettFagsakMedBehandlinger(
-                        personident = fagsakRequest.personident,
-                        stønadstype = fagsakRequest.stønadstype,
-                    )
-                }
-
-                fagsakRequest.fagsakPersonId != null -> {
-                    fagsakService.hentEllerOpprettFagsakMedFagsakPersonId(
-                        fagsakPersonId = fagsakRequest.fagsakPersonId,
-                        stønadstype = fagsakRequest.stønadstype,
-                    )
-                }
-
-                else -> {
-                    throw Feil("Må oppgi enten personident eller fagsakPersonId")
-                }
-            }
-
-        return ResponseEntity.ok(fagsakDto)
+        logger.info("Kaller hentEllerOpprettFagsakForPerson")
+        return ResponseEntity.ok(fagsakService.hentEllerOpprettFagsak(request))
     }
 }

@@ -5,88 +5,53 @@ import no.nav.gjenlevende.bs.sak.fagsak.domain.FagsakPerson
 import no.nav.gjenlevende.bs.sak.fagsak.domain.StønadType
 import no.nav.gjenlevende.bs.sak.fagsak.dto.FagsakDto
 import no.nav.gjenlevende.bs.sak.fagsak.dto.tilDto
-import org.slf4j.LoggerFactory
+import no.nav.gjenlevende.bs.sak.infrastruktur.exception.Feil
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.util.UUID
 
 @Service
 open class FagsakService(
     private val fagsakRepository: FagsakRepository,
     private val fagsakPersonService: FagsakPersonService,
 ) {
-    private val logger = LoggerFactory.getLogger(javaClass)
-
     @Transactional
-    fun hentEllerOpprettFagsakMedBehandlinger(
-        personident: String,
-        stønadstype: StønadType,
+    fun hentEllerOpprettFagsak(
+        request: FagsakRequest,
     ): FagsakDto {
-        val fagsak = hentEllerOpprettFagsak(personident = personident, stønadstype = stønadstype)
-        return fagsak.tilDto(personident)
-    }
-
-    @Transactional
-    fun hentEllerOpprettFagsakMedFagsakPersonId(
-        fagsakPersonId: UUID,
-        stønadstype: StønadType,
-    ): FagsakDto {
-        val fagsak = hentEllerOpprettFagsakMedId(fagsakPersonId = fagsakPersonId, stønadstype = stønadstype)
-        val personident = fagsakPersonService.hentAktivIdent(fagsakPersonId)
+        val (fagsakPerson, personident) = hentFagsakPersonMedIdent(request)
+        val fagsak = hentEllerOpprett(fagsakPerson = fagsakPerson, stønadstype = request.stønadstype)
 
         return fagsak.tilDto(personident)
     }
 
-    @Transactional
-    open fun hentEllerOpprettFagsak(
-        personident: String,
-        stønadstype: StønadType,
-    ): Fagsak {
-        val fagsakPerson = fagsakPersonService.hentEllerOpprettPerson(setOf(personident), personident)
+    private fun hentFagsakPersonMedIdent(request: FagsakRequest): Pair<FagsakPerson, String> =
+        when {
+            request.personident != null -> {
+                val fagsakPerson =
+                    fagsakPersonService.hentEllerOpprettPerson(
+                        personidenter = setOf(request.personident),
+                        gjeldendePersonident = request.personident,
+                    )
+                Pair(fagsakPerson, request.personident)
+            }
 
-        return hentEllerOpprettFagsakForPerson(fagsakPerson, stønadstype)
-    }
+            request.fagsakPersonId != null -> {
+                val fagsakPerson =
+                    fagsakPersonService.finnPersonMedId(request.fagsakPersonId)
+                        ?: throw Feil("Fant ingen fagsakPerson med id ${request.fagsakPersonId}")
+                val personident = fagsakPersonService.hentAktivIdent(request.fagsakPersonId)
+                Pair(fagsakPerson, personident)
+            }
 
-    @Transactional
-    open fun hentEllerOpprettFagsakMedId(
-        fagsakPersonId: UUID,
-        stønadstype: StønadType,
-    ): Fagsak {
-        val fagsakPerson =
-            fagsakPersonService.finnPersonMedId(fagsakPersonId)
-                ?: throw IllegalArgumentException("Fant ingen fagsakPerson med id $fagsakPersonId")
+            else -> {
+                throw Feil("Må oppgi enten personident eller fagsakPersonId")
+            }
+        }
 
-        return hentEllerOpprettFagsakForPerson(fagsakPerson, stønadstype)
-    }
-
-    private fun hentEllerOpprettFagsakForPerson(
-        fagsakPerson: FagsakPerson,
-        stønadstype: StønadType,
-    ): Fagsak {
-        logger.info("FagsakPerson: $fagsakPerson")
-
-        val fagsak = hentFagsakForPerson(fagsakPerson = fagsakPerson, stønadstype = stønadstype) ?: opprettFagsak(fagsakPerson = fagsakPerson, stønadstype = stønadstype)
-
-        return fagsak
-    }
-
-    private fun hentFagsakForPerson(
-        fagsakPerson: FagsakPerson,
-        stønadstype: StønadType,
-    ): Fagsak? =
-        fagsakRepository.findByFagsakPersonIdAndStønadstype(
-            fagsakPerson.id,
-            stønadstype,
-        )
-
-    private fun opprettFagsak(
+    private fun hentEllerOpprett(
         fagsakPerson: FagsakPerson,
         stønadstype: StønadType,
     ): Fagsak =
-        fagsakRepository.insert(
-            Fagsak(
-                fagsakPersonId = fagsakPerson.id,
-                stønadstype = stønadstype,
-            ),
-        )
+        fagsakRepository.findByFagsakPersonIdAndStønadstype(fagsakPerson.id, stønadstype)
+            ?: fagsakRepository.insert(Fagsak(fagsakPersonId = fagsakPerson.id, stønadstype = stønadstype))
 }

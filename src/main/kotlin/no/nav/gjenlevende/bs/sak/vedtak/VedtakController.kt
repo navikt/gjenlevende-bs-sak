@@ -29,6 +29,7 @@ class VedtakController(
         @PathVariable behandlingId: UUID,
         @RequestBody vedtakDto: VedtakDto,
     ): ResponseEntity<UUID> {
+        vedtakService.validerKanLagreVedtak(vedtakDto, behandlingId)
         vedtakService.slettVedtakHvisFinnes(behandlingId)
         vedtakService.lagreVedtak(vedtakDto = vedtakDto, behandlingId = behandlingId)
         return ResponseEntity.ok(behandlingId)
@@ -38,5 +39,8 @@ class VedtakController(
     fun beregn(
         @PathVariable behandlingId: UUID,
         @RequestBody barnetilsynBeregningRequest: BarnetilsynBeregningRequest,
-    ): ResponseEntity<List<BeløpsperioderDto>> = ResponseEntity.ok(vedtakService.lagBeløpsperioder(barnetilsynBeregningRequest))
+    ): ResponseEntity<List<BeløpsperioderDto>> {
+        vedtakService.validerKanBeregne(barnetilsynBeregningRequest)
+        return ResponseEntity.ok(vedtakService.lagBeløpsperioder(barnetilsynBeregningRequest))
+    }
 }

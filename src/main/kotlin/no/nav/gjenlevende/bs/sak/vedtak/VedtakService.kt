@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.util.UUID
 import kotlin.collections.any
+import kotlin.text.isNullOrEmpty
 
 @Service
 class VedtakService(
@@ -44,12 +45,12 @@ class VedtakService(
             if (vedtakDto.opphørFom == null) {
                 throw Feil("Kan ikke opphøre uten å velge opphørsdato")
             }
-            if (vedtakDto.barnetilsynperioder.isNotEmpty()){
+            if (vedtakDto.barnetilsynperioder.isNotEmpty()) {
                 throw Feil("Kan ikke være barnetilsynsperioder på et opphørsvedtak")
             }
         }
-        if (vedtakDto.resultatType == ResultatType.AVSLÅTT){
-            if (vedtakDto.barnetilsynperioder.isNotEmpty()){
+        if (vedtakDto.resultatType == ResultatType.AVSLÅTT) {
+            if (vedtakDto.barnetilsynperioder.isNotEmpty()) {
                 throw Feil("Kan ikke være barnetilsynsperioder på et opphørsvedtak")
             }
         }

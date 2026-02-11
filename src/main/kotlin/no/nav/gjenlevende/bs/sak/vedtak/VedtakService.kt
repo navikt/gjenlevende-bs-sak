@@ -44,6 +44,14 @@ class VedtakService(
             if (vedtakDto.opphørFom == null) {
                 throw Feil("Kan ikke opphøre uten å velge opphørsdato")
             }
+            if (vedtakDto.barnetilsynperioder.isNotEmpty()){
+                throw Feil("Kan ikke være barnetilsynsperioder på et opphørsvedtak")
+            }
+        }
+        if (vedtakDto.resultatType == ResultatType.AVSLÅTT){
+            if (vedtakDto.barnetilsynperioder.isNotEmpty()){
+                throw Feil("Kan ikke være barnetilsynsperioder på et opphørsvedtak")
+            }
         }
         validerBegrunnelse(vedtakDto)
     }

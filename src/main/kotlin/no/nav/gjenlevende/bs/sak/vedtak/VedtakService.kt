@@ -27,7 +27,6 @@ class VedtakService(
 
     fun validerKanLagreVedtak(
         vedtakDto: VedtakDto,
-        behandlingId: UUID,
     ) {
         if (vedtakDto.resultatType == ResultatType.INNVILGET) {
             val barnetilsynperioder = vedtakDto.barnetilsynperioder
@@ -38,7 +37,7 @@ class VedtakService(
             val utgifer = barnetilsynperioder.map { periode -> periode.utgifter }
             validerFornuftigeBeløp(utgifer)
 
-            validerAntallBarnOgUtgifter(barnetilsynperioder, behandlingId)
+            validerAntallBarnOgUtgifter(barnetilsynperioder)
             validerOpphørIkkeFørsteEllerSistePeriode(barnetilsynperioder)
         }
         if (vedtakDto.resultatType == ResultatType.OPPHØR) {
@@ -88,19 +87,18 @@ class VedtakService(
 
     private fun validerAntallBarnOgUtgifter(
         barnetilsynperioder: List<Barnetilsynperiode>,
-        behandlingId: UUID,
     ) {
         if (barnetilsynperioder.any { it.periodetype == PeriodetypeBarnetilsyn.INGEN_STØNAD && it.barn.isNotEmpty() }) {
-            throw Feil("Kan ikke ta med barn på en periode som er et midlertidig opphør eller sanksjon, på behandling=$behandlingId")
+            throw Feil("Kan ikke ta med barn på en periode som er av type ingen stønad")
         }
         if (barnetilsynperioder.any { it.periodetype == PeriodetypeBarnetilsyn.INGEN_STØNAD && it.utgifter.toInt() > 0 }) {
-            throw Feil("Kan ikke ha utgifter større enn null på en periode som er et midlertidig opphør eller sanksjon, på behandling=$behandlingId")
+            throw Feil("Kan ikke ha utgifter større enn null på en periode som er av type ingen stønad")
         }
         if (barnetilsynperioder.any { it.periodetype == PeriodetypeBarnetilsyn.ORDINÆR && it.barn.isEmpty() }) {
-            throw Feil("Må ha med minst et barn på en periode som ikke er et midlertidig opphør eller sanksjon, på behandling=$behandlingId")
+            throw Feil("Må ha med minst et barn på en periode som er ordinær")
         }
         if (barnetilsynperioder.any { it.periodetype == PeriodetypeBarnetilsyn.ORDINÆR && it.utgifter.toInt() <= 0 }) {
-            throw Feil("Kan ikke ha null utgifter på en periode som ikke er et midlertidig opphør eller sanksjon, på behandling=$behandlingId")
+            throw Feil("Kan ikke ha null utgifter på en periode som er ordinær")
         }
     }
 

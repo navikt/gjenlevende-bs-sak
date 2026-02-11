@@ -20,6 +20,7 @@ class OppgaveService(
     private val fagsakRepository: FagsakRepository,
     private val fagsakPersonRepository: FagsakPersonRepository,
     private val oppgaveClient: OppgaveClient,
+    private val oppgaveRepository: OppgaveRepository,
 ) {
     private val logger = LoggerFactory.getLogger(OppgaveService::class.java)
 
@@ -34,9 +35,19 @@ class OppgaveService(
         val fagsakPerson = fagsakPersonRepository.findByIdOrNull(fagsak.fagsakPersonId) ?: throw IllegalStateException("Finner ikke fagsakPerson med id=${fagsak.fagsakPersonId}")
         val personident: Personident = fagsakPerson.aktivIdent()
 
-        val oppgave = lagOpprettBehandleSakOppgaveRequest(personident, fagsak, behandling, saksbehandler, tildeltEnhetsnr)
+        val oppgaveRequest = lagOpprettBehandleSakOppgaveRequest(personident, fagsak, behandling, saksbehandler, tildeltEnhetsnr)
 
-        oppgaveClient.opprettOppgaveM2M(oppgaveRequest = oppgave)
+        val oppgave = oppgaveClient.opprettOppgaveM2M(oppgaveRequest = oppgaveRequest)
+
+        oppgaveRepository.insert(
+            OppgaveEntity(
+                behandlingId = behandling.id,
+                gsakOppgaveId = oppgave.id ?: throw IllegalStateException("Oppgave-respons mangler id"),
+                type = OppgavetypeEYO.BEH_SAK.name,
+            ),
+        )
+
+        logger.info("Oppgave med gsakOppgaveId=${oppgave.id} lagret for behandling=${behandling.id}")
     }
 }
 

@@ -20,6 +20,8 @@ data class Behandling(
 enum class BehandlingStatus {
     OPPRETTET,
     UTREDES,
+    FATTER_VEDTAK,
+    IVERKSETTER_VEDTAK,
     FERDIGSTILT,
 }
 

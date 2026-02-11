@@ -37,4 +37,13 @@ class BehandlingService(
     fun hentBehandlingerFraFagsak(fagsakId: UUID): List<Behandling>? = behandlingRepository.findAllByFagsakId(fagsakId)
 
     fun finnesÅpenBehandling(fagsakId: UUID) = behandlingRepository.existsByFagsakIdAndStatusIsNot(fagsakId, BehandlingStatus.FERDIGSTILT)
+
+    fun oppdaterBehandlingStatus(
+        behandlingId: UUID,
+        status: BehandlingStatus,
+    ) {
+        val behandling = behandlingRepository.findByIdOrNull(behandlingId) ?: error("Fant ikke behandling med id=$behandlingId for oppdatering av BehandlingStatus")
+        val oppdatertBehandling = behandling.copy(status = status)
+        behandlingRepository.update(oppdatertBehandling)
+    }
 }

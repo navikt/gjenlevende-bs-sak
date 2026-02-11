@@ -29,16 +29,24 @@ class VedtakService(
         vedtakDto: VedtakDto,
         behandlingId: UUID,
     ) {
-        val barnetilsynperioder = vedtakDto.barnetilsynperioder
+        if(vedtakDto.resultatType == ResultatType.INNVILGET){
+            val barnetilsynperioder = vedtakDto.barnetilsynperioder
 
-        val månedsPerioder = barnetilsynperioder.map { periode -> Månedsperiode(periode.datoFra, periode.datoTil) }
-        validerGyldigePerioder(månedsPerioder)
+            val månedsPerioder = barnetilsynperioder.map { periode -> Månedsperiode(periode.datoFra, periode.datoTil) }
+            validerGyldigePerioder(månedsPerioder)
 
-        val utgifer = barnetilsynperioder.map { periode -> periode.utgifter }
-        validerFornuftigeBeløp(utgifer)
+            val utgifer = barnetilsynperioder.map { periode -> periode.utgifter }
+            validerFornuftigeBeløp(utgifer)
 
-        validerAntallBarnOgUtgifter(barnetilsynperioder, behandlingId)
-        validerOpphørIkkeFørsteEllerSistePeriode(barnetilsynperioder)
+            validerAntallBarnOgUtgifter(barnetilsynperioder, behandlingId)
+            validerOpphørIkkeFørsteEllerSistePeriode(barnetilsynperioder)
+        }
+        if (vedtakDto.resultatType == ResultatType.OPPHØR) {
+            if (vedtakDto.opphørFom == null){
+                throw Feil("Kan ikke opphøre uten å velge opphørsdato")
+            }
+        }
+        validerBegrunnelse(vedtakDto)
     }
 
     fun validerKanBeregne(
@@ -104,6 +112,14 @@ class VedtakService(
         }
         if (barnetilsynperioder.last().periodetype == PeriodetypeBarnetilsyn.INGEN_STØNAD) {
             throw Feil("Siste periode kan ikke være periodetype Ingen stønad")
+        }
+    }
+
+    private fun validerBegrunnelse(
+        vedtakDto: VedtakDto,
+    ){
+        if (vedtakDto.begrunnelse.isNullOrEmpty()) {
+            throw Feil("Mangler begrunnelse")
         }
     }
 }

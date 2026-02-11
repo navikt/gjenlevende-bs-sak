@@ -51,6 +51,7 @@ class VedtakControllerTest {
   "opprettetTid": "2026-01-21T09:52:13.329Z",
   "opprettetAv": "mockSaksbehandler"
 }"""
+        justRun { vedtakService.validerKanLagreVedtak(any(), any()) }
         justRun { vedtakService.slettVedtakHvisFinnes(any()) }
 
         every { vedtakService.lagreVedtak(any(), any()) } returns UUID.fromString("86460749-53d4-481b-8909-7286efc7eaad")

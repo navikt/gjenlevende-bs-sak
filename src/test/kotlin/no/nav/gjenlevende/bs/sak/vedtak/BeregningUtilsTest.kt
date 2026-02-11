@@ -5,6 +5,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.math.BigDecimal
 import java.time.YearMonth
+import java.util.UUID
 
 class BeregningUtilsTest {
     @Test
@@ -123,5 +124,243 @@ class BeregningUtilsTest {
             assertThat(satserForBarnetilsyn.hentSatsFor(antallBarn = 1, årMåned = år)).isEqualTo(3888)
             assertThat(satserForBarnetilsyn.hentSatsFor(antallBarn = 0, årMåned = år)).isEqualTo(0)
         }
+    }
+
+    @Test
+    fun `skal sammenslå beløpsperioder med samme utgifter, barn og beløp som er sammenhengende`() {
+        val barn = listOf(UUID.randomUUID())
+        val beregninger =
+            listOf(
+                BarnetilsynBeregning(
+                    datoFra = YearMonth.of(2025, 1),
+                    datoTil = YearMonth.of(2025, 3),
+                    utgifter = BigDecimal(1000),
+                    barn = barn,
+                    periodetype = PeriodetypeBarnetilsyn.ORDINÆR,
+                ),
+                BarnetilsynBeregning(
+                    datoFra = YearMonth.of(2025, 4),
+                    datoTil = YearMonth.of(2025, 6),
+                    utgifter = BigDecimal(1000),
+                    barn = barn,
+                    periodetype = PeriodetypeBarnetilsyn.ORDINÆR,
+                ),
+            )
+
+        val resultat = BeregningUtils.beregnBarnetilsynperiode(beregninger)
+
+        assertThat(resultat).hasSize(1)
+        assertThat(resultat[0].datoFra).isEqualTo(YearMonth.of(2025, 1))
+        assertThat(resultat[0].datoTil).isEqualTo(YearMonth.of(2025, 6))
+        assertThat(resultat[0].utgifter).isEqualTo(BigDecimal(1000))
+        assertThat(resultat[0].antallBarn).isEqualTo(1)
+    }
+
+    @Test
+    fun `skal ikke sammenslå beløpsperioder med forskjellige utgifter`() {
+        val barn = listOf(UUID.randomUUID())
+        val beregninger =
+            listOf(
+                BarnetilsynBeregning(
+                    datoFra = YearMonth.of(2025, 1),
+                    datoTil = YearMonth.of(2025, 3),
+                    utgifter = BigDecimal(1000),
+                    barn = barn,
+                    periodetype = PeriodetypeBarnetilsyn.ORDINÆR,
+                ),
+                BarnetilsynBeregning(
+                    datoFra = YearMonth.of(2025, 4),
+                    datoTil = YearMonth.of(2025, 6),
+                    utgifter = BigDecimal(2000),
+                    barn = barn,
+                    periodetype = PeriodetypeBarnetilsyn.ORDINÆR,
+                ),
+            )
+
+        val resultat = BeregningUtils.beregnBarnetilsynperiode(beregninger)
+
+        assertThat(resultat).hasSize(2)
+        assertThat(resultat[0].utgifter).isEqualTo(BigDecimal(1000))
+        assertThat(resultat[1].utgifter).isEqualTo(BigDecimal(2000))
+    }
+
+    @Test
+    fun `skal ikke sammenslå beløpsperioder med forskjellig antall barn`() {
+        val barn1 = listOf(UUID.randomUUID())
+        val barn2 = listOf(UUID.randomUUID(), UUID.randomUUID())
+        val beregninger =
+            listOf(
+                BarnetilsynBeregning(
+                    datoFra = YearMonth.of(2025, 1),
+                    datoTil = YearMonth.of(2025, 3),
+                    utgifter = BigDecimal(1000),
+                    barn = barn1,
+                    periodetype = PeriodetypeBarnetilsyn.ORDINÆR,
+                ),
+                BarnetilsynBeregning(
+                    datoFra = YearMonth.of(2025, 4),
+                    datoTil = YearMonth.of(2025, 6),
+                    utgifter = BigDecimal(1000),
+                    barn = barn2,
+                    periodetype = PeriodetypeBarnetilsyn.ORDINÆR,
+                ),
+            )
+
+        val resultat = BeregningUtils.beregnBarnetilsynperiode(beregninger)
+
+        assertThat(resultat).hasSize(2)
+        assertThat(resultat[0].antallBarn).isEqualTo(1)
+        assertThat(resultat[1].antallBarn).isEqualTo(2)
+    }
+
+    @Test
+    fun `skal ikke sammenslå beløpsperioder som ikke er sammenhengende`() {
+        val barn = listOf(UUID.randomUUID())
+        val beregninger =
+            listOf(
+                BarnetilsynBeregning(
+                    datoFra = YearMonth.of(2025, 1),
+                    datoTil = YearMonth.of(2025, 3),
+                    utgifter = BigDecimal(1000),
+                    barn = barn,
+                    periodetype = PeriodetypeBarnetilsyn.ORDINÆR,
+                ),
+                BarnetilsynBeregning(
+                    datoFra = YearMonth.of(2025, 5),
+                    datoTil = YearMonth.of(2025, 7),
+                    utgifter = BigDecimal(1000),
+                    barn = barn,
+                    periodetype = PeriodetypeBarnetilsyn.ORDINÆR,
+                ),
+            )
+
+        val resultat = BeregningUtils.beregnBarnetilsynperiode(beregninger)
+
+        assertThat(resultat).hasSize(2)
+        assertThat(resultat[0].datoTil).isEqualTo(YearMonth.of(2025, 3))
+        assertThat(resultat[1].datoFra).isEqualTo(YearMonth.of(2025, 5))
+    }
+
+    @Test
+    fun `skal dele opp beløpsperioder ved årsskifte når beløp endres pga maxbeløp`() {
+        val barn = listOf(UUID.randomUUID())
+        val beregninger =
+            listOf(
+                BarnetilsynBeregning(
+                    datoFra = YearMonth.of(2025, 11),
+                    datoTil = YearMonth.of(2026, 2),
+                    utgifter = BigDecimal(10000),
+                    barn = barn,
+                    periodetype = PeriodetypeBarnetilsyn.ORDINÆR,
+                ),
+            )
+
+        val resultat = BeregningUtils.beregnBarnetilsynperiode(beregninger)
+
+        assertThat(resultat).hasSize(2)
+        assertThat(resultat[0].datoFra).isEqualTo(YearMonth.of(2025, 11))
+        assertThat(resultat[0].datoTil).isEqualTo(YearMonth.of(2025, 12))
+        assertThat(resultat[1].datoFra).isEqualTo(YearMonth.of(2026, 1))
+        assertThat(resultat[1].datoTil).isEqualTo(YearMonth.of(2026, 2))
+
+        assertThat(resultat[0].beløp).isNotEqualTo(resultat[1].beløp)
+        assertThat(resultat[0].beløp).isEqualTo(4790)
+        assertThat(resultat[1].beløp).isEqualTo(4895)
+    }
+
+    @Test
+    fun `skal ikke dele opp beløpsperioder ved årsskifte når beløp ikke endres`() {
+        val barn = listOf(UUID.randomUUID())
+        val beregninger =
+            listOf(
+                BarnetilsynBeregning(
+                    datoFra = YearMonth.of(2025, 11),
+                    datoTil = YearMonth.of(2026, 2),
+                    utgifter = BigDecimal(1000),
+                    barn = barn,
+                    periodetype = PeriodetypeBarnetilsyn.ORDINÆR,
+                ),
+            )
+
+        val resultat = BeregningUtils.beregnBarnetilsynperiode(beregninger)
+
+        assertThat(resultat).hasSize(1)
+        assertThat(resultat[0].datoFra).isEqualTo(YearMonth.of(2025, 11))
+        assertThat(resultat[0].datoTil).isEqualTo(YearMonth.of(2026, 2))
+
+        assertThat(resultat[0].beløp).isEqualTo(640)
+    }
+
+    @Test
+    fun `skal håndtere kompleks scenario med både sammenslåing og dele opp`() {
+        val barn = listOf(UUID.randomUUID())
+        val beregninger =
+            listOf(
+                BarnetilsynBeregning(
+                    datoFra = YearMonth.of(2025, 1),
+                    datoTil = YearMonth.of(2025, 3),
+                    utgifter = BigDecimal(1000),
+                    barn = barn,
+                    periodetype = PeriodetypeBarnetilsyn.ORDINÆR,
+                ),
+                BarnetilsynBeregning(
+                    datoFra = YearMonth.of(2025, 4),
+                    datoTil = YearMonth.of(2025, 6),
+                    utgifter = BigDecimal(1000),
+                    barn = barn,
+                    periodetype = PeriodetypeBarnetilsyn.ORDINÆR,
+                ),
+                BarnetilsynBeregning(
+                    datoFra = YearMonth.of(2025, 11),
+                    datoTil = YearMonth.of(2026, 2),
+                    utgifter = BigDecimal(10000),
+                    barn = barn,
+                    periodetype = PeriodetypeBarnetilsyn.ORDINÆR,
+                ),
+            )
+
+        val resultat = BeregningUtils.beregnBarnetilsynperiode(beregninger)
+
+        assertThat(resultat).hasSize(3)
+
+        assertThat(resultat[0].datoFra).isEqualTo(YearMonth.of(2025, 1))
+        assertThat(resultat[0].datoTil).isEqualTo(YearMonth.of(2025, 6))
+
+        assertThat(resultat[1].datoFra).isEqualTo(YearMonth.of(2025, 11))
+        assertThat(resultat[1].datoTil).isEqualTo(YearMonth.of(2025, 12))
+
+        assertThat(resultat[2].datoFra).isEqualTo(YearMonth.of(2026, 1))
+        assertThat(resultat[2].datoTil).isEqualTo(YearMonth.of(2026, 2))
+    }
+
+    @Test
+    fun `skal dele opp beløpsperioder som går over flere år hvor beløp endres`() {
+        val barn = listOf(UUID.randomUUID())
+        val beregninger =
+            listOf(
+                BarnetilsynBeregning(
+                    datoFra = YearMonth.of(2024, 10),
+                    datoTil = YearMonth.of(2026, 3),
+                    utgifter = BigDecimal(10000),
+                    barn = barn,
+                    periodetype = PeriodetypeBarnetilsyn.ORDINÆR,
+                ),
+            )
+
+        val resultat = BeregningUtils.beregnBarnetilsynperiode(beregninger)
+
+        assertThat(resultat).hasSize(3)
+
+        assertThat(resultat[0].datoFra).isEqualTo(YearMonth.of(2024, 10))
+        assertThat(resultat[0].datoTil).isEqualTo(YearMonth.of(2024, 12))
+        assertThat(resultat[0].beløp).isEqualTo(4650)
+
+        assertThat(resultat[1].datoFra).isEqualTo(YearMonth.of(2025, 1))
+        assertThat(resultat[1].datoTil).isEqualTo(YearMonth.of(2025, 12))
+        assertThat(resultat[1].beløp).isEqualTo(4790)
+
+        assertThat(resultat[2].datoFra).isEqualTo(YearMonth.of(2026, 1))
+        assertThat(resultat[2].datoTil).isEqualTo(YearMonth.of(2026, 3))
+        assertThat(resultat[2].beløp).isEqualTo(4895)
     }
 }

@@ -85,10 +85,9 @@ object BeregningUtils {
 
     private fun delOppPerÅr(barnetilsynBeregninger: List<BarnetilsynBeregning>): List<BarnetilsynBeregning> =
         barnetilsynBeregninger.flatMap { periode ->
-            require(!periode.datoTil.isBefore(periode.datoFra)) { "datoTil må være >= datoFra" }
 
-            val years = (periode.datoFra.year..periode.datoTil.year)
-            years.map { year ->
+            val periodeÅr = (periode.datoFra.year..periode.datoTil.year)
+            periodeÅr.map { year ->
                 val fra = maxOf(periode.datoFra, YearMonth.of(year, 1))
                 val til = minOf(periode.datoTil, YearMonth.of(year, 12))
 
@@ -120,35 +119,35 @@ object BeregningUtils {
         val sorterteBeløpsperioder = beløpsperioder.sortedBy { it.datoFra }
         val sammenslåttBeløpsperioder = mutableListOf<BeløpsperioderDto>()
 
-        var current = sorterteBeløpsperioder.first()
+        var gjeldendePeriode = sorterteBeløpsperioder.first()
 
         for (i in 1 until sorterteBeløpsperioder.size) {
-            val next = sorterteBeløpsperioder[i]
+            val nestePeriode = sorterteBeløpsperioder[i]
 
-            if (kanSammenslå(current, next)) {
-                current = current.copy(datoTil = next.datoTil)
+            if (kanSammenslå(gjeldendePeriode, nestePeriode)) {
+                gjeldendePeriode = gjeldendePeriode.copy(datoTil = nestePeriode.datoTil)
             } else {
-                sammenslåttBeløpsperioder.add(current)
-                current = next
+                sammenslåttBeløpsperioder.add(gjeldendePeriode)
+                gjeldendePeriode = nestePeriode
             }
         }
 
-        sammenslåttBeløpsperioder.add(current)
+        sammenslåttBeløpsperioder.add(gjeldendePeriode)
 
         return sammenslåttBeløpsperioder
     }
 
     private fun kanSammenslå(
-        bp1: BeløpsperioderDto,
-        bp2: BeløpsperioderDto,
+        gjeldendePeriode: BeløpsperioderDto,
+        nestePeriode: BeløpsperioderDto,
     ): Boolean {
-        val erSammenhengende = bp1.datoTil.plusMonths(1) == bp2.datoFra
+        val erSammenhengende = gjeldendePeriode.datoTil.plusMonths(1) == nestePeriode.datoFra
 
         val likeVerdier =
-            bp1.utgifter == bp2.utgifter &&
-                bp1.antallBarn == bp2.antallBarn &&
-                bp1.beløp == bp2.beløp &&
-                bp1.periodetype == bp2.periodetype
+            gjeldendePeriode.utgifter == nestePeriode.utgifter &&
+                gjeldendePeriode.antallBarn == nestePeriode.antallBarn &&
+                gjeldendePeriode.beløp == nestePeriode.beløp &&
+                gjeldendePeriode.periodetype == nestePeriode.periodetype
 
         return erSammenhengende && likeVerdier
     }

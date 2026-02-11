@@ -65,8 +65,8 @@ class VedtakService(
         val månedsperioder = barnetilsynBeregninger.map { periode -> Månedsperiode(periode.datoFra, periode.datoTil) }
         validerGyldigePerioder(månedsperioder)
 
-        val utgifer = barnetilsynBeregninger.map { periode -> periode.utgifter }
-        validerFornuftigeBeløp(utgifer)
+        val utgifter = barnetilsynBeregninger.map { periode -> periode.utgifter }
+        validerFornuftigeBeløp(utgifter)
     }
 
     private fun validerGyldigePerioder(

@@ -35,8 +35,8 @@ class VedtakService(
             val månedsPerioder = barnetilsynperioder.map { periode -> Månedsperiode(periode.datoFra, periode.datoTil) }
             validerGyldigePerioder(månedsPerioder)
 
-            val utgifer = barnetilsynperioder.map { periode -> periode.utgifter }
-            validerFornuftigeBeløp(utgifer)
+            val utgifter = barnetilsynperioder.map { periode -> periode.utgifter }
+            validerFornuftigeBeløp(utgifter)
 
             validerAntallBarnOgUtgifter(barnetilsynperioder)
             validerOpphørIkkeFørsteEllerSistePeriode(barnetilsynperioder)
@@ -62,23 +62,23 @@ class VedtakService(
     ) {
         val barnetilsynBeregninger = barnetilsynBeregningRequest.barnetilsynBeregning
 
-        val månedsPerioder = barnetilsynBeregninger.map { periode -> Månedsperiode(periode.datoFra, periode.datoTil) }
-        validerGyldigePerioder(månedsPerioder)
+        val månedsperioder = barnetilsynBeregninger.map { periode -> Månedsperiode(periode.datoFra, periode.datoTil) }
+        validerGyldigePerioder(månedsperioder)
 
         val utgifer = barnetilsynBeregninger.map { periode -> periode.utgifter }
         validerFornuftigeBeløp(utgifer)
     }
 
     private fun validerGyldigePerioder(
-        månedsPerioder: List<Månedsperiode>,
+        månedsperioder: List<Månedsperiode>,
     ) {
-        if (månedsPerioder.isEmpty()) {
+        if (månedsperioder.isEmpty()) {
             throw Feil("Ingen perioder")
         }
-        if (månedsPerioder.harOverlappende()) {
+        if (månedsperioder.harOverlappende()) {
             throw Feil("Har overlappende perioder")
         }
-        if (!månedsPerioder.erSammenhengende()) {
+        if (!månedsperioder.erSammenhengende()) {
             throw Feil("Perioder må være sammenhengende")
         }
     }
@@ -90,7 +90,7 @@ class VedtakService(
             throw Feil("Utgifter kan ikke være mindre enn 0")
         }
         if (utgifter.any({ it.toInt() > 40000 })) {
-            throw Feil("Utgiter på mer enn 40000 støttes ikke")
+            throw Feil("Utgifter på mer enn 40000 støttes ikke")
         }
     }
 
@@ -115,10 +115,10 @@ class VedtakService(
         barnetilsynperioder: List<Barnetilsynperiode>,
     ) {
         if (barnetilsynperioder.first().periodetype == PeriodetypeBarnetilsyn.INGEN_STØNAD) {
-            throw Feil("Første periode kan ikke være periodetype Ingen stønad")
+            throw Feil("Første periode kan ikke være periodetype ingen stønad")
         }
         if (barnetilsynperioder.last().periodetype == PeriodetypeBarnetilsyn.INGEN_STØNAD) {
-            throw Feil("Siste periode kan ikke være periodetype Ingen stønad")
+            throw Feil("Siste periode kan ikke være periodetype ingen stønad")
         }
     }
 

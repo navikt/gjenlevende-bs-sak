@@ -29,7 +29,7 @@ class VedtakService(
         vedtakDto: VedtakDto,
         behandlingId: UUID,
     ) {
-        if(vedtakDto.resultatType == ResultatType.INNVILGET){
+        if (vedtakDto.resultatType == ResultatType.INNVILGET) {
             val barnetilsynperioder = vedtakDto.barnetilsynperioder
 
             val månedsPerioder = barnetilsynperioder.map { periode -> Månedsperiode(periode.datoFra, periode.datoTil) }
@@ -42,7 +42,7 @@ class VedtakService(
             validerOpphørIkkeFørsteEllerSistePeriode(barnetilsynperioder)
         }
         if (vedtakDto.resultatType == ResultatType.OPPHØR) {
-            if (vedtakDto.opphørFom == null){
+            if (vedtakDto.opphørFom == null) {
                 throw Feil("Kan ikke opphøre uten å velge opphørsdato")
             }
         }
@@ -117,7 +117,7 @@ class VedtakService(
 
     private fun validerBegrunnelse(
         vedtakDto: VedtakDto,
-    ){
+    ) {
         if (vedtakDto.begrunnelse.isNullOrEmpty()) {
             throw Feil("Mangler begrunnelse")
         }

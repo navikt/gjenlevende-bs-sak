@@ -1,10 +1,12 @@
 package no.nav.gjenlevende.bs.sak.oppgave
 
+import no.nav.gjenlevende.bs.sak.behandling.BehandlingRepository
 import no.nav.gjenlevende.bs.sak.felles.sikkerhet.SikkerhetContext
 import no.nav.gjenlevende.bs.sak.oppgave.dto.AnsvarligSaksbehandlerDto
 import no.nav.gjenlevende.bs.sak.oppgave.dto.SaksbehandlerRolle
 import no.nav.gjenlevende.bs.sak.saksbehandler.EntraProxyClient
 import org.slf4j.LoggerFactory
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import java.util.UUID
 
@@ -13,6 +15,7 @@ class TilordnetRessursService(
     private val oppgaveRepository: OppgaveRepository,
     private val oppgaveClient: OppgaveClient,
     private val entraProxyClient: EntraProxyClient,
+    private val behandlingRepository: BehandlingRepository,
 ) {
     private val logger = LoggerFactory.getLogger(TilordnetRessursService::class.java)
 
@@ -25,18 +28,15 @@ class TilordnetRessursService(
                 type = OppgavetypeEYO.BEH_SAK.name,
             )
 
-        if (oppgaveEntity == null) {
-            logger.info("Ingen oppgave funnet for behandling=$behandlingId, antar innlogget bruker er eier")
-            val saksbehandlerInfo = entraProxyClient.hentSaksbehandlerInfo(innloggetSaksbehandler)
-            return AnsvarligSaksbehandlerDto(
-                fornavn = saksbehandlerInfo.fornavn,
-                etternavn = saksbehandlerInfo.etternavn,
-                rolle = SaksbehandlerRolle.INNLOGGET_SAKSBEHANDLER,
-            )
+        val tilordnetRessurs = if (oppgaveEntity != null) {
+            val gosysOppgave = oppgaveClient.hentOppgaveM2M(oppgaveEntity.gsakOppgaveId)
+            gosysOppgave.tilordnetRessurs
+        } else {
+            logger.info("Ingen oppgave funnet for behandling=$behandlingId, bruker opprettetAv fra behandling")
+            val behandling = behandlingRepository.findByIdOrNull(behandlingId)
+                ?: throw IllegalStateException("Finner ikke behandling med id=$behandlingId")
+            behandling.sporbar.opprettetAv
         }
-
-        val gosysOppgave = oppgaveClient.hentOppgaveM2M(oppgaveEntity.gsakOppgaveId)
-        val tilordnetRessurs = gosysOppgave.tilordnetRessurs
 
         if (tilordnetRessurs.isNullOrBlank()) {
             return AnsvarligSaksbehandlerDto(

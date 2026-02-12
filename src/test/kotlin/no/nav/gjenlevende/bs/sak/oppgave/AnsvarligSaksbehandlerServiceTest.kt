@@ -21,14 +21,14 @@ import org.junit.jupiter.api.Test
 import org.springframework.data.repository.findByIdOrNull
 import java.util.UUID
 
-class TilordnetRessursServiceTest {
+class AnsvarligSaksbehandlerServiceTest {
     private val oppgaveRepository = mockk<OppgaveRepository>()
     private val oppgaveClient = mockk<OppgaveClient>()
     private val entraProxyClient = mockk<EntraProxyClient>()
     private val behandlingRepository = mockk<BehandlingRepository>()
 
     private val service =
-        TilordnetRessursService(
+        AnsvarligSaksbehandlerService(
             oppgaveRepository = oppgaveRepository,
             oppgaveClient = oppgaveClient,
             entraProxyClient = entraProxyClient,

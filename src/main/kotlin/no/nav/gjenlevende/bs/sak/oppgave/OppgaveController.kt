@@ -19,13 +19,13 @@ data class HentAnsvarligSaksbehandlerRequest(
 @PreAuthorize("hasRole('SAKSBEHANDLER')")
 @RequestMapping(path = ["/api/oppgave"])
 class OppgaveController(
-    private val tilordnetRessursService: TilordnetRessursService,
+    private val ansvarligSaksbehandlerService: AnsvarligSaksbehandlerService,
 ) {
     @PostMapping("/ansvarlig-saksbehandler")
     fun hentAnsvarligSaksbehandler(
         @RequestBody request: HentAnsvarligSaksbehandlerRequest,
     ): ResponseEntity<AnsvarligSaksbehandlerDto> {
-        val ansvarligSaksbehandler = tilordnetRessursService.hentAnsvarligSaksbehandler(request.behandlingId)
+        val ansvarligSaksbehandler = ansvarligSaksbehandlerService.hentAnsvarligSaksbehandler(request.behandlingId)
         return ResponseEntity.ok(ansvarligSaksbehandler)
     }
 }

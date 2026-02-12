@@ -11,26 +11,26 @@ import org.springframework.stereotype.Service
 import java.util.UUID
 
 @Service
-class TilordnetRessursService(
+class AnsvarligSaksbehandlerService(
     private val oppgaveRepository: OppgaveRepository,
     private val oppgaveClient: OppgaveClient,
     private val entraProxyClient: EntraProxyClient,
     private val behandlingRepository: BehandlingRepository,
 ) {
-    private val logger = LoggerFactory.getLogger(TilordnetRessursService::class.java)
+    private val logger = LoggerFactory.getLogger(AnsvarligSaksbehandlerService::class.java)
 
     fun hentAnsvarligSaksbehandler(behandlingId: UUID): AnsvarligSaksbehandlerDto {
         val innloggetSaksbehandler = SikkerhetContext.hentSaksbehandler()
 
-        val oppgaveEntity =
+        val oppgave =
             oppgaveRepository.findByBehandlingIdAndType(
                 behandlingId = behandlingId,
                 type = OppgavetypeEYO.BEH_SAK.name,
             )
 
-        val tilordnetRessurs =
-            if (oppgaveEntity != null) {
-                val gosysOppgave = oppgaveClient.hentOppgaveM2M(oppgaveEntity.gsakOppgaveId)
+        val ansvarligSaksbehandler =
+            if (oppgave != null) {
+                val gosysOppgave = oppgaveClient.hentOppgaveM2M(oppgave.gsakOppgaveId)
                 gosysOppgave.tilordnetRessurs
             } else {
                 logger.info("Ingen oppgave funnet for behandling=$behandlingId, bruker opprettetAv fra behandling")
@@ -40,7 +40,7 @@ class TilordnetRessursService(
                 behandling.sporbar.opprettetAv
             }
 
-        if (tilordnetRessurs.isNullOrBlank()) {
+        if (ansvarligSaksbehandler.isNullOrBlank()) {
             return AnsvarligSaksbehandlerDto(
                 fornavn = "",
                 etternavn = "",
@@ -48,9 +48,9 @@ class TilordnetRessursService(
             )
         }
 
-        val saksbehandlerInfo = entraProxyClient.hentSaksbehandlerInfo(tilordnetRessurs)
+        val saksbehandlerInfo = entraProxyClient.hentSaksbehandlerInfo(ansvarligSaksbehandler)
         val rolle =
-            if (tilordnetRessurs == innloggetSaksbehandler) {
+            if (ansvarligSaksbehandler == innloggetSaksbehandler) {
                 SaksbehandlerRolle.INNLOGGET_SAKSBEHANDLER
             } else {
                 SaksbehandlerRolle.ANNEN_SAKSBEHANDLER

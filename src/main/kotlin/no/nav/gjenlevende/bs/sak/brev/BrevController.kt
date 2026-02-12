@@ -23,19 +23,6 @@ class BrevController(
     private val brevService: BrevService,
     private val taskService: TaskService,
 ) {
-    @PostMapping("/send-til-beslutter/{behandlingId}")
-    @PreAuthorize("hasRole('SAKSBEHANDLER')")
-    @Operation(
-        summary = "Sender behandling til beslutter",
-        description = "Sender behandling til beslutter.",
-    )
-    fun sendTilBeslutter(
-        @PathVariable behandlingId: UUID,
-    ): ResponseEntity<String> {
-        brevService.oppdaterSaksbehandler(behandlingId) // TODO en eller annen task som sender til beslutter
-        return ResponseEntity.ok("OK")
-    }
-
     @PostMapping("/lag-task/{behandlingId}") // TODO renames til beslutte-behandling elr noe sånt
     @PreAuthorize("hasRole('ATTESTERING')")
     @Operation(
@@ -45,7 +32,7 @@ class BrevController(
     fun lagBrevTask(
         @PathVariable behandlingId: UUID,
     ): ResponseEntity<String> {
-        brevService.oppdaterBeslutter(behandlingId)
+        brevService.oppdaterBeslutterForBrev(behandlingId)
         val task = brevService.lagBrevPdfTask(behandlingId)
         taskService.save(task)
 

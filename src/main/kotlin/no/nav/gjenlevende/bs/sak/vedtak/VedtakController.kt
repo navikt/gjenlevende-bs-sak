@@ -33,11 +33,11 @@ class VedtakController(
     fun lagreVedtak(
         @PathVariable behandlingId: UUID,
         @RequestBody vedtakDto: VedtakDto,
-    ): ResponseEntity<UUID> {
+    ): ResponseEntity<Map<String, String>> {
         vedtakService.validerKanLagreVedtak(vedtakDto)
         vedtakService.slettVedtakHvisFinnes(behandlingId)
         vedtakService.lagreVedtak(vedtakDto = vedtakDto, behandlingId = behandlingId)
-        return ResponseEntity.ok(behandlingId)
+        return ResponseEntity.ok(mapOf("status" to "OK"))
     }
 
     @PostMapping("/{behandlingId}/beregn")

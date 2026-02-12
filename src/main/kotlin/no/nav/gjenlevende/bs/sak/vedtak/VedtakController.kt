@@ -21,7 +21,12 @@ class VedtakController(
         @PathVariable behandlingId: UUID,
     ): ResponseEntity<VedtakDto> {
         val vedtak = vedtakService.hentVedtak(behandlingId)
-        return ResponseEntity.ok(vedtak?.tilDto())
+
+        return if (vedtak == null) {
+            ResponseEntity.noContent().build()
+        } else {
+            ResponseEntity.ok(vedtak.tilDto())
+        }
     }
 
     @PostMapping("/{behandlingId}/lagre-vedtak")

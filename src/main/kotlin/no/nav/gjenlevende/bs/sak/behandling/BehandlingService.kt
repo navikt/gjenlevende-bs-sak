@@ -44,10 +44,11 @@ class BehandlingService(
         status: BehandlingStatus,
     ) {
         val behandling = behandlingRepository.findByIdOrNull(behandlingId) ?: error("Fant ikke behandling med id=$behandlingId for oppdatering av BehandlingStatus")
-        val oppdatertBehandling = behandling.copy(
-            status = status,
-            sporbar = behandling.sporbar.copy(endret = Endret()),
-        )
+        val oppdatertBehandling =
+            behandling.copy(
+                status = status,
+                sporbar = behandling.sporbar.copy(endret = Endret()),
+            )
         behandlingRepository.update(oppdatertBehandling)
     }
 }

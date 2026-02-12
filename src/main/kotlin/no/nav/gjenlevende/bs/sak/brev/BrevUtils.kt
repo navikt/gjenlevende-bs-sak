@@ -17,5 +17,6 @@ fun logoTilBase64(): String {
 fun lagHtmlTekstbolker(tekstbolker: List<TekstbolkDto>): String =
     tekstbolker.joinToString(separator = "") { bolk ->
         val underoverskrift = bolk.underoverskrift?.let { "<h2>$it</h2>" } ?: ""
-        "<section>\n${underoverskrift}\n<p>${bolk.innhold}</p>\n</section>\n"
+        val innholdMedLinjeskift = bolk.innhold.replace("\n", "<br>")
+        "<section>\n${underoverskrift}\n<p>$innholdMedLinjeskift</p>\n</section>\n"
     }

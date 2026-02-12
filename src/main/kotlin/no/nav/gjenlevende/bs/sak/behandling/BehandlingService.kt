@@ -1,6 +1,7 @@
 package no.nav.gjenlevende.bs.sak.behandling
 
 import no.nav.gjenlevende.bs.sak.felles.sikkerhet.SikkerhetContext
+import no.nav.gjenlevende.bs.sak.felles.sporbar.Endret
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -43,7 +44,10 @@ class BehandlingService(
         status: BehandlingStatus,
     ) {
         val behandling = behandlingRepository.findByIdOrNull(behandlingId) ?: error("Fant ikke behandling med id=$behandlingId for oppdatering av BehandlingStatus")
-        val oppdatertBehandling = behandling.copy(status = status)
+        val oppdatertBehandling = behandling.copy(
+            status = status,
+            sporbar = behandling.sporbar.copy(endret = Endret()),
+        )
         behandlingRepository.update(oppdatertBehandling)
     }
 }

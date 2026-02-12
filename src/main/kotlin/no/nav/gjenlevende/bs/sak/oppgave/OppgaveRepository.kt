@@ -7,10 +7,10 @@ import java.util.UUID
 
 @Repository
 interface OppgaveRepository :
-    RepositoryInterface<OppgaveEntity, UUID>,
-    InsertUpdateRepository<OppgaveEntity> {
+    RepositoryInterface<Oppgave, UUID>,
+    InsertUpdateRepository<Oppgave> {
     fun findByBehandlingIdAndType(
         behandlingId: UUID,
         type: String,
-    ): OppgaveEntity?
+    ): Oppgave?
 }

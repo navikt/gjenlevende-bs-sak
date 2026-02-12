@@ -8,7 +8,7 @@ import org.springframework.data.relational.core.mapping.Table
 import java.util.UUID
 
 @Table("oppgave")
-data class OppgaveEntity(
+data class Oppgave(
     @Id
     val id: UUID = UUID.randomUUID(),
     val behandlingId: UUID,

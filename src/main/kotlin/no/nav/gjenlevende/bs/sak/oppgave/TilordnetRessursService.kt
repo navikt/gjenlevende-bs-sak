@@ -28,15 +28,17 @@ class TilordnetRessursService(
                 type = OppgavetypeEYO.BEH_SAK.name,
             )
 
-        val tilordnetRessurs = if (oppgaveEntity != null) {
-            val gosysOppgave = oppgaveClient.hentOppgaveM2M(oppgaveEntity.gsakOppgaveId)
-            gosysOppgave.tilordnetRessurs
-        } else {
-            logger.info("Ingen oppgave funnet for behandling=$behandlingId, bruker opprettetAv fra behandling")
-            val behandling = behandlingRepository.findByIdOrNull(behandlingId)
-                ?: throw IllegalStateException("Finner ikke behandling med id=$behandlingId")
-            behandling.sporbar.opprettetAv
-        }
+        val tilordnetRessurs =
+            if (oppgaveEntity != null) {
+                val gosysOppgave = oppgaveClient.hentOppgaveM2M(oppgaveEntity.gsakOppgaveId)
+                gosysOppgave.tilordnetRessurs
+            } else {
+                logger.info("Ingen oppgave funnet for behandling=$behandlingId, bruker opprettetAv fra behandling")
+                val behandling =
+                    behandlingRepository.findByIdOrNull(behandlingId)
+                        ?: throw IllegalStateException("Finner ikke behandling med id=$behandlingId")
+                behandling.sporbar.opprettetAv
+            }
 
         if (tilordnetRessurs.isNullOrBlank()) {
             return AnsvarligSaksbehandlerDto(

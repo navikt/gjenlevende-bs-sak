@@ -27,12 +27,13 @@ class TilordnetRessursServiceTest {
     private val entraProxyClient = mockk<EntraProxyClient>()
     private val behandlingRepository = mockk<BehandlingRepository>()
 
-    private val service = TilordnetRessursService(
-        oppgaveRepository = oppgaveRepository,
-        oppgaveClient = oppgaveClient,
-        entraProxyClient = entraProxyClient,
-        behandlingRepository = behandlingRepository,
-    )
+    private val service =
+        TilordnetRessursService(
+            oppgaveRepository = oppgaveRepository,
+            oppgaveClient = oppgaveClient,
+            entraProxyClient = entraProxyClient,
+            behandlingRepository = behandlingRepository,
+        )
 
     @BeforeEach
     fun setUp() {
@@ -120,10 +121,11 @@ class TilordnetRessursServiceTest {
             )
         } returns null
 
-        every { behandlingRepository.findByIdOrNull(behandlingId) } returns lagBehandling(
-            id = behandlingId,
-            opprettetAv = INNLOGGET_IDENT,
-        )
+        every { behandlingRepository.findByIdOrNull(behandlingId) } returns
+            lagBehandling(
+                id = behandlingId,
+                opprettetAv = INNLOGGET_IDENT,
+            )
         every { entraProxyClient.hentSaksbehandlerInfo(INNLOGGET_IDENT) } returns lagSaksbehandlerResponse(navIdent = INNLOGGET_IDENT)
 
         val resultat = service.hentAnsvarligSaksbehandler(behandlingId)
@@ -143,10 +145,11 @@ class TilordnetRessursServiceTest {
             )
         } returns null
 
-        every { behandlingRepository.findByIdOrNull(behandlingId) } returns lagBehandling(
-            id = behandlingId,
-            opprettetAv = annenIdent,
-        )
+        every { behandlingRepository.findByIdOrNull(behandlingId) } returns
+            lagBehandling(
+                id = behandlingId,
+                opprettetAv = annenIdent,
+            )
         every { entraProxyClient.hentSaksbehandlerInfo(annenIdent) } returns lagSaksbehandlerResponse(navIdent = annenIdent)
 
         val resultat = service.hentAnsvarligSaksbehandler(behandlingId)
@@ -160,28 +163,30 @@ class TilordnetRessursServiceTest {
         private fun lagOppgaveEntity(
             behandlingId: UUID,
             gsakOppgaveId: Long,
-        ) = OppgaveEntity(
+        ) = Oppgave(
             behandlingId = behandlingId,
             gsakOppgaveId = gsakOppgaveId,
             type = OppgavetypeEYO.BEH_SAK.name,
         )
 
-        private fun lagGosysOppgave(tilordnetRessurs: String?) = Oppgave(
-            id = 12345L,
-            tema = Tema.EYO,
-            oppgavetype = OppgavetypeEYO.BEH_SAK.name,
-            tilordnetRessurs = tilordnetRessurs,
-        )
+        private fun lagGosysOppgave(tilordnetRessurs: String?) =
+            OppgaveDto(
+                id = 12345L,
+                tema = Tema.EYO,
+                oppgavetype = OppgavetypeEYO.BEH_SAK.name,
+                tilordnetRessurs = tilordnetRessurs,
+            )
 
-        private fun lagSaksbehandlerResponse(navIdent: String) = SaksbehandlerResponse(
-            navIdent = navIdent,
-            visningNavn = "Fornavn Etternavn",
-            fornavn = "Fornavn",
-            etternavn = "Etternavn",
-            tIdent = navIdent,
-            epost = "fornavn.etternavn@nav.no",
-            enhet = EnhetResponse(enhetnummer = "4415", navn = "NAV Molde"),
-        )
+        private fun lagSaksbehandlerResponse(navIdent: String) =
+            SaksbehandlerResponse(
+                navIdent = navIdent,
+                visningNavn = "Fornavn Etternavn",
+                fornavn = "Fornavn",
+                etternavn = "Etternavn",
+                tIdent = navIdent,
+                epost = "fornavn.etternavn@nav.no",
+                enhet = EnhetResponse(enhetnummer = "4415", navn = "NAV Molde"),
+            )
 
         private fun lagBehandling(
             id: UUID,

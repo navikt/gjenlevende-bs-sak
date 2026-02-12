@@ -19,18 +19,19 @@ import org.junit.jupiter.api.Test
 import org.springframework.data.repository.findByIdOrNull
 import java.util.UUID
 
-class OppgaveServiceTest {
+class OppgaveDtoServiceTest {
     private val fagsakRepository = mockk<FagsakRepository>()
     private val fagsakPersonRepository = mockk<FagsakPersonRepository>()
     private val oppgaveClient = mockk<OppgaveClient>()
     private val oppgaveRepository = mockk<OppgaveRepository>()
 
-    private val service = OppgaveService(
-        fagsakRepository = fagsakRepository,
-        fagsakPersonRepository = fagsakPersonRepository,
-        oppgaveClient = oppgaveClient,
-        oppgaveRepository = oppgaveRepository,
-    )
+    private val service =
+        OppgaveService(
+            fagsakRepository = fagsakRepository,
+            fagsakPersonRepository = fagsakPersonRepository,
+            oppgaveClient = oppgaveClient,
+            oppgaveRepository = oppgaveRepository,
+        )
 
     @Test
     fun `oppretter oppgave og lagrer OppgaveEntity med riktig gsakOppgaveId`() {
@@ -39,32 +40,36 @@ class OppgaveServiceTest {
         val behandlingId = UUID.randomUUID()
         val gsakOppgaveId = 98765L
 
-        val fagsakPerson = FagsakPerson(
-            id = fagsakPersonId,
-            identer = setOf(Personident(ident = "12345678910")),
-        )
-        val fagsak = Fagsak(
-            id = fagsakId,
-            fagsakPersonId = fagsakPersonId,
-            eksternId = 1001,
-            stønadstype = StønadType.BARNETILSYN,
-        )
-        val behandling = Behandling(
-            id = behandlingId,
-            fagsakId = fagsakId,
-            status = BehandlingStatus.OPPRETTET,
-            resultat = BehandlingResultat.IKKE_SATT,
-        )
+        val fagsakPerson =
+            FagsakPerson(
+                id = fagsakPersonId,
+                identer = setOf(Personident(ident = "12345678910")),
+            )
+        val fagsak =
+            Fagsak(
+                id = fagsakId,
+                fagsakPersonId = fagsakPersonId,
+                eksternId = 1001,
+                stønadstype = StønadType.BARNETILSYN,
+            )
+        val behandling =
+            Behandling(
+                id = behandlingId,
+                fagsakId = fagsakId,
+                status = BehandlingStatus.OPPRETTET,
+                resultat = BehandlingResultat.IKKE_SATT,
+            )
 
         every { fagsakRepository.findByIdOrNull(fagsakId) } returns fagsak
         every { fagsakPersonRepository.findByIdOrNull(fagsakPersonId) } returns fagsakPerson
-        every { oppgaveClient.opprettOppgaveM2M(oppgaveRequest = any()) } returns Oppgave(
-            id = gsakOppgaveId,
-            tema = Tema.EYO,
-            oppgavetype = OppgavetypeEYO.BEH_SAK.name,
-        )
+        every { oppgaveClient.opprettOppgaveM2M(oppgaveRequest = any()) } returns
+            OppgaveDto(
+                id = gsakOppgaveId,
+                tema = Tema.EYO,
+                oppgavetype = OppgavetypeEYO.BEH_SAK.name,
+            )
 
-        val entitySlot = slot<OppgaveEntity>()
+        val entitySlot = slot<Oppgave>()
         every { oppgaveRepository.insert(capture(entitySlot)) } answers { firstArg() }
 
         service.opprettBehandleSakOppgave(
@@ -84,30 +89,34 @@ class OppgaveServiceTest {
         val fagsakId = UUID.randomUUID()
         val behandlingId = UUID.randomUUID()
 
-        val fagsakPerson = FagsakPerson(
-            id = fagsakPersonId,
-            identer = setOf(Personident(ident = "12345678910")),
-        )
-        val fagsak = Fagsak(
-            id = fagsakId,
-            fagsakPersonId = fagsakPersonId,
-            eksternId = 1001,
-            stønadstype = StønadType.BARNETILSYN,
-        )
-        val behandling = Behandling(
-            id = behandlingId,
-            fagsakId = fagsakId,
-            status = BehandlingStatus.OPPRETTET,
-            resultat = BehandlingResultat.IKKE_SATT,
-        )
+        val fagsakPerson =
+            FagsakPerson(
+                id = fagsakPersonId,
+                identer = setOf(Personident(ident = "12345678910")),
+            )
+        val fagsak =
+            Fagsak(
+                id = fagsakId,
+                fagsakPersonId = fagsakPersonId,
+                eksternId = 1001,
+                stønadstype = StønadType.BARNETILSYN,
+            )
+        val behandling =
+            Behandling(
+                id = behandlingId,
+                fagsakId = fagsakId,
+                status = BehandlingStatus.OPPRETTET,
+                resultat = BehandlingResultat.IKKE_SATT,
+            )
 
         every { fagsakRepository.findByIdOrNull(fagsakId) } returns fagsak
         every { fagsakPersonRepository.findByIdOrNull(fagsakPersonId) } returns fagsakPerson
-        every { oppgaveClient.opprettOppgaveM2M(oppgaveRequest = any()) } returns Oppgave(
-            id = null,
-            tema = Tema.EYO,
-            oppgavetype = OppgavetypeEYO.BEH_SAK.name,
-        )
+        every { oppgaveClient.opprettOppgaveM2M(oppgaveRequest = any()) } returns
+            OppgaveDto(
+                id = null,
+                tema = Tema.EYO,
+                oppgavetype = OppgavetypeEYO.BEH_SAK.name,
+            )
 
         assertThatThrownBy {
             service.opprettBehandleSakOppgave(

@@ -40,7 +40,7 @@ class OppgaveService(
         val oppgave = oppgaveClient.opprettOppgaveM2M(oppgaveRequest = oppgaveRequest)
 
         oppgaveRepository.insert(
-            OppgaveEntity(
+            Oppgave(
                 behandlingId = behandling.id,
                 gsakOppgaveId = oppgave.id ?: throw IllegalStateException("Oppgave-respons mangler id"),
                 type = OppgavetypeEYO.BEH_SAK.name,
@@ -79,7 +79,7 @@ fun FagsakPerson.aktivIdent(): Personident =
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-data class Oppgave(
+data class OppgaveDto(
     val id: Long? = null,
     val identer: List<OppgavePersonident>? = null,
     val tildeltEnhetsnr: String? = null,

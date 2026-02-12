@@ -12,7 +12,7 @@ import java.time.DayOfWeek.WEDNESDAY
 import java.time.LocalDateTime
 import java.time.temporal.TemporalAdjusters
 
-class OppgaveUtilTest {
+class OppgaveDtoUtilTest {
     @Test
     fun `Sjekk at frist er riktig gammel`() {
         for (dag in DayOfWeek.entries) {

@@ -42,7 +42,7 @@ class OppgaveClient(
         private const val API_BASE_URL = "/api/v1/oppgaver"
     }
 
-    fun opprettOppgaveM2M(oppgaveRequest: LagOppgaveRequest): Oppgave {
+    fun opprettOppgaveM2M(oppgaveRequest: LagOppgaveRequest): OppgaveDto {
         logger.info("Sender opprettOppgave request til Oppgave-service ")
         val maskinToken = texasClient.hentMaskinToken(oppgaveScope.toString())
 
@@ -53,7 +53,7 @@ class OppgaveClient(
             .header("X-Correlation-ID", MDC.get("callId") ?: "${UUID.randomUUID()}")
             .bodyValue(oppgaveRequest)
             .retrieve()
-            .bodyToMono<Oppgave>()
+            .bodyToMono<OppgaveDto>()
             .switchIfEmpty(Mono.error(NoSuchElementException("Tom respons fra oppgave")))
             .timeout(Duration.ofSeconds(TIMEOUT_SEKUNDER))
             .doOnNext { response ->
@@ -64,7 +64,7 @@ class OppgaveClient(
     }
 
     // TODO: Dette må kanskje gjøres med OBO, vi ser på dette siden.
-    fun hentOppgaveM2M(oppgaveId: Long): Oppgave {
+    fun hentOppgaveM2M(oppgaveId: Long): OppgaveDto {
         logger.info("Henter oppgave med id=$oppgaveId fra Oppgave-service")
         val maskinToken = texasClient.hentMaskinToken(oppgaveScope.toString())
 
@@ -74,7 +74,7 @@ class OppgaveClient(
             .header("Authorization", "Bearer $maskinToken")
             .header("X-Correlation-ID", MDC.get("callId") ?: "${UUID.randomUUID()}")
             .retrieve()
-            .bodyToMono<Oppgave>()
+            .bodyToMono<OppgaveDto>()
             .switchIfEmpty(Mono.error(NoSuchElementException("Tom respons fra oppgave")))
             .timeout(Duration.ofSeconds(TIMEOUT_SEKUNDER))
             .doOnNext { response ->

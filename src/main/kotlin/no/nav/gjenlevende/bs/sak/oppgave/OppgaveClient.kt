@@ -42,7 +42,7 @@ class OppgaveClient(
         private const val API_BASE_URL = "/api/v1/oppgaver"
     }
 
-    fun opprettOppgaveM2M(oppgaveRequest: LagOppgaveRequest): Oppgave {
+    fun opprettOppgaveM2M(oppgaveRequest: LagOppgaveRequest): OppgaveDto {
         logger.info("Sender opprettOppgave request til Oppgave-service ")
         val maskinToken = texasClient.hentMaskinToken(oppgaveScope.toString())
 
@@ -53,7 +53,7 @@ class OppgaveClient(
             .header("X-Correlation-ID", MDC.get("callId") ?: "${UUID.randomUUID()}")
             .bodyValue(oppgaveRequest)
             .retrieve()
-            .bodyToMono<Oppgave>()
+            .bodyToMono<OppgaveDto>()
             .switchIfEmpty(Mono.error(NoSuchElementException("Tom respons fra oppgave")))
             .timeout(Duration.ofSeconds(TIMEOUT_SEKUNDER))
             .doOnNext { response ->
@@ -61,6 +61,27 @@ class OppgaveClient(
             }.doOnError {
                 logger.error("Feil: klarte ikke opprette oppgave med $oppgaveRequest")
             }.block() ?: throw RuntimeException("Klarte ikke opprette oppgave")
+    }
+
+    // TODO: Dette må kanskje gjøres med OBO, vi ser på dette siden.
+    fun hentOppgaveM2M(oppgaveId: Long): OppgaveDto {
+        logger.info("Henter oppgave med id=$oppgaveId fra Oppgave-service")
+        val maskinToken = texasClient.hentMaskinToken(oppgaveScope.toString())
+
+        return oppgaveWebClient
+            .get()
+            .uri("$API_BASE_URL/$oppgaveId")
+            .header("Authorization", "Bearer $maskinToken")
+            .header("X-Correlation-ID", MDC.get("callId") ?: "${UUID.randomUUID()}")
+            .retrieve()
+            .bodyToMono<OppgaveDto>()
+            .switchIfEmpty(Mono.error(NoSuchElementException("Tom respons fra oppgave")))
+            .timeout(Duration.ofSeconds(TIMEOUT_SEKUNDER))
+            .doOnNext { response ->
+                logger.info("Hentet oppgave med id: ${response.id}")
+            }.doOnError {
+                logger.error("Feil: klarte ikke hente oppgave med id=$oppgaveId")
+            }.block() ?: throw RuntimeException("Klarte ikke hente oppgave med id=$oppgaveId")
     }
 }
 

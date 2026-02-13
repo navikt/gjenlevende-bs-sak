@@ -60,7 +60,7 @@ class BrevService(
     }
 
     @Transactional
-    fun oppdaterSaksbehandler(
+    fun oppdaterSaksbehandlerForBrev(
         behandlingId: UUID,
     ) {
         val saksbehandler = SikkerhetContext.hentSaksbehandlerEllerSystembruker()
@@ -75,7 +75,7 @@ class BrevService(
     }
 
     @Transactional
-    fun oppdaterBeslutter(
+    fun oppdaterBeslutterForBrev(
         behandlingId: UUID,
     ) {
         val beslutter = SikkerhetContext.hentSaksbehandlerEllerSystembruker()

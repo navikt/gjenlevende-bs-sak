@@ -76,20 +76,81 @@ object BeregningUtils {
         return maxOf(BigDecimal.ZERO, minBeløp)
     }
 
-    fun beregnBarnetilsynperiode(barnetilsynBeregninger: List<BarnetilsynBeregning>): List<BeløpsperioderDto> =
-        barnetilsynBeregninger.map { beregning ->
-            val antallBarn = beregning.barn.size
-            val beløp = beregnPeriodeBeløp(beregning.utgifter, antallBarn, beregning.datoFra)
+    fun beregnBarnetilsynperiode(barnetilsynBeregninger: List<BarnetilsynBeregning>): List<BeløpsperioderDto> {
+        val splittetBarnetilsynpBeregninger = delOppPerÅr(barnetilsynBeregninger)
+        val beløpsperioderDtoListe = tilBeløpsPerioderDto(splittetBarnetilsynpBeregninger)
 
-            BeløpsperioderDto(
-                datoFra = beregning.datoFra,
-                datoTil = beregning.datoTil,
-                utgifter = beregning.utgifter,
-                antallBarn = antallBarn,
-                beløp = beløp.roundUp().toInt(),
-                periodetype = beregning.periodetype,
+        return sammenslåSammenhengendeBeløpsperioder(beløpsperioderDtoListe)
+    }
+
+    private fun delOppPerÅr(barnetilsynBeregninger: List<BarnetilsynBeregning>): List<BarnetilsynBeregning> =
+        barnetilsynBeregninger.flatMap { periode ->
+
+            val periodeÅr = (periode.datoFra.year..periode.datoTil.year)
+            periodeÅr.map { year ->
+                val fra = maxOf(periode.datoFra, YearMonth.of(year, 1))
+                val til = minOf(periode.datoTil, YearMonth.of(year, 12))
+
+                periode.copy(datoFra = fra, datoTil = til)
+            }
+        }
+
+    private fun tilBeløpsPerioderDto(barnetilsynperioder: List<BarnetilsynBeregning>): List<BeløpsperioderDto> {
+        val perioder = mutableListOf<BeløpsperioderDto>()
+
+        barnetilsynperioder.forEach { barnetilsynperiode ->
+            perioder.add(
+                BeløpsperioderDto(
+                    datoFra = barnetilsynperiode.datoFra,
+                    datoTil = barnetilsynperiode.datoTil,
+                    utgifter = barnetilsynperiode.utgifter,
+                    antallBarn = barnetilsynperiode.barn.size,
+                    beløp = beregnPeriodeBeløp(barnetilsynperiode.utgifter, barnetilsynperiode.barn.size, barnetilsynperiode.datoFra).roundUp().toInt(),
+                    periodetype = barnetilsynperiode.periodetype,
+                ),
             )
         }
+        return perioder
+    }
+
+    private fun sammenslåSammenhengendeBeløpsperioder(beløpsperioder: List<BeløpsperioderDto>): List<BeløpsperioderDto> {
+        if (beløpsperioder.isEmpty()) return emptyList()
+
+        val sorterteBeløpsperioder = beløpsperioder.sortedBy { it.datoFra }
+        val sammenslåttBeløpsperioder = mutableListOf<BeløpsperioderDto>()
+
+        var gjeldendePeriode = sorterteBeløpsperioder.first()
+
+        for (i in 1 until sorterteBeløpsperioder.size) {
+            val nestePeriode = sorterteBeløpsperioder[i]
+
+            if (kanSammenslå(gjeldendePeriode, nestePeriode)) {
+                gjeldendePeriode = gjeldendePeriode.copy(datoTil = nestePeriode.datoTil)
+            } else {
+                sammenslåttBeløpsperioder.add(gjeldendePeriode)
+                gjeldendePeriode = nestePeriode
+            }
+        }
+
+        sammenslåttBeløpsperioder.add(gjeldendePeriode)
+
+        return sammenslåttBeløpsperioder
+    }
+
+    private fun kanSammenslå(
+        gjeldendePeriode: BeløpsperioderDto,
+        nestePeriode: BeløpsperioderDto,
+    ): Boolean {
+        val erSammenhengende = gjeldendePeriode.datoTil.plusMonths(1) == nestePeriode.datoFra
+
+        val likeVerdier =
+            gjeldendePeriode.utgifter == nestePeriode.utgifter &&
+                gjeldendePeriode.antallBarn == nestePeriode.antallBarn &&
+                gjeldendePeriode.beløp == nestePeriode.beløp &&
+                gjeldendePeriode.periodetype == nestePeriode.periodetype
+
+        return erSammenhengende && likeVerdier
+    }
 }
 
 fun List<MaxbeløpBarnetilsynSats>.hentSatsFor(

@@ -6,6 +6,7 @@ import io.mockk.verify
 import no.nav.gjenlevende.bs.sak.ApplicationLocalSetup
 import no.nav.gjenlevende.bs.sak.fagsak.domain.StønadType
 import no.nav.gjenlevende.bs.sak.fagsak.dto.FagsakDto
+import no.nav.gjenlevende.bs.sak.infrastruktur.exception.Feil
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -59,8 +60,15 @@ open class FagsakControllerTest {
                 eksternId = 1L,
             )
 
+        val request =
+            FagsakRequest(
+                personident = personident,
+                fagsakPersonId = null,
+                stønadstype = stønadstype,
+            )
+
         every {
-            fagsakService.hentEllerOpprettFagsakMedBehandlinger(personident, stønadstype)
+            fagsakService.hentEllerOpprettFagsak(request)
         } returns forventetFagsak
 
         val responseJson =
@@ -79,7 +87,7 @@ open class FagsakControllerTest {
         assertThat(fagsakDto.stønadstype).isEqualTo(stønadstype)
 
         verify(exactly = 1) {
-            fagsakService.hentEllerOpprettFagsakMedBehandlinger(personident, stønadstype)
+            fagsakService.hentEllerOpprettFagsak(request)
         }
     }
 
@@ -104,8 +112,15 @@ open class FagsakControllerTest {
                 eksternId = 1L,
             )
 
+        val request =
+            FagsakRequest(
+                personident = null,
+                fagsakPersonId = fagsakPersonId,
+                stønadstype = stønadstype,
+            )
+
         every {
-            fagsakService.hentEllerOpprettFagsakMedFagsakPersonId(fagsakPersonId, stønadstype)
+            fagsakService.hentEllerOpprettFagsak(request)
         } returns forventetFagsak
 
         every { fagsakPersonService.hentAktivIdent(any()) } returns personident
@@ -126,7 +141,7 @@ open class FagsakControllerTest {
         assertThat(fagsakDto.stønadstype).isEqualTo(stønadstype)
 
         verify(exactly = 1) {
-            fagsakService.hentEllerOpprettFagsakMedFagsakPersonId(fagsakPersonId, stønadstype)
+            fagsakService.hentEllerOpprettFagsak(request)
         }
     }
 
@@ -138,6 +153,10 @@ open class FagsakControllerTest {
                 fagsakPersonId = null,
                 stønadstype = StønadType.BARNETILSYN,
             )
+
+        every {
+            fagsakService.hentEllerOpprettFagsak(ugyldigRequest)
+        } throws Feil("Må oppgi enten personident eller fagsakPersonId")
 
         mockMvc
             .post("/api/fagsak") {
@@ -160,7 +179,7 @@ open class FagsakControllerTest {
             )
 
         every {
-            fagsakService.hentEllerOpprettFagsakMedFagsakPersonId(any(), any())
+            fagsakService.hentEllerOpprettFagsak(any())
         } returns
             FagsakDto(
                 personident = "12345678910",

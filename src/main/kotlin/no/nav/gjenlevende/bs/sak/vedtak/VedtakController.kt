@@ -21,22 +21,31 @@ class VedtakController(
         @PathVariable behandlingId: UUID,
     ): ResponseEntity<VedtakDto> {
         val vedtak = vedtakService.hentVedtak(behandlingId)
-        return ResponseEntity.ok(vedtak?.tilDto())
+
+        return if (vedtak == null) {
+            ResponseEntity.noContent().build()
+        } else {
+            ResponseEntity.ok(vedtak.tilDto())
+        }
     }
 
     @PostMapping("/{behandlingId}/lagre-vedtak")
     fun lagreVedtak(
         @PathVariable behandlingId: UUID,
         @RequestBody vedtakDto: VedtakDto,
-    ): ResponseEntity<UUID> {
+    ): ResponseEntity<Map<String, String>> {
+        vedtakService.validerKanLagreVedtak(vedtakDto)
         vedtakService.slettVedtakHvisFinnes(behandlingId)
         vedtakService.lagreVedtak(vedtakDto = vedtakDto, behandlingId = behandlingId)
-        return ResponseEntity.ok(behandlingId)
+        return ResponseEntity.ok(mapOf("status" to "OK"))
     }
 
     @PostMapping("/{behandlingId}/beregn")
     fun beregn(
         @PathVariable behandlingId: UUID,
         @RequestBody barnetilsynBeregningRequest: BarnetilsynBeregningRequest,
-    ): ResponseEntity<List<BeløpsperioderDto>> = ResponseEntity.ok(vedtakService.lagBeløpsperioder(barnetilsynBeregningRequest))
+    ): ResponseEntity<List<BeløpsperioderDto>> {
+        vedtakService.validerKanBeregne(barnetilsynBeregningRequest)
+        return ResponseEntity.ok(vedtakService.lagBeløpsperioder(barnetilsynBeregningRequest))
+    }
 }

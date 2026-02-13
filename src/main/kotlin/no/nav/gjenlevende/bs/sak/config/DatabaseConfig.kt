@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.convert.converter.Converter
 import org.springframework.core.env.Environment
+import org.springframework.data.auditing.DateTimeProvider
 import org.springframework.data.convert.ReadingConverter
 import org.springframework.data.convert.WritingConverter
 import org.springframework.data.domain.AuditorAware
@@ -21,12 +22,14 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import tools.jackson.databind.ObjectMapper
 import java.sql.Date
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.YearMonth
+import java.time.temporal.ChronoUnit
 import java.util.Optional
 import javax.sql.DataSource
 
 @Configuration
-@EnableJdbcAuditing
+@EnableJdbcAuditing(dateTimeProviderRef = "dateTimeProvider")
 @EnableJdbcRepositories("no.nav.familie", "no.nav.gjenlevende")
 open class DatabaseConfig(
     private val objectMapper: ObjectMapper,
@@ -36,6 +39,9 @@ open class DatabaseConfig(
 
     @Bean
     open fun auditorAware(): AuditorAware<String> = AuditorAware { Optional.of(SikkerhetContext.hentSaksbehandlerEllerSystembruker()) }
+
+    @Bean
+    open fun dateTimeProvider(): DateTimeProvider = DateTimeProvider { Optional.of(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS)) }
 
     override fun userConverters(): List<*> =
         listOf(

@@ -1,19 +1,12 @@
 package no.nav.gjenlevende.bs.sak.felles.sporbar
 
-import org.springframework.data.annotation.CreatedBy
-import org.springframework.data.annotation.CreatedDate
-import org.springframework.data.annotation.LastModifiedBy
-import org.springframework.data.annotation.LastModifiedDate
+import no.nav.gjenlevende.bs.sak.felles.sikkerhet.SikkerhetContext
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
 data class Sporing(
-    @CreatedBy
-    val opprettetAv: String = "",
-    @CreatedDate
+    val opprettetAv: String = SikkerhetContext.hentSaksbehandlerEllerSystembruker(),
     val opprettetTid: LocalDateTime = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
-    @LastModifiedBy
-    val endretAv: String = "",
-    @LastModifiedDate
+    val endretAv: String = SikkerhetContext.hentSaksbehandlerEllerSystembruker(),
     val endretTid: LocalDateTime = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
 )

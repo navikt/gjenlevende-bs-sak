@@ -1,7 +1,8 @@
 package no.nav.gjenlevende.bs.sak.vedtak
 
 import no.nav.gjenlevende.bs.sak.felles.sikkerhet.SikkerhetContext
-import no.nav.gjenlevende.bs.sak.felles.sporbar.SporbarUtils
+import org.springframework.data.annotation.CreatedBy
+import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.MappedCollection
@@ -21,8 +22,10 @@ data class Vedtak(
     @Column("opphor_fom")
     val opphørFom: YearMonth? = null,
     val beslutterIdent: String? = null,
-    val opprettetTid: LocalDateTime = SporbarUtils.now(),
-    val opprettetAv: String = SikkerhetContext.hentSaksbehandlerEllerSystembruker(),
+    @CreatedDate
+    val opprettetTid: LocalDateTime = LocalDateTime.now(),
+    @CreatedBy
+    val opprettetAv: String = "",
 )
 
 data class Barnetilsynperiode(

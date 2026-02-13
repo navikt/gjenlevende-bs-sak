@@ -1,6 +1,6 @@
 package no.nav.gjenlevende.bs.sak.behandling
 
-import no.nav.gjenlevende.bs.sak.felles.sporbar.Sporbar
+import no.nav.gjenlevende.bs.sak.felles.sporbar.Sporing
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Embedded
 import org.springframework.data.relational.core.mapping.Table
@@ -14,7 +14,7 @@ data class Behandling(
     val status: BehandlingStatus,
     val resultat: BehandlingResultat,
     @Embedded(onEmpty = Embedded.OnEmpty.USE_EMPTY)
-    val sporbar: Sporbar = Sporbar(),
+    val sporing: Sporing = Sporing(),
 )
 
 enum class BehandlingStatus {

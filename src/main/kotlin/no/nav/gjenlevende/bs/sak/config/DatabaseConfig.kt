@@ -3,6 +3,7 @@ package no.nav.gjenlevende.bs.sak.config
 import no.nav.familie.prosessering.PropertiesWrapperTilStringConverter
 import no.nav.familie.prosessering.StringTilPropertiesWrapperConverter
 import no.nav.gjenlevende.bs.sak.brev.domain.BrevRequest
+import no.nav.gjenlevende.bs.sak.felles.sikkerhet.SikkerhetContext
 import org.postgresql.util.PGobject
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.flyway.autoconfigure.FlywayConfigurationCustomizer
@@ -12,22 +13,29 @@ import org.springframework.core.convert.converter.Converter
 import org.springframework.core.env.Environment
 import org.springframework.data.convert.ReadingConverter
 import org.springframework.data.convert.WritingConverter
+import org.springframework.data.domain.AuditorAware
 import org.springframework.data.jdbc.repository.config.AbstractJdbcConfiguration
+import org.springframework.data.jdbc.repository.config.EnableJdbcAuditing
 import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import tools.jackson.databind.ObjectMapper
 import java.sql.Date
 import java.time.LocalDate
 import java.time.YearMonth
+import java.util.Optional
 import javax.sql.DataSource
 
 @Configuration
+@EnableJdbcAuditing
 @EnableJdbcRepositories("no.nav.familie", "no.nav.gjenlevende")
 open class DatabaseConfig(
     private val objectMapper: ObjectMapper,
 ) : AbstractJdbcConfiguration() {
     @Bean
     open fun namedParameterJdbcTemplate(dataSource: DataSource): NamedParameterJdbcTemplate = NamedParameterJdbcTemplate(dataSource)
+
+    @Bean
+    open fun auditorAware(): AuditorAware<String> = AuditorAware { Optional.of(SikkerhetContext.hentSaksbehandlerEllerSystembruker()) }
 
     override fun userConverters(): List<*> =
         listOf(

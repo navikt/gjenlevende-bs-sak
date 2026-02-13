@@ -32,16 +32,12 @@ class BrevService(
         behandlingId: UUID,
         brevRequest: BrevRequest,
     ) {
-        val brev =
-            Brev(
-                behandlingId = behandlingId,
-                brevJson = brevRequest,
-            )
+        val eksisterendeBrev = brevRepository.findByIdOrNull(behandlingId)
 
-        if (brevRepository.existsById(behandlingId)) {
-            brevRepository.update(brev)
+        if (eksisterendeBrev != null) {
+            brevRepository.update(eksisterendeBrev.copy(brevJson = brevRequest))
         } else {
-            brevRepository.insert(brev)
+            brevRepository.insert(Brev(behandlingId = behandlingId, brevJson = brevRequest))
         }
     }
 

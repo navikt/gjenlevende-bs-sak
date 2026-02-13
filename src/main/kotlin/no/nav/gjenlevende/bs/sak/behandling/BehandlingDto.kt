@@ -18,8 +18,8 @@ fun Behandling.tilDto(): BehandlingDto =
         id = this.id,
         fagsakId = this.fagsakId,
         status = this.status,
-        sistEndret = this.sporbar.endret.endretTid,
-        opprettet = this.sporbar.opprettetTid,
-        opprettetAv = this.sporbar.opprettetAv,
+        sistEndret = this.sporing.endretTid,
+        opprettet = this.sporing.opprettetTid,
+        opprettetAv = this.sporing.opprettetAv,
         resultat = this.resultat,
     )

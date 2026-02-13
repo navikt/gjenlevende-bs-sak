@@ -11,7 +11,7 @@ import no.nav.gjenlevende.bs.sak.behandling.BehandlingRepository
 import no.nav.gjenlevende.bs.sak.behandling.BehandlingResultat
 import no.nav.gjenlevende.bs.sak.behandling.BehandlingStatus
 import no.nav.gjenlevende.bs.sak.felles.sikkerhet.SikkerhetContext
-import no.nav.gjenlevende.bs.sak.felles.sporbar.Sporbar
+import no.nav.gjenlevende.bs.sak.felles.sporbar.Sporing
 import no.nav.gjenlevende.bs.sak.oppgave.dto.SaksbehandlerRolle
 import no.nav.gjenlevende.bs.sak.saksbehandler.EntraProxyClient
 import org.assertj.core.api.Assertions.assertThat
@@ -196,7 +196,7 @@ class AnsvarligSaksbehandlerServiceTest {
             fagsakId = UUID.randomUUID(),
             status = BehandlingStatus.OPPRETTET,
             resultat = BehandlingResultat.IKKE_SATT,
-            sporbar = Sporbar(opprettetAv = opprettetAv),
+            sporing = Sporing(opprettetAv = opprettetAv),
         )
     }
 }

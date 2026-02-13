@@ -1,6 +1,6 @@
 package no.nav.gjenlevende.bs.sak.fagsak.domain
 
-import no.nav.gjenlevende.bs.sak.felles.sporbar.Sporbar
+import no.nav.gjenlevende.bs.sak.felles.sporbar.Sporing
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Embedded
@@ -16,7 +16,7 @@ data class Fagsak(
     @Column("stonadstype")
     val stønadstype: StønadType,
     @Embedded(onEmpty = Embedded.OnEmpty.USE_EMPTY)
-    val sporbar: Sporbar = Sporbar(),
+    val sporing: Sporing = Sporing(),
 )
 
 enum class StønadType(

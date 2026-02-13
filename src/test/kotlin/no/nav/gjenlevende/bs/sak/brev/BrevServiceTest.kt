@@ -26,7 +26,7 @@ class BrevServiceTest {
         val behandlingId = UUID.randomUUID()
         val brevRequest = gyldigBrevRequest()
 
-        every { brevRepository.existsById(behandlingId) } returns false
+        every { brevRepository.findByIdOrNull(behandlingId) } returns null
         coEvery { brevRepository.insert(any()) } answers {
             firstArg<Brev>()
         }
@@ -51,8 +51,9 @@ class BrevServiceTest {
     fun `mellomlagreBrev update når brev finnes`() {
         val behandlingId = UUID.randomUUID()
         val brevRequest = gyldigBrevRequest()
+        val eksisterendeBrev = Brev(behandlingId = behandlingId, brevJson = gyldigBrevRequest())
 
-        every { brevRepository.existsById(behandlingId) } returns true
+        every { brevRepository.findByIdOrNull(behandlingId) } returns eksisterendeBrev
         coEvery { brevRepository.update(any()) } answers {
             firstArg<Brev>()
         }

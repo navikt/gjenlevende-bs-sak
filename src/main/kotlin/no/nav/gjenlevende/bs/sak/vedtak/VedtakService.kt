@@ -1,5 +1,6 @@
 package no.nav.gjenlevende.bs.sak.vedtak
 
+import no.nav.gjenlevende.bs.sak.behandling.BehandlingService
 import no.nav.gjenlevende.bs.sak.infrastruktur.exception.Feil
 import no.nav.gjenlevende.bs.sak.vedtak.BeregningUtils.beregnBarnetilsynperiode
 import org.springframework.data.repository.findByIdOrNull
@@ -12,13 +13,18 @@ import kotlin.text.isNullOrEmpty
 @Service
 class VedtakService(
     private val vedtakRepository: VedtakRepository,
+    private val behandlingService: BehandlingService,
 ) {
     fun hentVedtak(behandlingId: UUID): Vedtak? = vedtakRepository.findByIdOrNull(behandlingId)
 
     fun lagreVedtak(
         vedtakDto: VedtakDto,
         behandlingId: UUID,
-    ): UUID = vedtakRepository.insert(vedtakDto.tilVedtak(behandlingId)).behandlingId
+    ): UUID {
+        val vedtak = vedtakRepository.insert(vedtakDto.tilVedtak(behandlingId))
+        behandlingService.oppdaterEndretTidspunkt(behandlingId)
+        return vedtak.behandlingId
+    }
 
     fun slettVedtakHvisFinnes(behandlingId: UUID) {
         vedtakRepository.deleteById(behandlingId)

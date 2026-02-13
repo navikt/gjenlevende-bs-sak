@@ -1,11 +1,13 @@
 package no.nav.gjenlevende.bs.sak.vilkår
 
+import no.nav.gjenlevende.bs.sak.behandling.BehandlingService
 import org.springframework.stereotype.Service
 import java.util.UUID
 
 @Service
 class VilkårVurderingService(
     private val vilkårVurderingRepository: VilkårVurderingRepository,
+    private val behandlingService: BehandlingService,
 ) {
     fun hentVilkårVurderinger(behandlingId: UUID): List<VilkårVurdering> = vilkårVurderingRepository.findByBehandlingId(behandlingId)
 
@@ -19,22 +21,26 @@ class VilkårVurderingService(
                 vilkårType = request.vilkårType,
             )
 
-        if (eksisterendeVurdering == null) {
-            return vilkårVurderingRepository.insert(
-                VilkårVurdering(
-                    behandlingId = behandlingId,
-                    vilkårType = request.vilkårType,
-                    vurdering = request.vurdering,
-                    begrunnelse = request.begrunnelse,
-                ),
-            )
-        }
+        val resultat =
+            if (eksisterendeVurdering == null) {
+                vilkårVurderingRepository.insert(
+                    VilkårVurdering(
+                        behandlingId = behandlingId,
+                        vilkårType = request.vilkårType,
+                        vurdering = request.vurdering,
+                        begrunnelse = request.begrunnelse,
+                    ),
+                )
+            } else {
+                vilkårVurderingRepository.update(
+                    eksisterendeVurdering.copy(
+                        vurdering = request.vurdering,
+                        begrunnelse = request.begrunnelse,
+                    ),
+                )
+            }
 
-        return vilkårVurderingRepository.update(
-            eksisterendeVurdering.copy(
-                vurdering = request.vurdering,
-                begrunnelse = request.begrunnelse,
-            ),
-        )
+        behandlingService.oppdaterEndretTidspunkt(behandlingId)
+        return resultat
     }
 }

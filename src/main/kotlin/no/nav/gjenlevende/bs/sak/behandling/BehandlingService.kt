@@ -45,4 +45,9 @@ class BehandlingService(
         val behandling = behandlingRepository.findByIdOrNull(behandlingId) ?: error("Fant ikke behandling med id=$behandlingId for oppdatering av BehandlingStatus")
         behandlingRepository.update(behandling.copy(status = status))
     }
+
+    fun oppdaterEndretTidspunkt(behandlingId: UUID) {
+        val behandling = behandlingRepository.findByIdOrNull(behandlingId) ?: error("Fant ikke behandling med id=$behandlingId")
+        behandlingRepository.update(behandling)
+    }
 }

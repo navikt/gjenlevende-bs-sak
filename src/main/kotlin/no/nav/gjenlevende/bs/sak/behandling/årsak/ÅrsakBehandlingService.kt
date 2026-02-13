@@ -34,12 +34,16 @@ class ÅrsakBehandlingService(
             )
         }
 
-        return årsakBehandlingRepository.update(
-            eksisterendeÅrsak.copy(
-                kravdato = årsakBehandlingRequest.kravdato,
-                årsak = årsakBehandlingRequest.årsak,
-                beskrivelse = årsakBehandlingRequest.beskrivelse,
-            ),
-        )
+        val oppdatert =
+            årsakBehandlingRepository.update(
+                eksisterendeÅrsak.copy(
+                    kravdato = årsakBehandlingRequest.kravdato,
+                    årsak = årsakBehandlingRequest.årsak,
+                    beskrivelse = årsakBehandlingRequest.beskrivelse,
+                ),
+            )
+
+        behandlingService.oppdaterEndretTidspunkt(behandlingId)
+        return oppdatert
     }
 }

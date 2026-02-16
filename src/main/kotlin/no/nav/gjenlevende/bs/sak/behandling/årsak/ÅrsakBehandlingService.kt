@@ -43,7 +43,6 @@ class ÅrsakBehandlingService(
                 ),
             )
 
-        behandlingService.oppdaterEndretTidspunkt(behandlingId)
         return oppdatert
     }
 }

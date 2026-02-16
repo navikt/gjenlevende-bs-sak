@@ -1,13 +1,11 @@
 package no.nav.gjenlevende.bs.sak.vilkår
 
-import no.nav.gjenlevende.bs.sak.behandling.BehandlingService
 import org.springframework.stereotype.Service
 import java.util.UUID
 
 @Service
 class VilkårVurderingService(
     private val vilkårVurderingRepository: VilkårVurderingRepository,
-    private val behandlingService: BehandlingService,
 ) {
     fun hentVilkårVurderinger(behandlingId: UUID): List<VilkårVurdering> = vilkårVurderingRepository.findByBehandlingId(behandlingId)
 
@@ -40,7 +38,6 @@ class VilkårVurderingService(
                 )
             }
 
-        behandlingService.oppdaterEndretTidspunkt(behandlingId)
         return resultat
     }
 }

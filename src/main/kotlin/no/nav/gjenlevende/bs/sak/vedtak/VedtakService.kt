@@ -2,7 +2,6 @@ package no.nav.gjenlevende.bs.sak.vedtak
 
 import no.nav.gjenlevende.bs.sak.infrastruktur.exception.Feil
 import no.nav.gjenlevende.bs.sak.vedtak.BeregningUtils.beregnBarnetilsynperiode
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.util.UUID
@@ -13,15 +12,17 @@ import kotlin.text.isNullOrEmpty
 class VedtakService(
     private val vedtakRepository: VedtakRepository,
 ) {
-    fun hentVedtak(behandlingId: UUID): Vedtak? = vedtakRepository.findByIdOrNull(behandlingId)
+    fun hentVedtak(behandlingId: UUID): Vedtak? = vedtakRepository.findByBehandlingId(behandlingId)
 
     fun lagreVedtak(
         vedtakDto: VedtakDto,
         behandlingId: UUID,
-    ): UUID = vedtakRepository.insert(vedtakDto.tilVedtak(behandlingId)).behandlingId
+    ): UUID = vedtakRepository.insert(vedtakDto.tilVedtak(behandlingId)).id
 
     fun slettVedtakHvisFinnes(behandlingId: UUID) {
-        vedtakRepository.deleteById(behandlingId)
+        if(vedtakRepository.findByBehandlingId(behandlingId) != null) {
+            vedtakRepository.deleteByBehandlingId(behandlingId)
+        }
     }
 
     fun lagBeløpsperioder(barnetilsynBeregningRequest: BarnetilsynBeregningRequest): List<BeløpsperioderDto> = beregnBarnetilsynperiode(barnetilsynBeregningRequest.barnetilsynBeregning)

@@ -8,4 +8,8 @@ import java.util.UUID
 @Repository
 interface VedtakRepository :
     RepositoryInterface<Vedtak, UUID>,
-    InsertUpdateRepository<Vedtak>
+    InsertUpdateRepository<Vedtak> {
+    fun findByBehandlingId(behandlingId: UUID): Vedtak?
+
+    fun deleteByBehandlingId(behandlingId: UUID)
+}

@@ -3,7 +3,7 @@ package no.nav.gjenlevende.bs.sak.config
 import no.nav.familie.prosessering.PropertiesWrapperTilStringConverter
 import no.nav.familie.prosessering.StringTilPropertiesWrapperConverter
 import no.nav.gjenlevende.bs.sak.brev.domain.BrevRequest
-import no.nav.gjenlevende.bs.sak.felles.sikkerhet.SikkerhetContext
+import no.nav.gjenlevende.bs.sak.felles.sporbar.Endret
 import org.postgresql.util.PGobject
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.flyway.autoconfigure.FlywayConfigurationCustomizer
@@ -38,7 +38,7 @@ open class DatabaseConfig(
     open fun namedParameterJdbcTemplate(dataSource: DataSource): NamedParameterJdbcTemplate = NamedParameterJdbcTemplate(dataSource)
 
     @Bean
-    open fun auditorAware(): AuditorAware<String> = AuditorAware { Optional.of(SikkerhetContext.hentSaksbehandlerEllerSystembruker()) }
+    open fun auditorAware(): AuditorAware<Endret> = AuditorAware { Optional.of(Endret()) }
 
     @Bean
     open fun dateTimeProvider(): DateTimeProvider = DateTimeProvider { Optional.of(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS)) }

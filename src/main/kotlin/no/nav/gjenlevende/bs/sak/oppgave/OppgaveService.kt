@@ -74,7 +74,7 @@ private fun lagOpprettBehandleSakOppgaveRequest(
     )
 
 fun FagsakPerson.aktivIdent(): Personident =
-    this.identer.maxByOrNull { it.sporing.endretTid }
+    this.identer.maxByOrNull { it.sporbar.endret.endretTid }
         ?: throw IllegalStateException("FagsakPerson har ingen identer")
 
 @JsonIgnoreProperties(ignoreUnknown = true)

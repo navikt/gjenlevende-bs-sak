@@ -30,7 +30,7 @@ class FagsakPersonService(
                 .findById(fagsakPersonId)
                 .orElseThrow { IllegalArgumentException("Fant ingen fagsakPerson med id $fagsakPersonId") }
 
-        return fagsakPerson.identer.maxByOrNull { it.sporing.endretTid }?.ident
+        return fagsakPerson.identer.maxByOrNull { it.sporbar.endret.endretTid }?.ident
             ?: throw IllegalStateException("FagsakPerson har ingen identer")
     }
 }

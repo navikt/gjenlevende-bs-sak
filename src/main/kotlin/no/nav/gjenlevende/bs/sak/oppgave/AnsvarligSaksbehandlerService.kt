@@ -37,7 +37,7 @@ class AnsvarligSaksbehandlerService(
                 val behandling =
                     behandlingRepository.findByIdOrNull(behandlingId)
                         ?: throw IllegalStateException("Finner ikke behandling med id=$behandlingId")
-                behandling.sporing.opprettetAv
+                behandling.sporbar.opprettetAv
             }
 
         if (ansvarligSaksbehandler.isNullOrBlank()) {

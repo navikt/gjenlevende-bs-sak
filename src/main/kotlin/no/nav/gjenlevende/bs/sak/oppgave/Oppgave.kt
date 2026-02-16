@@ -1,6 +1,6 @@
 package no.nav.gjenlevende.bs.sak.oppgave
 
-import no.nav.gjenlevende.bs.sak.felles.sporbar.Sporing
+import no.nav.gjenlevende.bs.sak.felles.sporbar.Sporbar
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Embedded
@@ -16,5 +16,5 @@ data class Oppgave(
     val gsakOppgaveId: Long,
     val type: String,
     @Embedded(onEmpty = Embedded.OnEmpty.USE_EMPTY)
-    val sporing: Sporing = Sporing(),
+    val sporbar: Sporbar = Sporbar(),
 )

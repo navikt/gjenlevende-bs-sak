@@ -5,13 +5,20 @@ import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
 import no.nav.gjenlevende.bs.sak.behandling.BehandlingService
 import no.nav.gjenlevende.bs.sak.brev.BrevService
+import no.nav.gjenlevende.bs.sak.brev.BrevmottakerService
+import no.nav.gjenlevende.bs.sak.brev.domain.Brevmottaker
+import no.nav.gjenlevende.bs.sak.brev.domain.MottakerType
 import no.nav.gjenlevende.bs.sak.fagsak.FagsakPersonService
 import no.nav.gjenlevende.bs.sak.fagsak.FagsakRepository
+import no.nav.gjenlevende.bs.sak.felles.sikkerhet.SikkerhetContext
 import no.nav.gjenlevende.bs.sak.iverksett.DokarkivClient
 import no.nav.gjenlevende.bs.sak.iverksett.domene.ArkiverDokumentRequest
+import no.nav.gjenlevende.bs.sak.iverksett.domene.AvsenderMottaker
+import no.nav.gjenlevende.bs.sak.iverksett.domene.AvsenderMottakerIdType
 import no.nav.gjenlevende.bs.sak.iverksett.domene.Dokument
 import no.nav.gjenlevende.bs.sak.iverksett.domene.Dokumenttype
 import no.nav.gjenlevende.bs.sak.iverksett.domene.Filtype
+import no.nav.gjenlevende.bs.sak.saksbehandler.EntraProxyClient
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.util.UUID
@@ -28,7 +35,9 @@ class JournalførVedtaksbrevTask(
     private val fagsakRepository: FagsakRepository,
     private val fagsakPersonService: FagsakPersonService,
     private val brevService: BrevService,
+    private val brevmottakerService: BrevmottakerService,
     private val dokarkivClient: DokarkivClient,
+    private val entraProxyClient: EntraProxyClient,
 ) : AsyncTaskStep {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -53,22 +62,42 @@ class JournalførVedtaksbrevTask(
                 dokumenttype = Dokumenttype.BARNETILSYNSTØNAD_VEDTAK, // TODO utlede
                 tittel = "Test-tittel", // TODO ikke dette
             )
-        val dokarkivResponse =
-            dokarkivClient.arkiverDokument(
+        val saksbehandler = SikkerhetContext.hentSaksbehandlerEllerSystembruker()
+        val saksbehandlerInfo = entraProxyClient.hentSaksbehandlerInfo(saksbehandler)
+        val saksbehandlerEnhet = saksbehandlerInfo.enhet.navn
+
+        val mottakere = brevmottakerService.hentBrevmottakere(behandlingId)
+        mottakere.forEachIndexed { indeks, mottaker ->
+            val arkiverDokumentRequestForMottaker =
                 ArkiverDokumentRequest(
-                    fnr = personident, // TODO Er dette alltid ett fnr? Er det riktig å bruke personident?
-                    `forsøkFerdigstill` = true,
+                    fnr = personident,
+                    forsøkFerdigstill = true,
                     hoveddokumentvarianter = listOf(dokument),
-                    vedleggsdokumenter = emptyList(), // TODO
+                    vedleggsdokumenter = emptyList(),
                     fagsakId = fagsak.eksternId.toString(),
-                    `journalførendeEnhet` = "", // TODO
-//                `førsteside` = TODO,
-                    eksternReferanseId = "$behandlingId-vedtaksbrev",
-//                avsenderMottaker = "", TODO
-                ),
-            )
-        // TODO lagre journalpostId og dokumentId fra dokarkivResponse i iverksettResultat
+                    journalførendeEnhet = saksbehandlerEnhet,
+                    eksternReferanseId = "$behandlingId-vedtaksbrev-mottaker$indeks",
+                    avsenderMottaker = mottaker.tilAvsenderMottaker(),
+                )
+            val response = dokarkivClient.arkiverDokument(arkiverDokumentRequestForMottaker)
+            logger.info("Journalført vedtaksbrev for mottaker ${mottaker.id}: $response")
+        }
     }
+
+    private fun Brevmottaker.tilAvsenderMottaker(): AvsenderMottaker =
+        AvsenderMottaker(
+            id =
+                when (mottakerType) {
+                    MottakerType.PERSON -> personident
+                    MottakerType.ORGANISASJON -> orgnr
+                },
+            idType =
+                when (mottakerType) {
+                    MottakerType.PERSON -> AvsenderMottakerIdType.FNR
+                    MottakerType.ORGANISASJON -> AvsenderMottakerIdType.ORGNR
+                },
+            navn = navnHosOrganisasjon ?: "",
+        )
 
     companion object {
         const val TYPE = "journalførVedtaksbrev"

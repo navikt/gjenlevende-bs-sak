@@ -52,7 +52,7 @@ class BehandlingController(
         val behandlinger = behandlingService.hentBehandlingerFraFagsak(fagsakId)
         return ResponseEntity.ok(
             behandlinger?.map {
-                val sisteEndring = endringshistorikkService.hentEndringshistorikk(it.id).firstOrNull()
+                val sisteEndring = endringshistorikkService.hentSisteEndring(it.id)
                 it.tilDto(sisteEndring)
             },
         )
@@ -65,7 +65,7 @@ class BehandlingController(
         val behandlingId = hentRequest.behandlingId
 
         val behandling = behandlingService.hentBehandling(behandlingId)
-        val sisteEndring = behandling?.let { endringshistorikkService.hentEndringshistorikk(it.id).firstOrNull() }
+        val sisteEndring = behandling?.let { endringshistorikkService.hentSisteEndring(it.id) }
         return ResponseEntity.ok(behandling?.tilDto(sisteEndring))
     }
 }

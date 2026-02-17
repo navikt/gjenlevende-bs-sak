@@ -4,6 +4,8 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import no.nav.familie.prosessering.internal.TaskService
 import no.nav.gjenlevende.bs.sak.brev.domain.BrevRequest
+import no.nav.gjenlevende.bs.sak.endringshistorikk.EndringType
+import no.nav.gjenlevende.bs.sak.endringshistorikk.EndringshistorikkService
 import no.nav.gjenlevende.bs.sak.felles.sikkerhet.Tilgangskontroll
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
@@ -22,6 +24,7 @@ import java.util.UUID
 class BrevController(
     private val brevService: BrevService,
     private val taskService: TaskService,
+    private val endringshistorikkService: EndringshistorikkService,
 ) {
     @PostMapping("/lag-task/{behandlingId}") // TODO renames til beslutte-behandling elr noe sånt
     @PreAuthorize("hasRole('ATTESTERING')")
@@ -35,6 +38,10 @@ class BrevController(
         brevService.oppdaterBeslutterForBrev(behandlingId)
         val task = brevService.lagBrevPdfTask(behandlingId)
         taskService.save(task)
+        endringshistorikkService.registrerEndring(
+            behandlingId = behandlingId,
+            endringType = EndringType.BESLUTTER_GODKJENT,
+        )
 
         return ResponseEntity.ok("OK")
     }

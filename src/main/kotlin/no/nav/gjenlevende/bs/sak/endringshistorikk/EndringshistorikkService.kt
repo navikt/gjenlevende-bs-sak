@@ -21,5 +21,7 @@ class EndringshistorikkService(
         )
     }
 
-    fun hentEndringshistorikk(behandlingId: UUID): List<BehandlingEndring> = behandlingEndringRepository.findByBehandlingIdOrderByUtførtTidDesc(behandlingId)
+    fun hentEndringshistorikk(behandlingId: UUID): List<BehandlingEndring> = behandlingEndringRepository.finnAlleForBehandling(behandlingId)
+
+    fun hentSisteEndring(behandlingId: UUID): BehandlingEndring? = behandlingEndringRepository.finnSisteForBehandling(behandlingId)
 }

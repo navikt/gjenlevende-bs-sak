@@ -19,6 +19,7 @@ enum class EndringType {
     BREV_PDF_GENERERT,
     ÅRSAK_LAGRET,
     ÅRSAK_OPPDATERT,
+    BESLUTTER_GODKJENT,
 }
 
 @Table("behandling_endring")

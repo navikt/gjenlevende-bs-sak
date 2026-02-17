@@ -60,10 +60,6 @@ class BrevService(
                 ?: error("Fant ikke brev for behandlingId=$behandlingId ved lagring av PDF")
         val oppdatertBrevPdf = eksisterendeBrev.copy(brevPdf = pdf)
         brevRepository.update(oppdatertBrevPdf)
-        endringshistorikkService.registrerEndring(
-            behandlingId = behandlingId,
-            endringType = EndringType.BREV_PDF_GENERERT,
-        )
     }
 
     @Transactional

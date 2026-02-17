@@ -65,15 +65,15 @@ class JournalførVedtaksbrevTask(
         val saksbehandler = SikkerhetContext.hentSaksbehandlerEllerSystembruker()
         val saksbehandlerInfo = entraProxyClient.hentSaksbehandlerInfo(saksbehandler)
         val saksbehandlerEnhet = saksbehandlerInfo.enhet.navn
-
         val mottakere = brevmottakerService.hentBrevmottakere(behandlingId)
+        require(mottakere.isNotEmpty()) { "Ingen brevmottakere funnet for behandlingId=$behandlingId" }
         mottakere.forEachIndexed { indeks, mottaker ->
             val arkiverDokumentRequestForMottaker =
                 ArkiverDokumentRequest(
-                    fnr = personident,
+                    fnr = personident, // TODO Er dette alltid ett fnr? Er det riktig å bruke personident?
                     forsøkFerdigstill = true,
                     hoveddokumentvarianter = listOf(dokument),
-                    vedleggsdokumenter = emptyList(),
+                    vedleggsdokumenter = emptyList(), // TODO vedlegg
                     fagsakId = fagsak.eksternId.toString(),
                     journalførendeEnhet = saksbehandlerEnhet,
                     eksternReferanseId = "$behandlingId-vedtaksbrev-mottaker$indeks",
@@ -81,6 +81,7 @@ class JournalførVedtaksbrevTask(
                 )
             val response = dokarkivClient.arkiverDokument(arkiverDokumentRequestForMottaker)
             logger.info("Journalført vedtaksbrev for mottaker ${mottaker.id}: $response")
+            // TODO lagre journalpostId og dokumentId fra dokarkivResponse i iverksettResultat
         }
     }
 
@@ -96,7 +97,13 @@ class JournalførVedtaksbrevTask(
                     MottakerType.PERSON -> AvsenderMottakerIdType.FNR
                     MottakerType.ORGANISASJON -> AvsenderMottakerIdType.ORGNR
                 },
-            navn = navnHosOrganisasjon ?: "",
+            navn =
+                when (mottakerType) {
+                    MottakerType.PERSON -> ""
+
+                    // TODO hent navn for personident
+                    MottakerType.ORGANISASJON -> navnHosOrganisasjon ?: ""
+                },
         )
 
     companion object {

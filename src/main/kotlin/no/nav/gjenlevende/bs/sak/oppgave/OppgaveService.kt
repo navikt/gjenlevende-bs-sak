@@ -14,6 +14,7 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.UUID
 
 @Service
 class OppgaveService(
@@ -48,6 +49,34 @@ class OppgaveService(
         )
 
         logger.info("Oppgave med gsakOppgaveId=${oppgave.id} lagret for behandling=${behandling.id}")
+    }
+
+    fun fordelOppgave(
+        behandlingId: UUID,
+        saksbehandler: String,
+    ): Long {
+        logger.info("Fordeler oppgave for behandling=$behandlingId til saksbehandler=$saksbehandler")
+
+        val oppgave =
+            oppgaveRepository.findByBehandlingIdAndType(
+                behandlingId = behandlingId,
+                type = OppgavetypeEYO.BEH_SAK.name,
+            ) ?: throw IllegalStateException("Finner ikke oppgave for behandling=$behandlingId")
+
+        val gosysOppgave = oppgaveClient.hentOppgaveM2M(oppgave.gsakOppgaveId)
+
+        if (gosysOppgave.tilordnetRessurs == saksbehandler) {
+            logger.info("Oppgave allerede tildelt saksbehandler=$saksbehandler")
+            return gosysOppgave.id ?: throw IllegalStateException("Oppgave mangler id")
+        }
+
+        val versjon = gosysOppgave.versjon ?: throw IllegalStateException("Oppgave mangler versjon")
+
+        return oppgaveClient.fordelOppgave(
+            oppgaveId = oppgave.gsakOppgaveId,
+            saksbehandler = saksbehandler,
+            versjon = versjon,
+        )
     }
 }
 

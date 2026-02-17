@@ -1,7 +1,8 @@
 package no.nav.gjenlevende.bs.sak.behandling
 
+import no.nav.gjenlevende.bs.sak.endringshistorikk.EndringType
+import no.nav.gjenlevende.bs.sak.endringshistorikk.EndringshistorikkService
 import no.nav.gjenlevende.bs.sak.felles.sikkerhet.SikkerhetContext
-import no.nav.gjenlevende.bs.sak.felles.sporbar.Endret
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -11,6 +12,7 @@ import java.util.UUID
 class BehandlingService(
     private val behandlingRepository: BehandlingRepository,
     private val lagBehandleSakOppgaveTask: LagBehandleSakOppgaveTask,
+    private val endringshistorikkService: EndringshistorikkService,
 ) {
     @Transactional
     fun opprettBehandling(
@@ -30,6 +32,11 @@ class BehandlingService(
 
         lagBehandleSakOppgaveTask.opprettBehandleSakOppgaveTask(behandling = behandling, saksbehandler = SikkerhetContext.hentSaksbehandler())
 
+        endringshistorikkService.registrerEndring(
+            behandlingId = behandling.id,
+            endringType = EndringType.BEHANDLING_OPPRETTET,
+        )
+
         return behandling
     }
 
@@ -47,7 +54,6 @@ class BehandlingService(
         val oppdatertBehandling =
             behandling.copy(
                 status = status,
-                sporbar = behandling.sporbar.copy(endret = Endret()),
             )
         behandlingRepository.update(oppdatertBehandling)
     }

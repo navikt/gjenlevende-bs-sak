@@ -1,5 +1,6 @@
 package no.nav.gjenlevende.bs.sak.behandling
 
+import no.nav.gjenlevende.bs.sak.endringshistorikk.EndringshistorikkService
 import no.nav.gjenlevende.bs.sak.felles.sikkerhet.Tilgangskontroll
 import no.nav.gjenlevende.bs.sak.infrastruktur.exception.Feil
 import org.springframework.http.ResponseEntity
@@ -25,6 +26,7 @@ data class HentBehandlingerRequest(
 @RequestMapping(path = ["/api/behandling"])
 class BehandlingController(
     private val behandlingService: BehandlingService,
+    private val endringshistorikkService: EndringshistorikkService,
 ) {
     @PostMapping("/opprett")
     fun opprettBehandling(
@@ -48,7 +50,12 @@ class BehandlingController(
         val fagsakId = hentBehandlingerRequest.fagsakId
 
         val behandlinger = behandlingService.hentBehandlingerFraFagsak(fagsakId)
-        return ResponseEntity.ok(behandlinger?.map { it.tilDto() })
+        return ResponseEntity.ok(
+            behandlinger?.map {
+                val sisteEndring = endringshistorikkService.hentSisteEndring(it.id)
+                it.tilDto(sisteEndring)
+            },
+        )
     }
 
     @PostMapping("/hent")
@@ -58,6 +65,7 @@ class BehandlingController(
         val behandlingId = hentRequest.behandlingId
 
         val behandling = behandlingService.hentBehandling(behandlingId)
-        return ResponseEntity.ok(behandling?.tilDto())
+        val sisteEndring = behandling?.let { endringshistorikkService.hentSisteEndring(it.id) }
+        return ResponseEntity.ok(behandling?.tilDto(sisteEndring))
     }
 }

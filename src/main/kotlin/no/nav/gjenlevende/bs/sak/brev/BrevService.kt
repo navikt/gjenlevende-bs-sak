@@ -2,6 +2,8 @@ package no.nav.gjenlevende.bs.sak.brev
 
 import no.nav.familie.prosessering.domene.Task
 import no.nav.gjenlevende.bs.sak.brev.domain.BrevRequest
+import no.nav.gjenlevende.bs.sak.endringshistorikk.EndringType
+import no.nav.gjenlevende.bs.sak.endringshistorikk.EndringshistorikkService
 import no.nav.gjenlevende.bs.sak.felles.sikkerhet.SikkerhetContext
 import no.nav.gjenlevende.bs.sak.saksbehandler.EntraProxyClient
 import no.nav.gjenlevende.bs.sak.task.BrevTask
@@ -19,6 +21,7 @@ class BrevService(
     private val brevRepository: BrevRepository,
     private val objectMapper: ObjectMapper,
     private val entraProxyClient: EntraProxyClient,
+    private val endringshistorikkService: EndringshistorikkService,
 ) {
     fun lagBrevPdfTask(behandlingId: UUID): Task =
         BrevTask.opprettTask(
@@ -87,6 +90,10 @@ class BrevService(
                 ?: error("Fant ikke brev for behandlingId=$behandlingId ved oppdatering av beslutter")
         val oppdatert = eksisterendeBrev.copy(beslutter = beslutterNavn, beslutterEnhet = beslutterEnhet)
         brevRepository.update(oppdatert)
+        endringshistorikkService.registrerEndring(
+            behandlingId = behandlingId,
+            endringType = EndringType.BESLUTTER_GODKJENT,
+        )
     }
 
     fun lagHtml(brev: Brev): String {

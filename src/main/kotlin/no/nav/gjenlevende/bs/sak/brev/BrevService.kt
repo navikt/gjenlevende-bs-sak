@@ -94,6 +94,10 @@ class BrevService(
                 ?: error("Fant ikke brev for behandlingId=$behandlingId ved oppdatering av beslutter")
         val oppdatert = eksisterendeBrev.copy(beslutter = beslutterNavn, beslutterEnhet = beslutterEnhet)
         brevRepository.update(oppdatert)
+        endringshistorikkService.registrerEndring(
+            behandlingId = behandlingId,
+            endringType = EndringType.BESLUTTER_GODKJENT,
+        )
     }
 
     fun lagHtml(brev: Brev): String {

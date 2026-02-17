@@ -83,6 +83,40 @@ class OppgaveClient(
                 logger.error("Feil: klarte ikke hente oppgave med id=$oppgaveId")
             }.block() ?: throw RuntimeException("Klarte ikke hente oppgave med id=$oppgaveId")
     }
+
+    fun fordelOppgave(
+        oppgaveId: Long,
+        saksbehandler: String,
+        versjon: Int,
+    ): Long {
+        // TODO: Lage funksjon av duplikat kode?
+        logger.info("Fordeler oppgave med id=$oppgaveId til saksbehandler=$saksbehandler")
+        val maskinToken = texasClient.hentMaskinToken(oppgaveScope.toString())
+
+        val oppdatertOppgave =
+            oppgaveWebClient
+                .patch()
+                .uri("$API_BASE_URL/$oppgaveId")
+                .header("Authorization", "Bearer $maskinToken")
+                .header("X-Correlation-ID", MDC.get("callId") ?: "${UUID.randomUUID()}")
+                .bodyValue(
+                    mapOf(
+                        "id" to oppgaveId,
+                        "tilordnetRessurs" to saksbehandler,
+                        "versjon" to versjon,
+                    ),
+                ).retrieve()
+                .bodyToMono<OppgaveDto>()
+                .switchIfEmpty(Mono.error(NoSuchElementException("Tom respons fra oppgave")))
+                .timeout(Duration.ofSeconds(TIMEOUT_SEKUNDER))
+                .doOnNext { response ->
+                    logger.info("Oppgave fordelt med id: ${response.id} til $saksbehandler")
+                }.doOnError {
+                    logger.error("Feil: klarte ikke fordele oppgave med id=$oppgaveId til $saksbehandler")
+                }.block() ?: throw RuntimeException("Klarte ikke fordele oppgave med id=$oppgaveId")
+
+        return oppdatertOppgave.id ?: throw RuntimeException("Oppdatert oppgave mangler id")
+    }
 }
 
 data class LagOppgaveRequest(

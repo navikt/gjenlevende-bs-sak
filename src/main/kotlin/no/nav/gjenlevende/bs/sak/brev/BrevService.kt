@@ -46,10 +46,6 @@ class BrevService(
         } else {
             brevRepository.insert(brev)
         }
-        endringshistorikkService.registrerEndring(
-            behandlingId = behandlingId,
-            endringType = EndringType.BREV_MELLOMLAGRET,
-        )
     }
 
     fun hentBrev(behandlingId: UUID): Brev? = brevRepository.findByIdOrNull(behandlingId)

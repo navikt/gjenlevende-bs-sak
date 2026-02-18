@@ -19,11 +19,14 @@ class BehandlingService(
         fagsakId: UUID,
         status: BehandlingStatus = BehandlingStatus.OPPRETTET,
     ): Behandling {
+        val forrigeBehandlingId = behandlingRepository.finnSisteIverksatteBehandling(fagsakId)?.id
+
         val behandling =
             Behandling(
                 fagsakId = fagsakId,
                 status = status,
                 resultat = BehandlingResultat.IKKE_SATT,
+                forrigeBehandlingId = forrigeBehandlingId,
             )
 
         behandlingRepository.insert(

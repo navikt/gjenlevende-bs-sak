@@ -94,8 +94,6 @@ class TotrinnskontrollService(
                         opprettetAv = sisteUnderkjentEndring.utførtAv,
                         opprettetTid = sisteUnderkjentEndring.utførtTid,
                         godkjent = beslutteVedtak.godkjent,
-                        begrunnelse = beslutteVedtak.begrunnelse,
-                        årsakerUnderkjent = beslutteVedtak.årsakerUnderkjent,
                     ),
             )
         } else {

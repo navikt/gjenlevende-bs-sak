@@ -104,9 +104,6 @@ class BeslutterService(
         behandlingId: UUID,
         beslutteVedtakDto: BeslutteVedtakDto,
     ) {
-        require(!beslutteVedtakDto.begrunnelse.isNullOrBlank()) { "Begrunnelse er påkrevd ved underkjennelse" }
-        require(beslutteVedtakDto.årsakerUnderkjent.isNotEmpty()) { "Minst én årsak må velges ved underkjennelse" }
-
         val saksbehandlerSomSendteTilBeslutter =
             totrinnskontrollService.hentSaksbehandlerSomSendteTilBeslutter(behandlingId)
 

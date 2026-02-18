@@ -11,8 +11,6 @@ data class TotrinnskontrollDto(
     val opprettetAv: String,
     val opprettetTid: LocalDateTime,
     val godkjent: Boolean? = null,
-    val begrunnelse: String? = null,
-    val årsakerUnderkjent: List<ÅrsakUnderkjent> = emptyList(),
 )
 
 enum class TotrinnskontrollStatus {

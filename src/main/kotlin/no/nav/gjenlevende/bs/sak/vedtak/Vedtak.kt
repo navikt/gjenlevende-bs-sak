@@ -1,5 +1,6 @@
 package no.nav.gjenlevende.bs.sak.vedtak
 
+import no.nav.gjenlevende.bs.sak.behandling.BehandlingResultat
 import no.nav.gjenlevende.bs.sak.felles.sikkerhet.SikkerhetContext
 import no.nav.gjenlevende.bs.sak.felles.sporbar.SporbarUtils
 import org.springframework.data.annotation.Id
@@ -64,12 +65,12 @@ enum class ResultatType {
     OPPHØR,
 }
 
-fun ResultatType.tilBehandlingResultat(): no.nav.gjenlevende.bs.sak.behandling.BehandlingResultat =
+fun ResultatType.tilBehandlingResultat(): BehandlingResultat =
     when (this) {
-        ResultatType.INNVILGET -> no.nav.gjenlevende.bs.sak.behandling.BehandlingResultat.INNVILGET
-        ResultatType.AVSLÅTT -> no.nav.gjenlevende.bs.sak.behandling.BehandlingResultat.AVSLÅTT
-        ResultatType.HENLAGT -> no.nav.gjenlevende.bs.sak.behandling.BehandlingResultat.HENLAGT
-        ResultatType.OPPHØR -> no.nav.gjenlevende.bs.sak.behandling.BehandlingResultat.OPPHØRT
+        ResultatType.INNVILGET -> BehandlingResultat.INNVILGET
+        ResultatType.AVSLÅTT -> BehandlingResultat.AVSLÅTT
+        ResultatType.HENLAGT -> BehandlingResultat.HENLAGT
+        ResultatType.OPPHØR -> BehandlingResultat.OPPHØRT
     }
 
 enum class PeriodetypeBarnetilsyn {

@@ -1,6 +1,6 @@
 package no.nav.gjenlevende.bs.sak.beslutter
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import no.nav.familie.prosessering.internal.TaskService
 import no.nav.gjenlevende.bs.sak.behandling.BehandlingService
 import no.nav.gjenlevende.bs.sak.behandling.BehandlingStatus
 import no.nav.gjenlevende.bs.sak.beslutter.dto.BeslutteVedtakDto
@@ -8,8 +8,12 @@ import no.nav.gjenlevende.bs.sak.brev.BrevService
 import no.nav.gjenlevende.bs.sak.endringshistorikk.EndringType
 import no.nav.gjenlevende.bs.sak.endringshistorikk.EndringshistorikkService
 import no.nav.gjenlevende.bs.sak.oppgave.OppgaveService
+import no.nav.gjenlevende.bs.sak.oppgave.OppgavetypeEYO
+import no.nav.gjenlevende.bs.sak.task.FerdigstillOppgaveTask
+import no.nav.gjenlevende.bs.sak.task.OpprettOppgaveTask
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import tools.jackson.databind.ObjectMapper
 import java.util.UUID
 
 @Service
@@ -19,9 +23,9 @@ class BeslutterService(
     private val endringshistorikkService: EndringshistorikkService,
     private val oppgaveService: OppgaveService,
     private val totrinnskontrollService: TotrinnskontrollService,
+    private val taskService: TaskService,
+    private val objectMapper: ObjectMapper,
 ) {
-    private val objectMapper = jacksonObjectMapper()
-
     @Transactional
     fun sendTilBeslutter(behandlingId: UUID) {
         brevService.oppdaterSaksbehandlerForBrev(behandlingId)
@@ -33,9 +37,22 @@ class BeslutterService(
             behandlingId = behandlingId,
             endringType = EndringType.SENDT_TIL_BESLUTTER,
         )
-        oppgaveService.fjernTilordnetRessursPåOppgave(behandlingId)
-        oppgaveService.ferdigstillOppgave(behandlingId)
-        oppgaveService.opprettGodkjennVedtakOppgave(behandlingId)
+
+        val aktivOppgavetype = oppgaveService.hentAktivOppgavetype(behandlingId)
+
+        FerdigstillOppgaveTask.opprettTask(
+            behandlingId = behandlingId,
+            oppgavetype = aktivOppgavetype,
+            objectMapper = objectMapper,
+            taskService = taskService,
+        )
+
+        OpprettOppgaveTask.opprettTask(
+            behandlingId = behandlingId,
+            oppgavetype = OppgavetypeEYO.GOD_VED,
+            objectMapper = objectMapper,
+            taskService = taskService,
+        )
     }
 
     @Transactional
@@ -73,7 +90,13 @@ class BeslutterService(
             behandlingId = behandlingId,
             endringType = EndringType.BESLUTTER_GODKJENT,
         )
-        oppgaveService.ferdigstillOppgave(behandlingId)
+
+        FerdigstillOppgaveTask.opprettTask(
+            behandlingId = behandlingId,
+            oppgavetype = OppgavetypeEYO.GOD_VED,
+            objectMapper = objectMapper,
+            taskService = taskService,
+        )
     }
 
     private fun underkjennVedtak(
@@ -95,10 +118,20 @@ class BeslutterService(
             endringType = EndringType.BESLUTTER_UNDERKJENT,
             detaljer = objectMapper.writeValueAsString(beslutteVedtakDto),
         )
-        oppgaveService.ferdigstillOppgave(behandlingId)
-        oppgaveService.opprettBehandleUnderkjentVedtakOppgave(
+
+        FerdigstillOppgaveTask.opprettTask(
             behandlingId = behandlingId,
+            oppgavetype = OppgavetypeEYO.GOD_VED,
+            objectMapper = objectMapper,
+            taskService = taskService,
+        )
+
+        OpprettOppgaveTask.opprettTask(
+            behandlingId = behandlingId,
+            oppgavetype = OppgavetypeEYO.BEH_UND_VED,
             tilordnetSaksbehandler = saksbehandlerSomSendteTilBeslutter,
+            objectMapper = objectMapper,
+            taskService = taskService,
         )
     }
 }

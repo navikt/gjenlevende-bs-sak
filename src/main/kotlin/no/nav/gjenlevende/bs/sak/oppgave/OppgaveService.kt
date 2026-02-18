@@ -192,6 +192,34 @@ class OppgaveService(
             types = listOf(OppgavetypeEYO.BEH_SAK.name, OppgavetypeEYO.GOD_VED.name, OppgavetypeEYO.BEH_UND_VED.name),
         )
 
+    fun ferdigstillOppgaveForType(
+        behandlingId: UUID,
+        oppgavetype: OppgavetypeEYO,
+    ) {
+        logger.info("Ferdigstiller oppgave av type=${oppgavetype.name} for behandling=$behandlingId")
+
+        val oppgave =
+            oppgaveRepository.findByBehandlingIdAndType(
+                behandlingId = behandlingId,
+                type = oppgavetype.name,
+            ) ?: throw IllegalStateException("Finner ikke oppgave av type=${oppgavetype.name} for behandling=$behandlingId")
+
+        val gosysOppgave = oppgaveClient.hentOppgaveM2M(oppgave.gsakOppgaveId)
+        val versjon = gosysOppgave.versjon ?: throw IllegalStateException("Oppgave mangler versjon")
+
+        oppgaveClient.ferdigstillOppgave(
+            oppgaveId = oppgave.gsakOppgaveId,
+            versjon = versjon,
+        )
+    }
+
+    fun hentAktivOppgavetype(behandlingId: UUID): OppgavetypeEYO {
+        val oppgave =
+            hentOppgaveForBehandling(behandlingId)
+                ?: throw IllegalStateException("Finner ikke oppgave for behandling=$behandlingId")
+        return OppgavetypeEYO.valueOf(oppgave.type)
+    }
+
     private fun hentGosysOppgave(behandlingId: UUID): OppgaveDto {
         val oppgave =
             hentOppgaveForBehandling(behandlingId)

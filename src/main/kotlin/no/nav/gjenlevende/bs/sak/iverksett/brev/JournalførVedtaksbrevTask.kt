@@ -66,8 +66,7 @@ class JournalførVedtaksbrevTask(
                 dokumenttype = Dokumenttype.BARNETILSYNSTØNAD_VEDTAK, // TODO utlede
                 tittel = "Test-tittel", // TODO ikke dette
             )
-        val saksbehandler = SikkerhetContext.hentSaksbehandlerEllerSystembruker()
-        val saksbehandlerInfo = entraProxyClient.hentSaksbehandlerInfo(saksbehandler)
+        val saksbehandlerInfo = entraProxyClient.hentSaksbehandlerInfo("Z993314") // TODO prøver med hardkodet. Må hente fra iverksettrepository da sikkerhetscontext/obo ikke er tilgjengelig
         val saksbehandlerEnhet = saksbehandlerInfo.enhet.navn
         val mottakere = brevmottakerService.hentBrevmottakere(behandlingId)
         require(mottakere.isNotEmpty()) { "Ingen brevmottakere funnet for behandlingId=$behandlingId" }

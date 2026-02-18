@@ -10,7 +10,6 @@ import no.nav.gjenlevende.bs.sak.brev.domain.Brevmottaker
 import no.nav.gjenlevende.bs.sak.brev.domain.MottakerType
 import no.nav.gjenlevende.bs.sak.fagsak.FagsakPersonService
 import no.nav.gjenlevende.bs.sak.fagsak.FagsakRepository
-import no.nav.gjenlevende.bs.sak.felles.sikkerhet.SikkerhetContext
 import no.nav.gjenlevende.bs.sak.iverksett.DokarkivClient
 import no.nav.gjenlevende.bs.sak.iverksett.domene.ArkiverDokumentRequest
 import no.nav.gjenlevende.bs.sak.iverksett.domene.AvsenderMottaker

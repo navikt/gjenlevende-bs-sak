@@ -104,7 +104,13 @@ class OppgaveService(
             hentOppgaveForBehandling(behandlingId)
                 ?: throw IllegalStateException("Finner ikke oppgave for behandling=$behandlingId")
 
-        oppgaveClient.ferdigstillOppgave(oppgave.gsakOppgaveId)
+        val gosysOppgave = oppgaveClient.hentOppgaveM2M(oppgave.gsakOppgaveId)
+        val versjon = gosysOppgave.versjon ?: throw IllegalStateException("Oppgave mangler versjon")
+
+        oppgaveClient.ferdigstillOppgave(
+            oppgaveId = oppgave.gsakOppgaveId,
+            versjon = versjon,
+        )
     }
 
     fun opprettGodkjennVedtakOppgave(behandlingId: UUID) {

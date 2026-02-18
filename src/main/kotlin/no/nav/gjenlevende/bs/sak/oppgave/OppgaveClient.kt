@@ -119,23 +119,21 @@ class OppgaveClient(
         )
     }
 
-    fun ferdigstillOppgave(oppgaveId: Long) {
+    fun ferdigstillOppgave(
+        oppgaveId: Long,
+        versjon: Int,
+    ) {
         logger.info("Ferdigstiller oppgave med id=$oppgaveId")
-        val maskinToken = texasClient.hentMaskinToken(oppgaveScope.toString())
-
-        oppgaveWebClient
-            .patch()
-            .uri("$API_BASE_URL/$oppgaveId/ferdigstill")
-            .header("Authorization", "Bearer $maskinToken")
-            .header("X-Correlation-ID", MDC.get("callId") ?: "${UUID.randomUUID()}")
-            .retrieve()
-            .bodyToMono<OppgaveDto>()
-            .timeout(Duration.ofSeconds(TIMEOUT_SEKUNDER))
-            .doOnNext {
-                logger.info("Oppgave ferdigstilt med id: $oppgaveId")
-            }.doOnError {
-                logger.error("Feil: klarte ikke ferdigstille oppgave med id=$oppgaveId")
-            }.block()
+        oppdaterOppgave(
+            oppgaveId = oppgaveId,
+            body =
+                mapOf(
+                    "id" to oppgaveId,
+                    "status" to "FERDIGSTILT",
+                    "versjon" to versjon,
+                ),
+        )
+        logger.info("Oppgave ferdigstilt med id: $oppgaveId")
     }
 
     private fun oppdaterOppgave(

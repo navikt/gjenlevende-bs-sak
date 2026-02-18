@@ -13,4 +13,9 @@ interface OppgaveRepository :
         behandlingId: UUID,
         type: String,
     ): Oppgave?
+
+    fun findByBehandlingIdAndTypeIn(
+        behandlingId: UUID,
+        types: List<String>,
+    ): Oppgave?
 }

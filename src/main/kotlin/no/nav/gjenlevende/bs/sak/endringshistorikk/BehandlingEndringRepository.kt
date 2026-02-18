@@ -15,4 +15,10 @@ interface BehandlingEndringRepository :
 
     @Query("SELECT * FROM behandling_endring WHERE behandling_id = :behandlingId ORDER BY utfort_tid DESC LIMIT 1")
     fun finnSisteForBehandling(behandlingId: UUID): BehandlingEndring?
+
+    @Query("SELECT * FROM behandling_endring WHERE behandling_id = :behandlingId AND endring_type = :endringType ORDER BY utfort_tid DESC LIMIT 1")
+    fun finnSisteForBehandlingMedType(
+        behandlingId: UUID,
+        endringType: EndringType,
+    ): BehandlingEndring?
 }

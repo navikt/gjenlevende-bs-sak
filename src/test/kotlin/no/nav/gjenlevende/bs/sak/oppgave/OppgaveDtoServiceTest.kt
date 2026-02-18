@@ -5,6 +5,7 @@ import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
 import no.nav.gjenlevende.bs.sak.behandling.Behandling
+import no.nav.gjenlevende.bs.sak.behandling.BehandlingRepository
 import no.nav.gjenlevende.bs.sak.behandling.BehandlingResultat
 import no.nav.gjenlevende.bs.sak.behandling.BehandlingStatus
 import no.nav.gjenlevende.bs.sak.fagsak.FagsakPersonRepository
@@ -24,6 +25,7 @@ class OppgaveDtoServiceTest {
     private val fagsakPersonRepository = mockk<FagsakPersonRepository>()
     private val oppgaveClient = mockk<OppgaveClient>()
     private val oppgaveRepository = mockk<OppgaveRepository>()
+    private val behandlingRepository = mockk<BehandlingRepository>()
 
     private val service =
         OppgaveService(
@@ -31,6 +33,7 @@ class OppgaveDtoServiceTest {
             fagsakPersonRepository = fagsakPersonRepository,
             oppgaveClient = oppgaveClient,
             oppgaveRepository = oppgaveRepository,
+            behandlingRepository = behandlingRepository,
         )
 
     @Test

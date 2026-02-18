@@ -89,33 +89,76 @@ class OppgaveClient(
         saksbehandler: String,
         versjon: Int,
     ): Long {
-        // TODO: Lage funksjon av duplikat kode?
         logger.info("Fordeler oppgave med id=$oppgaveId til saksbehandler=$saksbehandler")
-        val maskinToken = texasClient.hentMaskinToken(oppgaveScope.toString())
-
         val oppdatertOppgave =
-            oppgaveWebClient
-                .patch()
-                .uri("$API_BASE_URL/$oppgaveId")
-                .header("Authorization", "Bearer $maskinToken")
-                .header("X-Correlation-ID", MDC.get("callId") ?: "${UUID.randomUUID()}")
-                .bodyValue(
+            oppdaterOppgave(
+                oppgaveId = oppgaveId,
+                body =
                     mapOf(
                         "id" to oppgaveId,
                         "tilordnetRessurs" to saksbehandler,
                         "versjon" to versjon,
                     ),
-                ).retrieve()
-                .bodyToMono<OppgaveDto>()
-                .switchIfEmpty(Mono.error(NoSuchElementException("Tom respons fra oppgave")))
-                .timeout(Duration.ofSeconds(TIMEOUT_SEKUNDER))
-                .doOnNext { response ->
-                    logger.info("Oppgave fordelt med id: ${response.id} til $saksbehandler")
-                }.doOnError {
-                    logger.error("Feil: klarte ikke fordele oppgave med id=$oppgaveId til $saksbehandler")
-                }.block() ?: throw RuntimeException("Klarte ikke fordele oppgave med id=$oppgaveId")
-
+            )
         return oppdatertOppgave.id ?: throw RuntimeException("Oppdatert oppgave mangler id")
+    }
+
+    fun fjernTilordnetRessurs(
+        oppgaveId: Long,
+        versjon: Int,
+    ) {
+        logger.info("Fjerner tilordnetRessurs fra oppgave med id=$oppgaveId")
+        oppdaterOppgave(
+            oppgaveId = oppgaveId,
+            body =
+                mapOf(
+                    "id" to oppgaveId,
+                    "tilordnetRessurs" to "",
+                    "versjon" to versjon,
+                ),
+        )
+    }
+
+    fun ferdigstillOppgave(oppgaveId: Long) {
+        logger.info("Ferdigstiller oppgave med id=$oppgaveId")
+        val maskinToken = texasClient.hentMaskinToken(oppgaveScope.toString())
+
+        oppgaveWebClient
+            .patch()
+            .uri("$API_BASE_URL/$oppgaveId/ferdigstill")
+            .header("Authorization", "Bearer $maskinToken")
+            .header("X-Correlation-ID", MDC.get("callId") ?: "${UUID.randomUUID()}")
+            .retrieve()
+            .bodyToMono<OppgaveDto>()
+            .timeout(Duration.ofSeconds(TIMEOUT_SEKUNDER))
+            .doOnNext {
+                logger.info("Oppgave ferdigstilt med id: $oppgaveId")
+            }.doOnError {
+                logger.error("Feil: klarte ikke ferdigstille oppgave med id=$oppgaveId")
+            }.block()
+    }
+
+    private fun oppdaterOppgave(
+        oppgaveId: Long,
+        body: Map<String, Any>,
+    ): OppgaveDto {
+        val maskinToken = texasClient.hentMaskinToken(oppgaveScope.toString())
+
+        return oppgaveWebClient
+            .patch()
+            .uri("$API_BASE_URL/$oppgaveId")
+            .header("Authorization", "Bearer $maskinToken")
+            .header("X-Correlation-ID", MDC.get("callId") ?: "${UUID.randomUUID()}")
+            .bodyValue(body)
+            .retrieve()
+            .bodyToMono<OppgaveDto>()
+            .switchIfEmpty(Mono.error(NoSuchElementException("Tom respons fra oppgave")))
+            .timeout(Duration.ofSeconds(TIMEOUT_SEKUNDER))
+            .doOnNext { response ->
+                logger.info("Oppgave oppdatert med id: ${response.id}")
+            }.doOnError {
+                logger.error("Feil: klarte ikke oppdatere oppgave med id=$oppgaveId")
+            }.block() ?: throw RuntimeException("Klarte ikke oppdatere oppgave med id=$oppgaveId")
     }
 }
 
@@ -130,7 +173,7 @@ data class LagOppgaveRequest(
     val aktivDato: String,
     val oppgavetype: OppgavetypeEYO,
     val beskrivelse: String,
-    val tilordnetRessurs: String,
+    val tilordnetRessurs: String? = null,
     val behandlesAvApplikasjon: String,
     val tildeltEnhetsnr: String,
 )

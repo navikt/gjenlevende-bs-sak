@@ -26,7 +26,7 @@ class DokarkivClient(
     fun arkiverDokument(arkiverDokumentRequest: ArkiverDokumentRequest): String {
         val headers =
             HttpHeaders().apply {
-                setBearerAuth(texasClient.hentMaskinToken(targetAudience = dokarkivScope.toString()))
+                setBearerAuth(texasClient.hentOboToken(targetAudience = dokarkivScope.toString()))
                 this.contentType = MediaType.TEXT_HTML
                 this.accept = listOf(MediaType.APPLICATION_PDF)
             }

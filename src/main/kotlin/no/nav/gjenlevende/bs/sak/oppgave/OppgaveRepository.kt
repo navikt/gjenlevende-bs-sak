@@ -2,6 +2,7 @@ package no.nav.gjenlevende.bs.sak.oppgave
 
 import no.nav.gjenlevende.bs.sak.felles.InsertUpdateRepository
 import no.nav.gjenlevende.bs.sak.felles.RepositoryInterface
+import org.springframework.data.jdbc.repository.query.Query
 import org.springframework.stereotype.Repository
 import java.util.UUID
 
@@ -14,7 +15,16 @@ interface OppgaveRepository :
         type: String,
     ): Oppgave?
 
-    fun findByBehandlingIdAndTypeIn(
+    @Query(
+        """
+        SELECT * FROM oppgave 
+        WHERE behandling_id = :behandlingId 
+        AND type IN (:types) 
+        ORDER BY opprettet_tid DESC 
+        LIMIT 1
+        """,
+    )
+    fun finnSisteOppgaveForBehandling(
         behandlingId: UUID,
         types: List<String>,
     ): Oppgave?

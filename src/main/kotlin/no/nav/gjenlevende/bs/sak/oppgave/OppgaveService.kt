@@ -60,10 +60,8 @@ class OppgaveService(
         logger.info("Fordeler oppgave for behandling=$behandlingId til saksbehandler=$saksbehandler")
 
         val oppgave =
-            oppgaveRepository.findByBehandlingIdAndType(
-                behandlingId = behandlingId,
-                type = OppgavetypeEYO.BEH_SAK.name,
-            ) ?: throw IllegalStateException("Finner ikke oppgave for behandling=$behandlingId")
+            hentOppgaveForBehandling(behandlingId)
+                ?: throw IllegalStateException("Finner ikke oppgave for behandling=$behandlingId")
 
         val gosysOppgave = oppgaveClient.hentOppgaveM2M(oppgave.gsakOppgaveId)
 
@@ -187,7 +185,7 @@ class OppgaveService(
     }
 
     fun hentOppgaveForBehandling(behandlingId: UUID): Oppgave? =
-        oppgaveRepository.findByBehandlingIdAndTypeIn(
+        oppgaveRepository.finnSisteOppgaveForBehandling(
             behandlingId = behandlingId,
             types = listOf(OppgavetypeEYO.BEH_SAK.name, OppgavetypeEYO.GOD_VED.name, OppgavetypeEYO.BEH_UND_VED.name),
         )

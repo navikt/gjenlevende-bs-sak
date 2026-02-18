@@ -131,6 +131,7 @@ class OppgaveClient(
                     "id" to oppgaveId,
                     "status" to "FERDIGSTILT",
                     "versjon" to versjon,
+                    "tilordnetRessurs" to "",
                 ),
         )
         logger.info("Oppgave ferdigstilt med id: $oppgaveId")

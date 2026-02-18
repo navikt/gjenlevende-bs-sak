@@ -64,6 +64,14 @@ enum class ResultatType {
     OPPHØR,
 }
 
+fun ResultatType.tilBehandlingResultat(): no.nav.gjenlevende.bs.sak.behandling.BehandlingResultat =
+    when (this) {
+        ResultatType.INNVILGET -> no.nav.gjenlevende.bs.sak.behandling.BehandlingResultat.INNVILGET
+        ResultatType.AVSLÅTT -> no.nav.gjenlevende.bs.sak.behandling.BehandlingResultat.AVSLÅTT
+        ResultatType.HENLAGT -> no.nav.gjenlevende.bs.sak.behandling.BehandlingResultat.HENLAGT
+        ResultatType.OPPHØR -> no.nav.gjenlevende.bs.sak.behandling.BehandlingResultat.OPPHØRT
+    }
+
 enum class PeriodetypeBarnetilsyn {
     ORDINÆR,
     INGEN_STØNAD,

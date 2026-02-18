@@ -10,6 +10,15 @@ import java.util.UUID
 interface OppgaveRepository :
     RepositoryInterface<Oppgave, UUID>,
     InsertUpdateRepository<Oppgave> {
+    @Query(
+        """
+        SELECT * FROM oppgave 
+        WHERE behandling_id = :behandlingId 
+        AND type = :type 
+        ORDER BY opprettet_tid DESC 
+        LIMIT 1
+        """,
+    )
     fun findByBehandlingIdAndType(
         behandlingId: UUID,
         type: String,

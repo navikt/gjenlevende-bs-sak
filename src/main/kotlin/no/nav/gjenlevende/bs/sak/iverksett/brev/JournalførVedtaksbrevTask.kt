@@ -18,7 +18,6 @@ import no.nav.gjenlevende.bs.sak.iverksett.domene.AvsenderMottakerIdType
 import no.nav.gjenlevende.bs.sak.iverksett.domene.Dokument
 import no.nav.gjenlevende.bs.sak.iverksett.domene.Dokumenttype
 import no.nav.gjenlevende.bs.sak.iverksett.domene.Filtype
-import no.nav.gjenlevende.bs.sak.saksbehandler.EntraProxyClient
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import tools.jackson.databind.ObjectMapper
@@ -39,7 +38,6 @@ class JournalførVedtaksbrevTask(
     private val brevService: BrevService,
     private val brevmottakerService: BrevmottakerService,
     private val dokarkivClient: DokarkivClient,
-    private val entraProxyClient: EntraProxyClient,
     private val objectMapper: ObjectMapper,
 ) : AsyncTaskStep {
     private val logger = LoggerFactory.getLogger(this::class.java)
@@ -66,8 +64,7 @@ class JournalførVedtaksbrevTask(
                 dokumenttype = Dokumenttype.BARNETILSYNSTØNAD_VEDTAK, // TODO utlede
                 tittel = "Test-tittel", // TODO ikke dette
             )
-        val saksbehandlerInfo = entraProxyClient.hentSaksbehandlerInfo("Z993314") // TODO prøver med hardkodet. Må hente fra iverksettrepository da sikkerhetscontext/obo ikke er tilgjengelig
-        val saksbehandlerEnhet = saksbehandlerInfo.enhet.navn
+        val saksbehandlerEnhet = "" // TODO
         val mottakere = brevmottakerService.hentBrevmottakere(behandlingId)
         require(mottakere.isNotEmpty()) { "Ingen brevmottakere funnet for behandlingId=$behandlingId" }
         mottakere.forEachIndexed { indeks, mottaker ->

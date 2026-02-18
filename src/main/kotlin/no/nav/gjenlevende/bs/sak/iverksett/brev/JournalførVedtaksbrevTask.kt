@@ -21,6 +21,8 @@ import no.nav.gjenlevende.bs.sak.iverksett.domene.Filtype
 import no.nav.gjenlevende.bs.sak.saksbehandler.EntraProxyClient
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import tools.jackson.databind.ObjectMapper
+import tools.jackson.module.kotlin.readValue
 import java.util.UUID
 
 @Service
@@ -38,11 +40,13 @@ class JournalførVedtaksbrevTask(
     private val brevmottakerService: BrevmottakerService,
     private val dokarkivClient: DokarkivClient,
     private val entraProxyClient: EntraProxyClient,
+    private val objectMapper: ObjectMapper,
 ) : AsyncTaskStep {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     override fun doTask(task: Task) {
-        val behandlingId = UUID.fromString(task.payload)
+        val taskData = objectMapper.readValue<JournalførVedtaksbrevTaskData>(task.payload)
+        val behandlingId = taskData.behandlingId
         val behandling =
             behandlingService.hentBehandling(behandlingId)
                 ?: error("Fant ikke behandling med id=$behandlingId")

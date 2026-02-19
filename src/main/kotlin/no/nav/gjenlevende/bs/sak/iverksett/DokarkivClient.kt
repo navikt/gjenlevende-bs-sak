@@ -27,8 +27,8 @@ class DokarkivClient(
         val headers =
             HttpHeaders().apply {
                 setBearerAuth(texasClient.hentMaskinToken(targetAudience = dokarkivScope.toString()))
-                this.contentType = MediaType.TEXT_HTML
-                this.accept = listOf(MediaType.APPLICATION_PDF)
+                this.contentType = MediaType.APPLICATION_JSON
+                this.accept = listOf(MediaType.TEXT_PLAIN)
             }
 
         return webClient

@@ -29,6 +29,8 @@ class BeslutterService(
 ) {
     @Transactional
     fun sendTilBeslutter(behandlingId: UUID) {
+        validerKanSendeBeslutter(behandlingId)
+
         brevService.oppdaterSaksbehandlerForBrev(behandlingId)
         behandlingService.oppdaterBehandlingStatus(
             behandlingId = behandlingId,
@@ -135,5 +137,25 @@ class BeslutterService(
             objectMapper = objectMapper,
             taskService = taskService,
         )
+    }
+
+    fun validerKanSendeBeslutter(behandlingId: UUID) {
+        val behandling = behandlingService.hentBehandling(behandlingId)
+            ?: throw IllegalStateException("Fant ikke behandling med id $behandlingId")
+
+        if (behandling.status != BehandlingStatus.UTREDES) {
+            throw IllegalStateException("Behandling må være i status UTREDES for å kunne sendes til beslutter")
+        }
+
+        val oppgave = oppgaveService.hentOppgaveForBehandling(behandlingId)
+            ?: throw IllegalStateException("Fant ikke oppgave for behandling med id $behandlingId")
+
+        val finnesFatterVedtakOppgaveFraFør = oppgave.type == OppgavetypeEYO.GOD_VED.name
+        if (finnesFatterVedtakOppgaveFraFør) {
+            throw IllegalStateException(
+                "Det finnes allerede en godkjenn vedtak-oppgave for behandling med id $behandlingId. " +
+                    "Behandlingen kan ikke sendes til beslutter på nytt før eksisterende oppgave er ferdigstilt."
+            )
+        }
     }
 }

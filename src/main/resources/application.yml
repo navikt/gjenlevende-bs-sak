@@ -83,7 +83,7 @@ OPPGAVE_URL: https://oppgave.dev-fss-pub.nais.io
 OPPGAVE_SCOPE: api://dev-fss.oppgavehandtering.oppgave/.default
 
 # DOKARKIV
-DOKARKIV_URL: https://dokarkiv.dev-fss-pub.nais.io
+DOKARKIV_URL: https://dokarkiv-q2.dev.intern.nav.no
 DOKARKIV_SCOPE: api://dev-fss.teamdokumenthandtering.dokarkiv/.default
 
 #SAF

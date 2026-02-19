@@ -1,5 +1,6 @@
 package no.nav.gjenlevende.bs.sak.vedtak
 
+import no.nav.gjenlevende.bs.sak.behandling.BehandlingService
 import no.nav.gjenlevende.bs.sak.endringshistorikk.EndringType
 import no.nav.gjenlevende.bs.sak.endringshistorikk.EndringshistorikkService
 import no.nav.gjenlevende.bs.sak.infrastruktur.exception.Feil
@@ -15,6 +16,7 @@ import kotlin.text.isNullOrEmpty
 class VedtakService(
     private val vedtakRepository: VedtakRepository,
     private val endringshistorikkService: EndringshistorikkService,
+    private val behandlingService: BehandlingService,
 ) {
     fun hentVedtak(behandlingId: UUID): Vedtak? = vedtakRepository.findByIdOrNull(behandlingId)
 
@@ -23,6 +25,13 @@ class VedtakService(
         behandlingId: UUID,
     ): UUID {
         val vedtak = vedtakRepository.insert(vedtakDto.tilVedtak(behandlingId))
+
+        val behandlingResultat = vedtakDto.resultatType.tilBehandlingResultat()
+        behandlingService.oppdaterBehandlingResultat(
+            behandlingId = behandlingId,
+            resultat = behandlingResultat,
+        )
+
         endringshistorikkService.registrerEndring(
             behandlingId = behandlingId,
             endringType = EndringType.VEDTAK_LAGRET,

@@ -18,6 +18,7 @@ enum class EndringType {
     ÅRSAK_LAGRET,
     ÅRSAK_OPPDATERT,
     BESLUTTER_GODKJENT,
+    BESLUTTER_UNDERKJENT,
 }
 
 @Table("behandling_endring")

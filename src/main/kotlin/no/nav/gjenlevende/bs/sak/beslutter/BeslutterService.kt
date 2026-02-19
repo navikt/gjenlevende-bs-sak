@@ -29,7 +29,7 @@ class BeslutterService(
 ) {
     @Transactional
     fun sendTilBeslutter(behandlingId: UUID) {
-        validerKanSendeBeslutter(behandlingId)
+        validerKanSendeTilBeslutter(behandlingId)
 
         brevService.oppdaterSaksbehandlerForBrev(behandlingId)
         behandlingService.oppdaterBehandlingStatus(
@@ -139,7 +139,7 @@ class BeslutterService(
         )
     }
 
-    fun validerKanSendeBeslutter(behandlingId: UUID) {
+    fun validerKanSendeTilBeslutter(behandlingId: UUID) {
         val behandling = behandlingService.hentBehandling(behandlingId)
             ?: throw IllegalStateException("Fant ikke behandling med id $behandlingId")
 

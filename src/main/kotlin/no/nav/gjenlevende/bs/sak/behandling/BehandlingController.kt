@@ -31,7 +31,7 @@ class BehandlingController(
     @PostMapping("/opprett")
     fun opprettBehandling(
         @RequestBody opprettRequest: OpprettRequest,
-    ): ResponseEntity<UUID> {
+    ): ResponseEntity<String> {
         val fagsakId = opprettRequest.fagsakId
 
         if (behandlingService.finnesÅpenBehandling(opprettRequest.fagsakId)) {
@@ -40,7 +40,7 @@ class BehandlingController(
 
         val behandling = behandlingService.opprettBehandling(fagsakId)
 
-        return ResponseEntity.ok(behandling.id)
+        return ResponseEntity.ok(behandling.id.toString())
     }
 
     @PostMapping("/hentBehandlinger")

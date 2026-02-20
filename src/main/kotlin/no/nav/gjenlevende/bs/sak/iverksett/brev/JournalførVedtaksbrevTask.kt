@@ -72,7 +72,7 @@ class JournalførVedtaksbrevTask(
         val mottakere = brevmottakerService.hentBrevmottakere(behandlingId)
         val dokarkivBruker = DokarkivBruker(BrukerIdType.FNR, personident)
         val sak =
-            Sak(fagsakId = fagsak.eksternId.toString(), sakstype = "FAGSAK", fagsaksystem = Fagsystem.BS)
+            Sak(fagsakId = fagsak.eksternId.toString(), sakstype = "FAGSAK", fagsaksystem = Fagsystem.EY)
 
         require(mottakere.isNotEmpty()) { "Ingen brevmottakere funnet for behandlingId=$behandlingId" }
         mottakere.forEachIndexed { indeks, mottaker ->

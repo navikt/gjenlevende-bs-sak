@@ -1,6 +1,7 @@
 package no.nav.gjenlevende.bs.sak.iverksett
 
 import no.nav.gjenlevende.bs.sak.iverksett.domene.ArkiverDokumentRequest
+import no.nav.gjenlevende.bs.sak.iverksett.domene.JournalpostRequest
 import no.nav.gjenlevende.bs.sak.texas.TexasClient
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders
@@ -23,7 +24,7 @@ class DokarkivClient(
             .defaultHeader("Content-Type", "application/json")
             .build()
 
-    fun arkiverDokument(arkiverDokumentRequest: ArkiverDokumentRequest): String {
+    fun arkiverDokument(journalpostRequest: JournalpostRequest): String {
         val headers =
             HttpHeaders().apply {
                 setBearerAuth(texasClient.hentMaskinToken(targetAudience = dokarkivScope.toString()))
@@ -35,7 +36,7 @@ class DokarkivClient(
             .post()
             .uri(OPPRETT_JOURNALPOST)
             .headers { it.addAll(headers) }
-            .bodyValue(arkiverDokumentRequest) // TODO response av noe slag her? journalpostid elns
+            .bodyValue(journalpostRequest) // TODO response av noe slag her? journalpostid elns
             .retrieve()
             .bodyToMono<String>()
             .block() ?: error("Ingen response ved henting av tilgang til person med relasjoner")

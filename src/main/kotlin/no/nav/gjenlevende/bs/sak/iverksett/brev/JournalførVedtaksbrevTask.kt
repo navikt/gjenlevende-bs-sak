@@ -11,13 +11,17 @@ import no.nav.gjenlevende.bs.sak.brev.domain.MottakerType
 import no.nav.gjenlevende.bs.sak.fagsak.FagsakPersonService
 import no.nav.gjenlevende.bs.sak.fagsak.FagsakRepository
 import no.nav.gjenlevende.bs.sak.iverksett.DokarkivClient
-import no.nav.gjenlevende.bs.sak.iverksett.domene.ArkiverDokumentRequest
 import no.nav.gjenlevende.bs.sak.iverksett.domene.AvsenderMottaker
 import no.nav.gjenlevende.bs.sak.iverksett.domene.AvsenderMottakerIdType
+import no.nav.gjenlevende.bs.sak.iverksett.domene.DokarkivBruker
 import no.nav.gjenlevende.bs.sak.iverksett.domene.Dokument
 import no.nav.gjenlevende.bs.sak.iverksett.domene.Dokumenttype
+import no.nav.gjenlevende.bs.sak.iverksett.domene.Fagsystem
 import no.nav.gjenlevende.bs.sak.iverksett.domene.Filtype
-import no.nav.gjenlevende.bs.sak.saf.Arkivtema
+import no.nav.gjenlevende.bs.sak.iverksett.domene.JournalpostRequest
+import no.nav.gjenlevende.bs.sak.iverksett.domene.JournalpostType
+import no.nav.gjenlevende.bs.sak.iverksett.domene.Sak
+import no.nav.gjenlevende.bs.sak.saf.BrukerIdType
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import tools.jackson.databind.ObjectMapper
@@ -64,26 +68,33 @@ class JournalførVedtaksbrevTask(
                 dokumenttype = Dokumenttype.BARNETILSYNSTØNAD_VEDTAK, // TODO utlede
                 tittel = "Test-tittel", // TODO ikke dette
             )
-        val saksbehandlerEnhet = "" // TODO
+        val saksbehandlerEnhet = "" // TODO må hente fra db, etter å ha henta fra register
         val mottakere = brevmottakerService.hentBrevmottakere(behandlingId)
+        val dokarkivBruker = DokarkivBruker(BrukerIdType.FNR, personident)
+        val sak =
+            Sak(fagsakId = fagsak.eksternId.toString(), sakstype = "FAGSAK", fagsaksystem = Fagsystem.BS)
+
         require(mottakere.isNotEmpty()) { "Ingen brevmottakere funnet for behandlingId=$behandlingId" }
         mottakere.forEachIndexed { indeks, mottaker ->
-            val arkiverDokumentRequestForMottaker =
-                ArkiverDokumentRequest(
-                    fnr = personident, // TODO Er dette alltid ett fnr? Er det riktig å bruke personident?
-                    forsøkFerdigstill = true,
-                    tema = Arkivtema.EYO, // TODO utlede tema
-                    hoveddokumentvarianter = listOf(dokument),
-                    vedleggsdokumenter = emptyList(), // TODO vedlegg
-                    fagsakId = fagsak.eksternId.toString(),
-                    journalførendeEnhet = saksbehandlerEnhet,
-                    eksternReferanseId = "$behandlingId-vedtaksbrev-mottaker$indeks",
+            val journalpostRequest =
+                JournalpostRequest(
+                    journalpostType = JournalpostType.UTGAAENDE,
+                    behandlingstema = "ab0028", // TODO hentet fra fagsak.kt, sjekk ut
                     avsenderMottaker = mottaker.tilAvsenderMottaker(),
+                    bruker = dokarkivBruker,
+                    tema = "EYO",
+                    tittel = dokument.tittel,
+                    kanal = "", // TODO ?
+                    journalfoerendeEnhet = saksbehandlerEnhet,
+                    eksternReferanseId = "$behandlingId-vedtaksbrev-mottaker$indeks", // TODO må være unik for hver mottaker, legg til indeks
+                    sak = sak,
+//                  dokumenter =, //TODO hoveddokument og vedlegg
                 )
-            val response = dokarkivClient.arkiverDokument(arkiverDokumentRequestForMottaker)
+            val response = dokarkivClient.arkiverDokument(journalpostRequest)
             logger.info("Journalført vedtaksbrev for mottaker ${mottaker.id}: $response")
-            // TODO lagre journalpostId og dokumentId fra dokarkivResponse i iverksettResultat
         }
+        // TODO lagre journalpostId og dokumentId fra dokarkivResponse i iverksettResultat
+//        }
     }
 
     private fun Brevmottaker.tilAvsenderMottaker(): AvsenderMottaker =

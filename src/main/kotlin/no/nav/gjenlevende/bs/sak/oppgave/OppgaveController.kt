@@ -14,12 +14,18 @@ data class HentAnsvarligSaksbehandlerRequest(
     val behandlingId: UUID,
 )
 
+data class FordelOppgaveRequest(
+    val behandlingId: UUID,
+    val saksbehandler: String,
+)
+
 @RestController
 @Tilgangskontroll
 @PreAuthorize("hasRole('SAKSBEHANDLER')")
 @RequestMapping(path = ["/api/oppgave"])
 class OppgaveController(
     private val ansvarligSaksbehandlerService: AnsvarligSaksbehandlerService,
+    private val oppgaveService: OppgaveService,
 ) {
     @PostMapping("/ansvarlig-saksbehandler")
     fun hentAnsvarligSaksbehandler(
@@ -27,5 +33,17 @@ class OppgaveController(
     ): ResponseEntity<AnsvarligSaksbehandlerDto> {
         val ansvarligSaksbehandler = ansvarligSaksbehandlerService.hentAnsvarligSaksbehandler(request.behandlingId)
         return ResponseEntity.ok(ansvarligSaksbehandler)
+    }
+
+    @PostMapping("/fordel")
+    fun fordelOppgave(
+        @RequestBody request: FordelOppgaveRequest,
+    ): ResponseEntity<Long> {
+        val oppgaveId =
+            oppgaveService.fordelOppgave(
+                behandlingId = request.behandlingId,
+                saksbehandler = request.saksbehandler,
+            )
+        return ResponseEntity.ok(oppgaveId)
     }
 }

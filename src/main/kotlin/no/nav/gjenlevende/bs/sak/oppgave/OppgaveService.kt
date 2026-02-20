@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonInclude
 import jakarta.validation.constraints.Pattern
 import no.nav.gjenlevende.bs.sak.behandling.Behandling
+import no.nav.gjenlevende.bs.sak.behandling.BehandlingRepository
 import no.nav.gjenlevende.bs.sak.fagsak.FagsakPersonRepository
 import no.nav.gjenlevende.bs.sak.fagsak.FagsakRepository
 import no.nav.gjenlevende.bs.sak.fagsak.domain.Fagsak
@@ -14,6 +15,7 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.UUID
 
 @Service
 class OppgaveService(
@@ -21,6 +23,7 @@ class OppgaveService(
     private val fagsakPersonRepository: FagsakPersonRepository,
     private val oppgaveClient: OppgaveClient,
     private val oppgaveRepository: OppgaveRepository,
+    private val behandlingRepository: BehandlingRepository,
 ) {
     private val logger = LoggerFactory.getLogger(OppgaveService::class.java)
 
@@ -48,6 +51,187 @@ class OppgaveService(
         )
 
         logger.info("Oppgave med gsakOppgaveId=${oppgave.id} lagret for behandling=${behandling.id}")
+    }
+
+    fun fordelOppgave(
+        behandlingId: UUID,
+        saksbehandler: String,
+    ): Long {
+        logger.info("Fordeler oppgave for behandling=$behandlingId til saksbehandler=$saksbehandler")
+
+        val oppgave =
+            hentOppgaveForBehandling(behandlingId)
+                ?: throw IllegalStateException("Finner ikke oppgave for behandling=$behandlingId")
+
+        val gosysOppgave = oppgaveClient.hentOppgaveM2M(oppgave.gsakOppgaveId)
+
+        if (gosysOppgave.tilordnetRessurs == saksbehandler) {
+            logger.info("Oppgave allerede tildelt saksbehandler=$saksbehandler")
+            return gosysOppgave.id ?: throw IllegalStateException("Oppgave mangler id")
+        }
+
+        val versjon = gosysOppgave.versjon ?: throw IllegalStateException("Oppgave mangler versjon")
+
+        return oppgaveClient.fordelOppgave(
+            oppgaveId = oppgave.gsakOppgaveId,
+            saksbehandler = saksbehandler,
+            versjon = versjon,
+        )
+    }
+
+    fun fjernTilordnetRessursPåOppgave(behandlingId: UUID) {
+        logger.info("Fjerner tilordnetRessurs for oppgave på behandling=$behandlingId")
+
+        val oppgave =
+            hentOppgaveForBehandling(behandlingId)
+                ?: throw IllegalStateException("Finner ikke oppgave for behandling=$behandlingId")
+
+        val gosysOppgave = oppgaveClient.hentOppgaveM2M(oppgave.gsakOppgaveId)
+        val versjon = gosysOppgave.versjon ?: throw IllegalStateException("Oppgave mangler versjon")
+
+        oppgaveClient.fjernTilordnetRessurs(
+            oppgaveId = oppgave.gsakOppgaveId,
+            versjon = versjon,
+        )
+    }
+
+    fun ferdigstillOppgave(behandlingId: UUID) {
+        logger.info("Ferdigstiller oppgave for behandling=$behandlingId")
+
+        val oppgave =
+            hentOppgaveForBehandling(behandlingId)
+                ?: throw IllegalStateException("Finner ikke oppgave for behandling=$behandlingId")
+
+        val gosysOppgave = oppgaveClient.hentOppgaveM2M(oppgave.gsakOppgaveId)
+        val versjon = gosysOppgave.versjon ?: throw IllegalStateException("Oppgave mangler versjon")
+
+        oppgaveClient.ferdigstillOppgave(
+            oppgaveId = oppgave.gsakOppgaveId,
+            versjon = versjon,
+        )
+    }
+
+    fun opprettGodkjennVedtakOppgave(behandlingId: UUID) {
+        logger.info("Oppretter godkjenn vedtak oppgave for behandling=$behandlingId")
+
+        val fagsak = hentFagsakForBehandling(behandlingId)
+        val fagsakPerson = fagsakPersonRepository.findByIdOrNull(fagsak.fagsakPersonId) ?: throw IllegalStateException("Finner ikke fagsakPerson")
+        val personident = fagsakPerson.aktivIdent()
+        val gosysOppgave = hentGosysOppgave(behandlingId)
+
+        val oppgaveRequest =
+            LagOppgaveRequest(
+                personident = personident.ident,
+                saksreferanse = fagsak.eksternId.toString(),
+                prioritet = OppgavePrioritet.NORM,
+                tema = Tema.EYO,
+                behandlingstema = fagsak.stønadstype.behandlingstema,
+                fristFerdigstillelse = OppgaveUtil.lagFristForOppgave().format(DateTimeFormatter.ISO_DATE),
+                aktivDato = LocalDate.now().format(DateTimeFormatter.ISO_DATE),
+                oppgavetype = OppgavetypeEYO.GOD_VED,
+                beskrivelse = "Godkjenn vedtak for behandling=$behandlingId",
+                tilordnetRessurs = null,
+                behandlesAvApplikasjon = "gjenlevende-bs-sak",
+                tildeltEnhetsnr = gosysOppgave.tildeltEnhetsnr ?: throw IllegalStateException("Oppgave mangler tildeltEnhetsnr"),
+            )
+
+        val oppgave = oppgaveClient.opprettOppgaveM2M(oppgaveRequest)
+
+        oppgaveRepository.insert(
+            Oppgave(
+                behandlingId = behandlingId,
+                gsakOppgaveId = oppgave.id ?: throw IllegalStateException("Oppgave-respons mangler id"),
+                type = OppgavetypeEYO.GOD_VED.name,
+            ),
+        )
+    }
+
+    fun opprettBehandleUnderkjentVedtakOppgave(
+        behandlingId: UUID,
+        tilordnetSaksbehandler: String,
+    ) {
+        logger.info("Oppretter behandle underkjent vedtak oppgave for behandling=$behandlingId")
+
+        val fagsak = hentFagsakForBehandling(behandlingId)
+        val fagsakPerson = fagsakPersonRepository.findByIdOrNull(fagsak.fagsakPersonId) ?: throw IllegalStateException("Finner ikke fagsakPerson")
+        val personident = fagsakPerson.aktivIdent()
+        val gosysOppgave = hentGosysOppgave(behandlingId)
+
+        val oppgaveRequest =
+            LagOppgaveRequest(
+                personident = personident.ident,
+                saksreferanse = fagsak.eksternId.toString(),
+                prioritet = OppgavePrioritet.NORM,
+                tema = Tema.EYO,
+                behandlingstema = fagsak.stønadstype.behandlingstema,
+                fristFerdigstillelse = OppgaveUtil.lagFristForOppgave().format(DateTimeFormatter.ISO_DATE),
+                aktivDato = LocalDate.now().format(DateTimeFormatter.ISO_DATE),
+                oppgavetype = OppgavetypeEYO.BEH_UND_VED,
+                beskrivelse = "Behandle underkjent vedtak for behandling=$behandlingId",
+                tilordnetRessurs = tilordnetSaksbehandler,
+                behandlesAvApplikasjon = "gjenlevende-bs-sak",
+                tildeltEnhetsnr = gosysOppgave.tildeltEnhetsnr ?: throw IllegalStateException("Oppgave mangler tildeltEnhetsnr"),
+            )
+
+        val oppgave = oppgaveClient.opprettOppgaveM2M(oppgaveRequest)
+
+        oppgaveRepository.insert(
+            Oppgave(
+                behandlingId = behandlingId,
+                gsakOppgaveId = oppgave.id ?: throw IllegalStateException("Oppgave-respons mangler id"),
+                type = OppgavetypeEYO.BEH_UND_VED.name,
+            ),
+        )
+    }
+
+    fun hentOppgaveForBehandling(behandlingId: UUID): Oppgave? =
+        oppgaveRepository.finnSisteOppgaveForBehandling(
+            behandlingId = behandlingId,
+            types = listOf(OppgavetypeEYO.BEH_SAK.name, OppgavetypeEYO.GOD_VED.name, OppgavetypeEYO.BEH_UND_VED.name),
+        )
+
+    fun ferdigstillOppgaveForType(
+        behandlingId: UUID,
+        oppgavetype: OppgavetypeEYO,
+    ) {
+        logger.info("Ferdigstiller oppgave av type=${oppgavetype.name} for behandling=$behandlingId")
+
+        val oppgave =
+            oppgaveRepository.findByBehandlingIdAndType(
+                behandlingId = behandlingId,
+                type = oppgavetype.name,
+            ) ?: throw IllegalStateException("Finner ikke oppgave av type=${oppgavetype.name} for behandling=$behandlingId")
+
+        val gosysOppgave = oppgaveClient.hentOppgaveM2M(oppgave.gsakOppgaveId)
+        val versjon = gosysOppgave.versjon ?: throw IllegalStateException("Oppgave mangler versjon")
+
+        oppgaveClient.ferdigstillOppgave(
+            oppgaveId = oppgave.gsakOppgaveId,
+            versjon = versjon,
+        )
+    }
+
+    fun hentAktivOppgavetype(behandlingId: UUID): OppgavetypeEYO {
+        val oppgave =
+            hentOppgaveForBehandling(behandlingId)
+                ?: throw IllegalStateException("Finner ikke oppgave for behandling=$behandlingId")
+        return OppgavetypeEYO.valueOf(oppgave.type)
+    }
+
+    private fun hentGosysOppgave(behandlingId: UUID): OppgaveDto {
+        val oppgave =
+            hentOppgaveForBehandling(behandlingId)
+                ?: throw IllegalStateException("Finner ikke oppgave for behandling=$behandlingId")
+        return oppgaveClient.hentOppgaveM2M(oppgave.gsakOppgaveId)
+    }
+
+    private fun hentFagsakForBehandling(behandlingId: UUID): Fagsak {
+        val behandling =
+            behandlingRepository.findByIdOrNull(behandlingId)
+                ?: throw IllegalStateException("Finner ikke behandling med id=$behandlingId")
+
+        return fagsakRepository.findByIdOrNull(behandling.fagsakId)
+            ?: throw IllegalStateException("Finner ikke fagsak for behandling=$behandlingId")
     }
 }
 

@@ -1,5 +1,8 @@
 package no.nav.gjenlevende.bs.sak.vedtak
 
+import no.nav.gjenlevende.bs.sak.behandling.BehandlingService
+import no.nav.gjenlevende.bs.sak.endringshistorikk.EndringType
+import no.nav.gjenlevende.bs.sak.endringshistorikk.EndringshistorikkService
 import no.nav.gjenlevende.bs.sak.infrastruktur.exception.Feil
 import no.nav.gjenlevende.bs.sak.vedtak.BeregningUtils.beregnBarnetilsynperiode
 import org.springframework.stereotype.Service
@@ -11,13 +14,30 @@ import kotlin.text.isNullOrEmpty
 @Service
 class VedtakService(
     private val vedtakRepository: VedtakRepository,
+    private val endringshistorikkService: EndringshistorikkService,
+    private val behandlingService: BehandlingService,
 ) {
     fun hentVedtak(behandlingId: UUID): Vedtak? = vedtakRepository.findByBehandlingId(behandlingId)
 
     fun lagreVedtak(
         vedtakDto: VedtakDto,
         behandlingId: UUID,
-    ): UUID = vedtakRepository.insert(vedtakDto.tilVedtak(behandlingId)).id
+    ): UUID {
+        val vedtak = vedtakRepository.insert(vedtakDto.tilVedtak(behandlingId))
+
+        val behandlingResultat = vedtakDto.resultatType.tilBehandlingResultat()
+        behandlingService.oppdaterBehandlingResultat(
+            behandlingId = behandlingId,
+            resultat = behandlingResultat,
+        )
+
+        endringshistorikkService.registrerEndring(
+            behandlingId = behandlingId,
+            endringType = EndringType.VEDTAK_LAGRET,
+            detaljer = "Resultat: ${vedtakDto.resultatType}",
+        )
+        return vedtak.behandlingId
+    }
 
     fun slettVedtakHvisFinnes(behandlingId: UUID) {
         if(vedtakRepository.findByBehandlingId(behandlingId) != null) {

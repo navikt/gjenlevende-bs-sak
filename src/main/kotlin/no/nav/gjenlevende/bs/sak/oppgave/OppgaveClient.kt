@@ -83,6 +83,82 @@ class OppgaveClient(
                 logger.error("Feil: klarte ikke hente oppgave med id=$oppgaveId")
             }.block() ?: throw RuntimeException("Klarte ikke hente oppgave med id=$oppgaveId")
     }
+
+    fun fordelOppgave(
+        oppgaveId: Long,
+        saksbehandler: String,
+        versjon: Int,
+    ): Long {
+        logger.info("Fordeler oppgave med id=$oppgaveId til saksbehandler=$saksbehandler")
+        val oppdatertOppgave =
+            oppdaterOppgave(
+                oppgaveId = oppgaveId,
+                body =
+                    mapOf(
+                        "id" to oppgaveId,
+                        "tilordnetRessurs" to saksbehandler,
+                        "versjon" to versjon,
+                    ),
+            )
+        return oppdatertOppgave.id ?: throw RuntimeException("Oppdatert oppgave mangler id")
+    }
+
+    fun fjernTilordnetRessurs(
+        oppgaveId: Long,
+        versjon: Int,
+    ) {
+        logger.info("Fjerner tilordnetRessurs fra oppgave med id=$oppgaveId")
+        oppdaterOppgave(
+            oppgaveId = oppgaveId,
+            body =
+                mapOf(
+                    "id" to oppgaveId,
+                    "tilordnetRessurs" to "",
+                    "versjon" to versjon,
+                ),
+        )
+    }
+
+    fun ferdigstillOppgave(
+        oppgaveId: Long,
+        versjon: Int,
+    ) {
+        logger.info("Ferdigstiller oppgave med id=$oppgaveId")
+        oppdaterOppgave(
+            oppgaveId = oppgaveId,
+            body =
+                mapOf(
+                    "id" to oppgaveId,
+                    "status" to "FERDIGSTILT",
+                    "versjon" to versjon,
+                    "tilordnetRessurs" to "",
+                ),
+        )
+        logger.info("Oppgave ferdigstilt med id: $oppgaveId")
+    }
+
+    private fun oppdaterOppgave(
+        oppgaveId: Long,
+        body: Map<String, Any>,
+    ): OppgaveDto {
+        val maskinToken = texasClient.hentMaskinToken(oppgaveScope.toString())
+
+        return oppgaveWebClient
+            .patch()
+            .uri("$API_BASE_URL/$oppgaveId")
+            .header("Authorization", "Bearer $maskinToken")
+            .header("X-Correlation-ID", MDC.get("callId") ?: "${UUID.randomUUID()}")
+            .bodyValue(body)
+            .retrieve()
+            .bodyToMono<OppgaveDto>()
+            .switchIfEmpty(Mono.error(NoSuchElementException("Tom respons fra oppgave")))
+            .timeout(Duration.ofSeconds(TIMEOUT_SEKUNDER))
+            .doOnNext { response ->
+                logger.info("Oppgave oppdatert med id: ${response.id}")
+            }.doOnError {
+                logger.error("Feil: klarte ikke oppdatere oppgave med id=$oppgaveId")
+            }.block() ?: throw RuntimeException("Klarte ikke oppdatere oppgave med id=$oppgaveId")
+    }
 }
 
 data class LagOppgaveRequest(
@@ -96,7 +172,7 @@ data class LagOppgaveRequest(
     val aktivDato: String,
     val oppgavetype: OppgavetypeEYO,
     val beskrivelse: String,
-    val tilordnetRessurs: String,
+    val tilordnetRessurs: String? = null,
     val behandlesAvApplikasjon: String,
     val tildeltEnhetsnr: String,
 )

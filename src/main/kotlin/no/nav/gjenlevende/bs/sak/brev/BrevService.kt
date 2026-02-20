@@ -117,7 +117,7 @@ class BrevService(
                 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
                 <title>$tittel</title>
                 <style type="text/css">
-                    body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; line-height: 12pt; margin-left: 48pt; margin-right: 48pt; }
+                    body { font-family: 'Source Sans Pro', sans-serif; font-size: 11pt; line-height: 12pt; margin-left: 48pt; margin-right: 48pt; }
                     header { margin-bottom: 12pt; }
                     h1 { font-size: 16pt; line-height: 20pt; font-weight: 700; margin-bottom: 26pt; }
                     h2 { font-size: 13pt; line-height: 16pt; font-weight: 700; margin-bottom: 6pt;}

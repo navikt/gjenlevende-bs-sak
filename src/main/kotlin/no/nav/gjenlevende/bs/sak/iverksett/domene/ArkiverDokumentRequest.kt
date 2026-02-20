@@ -2,6 +2,7 @@ package no.nav.gjenlevende.bs.sak.iverksett.domene
 
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotEmpty
+import no.nav.gjenlevende.bs.sak.saf.Arkivtema
 
 data class ArkiverDokumentRequest(
     @field:NotBlank val fnr: String,
@@ -9,6 +10,7 @@ data class ArkiverDokumentRequest(
     @field:NotEmpty val hoveddokumentvarianter: List<Dokument>,
     val vedleggsdokumenter: List<Dokument> = emptyList(),
     val fagsakId: String? = null,
+    val tema: Arkivtema,
     val journalførendeEnhet: String? = null,
     val førsteside: Førsteside? = null,
     val eksternReferanseId: String? = null,

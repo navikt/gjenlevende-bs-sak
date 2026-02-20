@@ -17,6 +17,7 @@ import no.nav.gjenlevende.bs.sak.iverksett.domene.AvsenderMottakerIdType
 import no.nav.gjenlevende.bs.sak.iverksett.domene.Dokument
 import no.nav.gjenlevende.bs.sak.iverksett.domene.Dokumenttype
 import no.nav.gjenlevende.bs.sak.iverksett.domene.Filtype
+import no.nav.gjenlevende.bs.sak.saf.Arkivtema
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import tools.jackson.databind.ObjectMapper
@@ -71,6 +72,7 @@ class JournalførVedtaksbrevTask(
                 ArkiverDokumentRequest(
                     fnr = personident, // TODO Er dette alltid ett fnr? Er det riktig å bruke personident?
                     forsøkFerdigstill = true,
+                    tema = Arkivtema.EYO, // TODO utlede tema
                     hoveddokumentvarianter = listOf(dokument),
                     vedleggsdokumenter = emptyList(), // TODO vedlegg
                     fagsakId = fagsak.eksternId.toString(),

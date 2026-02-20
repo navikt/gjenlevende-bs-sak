@@ -40,7 +40,7 @@ class VedtakService(
     }
 
     fun slettVedtakHvisFinnes(behandlingId: UUID) {
-        if(vedtakRepository.findByBehandlingId(behandlingId) != null) {
+        if (vedtakRepository.findByBehandlingId(behandlingId) != null) {
             vedtakRepository.deleteByBehandlingId(behandlingId)
         }
     }

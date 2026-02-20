@@ -42,6 +42,6 @@ class DokarkivClient(
     }
 
     companion object {
-        const val OPPRETT_JOURNALPOST = "rest/journalpostapi/v1/opprettJournalpost"
+        const val OPPRETT_JOURNALPOST = "rest/journalpostapi/v1/journalpost"
     }
 }

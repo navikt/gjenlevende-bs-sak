@@ -22,14 +22,14 @@ import org.springframework.data.repository.findByIdOrNull
 import java.util.UUID
 
 class AnsvarligSaksbehandlerServiceTest {
-    private val oppgaveRepository = mockk<OppgaveRepository>()
+    private val oppgaveService = mockk<OppgaveService>()
     private val oppgaveClient = mockk<OppgaveClient>()
     private val entraProxyClient = mockk<EntraProxyClient>()
     private val behandlingRepository = mockk<BehandlingRepository>()
 
     private val service =
         AnsvarligSaksbehandlerService(
-            oppgaveRepository = oppgaveRepository,
+            oppgaveService = oppgaveService,
             oppgaveClient = oppgaveClient,
             entraProxyClient = entraProxyClient,
             behandlingRepository = behandlingRepository,
@@ -52,10 +52,7 @@ class AnsvarligSaksbehandlerServiceTest {
         val gsakOppgaveId = 12345L
 
         every {
-            oppgaveRepository.findByBehandlingIdAndType(
-                behandlingId = behandlingId,
-                type = OppgavetypeEYO.BEH_SAK.name,
-            )
+            oppgaveService.hentOppgaveForBehandling(behandlingId)
         } returns lagOppgaveEntity(behandlingId = behandlingId, gsakOppgaveId = gsakOppgaveId)
 
         every { oppgaveClient.hentOppgaveM2M(gsakOppgaveId) } returns lagGosysOppgave(tilordnetRessurs = INNLOGGET_IDENT)
@@ -75,10 +72,7 @@ class AnsvarligSaksbehandlerServiceTest {
         val annenIdent = "B654321"
 
         every {
-            oppgaveRepository.findByBehandlingIdAndType(
-                behandlingId = behandlingId,
-                type = OppgavetypeEYO.BEH_SAK.name,
-            )
+            oppgaveService.hentOppgaveForBehandling(behandlingId)
         } returns lagOppgaveEntity(behandlingId = behandlingId, gsakOppgaveId = gsakOppgaveId)
 
         every { oppgaveClient.hentOppgaveM2M(gsakOppgaveId) } returns lagGosysOppgave(tilordnetRessurs = annenIdent)
@@ -95,10 +89,7 @@ class AnsvarligSaksbehandlerServiceTest {
         val gsakOppgaveId = 12345L
 
         every {
-            oppgaveRepository.findByBehandlingIdAndType(
-                behandlingId = behandlingId,
-                type = OppgavetypeEYO.BEH_SAK.name,
-            )
+            oppgaveService.hentOppgaveForBehandling(behandlingId)
         } returns lagOppgaveEntity(behandlingId = behandlingId, gsakOppgaveId = gsakOppgaveId)
 
         every { oppgaveClient.hentOppgaveM2M(gsakOppgaveId) } returns lagGosysOppgave(tilordnetRessurs = null)
@@ -115,10 +106,7 @@ class AnsvarligSaksbehandlerServiceTest {
         val behandlingId = UUID.randomUUID()
 
         every {
-            oppgaveRepository.findByBehandlingIdAndType(
-                behandlingId = behandlingId,
-                type = OppgavetypeEYO.BEH_SAK.name,
-            )
+            oppgaveService.hentOppgaveForBehandling(behandlingId)
         } returns null
 
         every { behandlingRepository.findByIdOrNull(behandlingId) } returns
@@ -139,10 +127,7 @@ class AnsvarligSaksbehandlerServiceTest {
         val annenIdent = "B654321"
 
         every {
-            oppgaveRepository.findByBehandlingIdAndType(
-                behandlingId = behandlingId,
-                type = OppgavetypeEYO.BEH_SAK.name,
-            )
+            oppgaveService.hentOppgaveForBehandling(behandlingId)
         } returns null
 
         every { behandlingRepository.findByIdOrNull(behandlingId) } returns

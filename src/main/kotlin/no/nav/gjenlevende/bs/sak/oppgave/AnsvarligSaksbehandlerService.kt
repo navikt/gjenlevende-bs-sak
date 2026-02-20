@@ -12,7 +12,7 @@ import java.util.UUID
 
 @Service
 class AnsvarligSaksbehandlerService(
-    private val oppgaveRepository: OppgaveRepository,
+    private val oppgaveService: OppgaveService,
     private val oppgaveClient: OppgaveClient,
     private val entraProxyClient: EntraProxyClient,
     private val behandlingRepository: BehandlingRepository,
@@ -22,11 +22,7 @@ class AnsvarligSaksbehandlerService(
     fun hentAnsvarligSaksbehandler(behandlingId: UUID): AnsvarligSaksbehandlerDto {
         val innloggetSaksbehandler = SikkerhetContext.hentSaksbehandler()
 
-        val oppgave =
-            oppgaveRepository.findByBehandlingIdAndType(
-                behandlingId = behandlingId,
-                type = OppgavetypeEYO.BEH_SAK.name,
-            )
+        val oppgave = oppgaveService.hentOppgaveForBehandling(behandlingId)
 
         val ansvarligSaksbehandler =
             if (oppgave != null) {

@@ -1,7 +1,6 @@
 package no.nav.gjenlevende.bs.sak.behandling
 
 import no.nav.gjenlevende.bs.sak.endringshistorikk.EndringshistorikkService
-import no.nav.gjenlevende.bs.sak.felles.sikkerhet.Tilgangskontroll
 import no.nav.gjenlevende.bs.sak.infrastruktur.exception.Feil
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
@@ -22,6 +21,10 @@ data class HentBehandlingerRequest(
     val fagsakId: UUID,
 )
 
+data class OpprettBehandlingResponseDto(
+    val behandlingId: UUID,
+)
+
 @RestController
 @RequestMapping(path = ["/api/behandling"])
 class BehandlingController(
@@ -31,7 +34,7 @@ class BehandlingController(
     @PostMapping("/opprett")
     fun opprettBehandling(
         @RequestBody opprettRequest: OpprettRequest,
-    ): ResponseEntity<UUID> {
+    ): ResponseEntity<OpprettBehandlingResponseDto> {
         val fagsakId = opprettRequest.fagsakId
 
         if (behandlingService.finnesÅpenBehandling(opprettRequest.fagsakId)) {
@@ -40,7 +43,7 @@ class BehandlingController(
 
         val behandling = behandlingService.opprettBehandling(fagsakId)
 
-        return ResponseEntity.ok(behandling.id)
+        return ResponseEntity.ok(OpprettBehandlingResponseDto(behandlingId = behandling.id))
     }
 
     @PostMapping("/hentBehandlinger")

@@ -18,6 +18,7 @@ import no.nav.gjenlevende.bs.sak.iverksett.domene.DokarkivBruker
 import no.nav.gjenlevende.bs.sak.iverksett.domene.Dokument
 import no.nav.gjenlevende.bs.sak.iverksett.domene.Dokumentkategori
 import no.nav.gjenlevende.bs.sak.iverksett.domene.Dokumenttype
+import no.nav.gjenlevende.bs.sak.iverksett.domene.Dokumentvariant
 import no.nav.gjenlevende.bs.sak.iverksett.domene.Fagsystem
 import no.nav.gjenlevende.bs.sak.iverksett.domene.Filtype
 import no.nav.gjenlevende.bs.sak.iverksett.domene.JournalpostRequest
@@ -78,10 +79,19 @@ class JournalførVedtaksbrevTask(
         val dokumenter =
             listOf(
                 ArkivDokument(
-                    "", // TODO
-                    "Barnetilsyn", // TODO
-                    Dokumentkategori.VB,
-                    emptyList(), // TODO
+                    tittel = "", // TODO
+                    brevkode = "Barnetilsyn", // TODO
+                    dokumentKategori = Dokumentkategori.VB,
+                    dokumentvarianter =
+                        listOf(
+                            Dokumentvariant(
+                                // TODO placeholder
+                                filtype = "PDFA",
+                                variantformat = "ARKIV",
+                                fysiskDokument = brevPdf,
+                                filnavn = "vedtaksbrev.pdf",
+                            ),
+                        ),
                 ),
             )
 

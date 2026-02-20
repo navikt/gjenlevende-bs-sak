@@ -11,10 +11,12 @@ import no.nav.gjenlevende.bs.sak.brev.domain.MottakerType
 import no.nav.gjenlevende.bs.sak.fagsak.FagsakPersonService
 import no.nav.gjenlevende.bs.sak.fagsak.FagsakRepository
 import no.nav.gjenlevende.bs.sak.iverksett.DokarkivClient
+import no.nav.gjenlevende.bs.sak.iverksett.domene.ArkivDokument
 import no.nav.gjenlevende.bs.sak.iverksett.domene.AvsenderMottaker
 import no.nav.gjenlevende.bs.sak.iverksett.domene.AvsenderMottakerIdType
 import no.nav.gjenlevende.bs.sak.iverksett.domene.DokarkivBruker
 import no.nav.gjenlevende.bs.sak.iverksett.domene.Dokument
+import no.nav.gjenlevende.bs.sak.iverksett.domene.Dokumentkategori
 import no.nav.gjenlevende.bs.sak.iverksett.domene.Dokumenttype
 import no.nav.gjenlevende.bs.sak.iverksett.domene.Fagsystem
 import no.nav.gjenlevende.bs.sak.iverksett.domene.Filtype
@@ -73,6 +75,15 @@ class JournalførVedtaksbrevTask(
         val dokarkivBruker = DokarkivBruker(BrukerIdType.FNR, personident)
         val sak =
             Sak(fagsakId = fagsak.eksternId.toString(), sakstype = "FAGSAK", fagsaksystem = Fagsystem.EY)
+        val dokumenter =
+            listOf(
+                ArkivDokument(
+                    "", // TODO
+                    "Barnetilsyn", // TODO
+                    Dokumentkategori.VB,
+                    emptyList(), // TODO
+                ),
+            )
 
         require(mottakere.isNotEmpty()) { "Ingen brevmottakere funnet for behandlingId=$behandlingId" }
         mottakere.forEachIndexed { indeks, mottaker ->
@@ -88,7 +99,7 @@ class JournalførVedtaksbrevTask(
                     journalfoerendeEnhet = saksbehandlerEnhet,
                     eksternReferanseId = "$behandlingId-vedtaksbrev-mottaker$indeks", // TODO må være unik for hver mottaker, legg til indeks
                     sak = sak,
-//                  dokumenter =, //TODO hoveddokument og vedlegg
+                    dokumenter = dokumenter,
                 )
             val response = dokarkivClient.arkiverDokument(journalpostRequest)
             logger.info("Journalført vedtaksbrev for mottaker ${mottaker.id}: $response")

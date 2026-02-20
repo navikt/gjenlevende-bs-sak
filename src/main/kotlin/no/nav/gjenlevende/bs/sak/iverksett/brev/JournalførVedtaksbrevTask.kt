@@ -71,7 +71,7 @@ class JournalførVedtaksbrevTask(
                 dokumenttype = Dokumenttype.BARNETILSYNSTØNAD_VEDTAK, // TODO utlede
                 tittel = "Test-tittel", // TODO ikke dette
             )
-        val saksbehandlerEnhet = "" // TODO må hente fra db, etter å ha henta fra register
+        val saksbehandlerEnhet = "4489" // TODO må hente fra db, etter å ha henta fra register
         val mottakere = brevmottakerService.hentBrevmottakere(behandlingId)
         val dokarkivBruker = DokarkivBruker(BrukerIdType.FNR, personident)
         val sak =

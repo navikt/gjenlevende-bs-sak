@@ -13,10 +13,11 @@ import java.util.UUID
 
 data class Vedtak(
     @Id
+    val id: UUID = UUID.randomUUID(),
     val behandlingId: UUID,
     val resultatType: ResultatType,
     val begrunnelse: String? = null,
-    @MappedCollection(idColumn = "behandling_id", "behandling_id")
+    @MappedCollection(idColumn = "vedtak_id", keyColumn = "id")
     val barnetilsynperioder: List<Barnetilsynperiode>,
     val saksbehandlerIdent: String,
     @Column("opphor_fom")
@@ -28,7 +29,7 @@ data class Vedtak(
 
 data class Barnetilsynperiode(
     @Id
-    val behandlingId: UUID,
+    val id: UUID = UUID.randomUUID(),
     val datoFra: YearMonth,
     val datoTil: YearMonth,
     val utgifter: BigDecimal,

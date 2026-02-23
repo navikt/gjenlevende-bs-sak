@@ -72,7 +72,6 @@ class VedtakServiceTest : SpringContextTest() {
                 ResultatType.INNVILGET,
                 listOf(
                     lagBarnetilsynperiode(
-                        behandlingId = behandling.id,
                         fra = YearMonth.of(2025, 1),
                         til = YearMonth.of(2025, 6),
                         utgifter = BigDecimal(1000),
@@ -97,7 +96,6 @@ class VedtakServiceTest : SpringContextTest() {
                 ResultatType.INNVILGET,
                 listOf(
                     lagBarnetilsynperiode(
-                        behandlingId = behandling.id,
                         fra = YearMonth.of(2025, 1),
                         til = YearMonth.of(2025, 6),
                         utgifter = BigDecimal(1000),
@@ -125,7 +123,6 @@ class VedtakServiceTest : SpringContextTest() {
                 ResultatType.INNVILGET,
                 listOf(
                     lagBarnetilsynperiode(
-                        behandlingId = behandling1.id,
                         fra = YearMonth.of(2025, 1),
                         til = YearMonth.of(2025, 6),
                         utgifter = BigDecimal(1000),
@@ -144,7 +141,6 @@ class VedtakServiceTest : SpringContextTest() {
                 ResultatType.INNVILGET,
                 listOf(
                     lagBarnetilsynperiode(
-                        behandlingId = behandling2.id,
                         fra = YearMonth.of(2025, 3),
                         til = YearMonth.of(2025, 4),
                         utgifter = BigDecimal(2000),
@@ -184,7 +180,6 @@ class VedtakServiceTest : SpringContextTest() {
                 ResultatType.INNVILGET,
                 listOf(
                     lagBarnetilsynperiode(
-                        behandlingId = behandling1.id,
                         fra = YearMonth.of(2025, 1),
                         til = YearMonth.of(2025, 12),
                         utgifter = BigDecimal(1000),
@@ -232,7 +227,6 @@ class VedtakServiceTest : SpringContextTest() {
                 ResultatType.INNVILGET,
                 listOf(
                     lagBarnetilsynperiode(
-                        behandlingId = behandling1.id,
                         fra = YearMonth.of(2025, 1),
                         til = YearMonth.of(2025, 12),
                         utgifter = BigDecimal(1000),
@@ -263,7 +257,6 @@ class VedtakServiceTest : SpringContextTest() {
                 ResultatType.INNVILGET,
                 listOf(
                     lagBarnetilsynperiode(
-                        behandlingId = behandling3.id,
                         fra = YearMonth.of(2025, 10),
                         til = YearMonth.of(2025, 12),
                         utgifter = BigDecimal(2000),
@@ -304,7 +297,6 @@ class VedtakServiceTest : SpringContextTest() {
                 ResultatType.INNVILGET,
                 listOf(
                     lagBarnetilsynperiode(
-                        behandlingId = ferdigstiltBehandling.id,
                         fra = YearMonth.of(2025, 1),
                         til = YearMonth.of(2025, 6),
                         utgifter = BigDecimal(1000),
@@ -324,7 +316,6 @@ class VedtakServiceTest : SpringContextTest() {
                 ResultatType.INNVILGET,
                 listOf(
                     lagBarnetilsynperiode(
-                        behandlingId = ikkeFerdigstiltBehandling.id,
                         fra = YearMonth.of(2025, 1),
                         til = YearMonth.of(2025, 6),
                         utgifter = BigDecimal(9999),
@@ -351,7 +342,6 @@ class VedtakServiceTest : SpringContextTest() {
                 ResultatType.INNVILGET,
                 listOf(
                     lagBarnetilsynperiode(
-                        behandlingId = behandling1.id,
                         fra = YearMonth.of(2025, 1),
                         til = YearMonth.of(2025, 6),
                         utgifter = BigDecimal(1000),
@@ -389,7 +379,6 @@ class VedtakServiceTest : SpringContextTest() {
                 ResultatType.INNVILGET,
                 listOf(
                     lagBarnetilsynperiode(
-                        behandlingId = behandling1.id,
                         fra = YearMonth.of(2025, 1),
                         til = YearMonth.of(2025, 3),
                         utgifter = BigDecimal(1000),
@@ -408,7 +397,6 @@ class VedtakServiceTest : SpringContextTest() {
                 ResultatType.INNVILGET,
                 listOf(
                     lagBarnetilsynperiode(
-                        behandlingId = behandling2.id,
                         fra = YearMonth.of(2025, 4),
                         til = YearMonth.of(2025, 6),
                         utgifter = BigDecimal(1000),
@@ -436,7 +424,6 @@ class VedtakServiceTest : SpringContextTest() {
                 ResultatType.INNVILGET,
                 listOf(
                     lagBarnetilsynperiode(
-                        behandlingId = behandling1.id,
                         fra = YearMonth.of(2025, 1),
                         til = YearMonth.of(2025, 3),
                         utgifter = BigDecimal(1000),
@@ -455,7 +442,6 @@ class VedtakServiceTest : SpringContextTest() {
                 ResultatType.INNVILGET,
                 listOf(
                     lagBarnetilsynperiode(
-                        behandlingId = behandling2.id,
                         fra = YearMonth.of(2025, 6),
                         til = YearMonth.of(2025, 8),
                         utgifter = BigDecimal(2000),
@@ -534,7 +520,6 @@ class VedtakServiceTest : SpringContextTest() {
     }
 
     private fun lagBarnetilsynperiode(
-        behandlingId: UUID,
         fra: YearMonth,
         til: YearMonth,
         utgifter: BigDecimal,
@@ -542,7 +527,6 @@ class VedtakServiceTest : SpringContextTest() {
         periodetype: PeriodetypeBarnetilsyn = PeriodetypeBarnetilsyn.ORDINÆR,
         aktivitetstype: AktivitetstypeBarnetilsyn = AktivitetstypeBarnetilsyn.I_ARBEID,
     ) = Barnetilsynperiode(
-        behandlingId = behandlingId,
         datoFra = fra,
         datoTil = til,
         utgifter = utgifter,

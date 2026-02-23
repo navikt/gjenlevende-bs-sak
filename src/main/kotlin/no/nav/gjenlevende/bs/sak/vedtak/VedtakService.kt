@@ -8,6 +8,7 @@ import no.nav.gjenlevende.bs.sak.endringshistorikk.EndringType
 import no.nav.gjenlevende.bs.sak.endringshistorikk.EndringshistorikkService
 import no.nav.gjenlevende.bs.sak.infrastruktur.exception.Feil
 import no.nav.gjenlevende.bs.sak.vedtak.BeregningUtils.beregnBarnetilsynperiode
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.time.YearMonth
@@ -173,10 +174,10 @@ class VedtakService(
 
         val vedtakListe =
             alleBehandlinger
-                .mapNotNull { vedtakRepository.findByIdOrNull(it.id) }
+                .mapNotNull { vedtakRepository.findByBehandlingId(it.id) }
                 .filter { it.resultatType == ResultatType.INNVILGET || it.resultatType == ResultatType.OPPHØR }
 
-        val sammenslåttPerioder = `sammenslåBarnetilsynsperioder`(vedtakListe, fra)
+        val sammenslåttPerioder = sammenslåBarnetilsynsperioder(vedtakListe, fra)
 
         return VedtakDto(
             resultatType = ResultatType.INNVILGET,
@@ -184,7 +185,7 @@ class VedtakService(
         )
     }
 
-    private fun `sammenslåBarnetilsynsperioder`(
+    private fun sammenslåBarnetilsynsperioder(
         vedtakListe: List<Vedtak>,
         fra: YearMonth,
     ): List<Barnetilsynperiode> {
@@ -277,7 +278,6 @@ private data class MonthPeriodData(
         datoFra: YearMonth,
         datoTil: YearMonth,
     ) = Barnetilsynperiode(
-        behandlingId = UUID.randomUUID(),
         datoFra = datoFra,
         datoTil = datoTil,
         utgifter = utgifter,

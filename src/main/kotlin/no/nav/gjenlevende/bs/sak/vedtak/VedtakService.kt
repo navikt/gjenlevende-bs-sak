@@ -8,7 +8,6 @@ import no.nav.gjenlevende.bs.sak.endringshistorikk.EndringType
 import no.nav.gjenlevende.bs.sak.endringshistorikk.EndringshistorikkService
 import no.nav.gjenlevende.bs.sak.infrastruktur.exception.Feil
 import no.nav.gjenlevende.bs.sak.vedtak.BeregningUtils.beregnBarnetilsynperiode
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.time.YearMonth
@@ -23,7 +22,7 @@ class VedtakService(
     private val endringshistorikkService: EndringshistorikkService,
     private val behandlingService: BehandlingService,
 ) {
-    fun hentVedtak(behandlingId: UUID): Vedtak? = vedtakRepository.findByIdOrNull(behandlingId)
+    fun hentVedtak(behandlingId: UUID): Vedtak? = vedtakRepository.findByBehandlingId(behandlingId)
 
     fun lagreVedtak(
         vedtakDto: VedtakDto,
@@ -46,7 +45,9 @@ class VedtakService(
     }
 
     fun slettVedtakHvisFinnes(behandlingId: UUID) {
-        vedtakRepository.deleteById(behandlingId)
+        if (vedtakRepository.findByBehandlingId(behandlingId) != null) {
+            vedtakRepository.deleteByBehandlingId(behandlingId)
+        }
     }
 
     fun lagBeløpsperioder(barnetilsynBeregningRequest: BarnetilsynBeregningRequest): List<BeløpsperioderDto> = beregnBarnetilsynperiode(barnetilsynBeregningRequest.barnetilsynBeregning)

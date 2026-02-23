@@ -131,11 +131,10 @@ class BrevService(
                         display: block;
                         margin-bottom: 32pt;
                         width: 128pt;
-                        height: 40pt;
                     }
                     .logo svg {
-                        width: 128pt;
-                        height: 40pt;
+                        width: 100%;
+                        height: auto;
                     }
                     .bruker-info {
                     display: flex;

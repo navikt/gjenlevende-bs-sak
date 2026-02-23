@@ -52,7 +52,6 @@ internal class VedtakRepositoryTest : SpringContextTest() {
                 barnetilsynperioder =
                     listOf(
                         Barnetilsynperiode(
-                            behandlingId = behandling.id,
                             datoFra = YearMonth.now(),
                             datoTil = YearMonth.now(),
                             utgifter = BigDecimal(1000),
@@ -68,10 +67,9 @@ internal class VedtakRepositoryTest : SpringContextTest() {
 
         vedtakRepository.insert(vedtak)
 
-        assertThat(vedtakRepository.findById(behandling.id))
-            .get()
+        assertThat(vedtakRepository.findByBehandlingId(behandling.id))
             .usingRecursiveComparison()
-            .ignoringFields("opprettetTid")
+            .ignoringFields("id", "opprettetTid", "barnetilsynperioder.id")
             .isEqualTo(vedtak)
     }
 }

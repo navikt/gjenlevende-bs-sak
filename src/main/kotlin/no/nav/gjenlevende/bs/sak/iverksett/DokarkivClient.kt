@@ -29,7 +29,7 @@ class DokarkivClient(
             HttpHeaders().apply {
                 setBearerAuth(texasClient.hentMaskinToken(targetAudience = dokarkivScope.toString()))
                 this.contentType = MediaType.APPLICATION_JSON
-                this.accept = listOf(MediaType.TEXT_PLAIN)
+                this.accept = listOf(MediaType.APPLICATION_JSON)
             }
 
         return webClient

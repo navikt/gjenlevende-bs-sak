@@ -130,12 +130,12 @@ class BrevService(
                     .logo {
                         display: block;
                         margin-bottom: 32pt;
-                        width: 64px;
-                        height: 20px;
+                        width: 128px;
+                        height: 40px;
                     }
                     .logo svg {
-                        width: 64px;
-                        height: 20px;
+                        width: 128px;
+                        height: 40px;
                     }
                     .bruker-info {
                     display: flex;
@@ -181,7 +181,7 @@ class BrevService(
             </head>
             <body>
                 <header class="header">
-                    $logoSvg
+                    <div class="logo">$logoSvg</div>
                     <div class="bruker-info">
                         <div class="venstre">
                             <div class="row"><span class="label">Navn:</span><span class="value">$brukerNavn</span></div>

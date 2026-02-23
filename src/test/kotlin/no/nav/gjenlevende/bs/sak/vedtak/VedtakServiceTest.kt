@@ -157,26 +157,23 @@ class VedtakServiceTest : SpringContextTest() {
 
             assertThat(result.barnetilsynperioder).hasSize(3)
 
-            // Første periode fra første vedtak (jan-feb)
             assertThat(result.barnetilsynperioder[0].datoFra).isEqualTo(YearMonth.of(2025, 1))
             assertThat(result.barnetilsynperioder[0].datoTil).isEqualTo(YearMonth.of(2025, 2))
             assertThat(result.barnetilsynperioder[0].utgifter).isEqualTo(BigDecimal(1000))
             assertThat(result.barnetilsynperioder[0].barn).containsExactly(barnId1)
 
-            // Midtre periode fra nyere vedtak (mars-april)
             assertThat(result.barnetilsynperioder[1].datoFra).isEqualTo(YearMonth.of(2025, 3))
             assertThat(result.barnetilsynperioder[1].datoTil).isEqualTo(YearMonth.of(2025, 4))
             assertThat(result.barnetilsynperioder[1].utgifter).isEqualTo(BigDecimal(2000))
             assertThat(result.barnetilsynperioder[1].barn).containsExactlyInAnyOrder(barnId1, barnId2)
 
-            // Siste periode fra første vedtak (mai-juni)
             assertThat(result.barnetilsynperioder[2].datoFra).isEqualTo(YearMonth.of(2025, 5))
             assertThat(result.barnetilsynperioder[2].datoTil).isEqualTo(YearMonth.of(2025, 6))
             assertThat(result.barnetilsynperioder[2].utgifter).isEqualTo(BigDecimal(1000))
         }
 
         @Test
-        fun `opphør skal fjerne perioder fra opphørFom`() {
+        fun `opphør skal markere perioder fra opphørFom som INGEN_STØNAD`() {
             val behandling1 =
                 opprettFerdigstiltBehandling(
                     BehandlingResultat.INNVILGET,
@@ -210,9 +207,17 @@ class VedtakServiceTest : SpringContextTest() {
 
             val result = vedtakService.hentVedtakFraDato(behandling2.id, YearMonth.of(2025, 1))
 
-            assertThat(result.barnetilsynperioder).hasSize(1)
+            assertThat(result.barnetilsynperioder).hasSize(2)
+
             assertThat(result.barnetilsynperioder[0].datoFra).isEqualTo(YearMonth.of(2025, 1))
             assertThat(result.barnetilsynperioder[0].datoTil).isEqualTo(YearMonth.of(2025, 6))
+            assertThat(result.barnetilsynperioder[0].periodetype).isEqualTo(PeriodetypeBarnetilsyn.ORDINÆR)
+
+            assertThat(result.barnetilsynperioder[1].datoFra).isEqualTo(YearMonth.of(2025, 7))
+            assertThat(result.barnetilsynperioder[1].datoTil).isEqualTo(YearMonth.of(2025, 12))
+            assertThat(result.barnetilsynperioder[1].periodetype).isEqualTo(PeriodetypeBarnetilsyn.INGEN_STØNAD)
+            assertThat(result.barnetilsynperioder[1].utgifter).isEqualTo(BigDecimal.ZERO)
+            assertThat(result.barnetilsynperioder[1].barn).isEmpty()
         }
 
         @Test
@@ -269,17 +274,22 @@ class VedtakServiceTest : SpringContextTest() {
 
             val result = vedtakService.hentVedtakFraDato(behandling3.id, YearMonth.of(2025, 1))
 
-            assertThat(result.barnetilsynperioder).hasSize(2)
+            assertThat(result.barnetilsynperioder).hasSize(3)
 
-            // Perioder før opphør
             assertThat(result.barnetilsynperioder[0].datoFra).isEqualTo(YearMonth.of(2025, 1))
             assertThat(result.barnetilsynperioder[0].datoTil).isEqualTo(YearMonth.of(2025, 3))
+            assertThat(result.barnetilsynperioder[0].periodetype).isEqualTo(PeriodetypeBarnetilsyn.ORDINÆR)
             assertThat(result.barnetilsynperioder[0].utgifter).isEqualTo(BigDecimal(1000))
 
-            // Perioder fra nytt vedtak etter opphør
-            assertThat(result.barnetilsynperioder[1].datoFra).isEqualTo(YearMonth.of(2025, 10))
-            assertThat(result.barnetilsynperioder[1].datoTil).isEqualTo(YearMonth.of(2025, 12))
-            assertThat(result.barnetilsynperioder[1].utgifter).isEqualTo(BigDecimal(2000))
+            assertThat(result.barnetilsynperioder[1].datoFra).isEqualTo(YearMonth.of(2025, 4))
+            assertThat(result.barnetilsynperioder[1].datoTil).isEqualTo(YearMonth.of(2025, 9))
+            assertThat(result.barnetilsynperioder[1].periodetype).isEqualTo(PeriodetypeBarnetilsyn.INGEN_STØNAD)
+            assertThat(result.barnetilsynperioder[1].utgifter).isEqualTo(BigDecimal.ZERO)
+
+            assertThat(result.barnetilsynperioder[2].datoFra).isEqualTo(YearMonth.of(2025, 10))
+            assertThat(result.barnetilsynperioder[2].datoTil).isEqualTo(YearMonth.of(2025, 12))
+            assertThat(result.barnetilsynperioder[2].periodetype).isEqualTo(PeriodetypeBarnetilsyn.ORDINÆR)
+            assertThat(result.barnetilsynperioder[2].utgifter).isEqualTo(BigDecimal(2000))
         }
 
         @Test
@@ -413,6 +423,67 @@ class VedtakServiceTest : SpringContextTest() {
             assertThat(result.barnetilsynperioder[0].datoFra).isEqualTo(YearMonth.of(2025, 1))
             assertThat(result.barnetilsynperioder[0].datoTil).isEqualTo(YearMonth.of(2025, 6))
         }
+
+        @Test
+        fun `skal fylle gap mellom perioder med INGEN_STØNAD`() {
+            val behandling1 =
+                opprettFerdigstiltBehandling(
+                    BehandlingResultat.INNVILGET,
+                    opprettetTid = LocalDateTime.of(2025, 1, 1, 10, 0),
+                )
+            opprettVedtak(
+                behandling1,
+                ResultatType.INNVILGET,
+                listOf(
+                    lagBarnetilsynperiode(
+                        behandlingId = behandling1.id,
+                        fra = YearMonth.of(2025, 1),
+                        til = YearMonth.of(2025, 3),
+                        utgifter = BigDecimal(1000),
+                        barn = listOf(barnId1),
+                    ),
+                ),
+            )
+
+            val behandling2 =
+                opprettFerdigstiltBehandling(
+                    BehandlingResultat.INNVILGET,
+                    opprettetTid = LocalDateTime.of(2025, 2, 1, 10, 0),
+                )
+            opprettVedtak(
+                behandling2,
+                ResultatType.INNVILGET,
+                listOf(
+                    lagBarnetilsynperiode(
+                        behandlingId = behandling2.id,
+                        fra = YearMonth.of(2025, 6),
+                        til = YearMonth.of(2025, 8),
+                        utgifter = BigDecimal(2000),
+                        barn = listOf(barnId1),
+                    ),
+                ),
+            )
+
+            val result = vedtakService.hentVedtakFraDato(behandling2.id, YearMonth.of(2025, 1))
+
+            assertThat(result.barnetilsynperioder).hasSize(3)
+
+            assertThat(result.barnetilsynperioder[0].datoFra).isEqualTo(YearMonth.of(2025, 1))
+            assertThat(result.barnetilsynperioder[0].datoTil).isEqualTo(YearMonth.of(2025, 3))
+            assertThat(result.barnetilsynperioder[0].periodetype).isEqualTo(PeriodetypeBarnetilsyn.ORDINÆR)
+            assertThat(result.barnetilsynperioder[0].utgifter).isEqualTo(BigDecimal(1000))
+
+            assertThat(result.barnetilsynperioder[1].datoFra).isEqualTo(YearMonth.of(2025, 4))
+            assertThat(result.barnetilsynperioder[1].datoTil).isEqualTo(YearMonth.of(2025, 5))
+            assertThat(result.barnetilsynperioder[1].periodetype).isEqualTo(PeriodetypeBarnetilsyn.INGEN_STØNAD)
+            assertThat(result.barnetilsynperioder[1].utgifter).isEqualTo(BigDecimal.ZERO)
+            assertThat(result.barnetilsynperioder[1].barn).isEmpty()
+
+            assertThat(result.barnetilsynperioder[2].datoFra).isEqualTo(YearMonth.of(2025, 6))
+            assertThat(result.barnetilsynperioder[2].datoTil).isEqualTo(YearMonth.of(2025, 8))
+            assertThat(result.barnetilsynperioder[2].periodetype).isEqualTo(PeriodetypeBarnetilsyn.ORDINÆR)
+            assertThat(result.barnetilsynperioder[2].utgifter).isEqualTo(BigDecimal(2000))
+        }
     }
 
     private fun opprettFerdigstiltBehandling(
@@ -433,9 +504,7 @@ class VedtakServiceTest : SpringContextTest() {
                 status = status,
                 resultat = resultat,
             )
-        // Use reflection or raw SQL to set opprettetTid since it's managed by Sporbar
         return behandlingRepository.insert(behandling).let { inserted ->
-            // Update opprettetTid directly via update
             val updated =
                 inserted.copy(
                     sporbar = inserted.sporbar.copy(opprettetTid = opprettetTid),

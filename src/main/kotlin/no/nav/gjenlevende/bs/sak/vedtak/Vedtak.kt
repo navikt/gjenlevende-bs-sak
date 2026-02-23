@@ -34,7 +34,7 @@ data class Barnetilsynperiode(
     val utgifter: BigDecimal,
     val barn: List<UUID>,
     val periodetype: PeriodetypeBarnetilsyn,
-    val aktivitetstype: AktivitetstypeBarnetilsyn,
+    val aktivitetstype: AktivitetstypeBarnetilsyn? = null,
 )
 
 data class BarnetilsynBeregningRequest(

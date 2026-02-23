@@ -181,7 +181,7 @@ class BrevService(
             </head>
             <body>
                 <header class="header">
-                    <div class="logo">$logoSvg</div>
+                    $logoSvg
                     <div class="bruker-info">
                         <div class="venstre">
                             <div class="row"><span class="label">Navn:</span><span class="value">$brukerNavn</span></div>

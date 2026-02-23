@@ -102,7 +102,7 @@ class BrevService(
         val brukerPersonident = brevInnhold.brevmal.informasjonOmBruker.fnr
         val dagensDato = LocalDate.now().format(DateTimeFormatter.ofPattern("d. MMMM yyyy", Locale.forLanguageTag("no")))
         val tittel = brevInnhold.brevmal.tittel
-        val logo = logoTilBase64()
+        val logoSvg = hentLogoSvg()
         val fritekst = lagHtmlTekstbolker(brevInnhold.fritekstbolker)
         val avslutning = lagHtmlTekstbolker(brevInnhold.brevmal.fastTekstAvslutning)
         val saksbehandlerNavn = brev.saksbehandler ?: ""
@@ -129,7 +129,13 @@ class BrevService(
                     }
                     .logo {
                         display: block;
-                        margin-bottom: 32pt
+                        margin-bottom: 32pt;
+                        width: 64px;
+                        height: 20px;
+                    }
+                    .logo svg {
+                        width: 64px;
+                        height: 20px;
                     }
                     .bruker-info {
                     display: flex;
@@ -175,7 +181,7 @@ class BrevService(
             </head>
             <body>
                 <header class="header">
-                    <img class="logo" src="$logo" alt="Logo" height="16" />
+                    <div class="logo">$logoSvg</div>
                     <div class="bruker-info">
                         <div class="venstre">
                             <div class="row"><span class="label">Navn:</span><span class="value">$brukerNavn</span></div>

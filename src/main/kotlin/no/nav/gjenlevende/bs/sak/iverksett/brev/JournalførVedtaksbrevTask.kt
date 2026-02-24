@@ -24,6 +24,7 @@ import no.nav.gjenlevende.bs.sak.iverksett.domene.Filtype
 import no.nav.gjenlevende.bs.sak.iverksett.domene.JournalpostRequest
 import no.nav.gjenlevende.bs.sak.iverksett.domene.JournalpostType
 import no.nav.gjenlevende.bs.sak.iverksett.domene.Sak
+import no.nav.gjenlevende.bs.sak.iverksett.metadata.tilMetadata
 import no.nav.gjenlevende.bs.sak.saf.BrukerIdType
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -71,6 +72,7 @@ class JournalførVedtaksbrevTask(
                 dokumenttype = Dokumenttype.BARNETILSYNSTØNAD_VEDTAK, // TODO utlede
                 tittel = "Test-tittel", // TODO ikke dette
             )
+        val metadata = dokument.dokumenttype.tilMetadata()
         val saksbehandlerEnhet = "4489" // TODO må hente fra db, etter å ha henta fra register
         val mottakere = brevmottakerService.hentBrevmottakere(behandlingId)
         val dokarkivBruker = DokarkivBruker(BrukerIdType.FNR, personident)
@@ -80,8 +82,8 @@ class JournalførVedtaksbrevTask(
             listOf(
                 ArkivDokument(
                     tittel = "", // TODO
-                    brevkode = "Barnetilsyn", // TODO
-                    dokumentKategori = Dokumentkategori.VB,
+                    brevkode = metadata.brevkode,
+                    dokumentKategori = metadata.dokumentKategori,
                     dokumentvarianter =
                         listOf(
                             Dokumentvariant(
@@ -99,13 +101,13 @@ class JournalførVedtaksbrevTask(
         mottakere.forEachIndexed { indeks, mottaker ->
             val journalpostRequest =
                 JournalpostRequest(
-                    journalpostType = JournalpostType.UTGAAENDE,
-                    behandlingstema = "ab0028", // TODO hentet fra fagsak.kt, sjekk ut
+                    journalpostType = metadata.journalpostType,
+                    behandlingstema = metadata.behandlingstema?.value,
                     avsenderMottaker = mottaker.tilAvsenderMottaker(),
                     bruker = dokarkivBruker,
-                    tema = "EYO",
-                    tittel = dokument.tittel,
-                    kanal = "", // TODO ?
+                    tema = metadata.tema.navn,
+                    tittel = dokument.tittel ?: metadata.tittel,
+                    kanal = metadata.kanal,
                     journalfoerendeEnhet = saksbehandlerEnhet,
                     eksternReferanseId = "$behandlingId-vedtaksbrev-mottaker$indeks", // TODO må være unik for hver mottaker, legg til indeks
                     sak = sak,

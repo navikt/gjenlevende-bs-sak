@@ -79,38 +79,6 @@ class OppgaveService(
         )
     }
 
-    fun fjernTilordnetRessursPåOppgave(behandlingId: UUID) {
-        logger.info("Fjerner tilordnetRessurs for oppgave på behandling=$behandlingId")
-
-        val oppgave =
-            hentOppgaveForBehandling(behandlingId)
-                ?: throw IllegalStateException("Finner ikke oppgave for behandling=$behandlingId")
-
-        val gosysOppgave = oppgaveClient.hentOppgaveM2M(oppgave.gsakOppgaveId)
-        val versjon = gosysOppgave.versjon ?: throw IllegalStateException("Oppgave mangler versjon")
-
-        oppgaveClient.fjernTilordnetRessurs(
-            oppgaveId = oppgave.gsakOppgaveId,
-            versjon = versjon,
-        )
-    }
-
-    fun ferdigstillOppgave(behandlingId: UUID) {
-        logger.info("Ferdigstiller oppgave for behandling=$behandlingId")
-
-        val oppgave =
-            hentOppgaveForBehandling(behandlingId)
-                ?: throw IllegalStateException("Finner ikke oppgave for behandling=$behandlingId")
-
-        val gosysOppgave = oppgaveClient.hentOppgaveM2M(oppgave.gsakOppgaveId)
-        val versjon = gosysOppgave.versjon ?: throw IllegalStateException("Oppgave mangler versjon")
-
-        oppgaveClient.ferdigstillOppgave(
-            oppgaveId = oppgave.gsakOppgaveId,
-            versjon = versjon,
-        )
-    }
-
     fun opprettGodkjennVedtakOppgave(behandlingId: UUID) {
         logger.info("Oppretter godkjenn vedtak oppgave for behandling=$behandlingId")
 

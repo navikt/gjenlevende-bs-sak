@@ -8,8 +8,6 @@ import no.nav.gjenlevende.bs.sak.beslutter.dto.TotrinnskontrollStatusDto
 import no.nav.gjenlevende.bs.sak.endringshistorikk.BehandlingEndringRepository
 import no.nav.gjenlevende.bs.sak.endringshistorikk.EndringType
 import no.nav.gjenlevende.bs.sak.felles.sikkerhet.SikkerhetContext
-import no.nav.gjenlevende.bs.sak.felles.sikkerhet.TilgangService
-import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import java.util.UUID
@@ -19,7 +17,6 @@ class TotrinnskontrollService(
     private val behandlingEndringRepository: BehandlingEndringRepository,
     private val behandlingRepository: BehandlingRepository,
 ) {
-    private val logger = LoggerFactory.getLogger(TilgangService::class.java)
 
     fun hentTotrinnskontrollStatus(behandlingId: UUID): TotrinnskontrollStatusDto {
         val behandling =

@@ -1,5 +1,6 @@
 package no.nav.gjenlevende.bs.sak.endringshistorikk
 
+import no.nav.gjenlevende.bs.sak.beslutter.ÅrsakUnderkjent
 import no.nav.gjenlevende.bs.sak.felles.sikkerhet.SikkerhetContext
 import no.nav.gjenlevende.bs.sak.felles.sporbar.SporbarUtils
 import org.springframework.data.annotation.Id
@@ -33,4 +34,8 @@ data class BehandlingEndring(
     @Column("utfort_tid")
     val utførtTid: LocalDateTime = SporbarUtils.now(),
     val detaljer: String? = null,
+    @Column("arsak_underkjent")
+    val årsakUnderkjent: ÅrsakUnderkjent? = null,
+    @Column("begrunnelse_underkjent")
+    val begrunnelseUnderkjent: String? = null,
 )

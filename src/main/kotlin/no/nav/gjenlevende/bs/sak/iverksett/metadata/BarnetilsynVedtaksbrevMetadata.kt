@@ -16,6 +16,6 @@ object BarnetilsynVedtaksbrevMetadata : Dokumentmetadata {
     override val kanal: String? = null // TODO https://confluence.adeo.no/spaces/BOA/pages/316407153/Utsendingskanal
     override val dokumenttype: Dokumenttype = Dokumenttype.VEDTAKSBREV_BARNETILSYN
     override val tittel: String? = null
-    override val brevkode: String = "EYO_BREV_BARNETILSYN_VEDTAK" // todo hør med mattis
+    override val brevkode: String = "EYO_BREV_BARNETILSYN_VEDTAK"
     override val dokumentKategori: Dokumentkategori = Dokumentkategori.VB
 }

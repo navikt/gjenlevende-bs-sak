@@ -472,84 +472,82 @@ class GjeldendeVedtakServiceTest : SpringContextTest() {
             assertThat(result.barnetilsynperioder[2].utgifter).isEqualTo(BigDecimal(2000))
         }
 
-
-    @Test
-    fun `Skal splitte opp vedtak som blir overskrevet av nyere vedtak`() {
-        val behandling1 =
-            opprettFerdigstiltBehandling(
-                BehandlingResultat.INNVILGET,
-                endretTid = LocalDateTime.of(2025, 1, 1, 10, 0),
-            )
-        opprettVedtak(
-            behandling1,
-            ResultatType.INNVILGET,
-            listOf(
-                lagBarnetilsynperiode(
-                    fra = YearMonth.of(2025, 1),
-                    til = YearMonth.of(2025, 3),
-                    utgifter = BigDecimal(1000),
-                    barn = listOf(barnId1),
+        @Test
+        fun `Skal splitte opp vedtak som blir overskrevet av nyere vedtak`() {
+            val behandling1 =
+                opprettFerdigstiltBehandling(
+                    BehandlingResultat.INNVILGET,
+                    endretTid = LocalDateTime.of(2025, 1, 1, 10, 0),
+                )
+            opprettVedtak(
+                behandling1,
+                ResultatType.INNVILGET,
+                listOf(
+                    lagBarnetilsynperiode(
+                        fra = YearMonth.of(2025, 1),
+                        til = YearMonth.of(2025, 3),
+                        utgifter = BigDecimal(1000),
+                        barn = listOf(barnId1),
+                    ),
                 ),
-            ),
-        )
-
-        val behandling2 =
-            opprettFerdigstiltBehandling(
-                BehandlingResultat.INNVILGET,
-                endretTid = LocalDateTime.of(2025, 2, 1, 10, 0),
             )
-        opprettVedtak(
-            behandling2,
-            ResultatType.INNVILGET,
-            listOf(
-                lagBarnetilsynperiode(
-                    fra = YearMonth.of(2025, 3),
-                    til = YearMonth.of(2025, 6),
-                    utgifter = BigDecimal(2000),
-                    barn = listOf(barnId1),
-                ),
-            ),
-        )
 
-        val behandling3 =
-            opprettFerdigstiltBehandling(
-                BehandlingResultat.INNVILGET,
-                endretTid = LocalDateTime.of(2025, 7, 1, 10, 0),
+            val behandling2 =
+                opprettFerdigstiltBehandling(
+                    BehandlingResultat.INNVILGET,
+                    endretTid = LocalDateTime.of(2025, 2, 1, 10, 0),
+                )
+            opprettVedtak(
+                behandling2,
+                ResultatType.INNVILGET,
+                listOf(
+                    lagBarnetilsynperiode(
+                        fra = YearMonth.of(2025, 3),
+                        til = YearMonth.of(2025, 6),
+                        utgifter = BigDecimal(2000),
+                        barn = listOf(barnId1),
+                    ),
+                ),
             )
-        opprettVedtak(
-            behandling3,
-            ResultatType.INNVILGET,
-            listOf(
-                lagBarnetilsynperiode(
-                    fra = YearMonth.of(2025, 7),
-                    til = YearMonth.of(2025, 8),
-                    utgifter = BigDecimal(3000),
-                    barn = listOf(barnId1),
+
+            val behandling3 =
+                opprettFerdigstiltBehandling(
+                    BehandlingResultat.INNVILGET,
+                    endretTid = LocalDateTime.of(2025, 7, 1, 10, 0),
+                )
+            opprettVedtak(
+                behandling3,
+                ResultatType.INNVILGET,
+                listOf(
+                    lagBarnetilsynperiode(
+                        fra = YearMonth.of(2025, 7),
+                        til = YearMonth.of(2025, 8),
+                        utgifter = BigDecimal(3000),
+                        barn = listOf(barnId1),
+                    ),
                 ),
-            ),
-        )
+            )
 
+            val result = gjeldendeVedtakService.hentGjeldendeVedtakFraDato(behandling3.id, YearMonth.of(2025, 1))
 
-        val result = gjeldendeVedtakService.hentGjeldendeVedtakFraDato(behandling3.id, YearMonth.of(2025, 1))
+            assertThat(result.barnetilsynperioder).hasSize(3)
 
-        assertThat(result.barnetilsynperioder).hasSize(3)
+            assertThat(result.barnetilsynperioder[0].datoFra).isEqualTo(YearMonth.of(2025, 1))
+            assertThat(result.barnetilsynperioder[0].datoTil).isEqualTo(YearMonth.of(2025, 2))
+            assertThat(result.barnetilsynperioder[0].periodetype).isEqualTo(PeriodetypeBarnetilsyn.ORDINÆR)
+            assertThat(result.barnetilsynperioder[0].utgifter).isEqualTo(BigDecimal(1000))
 
-        assertThat(result.barnetilsynperioder[0].datoFra).isEqualTo(YearMonth.of(2025, 1))
-        assertThat(result.barnetilsynperioder[0].datoTil).isEqualTo(YearMonth.of(2025, 2))
-        assertThat(result.barnetilsynperioder[0].periodetype).isEqualTo(PeriodetypeBarnetilsyn.ORDINÆR)
-        assertThat(result.barnetilsynperioder[0].utgifter).isEqualTo(BigDecimal(1000))
+            assertThat(result.barnetilsynperioder[1].datoFra).isEqualTo(YearMonth.of(2025, 3))
+            assertThat(result.barnetilsynperioder[1].datoTil).isEqualTo(YearMonth.of(2025, 6))
+            assertThat(result.barnetilsynperioder[1].periodetype).isEqualTo(PeriodetypeBarnetilsyn.ORDINÆR)
+            assertThat(result.barnetilsynperioder[1].utgifter).isEqualTo(BigDecimal(2000))
 
-        assertThat(result.barnetilsynperioder[1].datoFra).isEqualTo(YearMonth.of(2025, 3))
-        assertThat(result.barnetilsynperioder[1].datoTil).isEqualTo(YearMonth.of(2025, 6))
-        assertThat(result.barnetilsynperioder[1].periodetype).isEqualTo(PeriodetypeBarnetilsyn.ORDINÆR)
-        assertThat(result.barnetilsynperioder[1].utgifter).isEqualTo(BigDecimal(2000))
-
-        assertThat(result.barnetilsynperioder[2].datoFra).isEqualTo(YearMonth.of(2025, 7))
-        assertThat(result.barnetilsynperioder[2].datoTil).isEqualTo(YearMonth.of(2025, 8))
-        assertThat(result.barnetilsynperioder[2].periodetype).isEqualTo(PeriodetypeBarnetilsyn.ORDINÆR)
-        assertThat(result.barnetilsynperioder[2].utgifter).isEqualTo(BigDecimal(3000))
+            assertThat(result.barnetilsynperioder[2].datoFra).isEqualTo(YearMonth.of(2025, 7))
+            assertThat(result.barnetilsynperioder[2].datoTil).isEqualTo(YearMonth.of(2025, 8))
+            assertThat(result.barnetilsynperioder[2].periodetype).isEqualTo(PeriodetypeBarnetilsyn.ORDINÆR)
+            assertThat(result.barnetilsynperioder[2].utgifter).isEqualTo(BigDecimal(3000))
+        }
     }
-}
 
     private fun opprettFerdigstiltBehandling(
         resultat: BehandlingResultat,

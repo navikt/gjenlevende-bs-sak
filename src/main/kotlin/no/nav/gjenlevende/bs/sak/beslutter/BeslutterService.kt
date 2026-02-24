@@ -4,10 +4,12 @@ import no.nav.familie.prosessering.internal.TaskService
 import no.nav.gjenlevende.bs.sak.behandling.BehandlingResultat
 import no.nav.gjenlevende.bs.sak.behandling.BehandlingService
 import no.nav.gjenlevende.bs.sak.behandling.BehandlingStatus
+import no.nav.gjenlevende.bs.sak.behandling.LagBehandleSakOppgaveTask
 import no.nav.gjenlevende.bs.sak.beslutter.dto.BeslutteVedtakDto
 import no.nav.gjenlevende.bs.sak.brev.BrevService
 import no.nav.gjenlevende.bs.sak.endringshistorikk.EndringType
 import no.nav.gjenlevende.bs.sak.endringshistorikk.EndringshistorikkService
+import no.nav.gjenlevende.bs.sak.felles.sikkerhet.SikkerhetContext
 import no.nav.gjenlevende.bs.sak.infrastruktur.exception.Feil
 import no.nav.gjenlevende.bs.sak.oppgave.OppgaveService
 import no.nav.gjenlevende.bs.sak.oppgave.OppgavetypeEYO
@@ -27,6 +29,7 @@ class BeslutterService(
     private val totrinnskontrollService: TotrinnskontrollService,
     private val taskService: TaskService,
     private val objectMapper: ObjectMapper,
+    private val lagBehandleSakOppgaveTask: LagBehandleSakOppgaveTask,
 ) {
     @Transactional
     fun sendTilBeslutter(behandlingId: UUID) {
@@ -74,11 +77,13 @@ class BeslutterService(
             taskService = taskService,
         )
 
-        OpprettOppgaveTask.opprettTask(
-            behandlingId = behandlingId,
-            oppgavetype = OppgavetypeEYO.BEH_SAK,
-            objectMapper = objectMapper,
-            taskService = taskService,
+        val behandling =
+            behandlingService.hentBehandling(behandlingId)
+                ?: throw IllegalStateException("Fant ikke behandling med id $behandlingId")
+
+        lagBehandleSakOppgaveTask.opprettBehandleSakOppgaveTask(
+            behandling = behandling,
+            saksbehandler = SikkerhetContext.hentSaksbehandler(),
         )
 
         behandlingService.oppdaterBehandlingStatus(

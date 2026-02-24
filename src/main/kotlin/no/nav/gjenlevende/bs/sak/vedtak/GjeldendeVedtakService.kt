@@ -42,19 +42,19 @@ class GjeldendeVedtakService(
         vedtakListe: List<Vedtak>,
         fra: YearMonth,
     ): List<Barnetilsynperiode> {
-        val månedTilPeriode = mutableMapOf<YearMonth, MonthPeriodData>()
+        val månedTilPeriode = mutableMapOf<YearMonth, MånedPeriodeData>()
 
         for (vedtak in vedtakListe) {
             if (vedtak.resultatType == ResultatType.OPPHØR && vedtak.opphørFom != null) {
                 månedTilPeriode.keys.filter { it >= vedtak.opphørFom }.forEach { month ->
-                    månedTilPeriode[month] = MonthPeriodData.ingenStønad()
+                    månedTilPeriode[month] = MånedPeriodeData.ingenStønad()
                 }
             } else if (vedtak.resultatType == ResultatType.INNVILGET) {
                 for (periode in vedtak.barnetilsynperioder) {
                     var gjeldendeDato = periode.datoFra
                     while (gjeldendeDato <= periode.datoTil) {
                         månedTilPeriode[gjeldendeDato] =
-                            MonthPeriodData(
+                            MånedPeriodeData(
                                 utgifter = periode.utgifter,
                                 barn = periode.barn,
                                 periodetype = periode.periodetype,
@@ -72,7 +72,7 @@ class GjeldendeVedtakService(
     }
 
     private fun konverterTilBarnetilsynsperioder(
-        månedTilPeriode: Map<YearMonth, MonthPeriodData>,
+        månedTilPeriode: Map<YearMonth, MånedPeriodeData>,
     ): List<Barnetilsynperiode> {
         if (månedTilPeriode.isEmpty()) return emptyList()
 
@@ -87,31 +87,47 @@ class GjeldendeVedtakService(
             val gjeldendeData = månedTilPeriode[gjeldendeMåned]!!
 
             val forrigeMåned = sorterteMåneder[i - 1]
-            val erSammenhengende = forrigeMåned.plusMonths(1) == gjeldendeMåned
-            val harLikData = gjeldendeData == dataStart
 
-            if (!erSammenhengende || !harLikData) {
-                resultat.add(dataStart.toBarnetilsynperiode(periodeStart, forrigeMåned))
+            if (!kanSlåsSammen(forrigeMåned, gjeldendeMåned, dataStart, gjeldendeData)) {
+                resultat.add(dataStart.tilBarnetilsynPeriode(periodeStart, forrigeMåned))
 
-                if (!erSammenhengende) {
-                    val utenVedtakStart = forrigeMåned.plusMonths(1)
-                    val utenVedtakSlutt = gjeldendeMåned.minusMonths(1)
-                    if (utenVedtakStart <= utenVedtakSlutt) {
-                        resultat.add(MonthPeriodData.ingenStønad().toBarnetilsynperiode(utenVedtakStart, utenVedtakSlutt))
-                    }
-                }
+                resultat.addAll(lagIngenStønadPeriodeHvisTomPeriode(forrigeMåned, gjeldendeMåned))
 
                 periodeStart = gjeldendeMåned
                 dataStart = gjeldendeData
             }
         }
-        resultat.add(dataStart.toBarnetilsynperiode(periodeStart, sorterteMåneder.last()))
+        resultat.add(dataStart.tilBarnetilsynPeriode(periodeStart, sorterteMåneder.last()))
 
         return resultat
     }
+
+    private fun kanSlåsSammen(
+        forrigeMåned: YearMonth,
+        gjeldendeMåned: YearMonth,
+        forrigeData: MånedPeriodeData,
+        gjeldendeData: MånedPeriodeData,
+    ): Boolean {
+        val erSammenhengende = forrigeMåned.plusMonths(1) == gjeldendeMåned
+        val harLikData = forrigeData == gjeldendeData
+        return erSammenhengende && harLikData
+    }
+
+    private fun lagIngenStønadPeriodeHvisTomPeriode(
+        forrigeMåned: YearMonth,
+        gjeldendeMåned: YearMonth,
+    ): List<Barnetilsynperiode> {
+        val ingenPeriodeStart = forrigeMåned.plusMonths(1)
+        val ingenPeriodeSlutt = gjeldendeMåned.minusMonths(1)
+        return if (ingenPeriodeStart <= ingenPeriodeSlutt) {
+            listOf(MånedPeriodeData.ingenStønad().tilBarnetilsynPeriode(ingenPeriodeStart, ingenPeriodeSlutt))
+        } else {
+            emptyList()
+        }
+    }
 }
 
-private data class MonthPeriodData(
+private data class MånedPeriodeData(
     val utgifter: BigDecimal,
     val barn: List<UUID>,
     val periodetype: PeriodetypeBarnetilsyn,
@@ -119,7 +135,7 @@ private data class MonthPeriodData(
 ) {
     companion object {
         fun ingenStønad() =
-            MonthPeriodData(
+            MånedPeriodeData(
                 utgifter = BigDecimal.ZERO,
                 barn = emptyList(),
                 periodetype = PeriodetypeBarnetilsyn.INGEN_STØNAD,
@@ -127,7 +143,7 @@ private data class MonthPeriodData(
             )
     }
 
-    fun toBarnetilsynperiode(
+    fun tilBarnetilsynPeriode(
         datoFra: YearMonth,
         datoTil: YearMonth,
     ) = Barnetilsynperiode(

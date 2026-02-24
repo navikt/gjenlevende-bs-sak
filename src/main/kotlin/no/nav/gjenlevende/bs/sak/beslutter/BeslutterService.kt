@@ -8,6 +8,7 @@ import no.nav.gjenlevende.bs.sak.beslutter.dto.BeslutteVedtakDto
 import no.nav.gjenlevende.bs.sak.brev.BrevService
 import no.nav.gjenlevende.bs.sak.endringshistorikk.EndringType
 import no.nav.gjenlevende.bs.sak.endringshistorikk.EndringshistorikkService
+import no.nav.gjenlevende.bs.sak.infrastruktur.exception.Feil
 import no.nav.gjenlevende.bs.sak.oppgave.OppgaveService
 import no.nav.gjenlevende.bs.sak.oppgave.OppgavetypeEYO
 import no.nav.gjenlevende.bs.sak.task.FerdigstillOppgaveTask
@@ -60,10 +61,31 @@ class BeslutterService(
 
     @Transactional
     fun angreSendTilBeslutter(behandlingId: UUID) {
+        val aktivOppgavetype = oppgaveService.hentAktivOppgavetype(behandlingId)
+
+        if (aktivOppgavetype != OppgavetypeEYO.GOD_VED) {
+            Feil("Kan kun angre send til beslutter hvis oppgaven er av type GOD_VED. Oppgave er ${aktivOppgavetype.name}")
+        }
+
+        FerdigstillOppgaveTask.opprettTask(
+            behandlingId = behandlingId,
+            oppgavetype = aktivOppgavetype,
+            objectMapper = objectMapper,
+            taskService = taskService,
+        )
+
+        OpprettOppgaveTask.opprettTask(
+            behandlingId = behandlingId,
+            oppgavetype = OppgavetypeEYO.BEH_SAK,
+            objectMapper = objectMapper,
+            taskService = taskService,
+        )
+
         behandlingService.oppdaterBehandlingStatus(
             behandlingId = behandlingId,
             status = BehandlingStatus.UTREDES,
         )
+
         endringshistorikkService.registrerEndring(
             behandlingId = behandlingId,
             endringType = EndringType.ANGRET_SEND_TIL_BESLUTTER,

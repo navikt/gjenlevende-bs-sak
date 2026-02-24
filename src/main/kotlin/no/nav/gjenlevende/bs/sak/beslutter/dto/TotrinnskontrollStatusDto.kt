@@ -1,5 +1,6 @@
 package no.nav.gjenlevende.bs.sak.beslutter.dto
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import no.nav.gjenlevende.bs.sak.beslutter.ÅrsakUnderkjent
 import java.time.LocalDateTime
 
@@ -12,6 +13,7 @@ data class TotrinnskontrollDto(
     val opprettetAv: String,
     val opprettetTid: LocalDateTime,
     val godkjent: Boolean? = null,
+    @JsonProperty("årsakUnderkjent")
     val årsakUnderkjent: ÅrsakUnderkjent? = null,
     val begrunnelse: String? = null,
 )

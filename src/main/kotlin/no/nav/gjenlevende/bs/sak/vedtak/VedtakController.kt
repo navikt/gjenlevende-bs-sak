@@ -16,6 +16,7 @@ import java.util.UUID
 @RequestMapping("/api/vedtak")
 class VedtakController(
     private val vedtakService: VedtakService,
+    private val gjeldendeVedtakService: GjeldendeVedtakService,
 ) {
     @GetMapping("/{behandlingId}/hent-vedtak")
     fun hentVedtak(
@@ -54,5 +55,5 @@ class VedtakController(
     fun hentVedtakForBehandling(
         @PathVariable behandlingId: UUID,
         @PathVariable fra: YearMonth,
-    ): ResponseEntity<VedtakDto> = ResponseEntity.ok(vedtakService.hentVedtakFraDato(behandlingId, fra))
+    ): ResponseEntity<VedtakDto> = ResponseEntity.ok(gjeldendeVedtakService.hentGjeldendeVedtakFraDato(behandlingId, fra))
 }

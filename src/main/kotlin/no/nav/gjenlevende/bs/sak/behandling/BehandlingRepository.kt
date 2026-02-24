@@ -28,4 +28,15 @@ interface BehandlingRepository :
     """,
     )
     fun finnSisteIverksatteBehandling(fagsakId: UUID): Behandling?
+
+    @Query(
+        """
+        SELECT * FROM behandling
+        WHERE fagsak_id = :fagsakId
+          AND resultat IN ('OPPHØRT', 'INNVILGET')
+          AND status = 'FERDIGSTILT'
+        ORDER BY opprettet_tid DESC
+    """,
+    )
+    fun finnAlleIverksatteBehandlinger(fagsakId: UUID): List<Behandling>?
 }

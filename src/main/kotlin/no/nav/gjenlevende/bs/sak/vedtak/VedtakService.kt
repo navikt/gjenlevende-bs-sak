@@ -1,17 +1,12 @@
 package no.nav.gjenlevende.bs.sak.vedtak
 
-import no.nav.gjenlevende.bs.sak.behandling.BehandlingRepository
-import no.nav.gjenlevende.bs.sak.behandling.BehandlingResultat
 import no.nav.gjenlevende.bs.sak.behandling.BehandlingService
-import no.nav.gjenlevende.bs.sak.behandling.BehandlingStatus
 import no.nav.gjenlevende.bs.sak.endringshistorikk.EndringType
 import no.nav.gjenlevende.bs.sak.endringshistorikk.EndringshistorikkService
 import no.nav.gjenlevende.bs.sak.infrastruktur.exception.Feil
 import no.nav.gjenlevende.bs.sak.vedtak.BeregningUtils.beregnBarnetilsynperiode
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
-import java.time.YearMonth
 import java.util.UUID
 import kotlin.collections.any
 import kotlin.text.isNullOrEmpty
@@ -19,7 +14,6 @@ import kotlin.text.isNullOrEmpty
 @Service
 class VedtakService(
     private val vedtakRepository: VedtakRepository,
-    private val behandlingRepository: BehandlingRepository,
     private val endringshistorikkService: EndringshistorikkService,
     private val behandlingService: BehandlingService,
 ) {
@@ -156,133 +150,4 @@ class VedtakService(
             throw Feil("Mangler begrunnelse")
         }
     }
-
-    fun hentVedtakFraDato(
-        behandlingId: UUID,
-        fra: YearMonth,
-    ): VedtakDto {
-        val behandling =
-            behandlingRepository.findByIdOrNull(behandlingId)
-                ?: throw Feil("Fant ikke behandling med id=$behandlingId")
-
-        val alleBehandlinger =
-            behandlingRepository
-                .findAllByFagsakId(behandling.fagsakId)
-                .filter { it.status == BehandlingStatus.FERDIGSTILT }
-                .filter { it.resultat == BehandlingResultat.INNVILGET || it.resultat == BehandlingResultat.OPPHØRT }
-                .sortedBy { it.sporbar.opprettetTid }
-
-        val vedtakListe =
-            alleBehandlinger
-                .mapNotNull { vedtakRepository.findByBehandlingId(it.id) }
-                .filter { it.resultatType == ResultatType.INNVILGET || it.resultatType == ResultatType.OPPHØR }
-
-        val sammenslåttPerioder = sammenslåBarnetilsynsperioder(vedtakListe, fra)
-
-        return VedtakDto(
-            resultatType = ResultatType.INNVILGET,
-            barnetilsynperioder = sammenslåttPerioder,
-        )
-    }
-
-    private fun sammenslåBarnetilsynsperioder(
-        vedtakListe: List<Vedtak>,
-        fra: YearMonth,
-    ): List<Barnetilsynperiode> {
-        val månedTilPeriode = mutableMapOf<YearMonth, MonthPeriodData>()
-
-        for (vedtak in vedtakListe) {
-            if (vedtak.resultatType == ResultatType.OPPHØR && vedtak.opphørFom != null) {
-                månedTilPeriode.keys.filter { it >= vedtak.opphørFom }.forEach { month ->
-                    månedTilPeriode[month] = MonthPeriodData.ingenStønad()
-                }
-            } else if (vedtak.resultatType == ResultatType.INNVILGET) {
-                for (periode in vedtak.barnetilsynperioder) {
-                    var current = periode.datoFra
-                    while (current <= periode.datoTil) {
-                        månedTilPeriode[current] =
-                            MonthPeriodData(
-                                utgifter = periode.utgifter,
-                                barn = periode.barn,
-                                periodetype = periode.periodetype,
-                                aktivitetstype = periode.aktivitetstype,
-                            )
-                        current = current.plusMonths(1)
-                    }
-                }
-            }
-        }
-
-        val filtrerteMåneder = månedTilPeriode.filterKeys { it >= fra }
-
-        return konverterTilBarnetilsynsperioder(filtrerteMåneder)
-    }
-
-    private fun konverterTilBarnetilsynsperioder(
-        månedTilPeriode: Map<YearMonth, MonthPeriodData>,
-    ): List<Barnetilsynperiode> {
-        if (månedTilPeriode.isEmpty()) return emptyList()
-
-        val sortedMonths = månedTilPeriode.keys.sorted()
-        val result = mutableListOf<Barnetilsynperiode>()
-
-        var periodStart = sortedMonths.first()
-        var currentData = månedTilPeriode[periodStart]!!
-
-        for (i in 1 until sortedMonths.size) {
-            val month = sortedMonths[i]
-            val data = månedTilPeriode[month]!!
-
-            val previousMonth = sortedMonths[i - 1]
-            val isConsecutive = previousMonth.plusMonths(1) == month
-            val isSameData = data == currentData
-
-            if (!isConsecutive || !isSameData) {
-                result.add(currentData.toBarnetilsynperiode(periodStart, previousMonth))
-
-                if (!isConsecutive) {
-                    val gapStart = previousMonth.plusMonths(1)
-                    val gapEnd = month.minusMonths(1)
-                    if (gapStart <= gapEnd) {
-                        result.add(MonthPeriodData.ingenStønad().toBarnetilsynperiode(gapStart, gapEnd))
-                    }
-                }
-
-                periodStart = month
-                currentData = data
-            }
-        }
-        result.add(currentData.toBarnetilsynperiode(periodStart, sortedMonths.last()))
-
-        return result
-    }
-}
-
-private data class MonthPeriodData(
-    val utgifter: BigDecimal,
-    val barn: List<UUID>,
-    val periodetype: PeriodetypeBarnetilsyn,
-    val aktivitetstype: AktivitetstypeBarnetilsyn?,
-) {
-    companion object {
-        fun ingenStønad() =
-            MonthPeriodData(
-                utgifter = BigDecimal.ZERO,
-                barn = emptyList(),
-                periodetype = PeriodetypeBarnetilsyn.INGEN_STØNAD,
-                aktivitetstype = null,
-            )
-    }
-
-    fun toBarnetilsynperiode(
-        datoFra: YearMonth,
-        datoTil: YearMonth,
-    ) = Barnetilsynperiode(
-        datoFra = datoFra,
-        datoTil = datoTil,
-        utgifter = utgifter,
-        barn = barn,
-        periodetype = periodetype,
-        aktivitetstype = aktivitetstype,
-    )
 }

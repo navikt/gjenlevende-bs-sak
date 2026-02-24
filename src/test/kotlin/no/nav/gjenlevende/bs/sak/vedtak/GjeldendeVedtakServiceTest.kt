@@ -21,9 +21,9 @@ import java.time.LocalDateTime
 import java.time.YearMonth
 import java.util.UUID
 
-class VedtakServiceTest : SpringContextTest() {
+class GjeldendeVedtakServiceTest : SpringContextTest() {
     @Autowired
-    private lateinit var vedtakService: VedtakService
+    private lateinit var gjeldendeVedtakService: GjeldendeVedtakService
 
     @Autowired
     private lateinit var vedtakRepository: VedtakRepository
@@ -59,7 +59,7 @@ class VedtakServiceTest : SpringContextTest() {
         fun `skal returnere tom liste når ingen vedtak finnes`() {
             val behandling = opprettFerdigstiltBehandling(BehandlingResultat.INNVILGET)
 
-            val result = vedtakService.hentVedtakFraDato(behandling.id, YearMonth.of(2025, 1))
+            val result = gjeldendeVedtakService.hentGjeldendeVedtakFraDato(behandling.id, YearMonth.of(2025, 1))
 
             assertThat(result.barnetilsynperioder).isEmpty()
         }
@@ -80,7 +80,7 @@ class VedtakServiceTest : SpringContextTest() {
                 ),
             )
 
-            val result = vedtakService.hentVedtakFraDato(behandling.id, YearMonth.of(2025, 1))
+            val result = gjeldendeVedtakService.hentGjeldendeVedtakFraDato(behandling.id, YearMonth.of(2025, 1))
 
             assertThat(result.barnetilsynperioder).hasSize(1)
             assertThat(result.barnetilsynperioder[0].datoFra).isEqualTo(YearMonth.of(2025, 1))
@@ -104,7 +104,7 @@ class VedtakServiceTest : SpringContextTest() {
                 ),
             )
 
-            val result = vedtakService.hentVedtakFraDato(behandling.id, YearMonth.of(2025, 4))
+            val result = gjeldendeVedtakService.hentGjeldendeVedtakFraDato(behandling.id, YearMonth.of(2025, 4))
 
             assertThat(result.barnetilsynperioder).hasSize(1)
             assertThat(result.barnetilsynperioder[0].datoFra).isEqualTo(YearMonth.of(2025, 4))
@@ -149,7 +149,7 @@ class VedtakServiceTest : SpringContextTest() {
                 ),
             )
 
-            val result = vedtakService.hentVedtakFraDato(behandling2.id, YearMonth.of(2025, 1))
+            val result = gjeldendeVedtakService.hentGjeldendeVedtakFraDato(behandling2.id, YearMonth.of(2025, 1))
 
             assertThat(result.barnetilsynperioder).hasSize(3)
 
@@ -200,7 +200,7 @@ class VedtakServiceTest : SpringContextTest() {
                 opphørFom = YearMonth.of(2025, 7),
             )
 
-            val result = vedtakService.hentVedtakFraDato(behandling2.id, YearMonth.of(2025, 1))
+            val result = gjeldendeVedtakService.hentGjeldendeVedtakFraDato(behandling2.id, YearMonth.of(2025, 1))
 
             assertThat(result.barnetilsynperioder).hasSize(2)
 
@@ -265,7 +265,7 @@ class VedtakServiceTest : SpringContextTest() {
                 ),
             )
 
-            val result = vedtakService.hentVedtakFraDato(behandling3.id, YearMonth.of(2025, 1))
+            val result = gjeldendeVedtakService.hentGjeldendeVedtakFraDato(behandling3.id, YearMonth.of(2025, 1))
 
             assertThat(result.barnetilsynperioder).hasSize(3)
 
@@ -324,7 +324,7 @@ class VedtakServiceTest : SpringContextTest() {
                 ),
             )
 
-            val result = vedtakService.hentVedtakFraDato(ferdigstiltBehandling.id, YearMonth.of(2025, 1))
+            val result = gjeldendeVedtakService.hentGjeldendeVedtakFraDato(ferdigstiltBehandling.id, YearMonth.of(2025, 1))
 
             assertThat(result.barnetilsynperioder).hasSize(1)
             assertThat(result.barnetilsynperioder[0].utgifter).isEqualTo(BigDecimal(1000))
@@ -361,7 +361,7 @@ class VedtakServiceTest : SpringContextTest() {
                 emptyList(),
             )
 
-            val result = vedtakService.hentVedtakFraDato(behandling1.id, YearMonth.of(2025, 1))
+            val result = gjeldendeVedtakService.hentGjeldendeVedtakFraDato(behandling1.id, YearMonth.of(2025, 1))
 
             assertThat(result.barnetilsynperioder).hasSize(1)
             assertThat(result.barnetilsynperioder[0].utgifter).isEqualTo(BigDecimal(1000))
@@ -405,7 +405,7 @@ class VedtakServiceTest : SpringContextTest() {
                 ),
             )
 
-            val result = vedtakService.hentVedtakFraDato(behandling2.id, YearMonth.of(2025, 1))
+            val result = gjeldendeVedtakService.hentGjeldendeVedtakFraDato(behandling2.id, YearMonth.of(2025, 1))
 
             assertThat(result.barnetilsynperioder).hasSize(1)
             assertThat(result.barnetilsynperioder[0].datoFra).isEqualTo(YearMonth.of(2025, 1))
@@ -450,7 +450,7 @@ class VedtakServiceTest : SpringContextTest() {
                 ),
             )
 
-            val result = vedtakService.hentVedtakFraDato(behandling2.id, YearMonth.of(2025, 1))
+            val result = gjeldendeVedtakService.hentGjeldendeVedtakFraDato(behandling2.id, YearMonth.of(2025, 1))
 
             assertThat(result.barnetilsynperioder).hasSize(3)
 

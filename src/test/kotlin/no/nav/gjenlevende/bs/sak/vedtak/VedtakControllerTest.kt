@@ -29,6 +29,9 @@ class VedtakControllerTest {
     @MockkBean
     private lateinit var vedtakService: VedtakService
 
+    @MockkBean
+    private lateinit var gjeldendeVedtakService: GjeldendeVedtakService
+
     @Test
     fun `Skal lagre vedtak fra json`() {
         val json = """{

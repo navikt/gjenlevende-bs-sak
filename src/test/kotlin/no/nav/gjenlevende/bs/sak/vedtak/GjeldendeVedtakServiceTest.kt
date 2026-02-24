@@ -11,6 +11,7 @@ import no.nav.gjenlevende.bs.sak.fagsak.domain.Fagsak
 import no.nav.gjenlevende.bs.sak.fagsak.domain.FagsakPerson
 import no.nav.gjenlevende.bs.sak.fagsak.domain.Personident
 import no.nav.gjenlevende.bs.sak.fagsak.domain.StønadType
+import no.nav.gjenlevende.bs.sak.felles.sporbar.Endret
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
@@ -116,7 +117,7 @@ class GjeldendeVedtakServiceTest : SpringContextTest() {
             val behandling1 =
                 opprettFerdigstiltBehandling(
                     BehandlingResultat.INNVILGET,
-                    opprettetTid = LocalDateTime.of(2025, 1, 1, 10, 0),
+                    endretTid = LocalDateTime.of(2025, 1, 1, 10, 0),
                 )
             opprettVedtak(
                 behandling1,
@@ -134,7 +135,7 @@ class GjeldendeVedtakServiceTest : SpringContextTest() {
             val behandling2 =
                 opprettFerdigstiltBehandling(
                     BehandlingResultat.INNVILGET,
-                    opprettetTid = LocalDateTime.of(2025, 2, 1, 10, 0),
+                    endretTid = LocalDateTime.of(2025, 2, 1, 10, 0),
                 )
             opprettVedtak(
                 behandling2,
@@ -173,7 +174,7 @@ class GjeldendeVedtakServiceTest : SpringContextTest() {
             val behandling1 =
                 opprettFerdigstiltBehandling(
                     BehandlingResultat.INNVILGET,
-                    opprettetTid = LocalDateTime.of(2025, 1, 1, 10, 0),
+                    endretTid = LocalDateTime.of(2025, 1, 1, 10, 0),
                 )
             opprettVedtak(
                 behandling1,
@@ -191,7 +192,7 @@ class GjeldendeVedtakServiceTest : SpringContextTest() {
             val behandling2 =
                 opprettFerdigstiltBehandling(
                     BehandlingResultat.OPPHØRT,
-                    opprettetTid = LocalDateTime.of(2025, 6, 1, 10, 0),
+                    endretTid = LocalDateTime.of(2025, 6, 1, 10, 0),
                 )
             opprettVedtak(
                 behandling2,
@@ -220,7 +221,7 @@ class GjeldendeVedtakServiceTest : SpringContextTest() {
             val behandling1 =
                 opprettFerdigstiltBehandling(
                     BehandlingResultat.INNVILGET,
-                    opprettetTid = LocalDateTime.of(2025, 1, 1, 10, 0),
+                    endretTid = LocalDateTime.of(2025, 1, 1, 10, 0),
                 )
             opprettVedtak(
                 behandling1,
@@ -238,7 +239,7 @@ class GjeldendeVedtakServiceTest : SpringContextTest() {
             val behandling2 =
                 opprettFerdigstiltBehandling(
                     BehandlingResultat.OPPHØRT,
-                    opprettetTid = LocalDateTime.of(2025, 6, 1, 10, 0),
+                    endretTid = LocalDateTime.of(2025, 6, 1, 10, 0),
                 )
             opprettVedtak(
                 behandling2,
@@ -250,7 +251,7 @@ class GjeldendeVedtakServiceTest : SpringContextTest() {
             val behandling3 =
                 opprettFerdigstiltBehandling(
                     BehandlingResultat.INNVILGET,
-                    opprettetTid = LocalDateTime.of(2025, 9, 1, 10, 0),
+                    endretTid = LocalDateTime.of(2025, 9, 1, 10, 0),
                 )
             opprettVedtak(
                 behandling3,
@@ -290,7 +291,7 @@ class GjeldendeVedtakServiceTest : SpringContextTest() {
             val ferdigstiltBehandling =
                 opprettFerdigstiltBehandling(
                     BehandlingResultat.INNVILGET,
-                    opprettetTid = LocalDateTime.of(2025, 1, 1, 10, 0),
+                    endretTid = LocalDateTime.of(2025, 1, 1, 10, 0),
                 )
             opprettVedtak(
                 ferdigstiltBehandling,
@@ -309,7 +310,7 @@ class GjeldendeVedtakServiceTest : SpringContextTest() {
                 opprettBehandling(
                     BehandlingResultat.INNVILGET,
                     BehandlingStatus.UTREDES,
-                    opprettetTid = LocalDateTime.of(2025, 2, 1, 10, 0),
+                    endretTid = LocalDateTime.of(2025, 2, 1, 10, 0),
                 )
             opprettVedtak(
                 ikkeFerdigstiltBehandling,
@@ -335,7 +336,7 @@ class GjeldendeVedtakServiceTest : SpringContextTest() {
             val behandling1 =
                 opprettFerdigstiltBehandling(
                     BehandlingResultat.INNVILGET,
-                    opprettetTid = LocalDateTime.of(2025, 1, 1, 10, 0),
+                    endretTid = LocalDateTime.of(2025, 1, 1, 10, 0),
                 )
             opprettVedtak(
                 behandling1,
@@ -353,7 +354,7 @@ class GjeldendeVedtakServiceTest : SpringContextTest() {
             val behandling2 =
                 opprettFerdigstiltBehandling(
                     BehandlingResultat.AVSLÅTT,
-                    opprettetTid = LocalDateTime.of(2025, 2, 1, 10, 0),
+                    endretTid = LocalDateTime.of(2025, 2, 1, 10, 0),
                 )
             opprettVedtak(
                 behandling2,
@@ -372,7 +373,7 @@ class GjeldendeVedtakServiceTest : SpringContextTest() {
             val behandling1 =
                 opprettFerdigstiltBehandling(
                     BehandlingResultat.INNVILGET,
-                    opprettetTid = LocalDateTime.of(2025, 1, 1, 10, 0),
+                    endretTid = LocalDateTime.of(2025, 1, 1, 10, 0),
                 )
             opprettVedtak(
                 behandling1,
@@ -390,7 +391,7 @@ class GjeldendeVedtakServiceTest : SpringContextTest() {
             val behandling2 =
                 opprettFerdigstiltBehandling(
                     BehandlingResultat.INNVILGET,
-                    opprettetTid = LocalDateTime.of(2025, 2, 1, 10, 0),
+                    endretTid = LocalDateTime.of(2025, 2, 1, 10, 0),
                 )
             opprettVedtak(
                 behandling2,
@@ -417,7 +418,7 @@ class GjeldendeVedtakServiceTest : SpringContextTest() {
             val behandling1 =
                 opprettFerdigstiltBehandling(
                     BehandlingResultat.INNVILGET,
-                    opprettetTid = LocalDateTime.of(2025, 1, 1, 10, 0),
+                    endretTid = LocalDateTime.of(2025, 1, 1, 10, 0),
                 )
             opprettVedtak(
                 behandling1,
@@ -435,7 +436,7 @@ class GjeldendeVedtakServiceTest : SpringContextTest() {
             val behandling2 =
                 opprettFerdigstiltBehandling(
                     BehandlingResultat.INNVILGET,
-                    opprettetTid = LocalDateTime.of(2025, 2, 1, 10, 0),
+                    endretTid = LocalDateTime.of(2025, 2, 1, 10, 0),
                 )
             opprettVedtak(
                 behandling2,
@@ -470,17 +471,95 @@ class GjeldendeVedtakServiceTest : SpringContextTest() {
             assertThat(result.barnetilsynperioder[2].periodetype).isEqualTo(PeriodetypeBarnetilsyn.ORDINÆR)
             assertThat(result.barnetilsynperioder[2].utgifter).isEqualTo(BigDecimal(2000))
         }
+
+
+    @Test
+    fun `Skal splitte opp vedtak som blir overskrevet av nyere vedtak`() {
+        val behandling1 =
+            opprettFerdigstiltBehandling(
+                BehandlingResultat.INNVILGET,
+                endretTid = LocalDateTime.of(2025, 1, 1, 10, 0),
+            )
+        opprettVedtak(
+            behandling1,
+            ResultatType.INNVILGET,
+            listOf(
+                lagBarnetilsynperiode(
+                    fra = YearMonth.of(2025, 1),
+                    til = YearMonth.of(2025, 3),
+                    utgifter = BigDecimal(1000),
+                    barn = listOf(barnId1),
+                ),
+            ),
+        )
+
+        val behandling2 =
+            opprettFerdigstiltBehandling(
+                BehandlingResultat.INNVILGET,
+                endretTid = LocalDateTime.of(2025, 2, 1, 10, 0),
+            )
+        opprettVedtak(
+            behandling2,
+            ResultatType.INNVILGET,
+            listOf(
+                lagBarnetilsynperiode(
+                    fra = YearMonth.of(2025, 3),
+                    til = YearMonth.of(2025, 6),
+                    utgifter = BigDecimal(2000),
+                    barn = listOf(barnId1),
+                ),
+            ),
+        )
+
+        val behandling3 =
+            opprettFerdigstiltBehandling(
+                BehandlingResultat.INNVILGET,
+                endretTid = LocalDateTime.of(2025, 7, 1, 10, 0),
+            )
+        opprettVedtak(
+            behandling3,
+            ResultatType.INNVILGET,
+            listOf(
+                lagBarnetilsynperiode(
+                    fra = YearMonth.of(2025, 7),
+                    til = YearMonth.of(2025, 8),
+                    utgifter = BigDecimal(3000),
+                    barn = listOf(barnId1),
+                ),
+            ),
+        )
+
+
+        val result = gjeldendeVedtakService.hentGjeldendeVedtakFraDato(behandling3.id, YearMonth.of(2025, 1))
+
+        assertThat(result.barnetilsynperioder).hasSize(3)
+
+        assertThat(result.barnetilsynperioder[0].datoFra).isEqualTo(YearMonth.of(2025, 1))
+        assertThat(result.barnetilsynperioder[0].datoTil).isEqualTo(YearMonth.of(2025, 2))
+        assertThat(result.barnetilsynperioder[0].periodetype).isEqualTo(PeriodetypeBarnetilsyn.ORDINÆR)
+        assertThat(result.barnetilsynperioder[0].utgifter).isEqualTo(BigDecimal(1000))
+
+        assertThat(result.barnetilsynperioder[1].datoFra).isEqualTo(YearMonth.of(2025, 3))
+        assertThat(result.barnetilsynperioder[1].datoTil).isEqualTo(YearMonth.of(2025, 6))
+        assertThat(result.barnetilsynperioder[1].periodetype).isEqualTo(PeriodetypeBarnetilsyn.ORDINÆR)
+        assertThat(result.barnetilsynperioder[1].utgifter).isEqualTo(BigDecimal(2000))
+
+        assertThat(result.barnetilsynperioder[2].datoFra).isEqualTo(YearMonth.of(2025, 7))
+        assertThat(result.barnetilsynperioder[2].datoTil).isEqualTo(YearMonth.of(2025, 8))
+        assertThat(result.barnetilsynperioder[2].periodetype).isEqualTo(PeriodetypeBarnetilsyn.ORDINÆR)
+        assertThat(result.barnetilsynperioder[2].utgifter).isEqualTo(BigDecimal(3000))
     }
+}
 
     private fun opprettFerdigstiltBehandling(
         resultat: BehandlingResultat,
-        opprettetTid: LocalDateTime = LocalDateTime.now(),
-    ): Behandling = opprettBehandling(resultat, BehandlingStatus.FERDIGSTILT, opprettetTid)
+        endretTid: LocalDateTime = LocalDateTime.now(),
+    ): Behandling = opprettBehandling(resultat, BehandlingStatus.FERDIGSTILT, endretTid)
 
     private fun opprettBehandling(
         resultat: BehandlingResultat,
         status: BehandlingStatus,
-        opprettetTid: LocalDateTime = LocalDateTime.now(),
+        endretTid: LocalDateTime = LocalDateTime.now(),
     ): Behandling {
         val behandling =
             Behandling(
@@ -493,7 +572,7 @@ class GjeldendeVedtakServiceTest : SpringContextTest() {
         return behandlingRepository.insert(behandling).let { inserted ->
             val updated =
                 inserted.copy(
-                    sporbar = inserted.sporbar.copy(opprettetTid = opprettetTid),
+                    sporbar = inserted.sporbar.copy(endret = Endret(endretTid = endretTid)),
                 )
             behandlingRepository.update(updated)
             updated

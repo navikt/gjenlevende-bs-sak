@@ -76,17 +76,17 @@ class GjeldendeVedtakService(
     ): List<Barnetilsynperiode> {
         if (månedTilPeriode.isEmpty()) return emptyList()
 
-        val sortedMonths = månedTilPeriode.keys.sorted()
+        val sorterteMåneder = månedTilPeriode.keys.sorted()
         val resultat = mutableListOf<Barnetilsynperiode>()
 
-        var periodeStart = sortedMonths.first()
+        var periodeStart = sorterteMåneder.first()
         var dataStart = månedTilPeriode[periodeStart]!!
 
-        for (i in 1 until sortedMonths.size) {
-            val gjeldendeMåned = sortedMonths[i]
+        for (i in 1 until sorterteMåneder.size) {
+            val gjeldendeMåned = sorterteMåneder[i]
             val gjeldendeData = månedTilPeriode[gjeldendeMåned]!!
 
-            val forrigeMåned = sortedMonths[i - 1]
+            val forrigeMåned = sorterteMåneder[i - 1]
             val erSammenhengende = forrigeMåned.plusMonths(1) == gjeldendeMåned
             val harLikData = gjeldendeData == dataStart
 
@@ -105,7 +105,7 @@ class GjeldendeVedtakService(
                 dataStart = gjeldendeData
             }
         }
-        resultat.add(dataStart.toBarnetilsynperiode(periodeStart, sortedMonths.last()))
+        resultat.add(dataStart.toBarnetilsynperiode(periodeStart, sorterteMåneder.last()))
 
         return resultat
     }

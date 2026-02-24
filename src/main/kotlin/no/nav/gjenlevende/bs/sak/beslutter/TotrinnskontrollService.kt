@@ -83,8 +83,6 @@ class TotrinnskontrollService(
                 endringType = EndringType.BESLUTTER_UNDERKJENT,
             ) ?: return TotrinnskontrollStatusDto(TotrinnskontrollStatus.UAKTUELT)
 
-        logger.info("finnStatusForVedtakSomErFattet sisteUnderkjentEndring $sisteUnderkjentEndring ")
-
         return TotrinnskontrollStatusDto(
             status = TotrinnskontrollStatus.TOTRINNSKONTROLL_UNDERKJENT,
             totrinnskontroll =

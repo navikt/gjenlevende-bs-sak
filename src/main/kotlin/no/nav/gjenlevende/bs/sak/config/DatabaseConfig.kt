@@ -2,6 +2,7 @@ package no.nav.gjenlevende.bs.sak.config
 
 import no.nav.familie.prosessering.PropertiesWrapperTilStringConverter
 import no.nav.familie.prosessering.StringTilPropertiesWrapperConverter
+import no.nav.gjenlevende.bs.sak.beslutter.ÅrsakUnderkjent
 import no.nav.gjenlevende.bs.sak.brev.domain.BrevRequest
 import org.postgresql.util.PGobject
 import org.springframework.beans.factory.annotation.Value

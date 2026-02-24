@@ -1,16 +1,15 @@
 package no.nav.gjenlevende.bs.sak.beslutter
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.gjenlevende.bs.sak.behandling.BehandlingRepository
 import no.nav.gjenlevende.bs.sak.behandling.BehandlingStatus
-import no.nav.gjenlevende.bs.sak.beslutter.dto.BeslutteVedtakDto
 import no.nav.gjenlevende.bs.sak.beslutter.dto.TotrinnskontrollDto
 import no.nav.gjenlevende.bs.sak.beslutter.dto.TotrinnskontrollStatus
 import no.nav.gjenlevende.bs.sak.beslutter.dto.TotrinnskontrollStatusDto
 import no.nav.gjenlevende.bs.sak.endringshistorikk.BehandlingEndringRepository
 import no.nav.gjenlevende.bs.sak.endringshistorikk.EndringType
 import no.nav.gjenlevende.bs.sak.felles.sikkerhet.SikkerhetContext
+import no.nav.gjenlevende.bs.sak.felles.sikkerhet.TilgangService
+import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import java.util.UUID
@@ -20,7 +19,7 @@ class TotrinnskontrollService(
     private val behandlingEndringRepository: BehandlingEndringRepository,
     private val behandlingRepository: BehandlingRepository,
 ) {
-    private val objectMapper = jacksonObjectMapper()
+    private val logger = LoggerFactory.getLogger(TilgangService::class.java)
 
     fun hentTotrinnskontrollStatus(behandlingId: UUID): TotrinnskontrollStatusDto {
         val behandling =
@@ -84,20 +83,16 @@ class TotrinnskontrollService(
                 endringType = EndringType.BESLUTTER_UNDERKJENT,
             ) ?: return TotrinnskontrollStatusDto(TotrinnskontrollStatus.UAKTUELT)
 
-        val detaljer = sisteUnderkjentEndring.detaljer
-        return if (detaljer != null) {
-            val beslutteVedtak = objectMapper.readValue<BeslutteVedtakDto>(detaljer)
-            TotrinnskontrollStatusDto(
-                status = TotrinnskontrollStatus.TOTRINNSKONTROLL_UNDERKJENT,
-                totrinnskontroll =
-                    TotrinnskontrollDto(
-                        opprettetAv = sisteUnderkjentEndring.utførtAv,
-                        opprettetTid = sisteUnderkjentEndring.utførtTid,
-                        godkjent = beslutteVedtak.godkjent,
-                    ),
-            )
-        } else {
-            TotrinnskontrollStatusDto(TotrinnskontrollStatus.UAKTUELT)
-        }
+        return TotrinnskontrollStatusDto(
+            status = TotrinnskontrollStatus.TOTRINNSKONTROLL_UNDERKJENT,
+            totrinnskontroll =
+                TotrinnskontrollDto(
+                    opprettetAv = sisteUnderkjentEndring.utførtAv,
+                    opprettetTid = sisteUnderkjentEndring.utførtTid,
+                    godkjent = false,
+                    årsakUnderkjent = sisteUnderkjentEndring.årsakUnderkjent,
+                    begrunnelse = sisteUnderkjentEndring.begrunnelseUnderkjent,
+                ),
+        )
     }
 }

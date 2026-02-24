@@ -46,11 +46,9 @@ class BehandlingService(
     }
 
     fun validerBehandlingErRedigerbar(behandlingId: UUID) {
-        val behandling =
-            behandlingRepository.findByIdOrNull(behandlingId)
-                ?: error("Fant ikke behandling med id=$behandlingId")
+        val behandling = behandlingRepository.findByIdOrNull(behandlingId) ?: error("Fant ikke behandling med id=$behandlingId")
 
-        // TODO: Litt usikker på om OPPRETTET blir riktig her, ser på dette siden.
+        // TODO: Litt usikker på om OPPRETTET blir riktig her, ser på dette siden. Gunnstein og jeg blir enig om at vi skal titte på OPPRETTET som konsept.
         if (behandling.status !in listOf(BehandlingStatus.OPPRETTET, BehandlingStatus.UTREDES)) {
             throw Feil(
                 melding = "Behandlingen er ikke redigerbar. Status: ${behandling.status}",

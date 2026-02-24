@@ -2,6 +2,7 @@ package no.nav.gjenlevende.bs.sak.config
 
 import no.nav.familie.prosessering.PropertiesWrapperTilStringConverter
 import no.nav.familie.prosessering.StringTilPropertiesWrapperConverter
+import no.nav.gjenlevende.bs.sak.beslutter.ÅrsakUnderkjent
 import no.nav.gjenlevende.bs.sak.brev.domain.BrevRequest
 import org.postgresql.util.PGobject
 import org.springframework.beans.factory.annotation.Value
@@ -37,6 +38,8 @@ open class DatabaseConfig(
             JsonbTilBrevRequestConverter(objectMapper),
             YearMonthTilDateConverter(),
             DateTilYearMonthConverter(),
+            ÅrsakUnderkjentTilStringConverter(),
+            StringTilÅrsakUnderkjentConverter(),
         )
 
     @Bean
@@ -82,5 +85,15 @@ open class DatabaseConfig(
     @ReadingConverter
     class DateTilYearMonthConverter : Converter<Date, YearMonth> {
         override fun convert(source: Date): YearMonth = YearMonth.from(source.toLocalDate())
+    }
+
+    @WritingConverter
+    class ÅrsakUnderkjentTilStringConverter : Converter<ÅrsakUnderkjent, String> {
+        override fun convert(source: ÅrsakUnderkjent): String = source.name
+    }
+
+    @ReadingConverter
+    class StringTilÅrsakUnderkjentConverter : Converter<String, ÅrsakUnderkjent> {
+        override fun convert(source: String): ÅrsakUnderkjent = ÅrsakUnderkjent.valueOf(source)
     }
 }

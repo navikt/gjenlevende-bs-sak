@@ -17,7 +17,6 @@ class TotrinnskontrollService(
     private val behandlingEndringRepository: BehandlingEndringRepository,
     private val behandlingRepository: BehandlingRepository,
 ) {
-
     fun hentTotrinnskontrollStatus(behandlingId: UUID): TotrinnskontrollStatusDto {
         val behandling =
             behandlingRepository.findByIdOrNull(behandlingId)

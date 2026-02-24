@@ -4,10 +4,13 @@ import no.nav.familie.prosessering.internal.TaskService
 import no.nav.gjenlevende.bs.sak.behandling.BehandlingResultat
 import no.nav.gjenlevende.bs.sak.behandling.BehandlingService
 import no.nav.gjenlevende.bs.sak.behandling.BehandlingStatus
+import no.nav.gjenlevende.bs.sak.behandling.LagBehandleSakOppgaveTask
 import no.nav.gjenlevende.bs.sak.beslutter.dto.BeslutteVedtakDto
 import no.nav.gjenlevende.bs.sak.brev.BrevService
 import no.nav.gjenlevende.bs.sak.endringshistorikk.EndringType
 import no.nav.gjenlevende.bs.sak.endringshistorikk.EndringshistorikkService
+import no.nav.gjenlevende.bs.sak.felles.sikkerhet.SikkerhetContext
+import no.nav.gjenlevende.bs.sak.infrastruktur.exception.Feil
 import no.nav.gjenlevende.bs.sak.oppgave.OppgaveService
 import no.nav.gjenlevende.bs.sak.oppgave.OppgavetypeEYO
 import no.nav.gjenlevende.bs.sak.task.FerdigstillOppgaveTask
@@ -26,6 +29,7 @@ class BeslutterService(
     private val totrinnskontrollService: TotrinnskontrollService,
     private val taskService: TaskService,
     private val objectMapper: ObjectMapper,
+    private val lagBehandleSakOppgaveTask: LagBehandleSakOppgaveTask,
 ) {
     @Transactional
     fun sendTilBeslutter(behandlingId: UUID) {
@@ -60,10 +64,33 @@ class BeslutterService(
 
     @Transactional
     fun angreSendTilBeslutter(behandlingId: UUID) {
+        val aktivOppgavetype = oppgaveService.hentAktivOppgavetype(behandlingId)
+
+        if (aktivOppgavetype != OppgavetypeEYO.GOD_VED) {
+            Feil("Kan kun angre send til beslutter hvis oppgaven er av type GOD_VED. Oppgave er ${aktivOppgavetype.name}")
+        }
+
+        FerdigstillOppgaveTask.opprettTask(
+            behandlingId = behandlingId,
+            oppgavetype = aktivOppgavetype,
+            objectMapper = objectMapper,
+            taskService = taskService,
+        )
+
+        val behandling =
+            behandlingService.hentBehandling(behandlingId)
+                ?: throw IllegalStateException("Fant ikke behandling med id $behandlingId")
+
+        lagBehandleSakOppgaveTask.opprettBehandleSakOppgaveTask(
+            behandling = behandling,
+            saksbehandler = SikkerhetContext.hentSaksbehandler(),
+        )
+
         behandlingService.oppdaterBehandlingStatus(
             behandlingId = behandlingId,
             status = BehandlingStatus.UTREDES,
         )
+
         endringshistorikkService.registrerEndring(
             behandlingId = behandlingId,
             endringType = EndringType.ANGRET_SEND_TIL_BESLUTTER,
@@ -102,10 +129,18 @@ class BeslutterService(
         )
     }
 
+    private fun validerUnderkjennelse(dto: BeslutteVedtakDto): Pair<ÅrsakUnderkjent, String> {
+        val årsak = requireNotNull(dto.årsakUnderkjent) { "Årsak for underkjennelse må være satt" }
+        val begrunnelse = requireNotNull(dto.begrunnelse?.takeIf { it.isNotBlank() }) { "Begrunnelse for underkjennelse må være utfylt" }
+        return årsak to begrunnelse
+    }
+
     private fun underkjennVedtak(
         behandlingId: UUID,
         beslutteVedtakDto: BeslutteVedtakDto,
     ) {
+        val (årsakUnderkjent, begrunnelse) = validerUnderkjennelse(beslutteVedtakDto)
+
         val saksbehandlerSomSendteTilBeslutter =
             totrinnskontrollService.hentSaksbehandlerSomSendteTilBeslutter(behandlingId)
 
@@ -117,10 +152,10 @@ class BeslutterService(
             behandlingId = behandlingId,
             resultat = BehandlingResultat.IKKE_SATT,
         )
-        endringshistorikkService.registrerEndring(
+        endringshistorikkService.registrerUnderkjennelse(
             behandlingId = behandlingId,
-            endringType = EndringType.BESLUTTER_UNDERKJENT,
-            detaljer = objectMapper.writeValueAsString(beslutteVedtakDto),
+            årsakUnderkjent = årsakUnderkjent,
+            begrunnelse = begrunnelse,
         )
 
         FerdigstillOppgaveTask.opprettTask(

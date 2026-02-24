@@ -1,5 +1,6 @@
 package no.nav.gjenlevende.bs.sak.endringshistorikk
 
+import no.nav.gjenlevende.bs.sak.beslutter.ÅrsakUnderkjent
 import org.springframework.stereotype.Service
 import java.util.UUID
 
@@ -17,6 +18,21 @@ class EndringshistorikkService(
                 behandlingId = behandlingId,
                 endringType = endringType,
                 detaljer = detaljer,
+            ),
+        )
+    }
+
+    fun registrerUnderkjennelse(
+        behandlingId: UUID,
+        årsakUnderkjent: ÅrsakUnderkjent,
+        begrunnelse: String,
+    ) {
+        behandlingEndringRepository.insert(
+            BehandlingEndring(
+                behandlingId = behandlingId,
+                endringType = EndringType.BESLUTTER_UNDERKJENT,
+                årsakUnderkjent = årsakUnderkjent,
+                begrunnelseUnderkjent = begrunnelse,
             ),
         )
     }

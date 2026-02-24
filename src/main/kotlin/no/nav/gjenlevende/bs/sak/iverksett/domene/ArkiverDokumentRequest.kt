@@ -78,7 +78,7 @@ enum class Fagsystem(
     val navn: String,
     val tema: String,
 ) {
-    EY("Barnetilsyn", "EYO"),
+    EY("Gjenlevende", "EYO"),
 }
 
 data class ArkiverDokumentRequest(

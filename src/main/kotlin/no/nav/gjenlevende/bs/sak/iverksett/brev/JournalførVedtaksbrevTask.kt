@@ -3,6 +3,7 @@ package no.nav.gjenlevende.bs.sak.iverksett.brev
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
+import no.nav.gjenlevende.bs.sak.behandling.BehandlingResultat
 import no.nav.gjenlevende.bs.sak.behandling.BehandlingService
 import no.nav.gjenlevende.bs.sak.brev.BrevService
 import no.nav.gjenlevende.bs.sak.brev.BrevmottakerService
@@ -71,7 +72,7 @@ class JournalførVedtaksbrevTask(
                 dokument = brevPdf,
                 filtype = Filtype.PDFA,
                 dokumenttype = vedtaksbrevForStønadType(fagsak.stønadstype),
-                tittel = "Test-tittel", // TODO ikke dette
+                tittel = lagVedtakstekst(behandling.resultat) + lagStønadtypeTekst(fagsak.stønadstype),
             )
         val metadata = dokument.dokumenttype.tilMetadata()
         val saksbehandlerEnhet = "4489" // TODO må hente fra db, etter å ha henta fra register
@@ -79,24 +80,7 @@ class JournalførVedtaksbrevTask(
         val dokarkivBruker = DokarkivBruker(BrukerIdType.FNR, personident)
         val sak =
             Sak(fagsakId = fagsak.eksternId.toString(), sakstype = "FAGSAK", fagsaksystem = Fagsystem.EY)
-        val dokumenter =
-            listOf(
-                ArkivDokument(
-                    tittel = "", // TODO
-                    brevkode = metadata.brevkode,
-                    dokumentKategori = metadata.dokumentKategori,
-                    dokumentvarianter =
-                        listOf(
-                            Dokumentvariant(
-                                // TODO placeholder
-                                filtype = "PDFA",
-                                variantformat = "ARKIV",
-                                fysiskDokument = brevPdf,
-                                filnavn = "vedtaksbrev.pdf",
-                            ),
-                        ),
-                ),
-            )
+        val dokumenter = listOf(mapTilArkivdokument(dokument)) // TODO + evt. vedlegg her?
 
         require(mottakere.isNotEmpty()) { "Ingen brevmottakere funnet for behandlingId=$behandlingId" }
         mottakere.forEachIndexed { indeks, mottaker ->
@@ -141,6 +125,53 @@ class JournalførVedtaksbrevTask(
                     MottakerType.ORGANISASJON -> navnHosOrganisasjon ?: ""
                 },
         )
+
+    private fun mapTilArkivdokument(dokument: Dokument): ArkivDokument {
+        val metadata = dokument.dokumenttype.tilMetadata()
+        val variantFormat: String = hentVariantformat(dokument)
+        return ArkivDokument(
+            brevkode = metadata.brevkode,
+            dokumentKategori = metadata.dokumentKategori,
+            tittel = metadata.tittel ?: dokument.tittel,
+            dokumentvarianter =
+                listOf(
+                    Dokumentvariant(
+                        filtype = dokument.filtype.name,
+                        variantformat = variantFormat,
+                        fysiskDokument = dokument.dokument,
+                        filnavn = dokument.filnavn,
+                    ),
+                ),
+        )
+    }
+
+    private fun hentVariantformat(dokument: Dokument): String =
+        if (dokument.filtype == Filtype.PDFA) {
+            "ARKIV" // ustrukturert dokumentDto
+        } else {
+            "ORIGINAL" // strukturert dokumentDto
+        }
+
+    fun lagVedtakstekst(behandlingResultat: BehandlingResultat): String =
+        when (behandlingResultat) {
+            BehandlingResultat.AVSLÅTT -> {
+                "Vedtak om avslått "
+            }
+
+            BehandlingResultat.INNVILGET -> {
+                "Vedtak om innvilget "
+            }
+
+            else -> {
+                " "
+            }
+        }
+
+    fun lagStønadtypeTekst(stønadstype: StønadType): String =
+        when (stønadstype) {
+            StønadType.BARNETILSYN -> "stønad til barnetilsyn"
+            StønadType.SKOLEPENGER -> "stønad til skolepenger"
+        }
 
     fun vedtaksbrevForStønadType(stønadType: StønadType): Dokumenttype =
         when (stønadType) {

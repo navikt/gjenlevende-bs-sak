@@ -19,6 +19,7 @@ class ÅrsakBehandlingService(
         behandlingId: UUID,
         årsakBehandlingRequest: ÅrsakBehandlingRequest,
     ): ÅrsakBehandling {
+        behandlingService.validerBehandlingErRedigerbar(behandlingId)
         val eksisterendeÅrsak = hentÅrsakBehandling(behandlingId)
 
         if (eksisterendeÅrsak == null) {

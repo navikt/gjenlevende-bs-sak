@@ -38,5 +38,6 @@ enum class Behandlingstema(
 
 fun Dokumenttype.tilMetadata(): Dokumentmetadata =
     when (this) {
-        Dokumenttype.BARNETILSYNSTØNAD_VEDTAK -> BarnetilsynVedtaksbrevMetadata
+        Dokumenttype.VEDTAKSBREV_BARNETILSYN -> BarnetilsynVedtaksbrevMetadata
+        Dokumenttype.VEDTAKSBREV_SKOLEPENGER -> SkolepengerVedtaksbrevMetadata
     }

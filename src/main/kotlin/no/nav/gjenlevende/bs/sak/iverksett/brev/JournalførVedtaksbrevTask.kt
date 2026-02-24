@@ -10,6 +10,7 @@ import no.nav.gjenlevende.bs.sak.brev.domain.Brevmottaker
 import no.nav.gjenlevende.bs.sak.brev.domain.MottakerType
 import no.nav.gjenlevende.bs.sak.fagsak.FagsakPersonService
 import no.nav.gjenlevende.bs.sak.fagsak.FagsakRepository
+import no.nav.gjenlevende.bs.sak.fagsak.domain.StønadType
 import no.nav.gjenlevende.bs.sak.iverksett.DokarkivClient
 import no.nav.gjenlevende.bs.sak.iverksett.domene.ArkivDokument
 import no.nav.gjenlevende.bs.sak.iverksett.domene.AvsenderMottaker
@@ -69,7 +70,7 @@ class JournalførVedtaksbrevTask(
             Dokument(
                 dokument = brevPdf,
                 filtype = Filtype.PDFA,
-                dokumenttype = Dokumenttype.BARNETILSYNSTØNAD_VEDTAK, // TODO utlede
+                dokumenttype = vedtaksbrevForStønadType(fagsak.stønadstype),
                 tittel = "Test-tittel", // TODO ikke dette
             )
         val metadata = dokument.dokumenttype.tilMetadata()
@@ -140,6 +141,12 @@ class JournalførVedtaksbrevTask(
                     MottakerType.ORGANISASJON -> navnHosOrganisasjon ?: ""
                 },
         )
+
+    fun vedtaksbrevForStønadType(stønadType: StønadType): Dokumenttype =
+        when (stønadType) {
+            StønadType.BARNETILSYN -> Dokumenttype.VEDTAKSBREV_BARNETILSYN
+            StønadType.SKOLEPENGER -> Dokumenttype.VEDTAKSBREV_SKOLEPENGER
+        }
 
     companion object {
         const val TYPE = "journalførVedtaksbrev"

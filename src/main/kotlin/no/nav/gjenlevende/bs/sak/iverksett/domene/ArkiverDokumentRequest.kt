@@ -81,30 +81,6 @@ enum class Fagsystem(
     EY("Gjenlevende", "EYO"),
 }
 
-data class ArkiverDokumentRequest(
-    @field:NotBlank val fnr: String,
-    val forsøkFerdigstill: Boolean,
-    @field:NotEmpty val hoveddokumentvarianter: List<Dokument>,
-    val vedleggsdokumenter: List<Dokument> = emptyList(),
-    val fagsakId: String? = null,
-    val tema: Arkivtema,
-    val journalførendeEnhet: String? = null,
-    val førsteside: Førsteside? = null,
-    val eksternReferanseId: String? = null,
-    val avsenderMottaker: AvsenderMottaker? = null,
-)
-
-data class Førsteside(
-    val språkkode: Språkkode = Språkkode.NB,
-    val navSkjemaId: String,
-    val overskriftstittel: String,
-)
-
-enum class Språkkode {
-    NB,
-    NN,
-}
-
 class Dokument(
     @field:NotEmpty val dokument: ByteArray,
     @field:NotEmpty val filtype: Filtype,

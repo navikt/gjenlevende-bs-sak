@@ -8,6 +8,8 @@ import no.nav.gjenlevende.bs.sak.beslutter.dto.TotrinnskontrollStatusDto
 import no.nav.gjenlevende.bs.sak.endringshistorikk.BehandlingEndringRepository
 import no.nav.gjenlevende.bs.sak.endringshistorikk.EndringType
 import no.nav.gjenlevende.bs.sak.felles.sikkerhet.SikkerhetContext
+import no.nav.gjenlevende.bs.sak.unleash.FeatureToggle
+import no.nav.gjenlevende.bs.sak.unleash.UnleashService
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import java.util.UUID
@@ -16,6 +18,7 @@ import java.util.UUID
 class TotrinnskontrollService(
     private val behandlingEndringRepository: BehandlingEndringRepository,
     private val behandlingRepository: BehandlingRepository,
+    private val unleashService: UnleashService,
 ) {
     fun hentTotrinnskontrollStatus(behandlingId: UUID): TotrinnskontrollStatusDto {
         val behandling =
@@ -40,6 +43,8 @@ class TotrinnskontrollService(
     }
 
     fun validerAtBeslutterIkkeErSammeSomSaksbehandler(behandlingId: UUID) {
+        if (erTotrinnskontrollHoppetOver()) return
+
         val innloggetSaksbehandler = SikkerhetContext.hentSaksbehandler()
         val saksbehandlerSomSendteTilBeslutter = hentSaksbehandlerSomSendteTilBeslutter(behandlingId)
 
@@ -58,7 +63,7 @@ class TotrinnskontrollService(
         val innloggetSaksbehandler = SikkerhetContext.hentSaksbehandler()
         val erSammeSomSaksbehandler = innloggetSaksbehandler == sisteEndring.utførtAv
 
-        return if (erSammeSomSaksbehandler) {
+        return if (erSammeSomSaksbehandler && !erTotrinnskontrollHoppetOver()) {
             TotrinnskontrollStatusDto(
                 status = TotrinnskontrollStatus.IKKE_AUTORISERT,
                 totrinnskontroll =
@@ -70,6 +75,11 @@ class TotrinnskontrollService(
         } else {
             TotrinnskontrollStatusDto(TotrinnskontrollStatus.KAN_FATTE_VEDTAK)
         }
+    }
+
+    private fun erTotrinnskontrollHoppetOver(): Boolean {
+        val featureToggles = unleashService.hentFeatureToggles()
+        return featureToggles[FeatureToggle.HOPP_OVER_TOTRINNSKONTROLL.toggleName] ?: false
     }
 
     private fun finnStatusForVedtakSomErFattet(behandlingId: UUID): TotrinnskontrollStatusDto {

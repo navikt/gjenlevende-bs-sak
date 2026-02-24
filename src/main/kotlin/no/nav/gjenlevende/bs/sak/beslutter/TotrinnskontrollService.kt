@@ -77,7 +77,7 @@ class TotrinnskontrollService(
         }
     }
 
-    private fun erTotrinnskontrollHoppetOver(): Boolean {
+    internal fun erTotrinnskontrollHoppetOver(): Boolean {
         val featureToggles = unleashService.hentFeatureToggles()
         return featureToggles[FeatureToggle.HOPP_OVER_TOTRINNSKONTROLL.toggleName] ?: false
     }

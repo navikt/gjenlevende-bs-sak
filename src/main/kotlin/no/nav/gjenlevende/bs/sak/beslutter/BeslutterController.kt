@@ -31,6 +31,14 @@ class BeslutterController(
         return ResponseEntity.ok(mapOf("status" to "OK"))
     }
 
+    @PostMapping("/hopp-over-totrinnskontroll/{behandlingId}")
+    fun hoppOverTotrinnskontroll(
+        @PathVariable behandlingId: UUID,
+    ): ResponseEntity<Map<String, String>> {
+        beslutterService.hoppOverTotrinnskontroll(behandlingId)
+        return ResponseEntity.ok(mapOf("status" to "OK"))
+    }
+
     @PostMapping("/angre-send-til-beslutter/{behandlingId}")
     fun angreSendTilBeslutter(
         @PathVariable behandlingId: UUID,

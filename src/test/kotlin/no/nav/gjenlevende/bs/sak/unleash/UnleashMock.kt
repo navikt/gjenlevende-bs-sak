@@ -27,7 +27,7 @@ open class UnleashMock {
             mapOf(
                 "gjenlevende_frontend__test_setup" to true,
                 "gjenlevende_backend_toggle_tilgangsmaskin_i_dev" to true,
-                "gjenlevende_backend_hopp_over_totrinnskontroll" to true,
+                "gjenlevende-bs-sak-hopp-over-totrinnskontroll" to true,
             )
         return mockk
     }

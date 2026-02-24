@@ -3,7 +3,9 @@ package no.nav.gjenlevende.bs.sak.behandling
 import no.nav.gjenlevende.bs.sak.endringshistorikk.EndringType
 import no.nav.gjenlevende.bs.sak.endringshistorikk.EndringshistorikkService
 import no.nav.gjenlevende.bs.sak.felles.sikkerhet.SikkerhetContext
+import no.nav.gjenlevende.bs.sak.infrastruktur.exception.Feil
 import org.springframework.data.repository.findByIdOrNull
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
@@ -41,6 +43,20 @@ class BehandlingService(
         )
 
         return behandling
+    }
+
+    fun validerBehandlingErRedigerbar(behandlingId: UUID) {
+        val behandling =
+            behandlingRepository.findByIdOrNull(behandlingId)
+                ?: error("Fant ikke behandling med id=$behandlingId")
+
+        // TODO: Litt usikker på om OPPRETTET blir riktig her, ser på dette siden.
+        if (behandling.status !in listOf(BehandlingStatus.OPPRETTET, BehandlingStatus.UTREDES)) {
+            throw Feil(
+                melding = "Behandlingen er ikke redigerbar. Status: ${behandling.status}",
+                httpStatus = HttpStatus.BAD_REQUEST,
+            )
+        }
     }
 
     fun hentBehandling(behandlingId: UUID): Behandling? = behandlingRepository.findByIdOrNull(behandlingId)

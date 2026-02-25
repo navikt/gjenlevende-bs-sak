@@ -1,6 +1,7 @@
 package no.nav.gjenlevende.bs.sak.brev
 
 import no.nav.familie.prosessering.domene.Task
+import no.nav.gjenlevende.bs.sak.behandling.BehandlingService
 import no.nav.gjenlevende.bs.sak.brev.domain.BrevRequest
 import no.nav.gjenlevende.bs.sak.endringshistorikk.EndringType
 import no.nav.gjenlevende.bs.sak.endringshistorikk.EndringshistorikkService
@@ -19,6 +20,7 @@ import java.util.UUID
 @Service
 class BrevService(
     private val brevRepository: BrevRepository,
+    private val behandlingService: BehandlingService,
     private val objectMapper: ObjectMapper,
     private val entraProxyClient: EntraProxyClient,
     private val endringshistorikkService: EndringshistorikkService,
@@ -35,6 +37,7 @@ class BrevService(
         behandlingId: UUID,
         brevRequest: BrevRequest,
     ) {
+        behandlingService.validerBehandlingErRedigerbar(behandlingId)
         val brev =
             Brev(
                 behandlingId = behandlingId,

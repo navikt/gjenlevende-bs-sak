@@ -1,5 +1,6 @@
 package no.nav.gjenlevende.bs.sak.vilkår
 
+import no.nav.gjenlevende.bs.sak.behandling.BehandlingService
 import no.nav.gjenlevende.bs.sak.endringshistorikk.EndringType
 import no.nav.gjenlevende.bs.sak.endringshistorikk.EndringshistorikkService
 import org.springframework.stereotype.Service
@@ -8,6 +9,7 @@ import java.util.UUID
 @Service
 class VilkårVurderingService(
     private val vilkårVurderingRepository: VilkårVurderingRepository,
+    private val behandlingService: BehandlingService,
     private val endringshistorikkService: EndringshistorikkService,
 ) {
     fun hentVilkårVurderinger(behandlingId: UUID): List<VilkårVurdering> = vilkårVurderingRepository.findByBehandlingId(behandlingId)
@@ -16,6 +18,7 @@ class VilkårVurderingService(
         behandlingId: UUID,
         request: VilkårVurderingRequest,
     ): VilkårVurdering {
+        behandlingService.validerBehandlingErRedigerbar(behandlingId)
         val eksisterendeVurdering =
             vilkårVurderingRepository.findByBehandlingIdAndVilkårType(
                 behandlingId = behandlingId,

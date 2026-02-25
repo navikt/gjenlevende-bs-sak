@@ -4,13 +4,16 @@ import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import no.nav.gjenlevende.bs.sak.behandling.BehandlingService
 import no.nav.gjenlevende.bs.sak.brev.domain.BrevRequest
 import no.nav.gjenlevende.bs.sak.brev.domain.BrevmalDto
 import no.nav.gjenlevende.bs.sak.brev.domain.InformasjonOmBrukerDto
 import no.nav.gjenlevende.bs.sak.brev.domain.TekstbolkDto
 import no.nav.gjenlevende.bs.sak.endringshistorikk.EndringshistorikkService
+import no.nav.gjenlevende.bs.sak.infrastruktur.exception.Feil
 import no.nav.gjenlevende.bs.sak.saksbehandler.EntraProxyClient
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.springframework.data.repository.findByIdOrNull
 import tools.jackson.databind.ObjectMapper
 import java.util.UUID
@@ -18,10 +21,11 @@ import kotlin.test.Test
 
 class BrevServiceTest {
     private val brevRepository = mockk<BrevRepository>(relaxed = true)
+    private val behandlingService = mockk<BehandlingService>(relaxed = true)
     private val objectMapper = mockk<ObjectMapper>()
     private val entraProxyClient = mockk<EntraProxyClient>()
     private val endringshistorikkService = mockk<EndringshistorikkService>(relaxed = true)
-    private val brevService = BrevService(brevRepository, objectMapper, entraProxyClient, endringshistorikkService)
+    private val brevService = BrevService(brevRepository, behandlingService, objectMapper, entraProxyClient, endringshistorikkService)
 
     @Test
     fun `mellomlagreBrev insert når brev ikke finnes`() {
@@ -84,6 +88,18 @@ class BrevServiceTest {
         val result = brevService.hentBrev(behandlingId)
 
         assertThat(result).isEqualTo(brev)
+    }
+
+    @Test
+    fun `mellomlagreBrev kaster feil når behandling ikke er redigerbar`() {
+        val behandlingId = UUID.randomUUID()
+        val brevRequest = gyldigBrevRequest()
+
+        every { behandlingService.validerBehandlingErRedigerbar(behandlingId) } throws Feil("Behandlingen er ikke redigerbar. Status: FATTER_VEDTAK")
+
+        assertThatThrownBy { brevService.mellomlagreBrev(behandlingId, brevRequest) }
+            .isInstanceOf(Feil::class.java)
+            .hasMessageContaining("Behandlingen er ikke redigerbar")
     }
 
     @Test

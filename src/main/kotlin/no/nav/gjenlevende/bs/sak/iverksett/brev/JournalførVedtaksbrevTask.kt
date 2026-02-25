@@ -47,135 +47,23 @@ class JournalførVedtaksbrevTask(
     private val brevmottakerService: BrevmottakerService,
     private val dokarkivClient: DokarkivClient,
     private val objectMapper: ObjectMapper,
+    private val journalføringService: JournalføringService,
 ) : AsyncTaskStep {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     override fun doTask(task: Task) {
         val taskData = objectMapper.readValue<JournalførVedtaksbrevTaskData>(task.payload)
         val behandlingId = taskData.behandlingId
-        val behandling =
-            behandlingService.hentBehandling(behandlingId)
-                ?: error("Fant ikke behandling med id=$behandlingId")
-        val fagsak =
-            fagsakRepository.findById(behandling.fagsakId).orElseThrow {
-                error("Fant ikke fagsak med id=${behandling.fagsakId}")
-            }
-        val personident = fagsakPersonService.hentAktivIdent(fagsak.fagsakPersonId)
-        val vedtaksbrev =
-            brevService.hentBrev(behandlingId)
-                ?: error("Fant ikke brev for behandlingId=$behandlingId")
-        val brevPdf = vedtaksbrev.brevPdf ?: error("Vedtaksbrev mangler PDF for behandlingId=$behandlingId")
-        val dokument =
-            Dokument(
-                dokument = brevPdf,
-                filtype = Filtype.PDFA,
-                dokumenttype = vedtaksbrevForStønadType(fagsak.stønadstype),
-                tittel = lagVedtakstekst(behandling.resultat) + lagStønadtypeTekst(fagsak.stønadstype),
-            )
-        val metadata = dokument.dokumenttype.tilMetadata()
-        val saksbehandlerEnhet = "4489" // TODO må hente fra db, etter å ha henta fra register
-        val mottakere = brevmottakerService.hentBrevmottakere(behandlingId)
-        val dokarkivBruker = DokarkivBruker(BrukerIdType.FNR, personident)
-        val sak =
-            Sak(fagsakId = fagsak.eksternId.toString(), sakstype = "FAGSAK", fagsaksystem = Fagsystem.EY)
-        val dokumenter = listOf(mapTilArkivdokument(dokument)) // TODO + evt. vedlegg her?
+        val journalføringRequester = journalføringService.lagJournalføringRequester(behandlingId)
 
-        require(mottakere.isNotEmpty()) { "Ingen brevmottakere funnet for behandlingId=$behandlingId" }
-        mottakere.forEachIndexed { indeks, mottaker ->
-            val journalpostRequest =
-                JournalpostRequest(
-                    journalpostType = metadata.journalpostType,
-                    behandlingstema = metadata.behandlingstema?.value,
-                    avsenderMottaker = mottaker.tilAvsenderMottaker(),
-                    bruker = dokarkivBruker,
-                    tema = metadata.tema.navn,
-                    tittel = dokument.tittel ?: metadata.tittel,
-                    kanal = metadata.kanal,
-                    journalfoerendeEnhet = saksbehandlerEnhet,
-                    eksternReferanseId = "$behandlingId-vedtaksbrev-mottaker$indeks", // TODO må være unik for hver mottaker, legg til indeks
-                    sak = sak,
-                    dokumenter = dokumenter,
-                )
-            val response = dokarkivClient.arkiverDokument(journalpostRequest)
-            logger.info("Journalført vedtaksbrev for mottaker ${mottaker.id}: $response")
+        journalføringRequester.map { request ->
+            {
+                val response = dokarkivClient.arkiverDokument(request)
+                logger.info("Journalført vedtaksbrev for mottaker ${request.avsenderMottaker?.navn}: $response")
+                // TODO lagre journalpostId og dokumentId fra dokarkivResponse i iverksettResultat
+            }
         }
-        // TODO lagre journalpostId og dokumentId fra dokarkivResponse i iverksettResultat
-//        }
     }
-
-    private fun Brevmottaker.tilAvsenderMottaker(): AvsenderMottaker =
-        AvsenderMottaker(
-            id =
-                when (mottakerType) {
-                    MottakerType.PERSON -> personident
-                    MottakerType.ORGANISASJON -> orgnr
-                },
-            idType =
-                when (mottakerType) {
-                    MottakerType.PERSON -> AvsenderMottakerIdType.FNR
-                    MottakerType.ORGANISASJON -> AvsenderMottakerIdType.ORGNR
-                },
-            navn =
-                when (mottakerType) {
-                    MottakerType.PERSON -> ""
-
-                    // TODO hent navn for personident
-                    MottakerType.ORGANISASJON -> navnHosOrganisasjon ?: ""
-                },
-        )
-
-    private fun mapTilArkivdokument(dokument: Dokument): ArkivDokument {
-        val metadata = dokument.dokumenttype.tilMetadata()
-        val variantFormat: String = hentVariantformat(dokument)
-        return ArkivDokument(
-            brevkode = metadata.brevkode,
-            dokumentKategori = metadata.dokumentKategori,
-            tittel = metadata.tittel ?: dokument.tittel,
-            dokumentvarianter =
-                listOf(
-                    Dokumentvariant(
-                        filtype = dokument.filtype.name,
-                        variantformat = variantFormat,
-                        fysiskDokument = dokument.dokument,
-                        filnavn = dokument.filnavn,
-                    ),
-                ),
-        )
-    }
-
-    private fun hentVariantformat(dokument: Dokument): String =
-        if (dokument.filtype == Filtype.PDFA) {
-            "ARKIV" // ustrukturert dokumentDto
-        } else {
-            "ORIGINAL" // strukturert dokumentDto
-        }
-
-    fun lagVedtakstekst(behandlingResultat: BehandlingResultat): String =
-        when (behandlingResultat) {
-            BehandlingResultat.AVSLÅTT -> {
-                "Vedtak om avslått "
-            }
-
-            BehandlingResultat.INNVILGET -> {
-                "Vedtak om innvilget "
-            }
-
-            else -> {
-                " "
-            }
-        }
-
-    fun lagStønadtypeTekst(stønadstype: StønadType): String =
-        when (stønadstype) {
-            StønadType.BARNETILSYN -> "stønad til barnetilsyn"
-            StønadType.SKOLEPENGER -> "stønad til skolepenger"
-        }
-
-    fun vedtaksbrevForStønadType(stønadType: StønadType): Dokumenttype =
-        when (stønadType) {
-            StønadType.BARNETILSYN -> Dokumenttype.VEDTAKSBREV_BARNETILSYN
-            StønadType.SKOLEPENGER -> Dokumenttype.VEDTAKSBREV_SKOLEPENGER
-        }
 
     companion object {
         const val TYPE = "journalførVedtaksbrev"

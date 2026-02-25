@@ -56,12 +56,10 @@ class JournalførVedtaksbrevTask(
         val behandlingId = taskData.behandlingId
         val journalføringRequester = journalføringService.lagJournalføringRequester(behandlingId)
 
-        journalføringRequester.map { request ->
-            {
-                val response = dokarkivClient.arkiverDokument(request)
-                logger.info("Journalført vedtaksbrev for mottaker ${request.avsenderMottaker?.navn}: $response")
-                // TODO lagre journalpostId og dokumentId fra dokarkivResponse i iverksettResultat
-            }
+        journalføringRequester.forEach { request ->
+            val response = dokarkivClient.arkiverDokument(request)
+            logger.info("Journalført vedtaksbrev for mottaker ${request.avsenderMottaker?.navn}: $response")
+            // TODO lagre journalpostId og dokumentId fra dokarkivResponse i iverksettResultat
         }
     }
 

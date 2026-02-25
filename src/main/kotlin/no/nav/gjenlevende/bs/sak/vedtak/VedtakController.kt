@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import java.time.YearMonth
 import java.util.UUID
 
 @RestController
@@ -15,6 +16,7 @@ import java.util.UUID
 @RequestMapping("/api/vedtak")
 class VedtakController(
     private val vedtakService: VedtakService,
+    private val gjeldendeVedtakService: GjeldendeVedtakService,
 ) {
     @GetMapping("/{behandlingId}/hent-vedtak")
     fun hentVedtak(
@@ -48,4 +50,10 @@ class VedtakController(
         vedtakService.validerKanBeregne(barnetilsynBeregningRequest)
         return ResponseEntity.ok(vedtakService.lagBeløpsperioder(barnetilsynBeregningRequest))
     }
+
+    @GetMapping("{behandlingId}/historikk/{fra}")
+    fun hentVedtakForBehandling(
+        @PathVariable behandlingId: UUID,
+        @PathVariable fra: YearMonth,
+    ): ResponseEntity<VedtakDto> = ResponseEntity.ok(gjeldendeVedtakService.hentGjeldendeVedtakFraDato(behandlingId, fra))
 }

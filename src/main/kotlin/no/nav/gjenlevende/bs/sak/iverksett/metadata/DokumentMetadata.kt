@@ -11,7 +11,7 @@ import no.nav.gjenlevende.bs.sak.saf.Arkivtema
 sealed interface Dokumentmetadata {
     val journalpostType: JournalpostType
     val fagsakSystem: Fagsystem?
-    val tema: Arkivtema
+    val tema: String
     val behandlingstema: Behandlingstema?
     val kanal: String?
     val dokumenttype: Dokumenttype

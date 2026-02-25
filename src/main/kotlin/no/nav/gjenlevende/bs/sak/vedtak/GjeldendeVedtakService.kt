@@ -24,7 +24,7 @@ class GjeldendeVedtakService(
         val alleFerdigstilteBehandlinger =
             behandlingRepository
                 .finnAlleIverksatteBehandlinger(behandling.fagsakId)
-                ?.sortedBy { it.sporbar.endret.endretTid } ?: throw Feil("Fant ingen ferdigstilte behandlinger med id=$behandlingId")
+                .sortedBy { it.sporbar.endret.endretTid }
 
         val vedtakListe =
             alleFerdigstilteBehandlinger
@@ -80,11 +80,11 @@ class GjeldendeVedtakService(
         val resultat = mutableListOf<Barnetilsynperiode>()
 
         var periodeStart = sorterteMåneder.first()
-        var dataStart = månedTilPeriode[periodeStart]!!
+        var dataStart = månedTilPeriode.getValue(periodeStart)
 
         for (i in 1 until sorterteMåneder.size) {
             val gjeldendeMåned = sorterteMåneder[i]
-            val gjeldendeData = månedTilPeriode[gjeldendeMåned]!!
+            val gjeldendeData = månedTilPeriode.getValue(gjeldendeMåned)
 
             val forrigeMåned = sorterteMåneder[i - 1]
 

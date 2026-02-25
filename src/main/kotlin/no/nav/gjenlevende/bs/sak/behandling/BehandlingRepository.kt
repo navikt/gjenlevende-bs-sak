@@ -38,5 +38,5 @@ interface BehandlingRepository :
         ORDER BY opprettet_tid DESC
     """,
     )
-    fun finnAlleIverksatteBehandlinger(fagsakId: UUID): List<Behandling>?
+    fun finnAlleIverksatteBehandlinger(fagsakId: UUID): List<Behandling>
 }

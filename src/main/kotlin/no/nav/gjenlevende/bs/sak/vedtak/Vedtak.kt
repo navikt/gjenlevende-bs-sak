@@ -82,7 +82,7 @@ enum class PeriodetypeBarnetilsyn {
 enum class AktivitetstypeBarnetilsyn {
     I_ARBEID,
     FORBIGÅENDE_SYKDOM,
-    IKKE_RELEVANT
+    IKKE_RELEVANT,
 }
 
 data class VedtakDto(

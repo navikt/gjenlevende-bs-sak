@@ -23,6 +23,7 @@ class VedtakService(
         vedtakDto: VedtakDto,
         behandlingId: UUID,
     ): UUID {
+        behandlingService.validerBehandlingErRedigerbar(behandlingId)
         val vedtak = vedtakRepository.insert(vedtakDto.tilVedtak(behandlingId))
 
         val behandlingResultat = vedtakDto.resultatType.tilBehandlingResultat()

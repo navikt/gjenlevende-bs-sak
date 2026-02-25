@@ -1,6 +1,5 @@
 package no.nav.gjenlevende.bs.sak.iverksett
 
-import no.nav.gjenlevende.bs.sak.iverksett.domene.ArkiverDokumentRequest
 import no.nav.gjenlevende.bs.sak.iverksett.domene.JournalpostRequest
 import no.nav.gjenlevende.bs.sak.texas.TexasClient
 import org.springframework.beans.factory.annotation.Value
@@ -36,7 +35,7 @@ class DokarkivClient(
             .post()
             .uri(OPPRETT_JOURNALPOST)
             .headers { it.addAll(headers) }
-            .bodyValue(journalpostRequest) // TODO response av noe slag her? journalpostid elns
+            .bodyValue(journalpostRequest)
             .retrieve()
             .bodyToMono<String>()
             .block() ?: error("Ingen response ved henting av tilgang til person med relasjoner")

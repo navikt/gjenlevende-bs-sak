@@ -1,9 +1,7 @@
 package no.nav.gjenlevende.bs.sak.iverksett.domene
 
 import com.fasterxml.jackson.annotation.JsonInclude
-import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotEmpty
-import no.nav.gjenlevende.bs.sak.saf.Arkivtema
 import no.nav.gjenlevende.bs.sak.saf.BrukerIdType
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -78,31 +76,7 @@ enum class Fagsystem(
     val navn: String,
     val tema: String,
 ) {
-    EY("BS-sak", "EYO"),
-}
-
-data class ArkiverDokumentRequest(
-    @field:NotBlank val fnr: String,
-    val forsøkFerdigstill: Boolean,
-    @field:NotEmpty val hoveddokumentvarianter: List<Dokument>,
-    val vedleggsdokumenter: List<Dokument> = emptyList(),
-    val fagsakId: String? = null,
-    val tema: Arkivtema,
-    val journalførendeEnhet: String? = null,
-    val førsteside: Førsteside? = null,
-    val eksternReferanseId: String? = null,
-    val avsenderMottaker: AvsenderMottaker? = null,
-)
-
-data class Førsteside(
-    val språkkode: Språkkode = Språkkode.NB,
-    val navSkjemaId: String,
-    val overskriftstittel: String,
-)
-
-enum class Språkkode {
-    NB,
-    NN,
+    EY("Gjenlevende", "EYO"),
 }
 
 class Dokument(

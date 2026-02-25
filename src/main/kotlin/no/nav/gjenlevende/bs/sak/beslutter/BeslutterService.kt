@@ -64,7 +64,7 @@ class BeslutterService(
 
     @Transactional
     fun hoppOverTotrinnskontroll(behandlingId: UUID) {
-        require(totrinnskontrollService.erTotrinnskontrollHoppetOver()) {
+        require(totrinnskontrollService.kanHoppeOverTotrinnskontroll()) {
             "Toggle for å hoppe over totrinnskontroll er ikke aktivert"
         }
         validerKanSendeTilBeslutter(behandlingId)

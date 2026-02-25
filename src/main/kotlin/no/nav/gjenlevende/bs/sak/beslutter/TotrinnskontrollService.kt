@@ -43,7 +43,7 @@ class TotrinnskontrollService(
     }
 
     fun validerAtBeslutterIkkeErSammeSomSaksbehandler(behandlingId: UUID) {
-        if (erTotrinnskontrollHoppetOver()) return
+        if (kanHoppeOverTotrinnskontroll()) return
 
         val innloggetSaksbehandler = SikkerhetContext.hentSaksbehandler()
         val saksbehandlerSomSendteTilBeslutter = hentSaksbehandlerSomSendteTilBeslutter(behandlingId)
@@ -63,7 +63,7 @@ class TotrinnskontrollService(
         val innloggetSaksbehandler = SikkerhetContext.hentSaksbehandler()
         val erSammeSomSaksbehandler = innloggetSaksbehandler == sisteEndring.utførtAv
 
-        return if (erSammeSomSaksbehandler && !erTotrinnskontrollHoppetOver()) {
+        return if (erSammeSomSaksbehandler && !kanHoppeOverTotrinnskontroll()) {
             TotrinnskontrollStatusDto(
                 status = TotrinnskontrollStatus.IKKE_AUTORISERT,
                 totrinnskontroll =
@@ -77,7 +77,7 @@ class TotrinnskontrollService(
         }
     }
 
-    internal fun erTotrinnskontrollHoppetOver(): Boolean {
+    internal fun kanHoppeOverTotrinnskontroll(): Boolean {
         val featureToggles = unleashService.hentFeatureToggles()
         return featureToggles[FeatureToggle.HOPP_OVER_TOTRINNSKONTROLL.toggleName] ?: false
     }

@@ -26,6 +26,7 @@ class VedtakService(
         val vedtak = vedtakRepository.insert(vedtakDto.tilVedtak(behandlingId))
 
         val behandlingResultat = vedtakDto.resultatType.tilBehandlingResultat()
+
         behandlingService.oppdaterBehandlingResultat(
             behandlingId = behandlingId,
             resultat = behandlingResultat,

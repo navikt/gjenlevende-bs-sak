@@ -1,7 +1,6 @@
 package no.nav.gjenlevende.bs.sak.beslutter
 
 import no.nav.familie.prosessering.internal.TaskService
-import no.nav.gjenlevende.bs.sak.behandling.BehandlingResultat
 import no.nav.gjenlevende.bs.sak.behandling.BehandlingService
 import no.nav.gjenlevende.bs.sak.behandling.BehandlingStatus
 import no.nav.gjenlevende.bs.sak.behandling.LagBehandleSakOppgaveTask
@@ -148,10 +147,7 @@ class BeslutterService(
             behandlingId = behandlingId,
             status = BehandlingStatus.UTREDES,
         )
-        behandlingService.oppdaterBehandlingResultat(
-            behandlingId = behandlingId,
-            resultat = BehandlingResultat.IKKE_SATT,
-        )
+
         endringshistorikkService.registrerUnderkjennelse(
             behandlingId = behandlingId,
             årsakUnderkjent = årsakUnderkjent,

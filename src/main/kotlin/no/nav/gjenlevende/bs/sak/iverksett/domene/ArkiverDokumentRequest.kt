@@ -1,9 +1,7 @@
 package no.nav.gjenlevende.bs.sak.iverksett.domene
 
 import com.fasterxml.jackson.annotation.JsonInclude
-import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotEmpty
-import no.nav.gjenlevende.bs.sak.saf.Arkivtema
 import no.nav.gjenlevende.bs.sak.saf.BrukerIdType
 
 @JsonInclude(JsonInclude.Include.NON_NULL)

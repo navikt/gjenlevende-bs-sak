@@ -18,13 +18,11 @@ import no.nav.gjenlevende.bs.sak.iverksett.domene.AvsenderMottaker
 import no.nav.gjenlevende.bs.sak.iverksett.domene.AvsenderMottakerIdType
 import no.nav.gjenlevende.bs.sak.iverksett.domene.DokarkivBruker
 import no.nav.gjenlevende.bs.sak.iverksett.domene.Dokument
-import no.nav.gjenlevende.bs.sak.iverksett.domene.Dokumentkategori
 import no.nav.gjenlevende.bs.sak.iverksett.domene.Dokumenttype
 import no.nav.gjenlevende.bs.sak.iverksett.domene.Dokumentvariant
 import no.nav.gjenlevende.bs.sak.iverksett.domene.Fagsystem
 import no.nav.gjenlevende.bs.sak.iverksett.domene.Filtype
 import no.nav.gjenlevende.bs.sak.iverksett.domene.JournalpostRequest
-import no.nav.gjenlevende.bs.sak.iverksett.domene.JournalpostType
 import no.nav.gjenlevende.bs.sak.iverksett.domene.Sak
 import no.nav.gjenlevende.bs.sak.iverksett.metadata.tilMetadata
 import no.nav.gjenlevende.bs.sak.saf.BrukerIdType

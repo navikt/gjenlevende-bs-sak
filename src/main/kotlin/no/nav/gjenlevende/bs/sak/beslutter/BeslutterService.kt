@@ -129,10 +129,18 @@ class BeslutterService(
         )
     }
 
+    private fun validerUnderkjennelse(dto: BeslutteVedtakDto): Pair<ÅrsakUnderkjent, String> {
+        val årsak = requireNotNull(dto.årsakUnderkjent) { "Årsak for underkjennelse må være satt" }
+        val begrunnelse = requireNotNull(dto.begrunnelse?.takeIf { it.isNotBlank() }) { "Begrunnelse for underkjennelse må være utfylt" }
+        return årsak to begrunnelse
+    }
+
     private fun underkjennVedtak(
         behandlingId: UUID,
         beslutteVedtakDto: BeslutteVedtakDto,
     ) {
+        val (årsakUnderkjent, begrunnelse) = validerUnderkjennelse(beslutteVedtakDto)
+
         val saksbehandlerSomSendteTilBeslutter =
             totrinnskontrollService.hentSaksbehandlerSomSendteTilBeslutter(behandlingId)
 
@@ -144,10 +152,10 @@ class BeslutterService(
             behandlingId = behandlingId,
             resultat = BehandlingResultat.IKKE_SATT,
         )
-        endringshistorikkService.registrerEndring(
+        endringshistorikkService.registrerUnderkjennelse(
             behandlingId = behandlingId,
-            endringType = EndringType.BESLUTTER_UNDERKJENT,
-            detaljer = objectMapper.writeValueAsString(beslutteVedtakDto),
+            årsakUnderkjent = årsakUnderkjent,
+            begrunnelse = begrunnelse,
         )
 
         FerdigstillOppgaveTask.opprettTask(

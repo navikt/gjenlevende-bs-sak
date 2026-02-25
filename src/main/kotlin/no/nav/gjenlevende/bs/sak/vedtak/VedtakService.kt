@@ -134,6 +134,9 @@ class VedtakService(
         if (barnetilsynperioder.any { it.periodetype == PeriodetypeBarnetilsyn.INGEN_STØNAD && it.aktivitetstype != AktivitetstypeBarnetilsyn.IKKE_RELEVANT }) {
             throw Feil("Kan ikke ha aktivitetstype på ingen stønad periode")
         }
+        if (barnetilsynperioder.any { it.periodetype == PeriodetypeBarnetilsyn.ORDINÆR && it.aktivitetstype == AktivitetstypeBarnetilsyn.IKKE_RELEVANT }) {
+            throw Feil("Kan ikke ha tom aktivitetstype for ordinær periode")
+        }
     }
 
     private fun validerOpphørIkkeFørsteEllerSistePeriode(

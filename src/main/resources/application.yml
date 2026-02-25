@@ -82,6 +82,10 @@ PDL_SCOPE: api://dev-fss.pdl.pdl-api/.default
 OPPGAVE_URL: https://oppgave.dev-fss-pub.nais.io
 OPPGAVE_SCOPE: api://dev-fss.oppgavehandtering.oppgave/.default
 
+# DOKARKIV
+DOKARKIV_URL: https://dokarkiv-q2.dev-fss-pub.nais.io
+DOKARKIV_SCOPE: api://dev-fss.teamdokumenthandtering.dokarkiv/.default
+
 #SAF
 SAF_URL: https://saf-q2.dev-fss-pub.nais.io
 SAF_SCOPE: api://dev-fss.teamdokumenthandtering.saf/.default

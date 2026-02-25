@@ -66,6 +66,7 @@ spec:
                 -   host: etterlatte-unleash-api.nav.cloud.nais.io
                 -   host: familie-integrasjoner.dev-fss-pub.nais.io
                 -   host: saf-q2.dev-fss-pub.nais.io
+                -   host: dokarkiv-q2.dev-fss-pub.nais.io
 
     # Toggle
     envFrom:

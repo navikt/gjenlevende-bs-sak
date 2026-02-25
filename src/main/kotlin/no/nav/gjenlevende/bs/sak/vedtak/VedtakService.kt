@@ -59,7 +59,7 @@ class VedtakService(
             val utgifter = barnetilsynperioder.map { periode -> periode.utgifter }
             validerFornuftigeBeløp(utgifter)
 
-            validerAntallBarnOgUtgifter(barnetilsynperioder)
+            validerAntallBarnAktivitetstypeOgUtgifter(barnetilsynperioder)
             validerOpphørIkkeFørsteEllerSistePeriode(barnetilsynperioder)
         }
         if (vedtakDto.resultatType == ResultatType.OPPHØR) {
@@ -115,7 +115,7 @@ class VedtakService(
         }
     }
 
-    private fun validerAntallBarnOgUtgifter(
+    private fun validerAntallBarnAktivitetstypeOgUtgifter(
         barnetilsynperioder: List<Barnetilsynperiode>,
     ) {
         if (barnetilsynperioder.any { it.periodetype == PeriodetypeBarnetilsyn.INGEN_STØNAD && it.barn.isNotEmpty() }) {
@@ -129,6 +129,9 @@ class VedtakService(
         }
         if (barnetilsynperioder.any { it.periodetype == PeriodetypeBarnetilsyn.ORDINÆR && it.utgifter.toInt() <= 0 }) {
             throw Feil("Kan ikke ha null utgifter på en periode som er ordinær")
+        }
+        if (barnetilsynperioder.any { it.periodetype == PeriodetypeBarnetilsyn.INGEN_STØNAD && it.aktivitetstype != AktivitetstypeBarnetilsyn.IKKE_RELEVANT }) {
+            throw Feil("Kan ikke ha aktivitetstype på ingen stønad periode")
         }
     }
 

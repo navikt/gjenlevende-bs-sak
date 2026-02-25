@@ -63,6 +63,37 @@ class BeslutterService(
     }
 
     @Transactional
+    fun hoppOverTotrinnskontroll(behandlingId: UUID) {
+        require(totrinnskontrollService.kanHoppeOverTotrinnskontroll()) {
+            "Toggle for å hoppe over totrinnskontroll er ikke aktivert"
+        }
+        validerKanSendeTilBeslutter(behandlingId)
+
+        brevService.oppdaterSaksbehandlerForBrev(behandlingId)
+        endringshistorikkService.registrerEndring(
+            behandlingId = behandlingId,
+            endringType = EndringType.SENDT_TIL_BESLUTTER,
+        )
+        endringshistorikkService.registrerEndring(
+            behandlingId = behandlingId,
+            endringType = EndringType.BESLUTTER_GODKJENT,
+        )
+
+        val aktivOppgavetype = oppgaveService.hentAktivOppgavetype(behandlingId)
+        FerdigstillOppgaveTask.opprettTask(
+            behandlingId = behandlingId,
+            oppgavetype = aktivOppgavetype,
+            objectMapper = objectMapper,
+            taskService = taskService,
+        )
+
+        behandlingService.oppdaterBehandlingStatus(
+            behandlingId = behandlingId,
+            status = BehandlingStatus.FERDIGSTILT,
+        )
+    }
+
+    @Transactional
     fun angreSendTilBeslutter(behandlingId: UUID) {
         val aktivOppgavetype = oppgaveService.hentAktivOppgavetype(behandlingId)
 

@@ -69,7 +69,7 @@ class JournalføringService(
                     behandlingstema = metadata.behandlingstema?.value,
                     avsenderMottaker = mottaker.tilAvsenderMottaker(),
                     bruker = dokarkivBruker,
-                    tema = metadata.tema.navn,
+                    tema = metadata.tema,
                     tittel = dokument.tittel ?: metadata.tittel,
                     kanal = metadata.kanal,
                     journalfoerendeEnhet = saksbehandlerEnhet,

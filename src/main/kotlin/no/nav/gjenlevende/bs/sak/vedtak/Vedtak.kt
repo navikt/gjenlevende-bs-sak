@@ -35,7 +35,7 @@ data class Barnetilsynperiode(
     val utgifter: BigDecimal,
     val barn: List<UUID>,
     val periodetype: PeriodetypeBarnetilsyn,
-    val aktivitetstype: AktivitetstypeBarnetilsyn? = null,
+    val aktivitetstype: AktivitetstypeBarnetilsyn,
 )
 
 data class BarnetilsynBeregningRequest(
@@ -82,6 +82,7 @@ enum class PeriodetypeBarnetilsyn {
 enum class AktivitetstypeBarnetilsyn {
     I_ARBEID,
     FORBIGÅENDE_SYKDOM,
+    IKKE_RELEVANT
 }
 
 data class VedtakDto(

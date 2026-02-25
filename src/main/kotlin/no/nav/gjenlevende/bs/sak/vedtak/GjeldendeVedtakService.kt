@@ -131,7 +131,7 @@ private data class MånedPeriodeData(
     val utgifter: BigDecimal,
     val barn: List<UUID>,
     val periodetype: PeriodetypeBarnetilsyn,
-    val aktivitetstype: AktivitetstypeBarnetilsyn?,
+    val aktivitetstype: AktivitetstypeBarnetilsyn,
 ) {
     companion object {
         fun ingenStønad() =
@@ -139,7 +139,7 @@ private data class MånedPeriodeData(
                 utgifter = BigDecimal.ZERO,
                 barn = emptyList(),
                 periodetype = PeriodetypeBarnetilsyn.INGEN_STØNAD,
-                aktivitetstype = null,
+                aktivitetstype = AktivitetstypeBarnetilsyn.IKKE_RELEVANT,
             )
     }
 

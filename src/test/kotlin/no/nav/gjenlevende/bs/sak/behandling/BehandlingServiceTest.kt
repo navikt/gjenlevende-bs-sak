@@ -2,11 +2,14 @@ package no.nav.gjenlevende.bs.sak.behandling
 
 import io.mockk.every
 import io.mockk.mockk
+import no.nav.familie.prosessering.internal.TaskService
 import no.nav.gjenlevende.bs.sak.endringshistorikk.EndringshistorikkService
 import no.nav.gjenlevende.bs.sak.infrastruktur.exception.Feil
+import no.nav.gjenlevende.bs.sak.oppgave.OppgaveService
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus
+import tools.jackson.databind.ObjectMapper
 import java.util.UUID
 import kotlin.test.Test
 
@@ -14,7 +17,18 @@ class BehandlingServiceTest {
     private val behandlingRepository = mockk<BehandlingRepository>(relaxed = true)
     private val lagBehandleSakOppgaveTask = mockk<LagBehandleSakOppgaveTask>(relaxed = true)
     private val endringshistorikkService = mockk<EndringshistorikkService>(relaxed = true)
-    private val behandlingService = BehandlingService(behandlingRepository, lagBehandleSakOppgaveTask, endringshistorikkService)
+    private val oppgaveService = mockk<OppgaveService>(relaxed = true)
+    private val taskService = mockk<TaskService>(relaxed = true)
+    private val objectMapper = mockk<ObjectMapper>(relaxed = true)
+    private val behandlingService =
+        BehandlingService(
+            behandlingRepository = behandlingRepository,
+            lagBehandleSakOppgaveTask = lagBehandleSakOppgaveTask,
+            endringshistorikkService = endringshistorikkService,
+            oppgaveService = oppgaveService,
+            taskService = taskService,
+            objectMapper = objectMapper,
+        )
 
     @Test
     fun `validerBehandlingErRedigerbar er redigerbar for status OPPRETTET`() {

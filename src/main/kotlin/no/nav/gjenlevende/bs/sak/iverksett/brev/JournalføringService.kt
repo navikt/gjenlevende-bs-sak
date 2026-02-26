@@ -76,7 +76,7 @@ class JournalføringService(
                     tittel = dokument.tittel ?: metadata.tittel,
                     kanal = metadata.kanal,
                     journalfoerendeEnhet = saksbehandlerEnhet,
-                    eksternReferanseId = fagsak.eksternId.toString(),
+                    eksternReferanseId = "$behandlingId-vedtaksbrev-mottaker$indeks", // TODO må være unik for hver mottaker, legg til indeks
                     sak = sak,
                     dokumenter = dokumenter,
                 ),

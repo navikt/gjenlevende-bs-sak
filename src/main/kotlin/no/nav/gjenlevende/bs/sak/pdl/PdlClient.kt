@@ -17,7 +17,6 @@ class PdlClient(
     private val pdlScope: String,
 ) {
     private val logger = LoggerFactory.getLogger(PdlClient::class.java)
-
     val pdlRestClient =
         RestClient
             .builder()
@@ -25,7 +24,7 @@ class PdlClient(
             .defaultHeader("Content-Type", "application/json")
             .build()
 
-    fun hentPersonData(
+    fun hentPersonDataOBOToken(
         request: PdlRequest,
     ): HentPersonData? {
         logger.info("Utfører PDL-operasjon: hentPersonData")
@@ -35,6 +34,37 @@ class PdlClient(
                     .post()
                     .uri("/graphql")
                     .headers { it.addAll(lagPdlOnBehalfOfHeaders()) }
+                    .body(request)
+                    .retrieve()
+                    .body(PdlResponseHentPersonData::class.java)
+
+            håndterPdlErrors(pdlResponse?.errors, "hentPersonData")
+
+            return pdlResponse?.data
+        } catch (e: Exception) {
+            when (e) {
+                is PdlException -> {
+                    throw e
+                }
+
+                else -> {
+                    logger.error("Feil ved kall til PDL", e)
+                    throw PdlException("Teknisk feil ved henting av navn fra PDL", e)
+                }
+            }
+        }
+    }
+
+    fun hentPersonDataMaskinToken(
+        request: PdlRequest,
+    ): HentPersonData? {
+        logger.info("Utfører PDL-operasjon: hentPersonData")
+        try {
+            val pdlResponse =
+                pdlRestClient
+                    .post()
+                    .uri("/graphql")
+                    .headers { it.addAll(lagPdlMaskinTilMaskinToken()) }
                     .body(request)
                     .retrieve()
                     .body(PdlResponseHentPersonData::class.java)
@@ -90,6 +120,14 @@ class PdlClient(
             set("Tema", "EYO")
             set("behandlingsnummer", "B373")
             set("Authorization", "Bearer ${texasClient.hentOboToken(pdlScope)}")
+        }
+
+    private fun lagPdlMaskinTilMaskinToken(): HttpHeaders =
+        HttpHeaders().apply {
+            contentType = MediaType.APPLICATION_JSON
+            set("Tema", "EYO")
+            set("behandlingsnummer", "B373")
+            set("Authorization", "Bearer ${texasClient.hentMaskinToken(pdlScope)}")
         }
 
     private fun håndterPdlErrors(

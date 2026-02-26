@@ -16,7 +16,7 @@ class PdlServiceTest {
     fun `hent første navn ved response fra pdl`() {
         every { fagsakPersonService.hentAktivIdent(any()) } returns "01010199999"
 
-        every { pdlClient.hentPersonData(any()) } returns
+        every { pdlClient.hentPersonDataOBOToken(any()) } returns
             HentPersonData(
                 hentPerson =
                     HentPerson(

@@ -13,14 +13,36 @@ class PdlService(
 ) {
     private val logger = LoggerFactory.getLogger(PdlService::class.java)
 
-    fun hentNavnFraPdl(personident: String): Navn? {
+    fun hentNavnFraPdlMedOBOToken(personident: String): Navn? {
         val request =
             PdlRequest(
                 query = graphqlQuery("/pdl/hent_navn.graphql"),
                 variables = mapOf("ident" to personident),
             )
         val data: HentPersonData =
-            pdlClient.hentPersonData(
+            pdlClient.hentPersonDataOBOToken(
+                request = request,
+            ) ?: throw PdlException("Fant ingen person i PDL for ident")
+        val hentPerson =
+            data.hentPerson
+                ?: throw PdlException("Fant ingen person i PDL")
+        val navnListe = hentPerson.navn
+        if (navnListe.isEmpty()) {
+            logger.warn("Personen har ingen navn registrert i PDL")
+            return null
+        }
+
+        return navnListe.first()
+    }
+
+    fun hentNavnFraPdlMedMaskinToken(personident: String): Navn? {
+        val request =
+            PdlRequest(
+                query = graphqlQuery("/pdl/hent_navn.graphql"),
+                variables = mapOf("ident" to personident),
+            )
+        val data: HentPersonData =
+            pdlClient.hentPersonDataMaskinToken(
                 request = request,
             ) ?: throw PdlException("Fant ingen person i PDL for ident")
         val hentPerson =
@@ -37,12 +59,12 @@ class PdlService(
 
     fun hentNavnMedFagsakPersonId(fagsakPersonId: UUID): Navn? {
         val ident = fagsakPersonService.hentAktivIdent(fagsakPersonId)
-        return hentNavnFraPdl(ident)
+        return hentNavnFraPdlMedOBOToken(ident)
     }
 
     fun hentNavnMedPersonident(personident: String?): Navn? {
         if (personident == null) throw PdlException("Personident er null, kan ikke hente navn fra PDL")
-        return hentNavnFraPdl(personident)
+        return hentNavnFraPdlMedMaskinToken(personident)
     }
 
     fun hentBarnPersonidenter(personident: String): List<String> =

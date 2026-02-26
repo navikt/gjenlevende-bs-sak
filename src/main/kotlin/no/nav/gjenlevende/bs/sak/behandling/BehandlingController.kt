@@ -55,7 +55,7 @@ class BehandlingController(
         @RequestBody henleggRequest: HenleggRequest,
     ): ResponseEntity<Void> {
         behandlingService.henleggBehandling(behandlingId = henleggRequest.behandlingId)
-        return ResponseEntity.ok().build()
+        return ResponseEntity.noContent().build()
     }
 
     @PostMapping("/hentBehandlinger")

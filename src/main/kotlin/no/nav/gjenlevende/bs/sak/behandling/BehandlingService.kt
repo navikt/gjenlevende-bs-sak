@@ -1,13 +1,17 @@
 package no.nav.gjenlevende.bs.sak.behandling
 
+import no.nav.familie.prosessering.internal.TaskService
 import no.nav.gjenlevende.bs.sak.endringshistorikk.EndringType
 import no.nav.gjenlevende.bs.sak.endringshistorikk.EndringshistorikkService
 import no.nav.gjenlevende.bs.sak.felles.sikkerhet.SikkerhetContext
 import no.nav.gjenlevende.bs.sak.infrastruktur.exception.Feil
+import no.nav.gjenlevende.bs.sak.oppgave.OppgaveService
+import no.nav.gjenlevende.bs.sak.task.FerdigstillOppgaveTask
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import tools.jackson.databind.ObjectMapper
 import java.util.UUID
 
 @Service
@@ -15,6 +19,9 @@ class BehandlingService(
     private val behandlingRepository: BehandlingRepository,
     private val lagBehandleSakOppgaveTask: LagBehandleSakOppgaveTask,
     private val endringshistorikkService: EndringshistorikkService,
+    private val oppgaveService: OppgaveService,
+    private val taskService: TaskService,
+    private val objectMapper: ObjectMapper,
 ) {
     @Transactional
     fun opprettBehandling(
@@ -94,6 +101,14 @@ class BehandlingService(
                 resultat = BehandlingResultat.HENLAGT,
             )
         behandlingRepository.update(henlagtBehandling)
+
+        val aktivOppgavetype = oppgaveService.hentAktivOppgavetype(behandlingId)
+        FerdigstillOppgaveTask.opprettTask(
+            behandlingId = behandlingId,
+            oppgavetype = aktivOppgavetype,
+            objectMapper = objectMapper,
+            taskService = taskService,
+        )
 
         endringshistorikkService.registrerEndring(
             behandlingId = behandlingId,

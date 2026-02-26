@@ -1,6 +1,7 @@
 package no.nav.gjenlevende.bs.sak.pdl
 
 import no.nav.gjenlevende.bs.sak.fagsak.FagsakPersonService
+import no.nav.gjenlevende.bs.sak.felles.sikkerhet.SikkerhetContext
 import org.apache.commons.lang3.StringUtils
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -13,58 +14,42 @@ class PdlService(
 ) {
     private val logger = LoggerFactory.getLogger(PdlService::class.java)
 
-    fun hentNavnFraPdlMedOBOToken(personident: String): Navn? {
-        val request =
-            PdlRequest(
-                query = graphqlQuery("/pdl/hent_navn.graphql"),
-                variables = mapOf("ident" to personident),
-            )
-        val data: HentPersonData =
-            pdlClient.hentPersonDataOBOToken(
-                request = request,
-            ) ?: throw PdlException("Fant ingen person i PDL for ident")
-        val hentPerson =
-            data.hentPerson
-                ?: throw PdlException("Fant ingen person i PDL")
-        val navnListe = hentPerson.navn
-        if (navnListe.isEmpty()) {
-            logger.warn("Personen har ingen navn registrert i PDL")
-            return null
-        }
-
-        return navnListe.first()
-    }
-
-    fun hentNavnFraPdlMedMaskinToken(personident: String): Navn? {
-        val request =
-            PdlRequest(
-                query = graphqlQuery("/pdl/hent_navn.graphql"),
-                variables = mapOf("ident" to personident),
-            )
-        val data: HentPersonData =
-            pdlClient.hentPersonDataMaskinToken(
-                request = request,
-            ) ?: throw PdlException("Fant ingen person i PDL for ident")
-        val hentPerson =
-            data.hentPerson
-                ?: throw PdlException("Fant ingen person i PDL")
-        val navnListe = hentPerson.navn
-        if (navnListe.isEmpty()) {
-            logger.warn("Personen har ingen navn registrert i PDL")
-            return null
-        }
-
-        return navnListe.first()
-    }
-
     fun hentNavnMedFagsakPersonId(fagsakPersonId: UUID): Navn? {
         val ident = fagsakPersonService.hentAktivIdent(fagsakPersonId)
-        return hentNavnFraPdlMedOBOToken(ident)
+        return hentNavnFraPdl(ident)
     }
 
     fun hentNavnMedPersonident(personident: String?): Navn? {
         if (personident == null) throw PdlException("Personident er null, kan ikke hente navn fra PDL")
-        return hentNavnFraPdlMedMaskinToken(personident)
+        return hentNavnFraPdl(personident)
+    }
+
+    private fun hentNavnFraPdl(personident: String): Navn? {
+        val request =
+            PdlRequest(
+                query = graphqlQuery("/pdl/hent_navn.graphql"),
+                variables = mapOf("ident" to personident),
+            )
+        val data: HentPersonData =
+            if (SikkerhetContext.erMaskinTilMaskinToken()) {
+                pdlClient.hentPersonDataMaskinToken(
+                    request = request,
+                ) ?: throw PdlException("Fant ingen person i PDL for ident")
+            } else {
+                pdlClient.hentPersonDataOBOToken(
+                    request = request,
+                ) ?: throw PdlException("Fant ingen person i PDL for ident")
+            }
+        val hentPerson =
+            data.hentPerson
+                ?: throw PdlException("Fant ingen person i PDL")
+        val navnListe = hentPerson.navn
+        if (navnListe.isEmpty()) {
+            logger.warn("Personen har ingen navn registrert i PDL")
+            return null
+        }
+
+        return navnListe.first()
     }
 
     fun hentBarnPersonidenter(personident: String): List<String> =

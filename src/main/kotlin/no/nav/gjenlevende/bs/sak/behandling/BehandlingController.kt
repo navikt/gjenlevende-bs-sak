@@ -21,6 +21,10 @@ data class HentBehandlingerRequest(
     val fagsakId: UUID,
 )
 
+data class HenleggRequest(
+    val behandlingId: UUID,
+)
+
 data class OpprettBehandlingResponseDto(
     val behandlingId: UUID,
 )
@@ -44,6 +48,14 @@ class BehandlingController(
         val behandling = behandlingService.opprettBehandling(fagsakId)
 
         return ResponseEntity.ok(OpprettBehandlingResponseDto(behandlingId = behandling.id))
+    }
+
+    @PostMapping("/henlegg")
+    fun henleggBehandling(
+        @RequestBody henleggRequest: HenleggRequest,
+    ): ResponseEntity<Void> {
+        behandlingService.henleggBehandling(behandlingId = henleggRequest.behandlingId)
+        return ResponseEntity.ok().build()
     }
 
     @PostMapping("/hentBehandlinger")

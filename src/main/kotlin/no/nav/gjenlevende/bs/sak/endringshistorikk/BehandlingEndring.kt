@@ -20,6 +20,7 @@ enum class EndringType {
     ÅRSAK_OPPDATERT,
     BESLUTTER_GODKJENT,
     BESLUTTER_UNDERKJENT,
+    BEHANDLING_HENLAGT,
 }
 
 @Table("behandling_endring")

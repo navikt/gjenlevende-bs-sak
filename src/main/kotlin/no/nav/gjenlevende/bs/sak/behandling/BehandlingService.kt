@@ -75,6 +75,32 @@ class BehandlingService(
         behandlingRepository.update(oppdatertBehandling)
     }
 
+    @Transactional
+    fun henleggBehandling(behandlingId: UUID) {
+        val behandling =
+            behandlingRepository.findByIdOrNull(behandlingId)
+                ?: error("Fant ikke behandling med id=$behandlingId")
+
+        if (behandling.status == BehandlingStatus.FERDIGSTILT) {
+            throw Feil(
+                melding = "Behandlingen er allerede ferdigstilt",
+                httpStatus = HttpStatus.BAD_REQUEST,
+            )
+        }
+
+        val henlagtBehandling =
+            behandling.copy(
+                status = BehandlingStatus.FERDIGSTILT,
+                resultat = BehandlingResultat.HENLAGT,
+            )
+        behandlingRepository.update(henlagtBehandling)
+
+        endringshistorikkService.registrerEndring(
+            behandlingId = behandlingId,
+            endringType = EndringType.BEHANDLING_HENLAGT,
+        )
+    }
+
     fun oppdaterBehandlingResultat(
         behandlingId: UUID,
         resultat: BehandlingResultat,

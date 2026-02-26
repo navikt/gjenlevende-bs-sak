@@ -13,22 +13,19 @@ class PdlService(
 ) {
     private val logger = LoggerFactory.getLogger(PdlService::class.java)
 
-    fun hentNavn(fagsakPersonId: UUID): Navn? {
-        val ident = fagsakPersonService.hentAktivIdent(fagsakPersonId)
+    fun hentNavnFraPdl(personident: String): Navn? {
         val request =
             PdlRequest(
                 query = graphqlQuery("/pdl/hent_navn.graphql"),
-                variables = mapOf("ident" to ident),
+                variables = mapOf("ident" to personident),
             )
         val data: HentPersonData =
             pdlClient.hentPersonData(
                 request = request,
             ) ?: throw PdlException("Fant ingen person i PDL for ident")
-
         val hentPerson =
             data.hentPerson
                 ?: throw PdlException("Fant ingen person i PDL")
-
         val navnListe = hentPerson.navn
         if (navnListe.isEmpty()) {
             logger.warn("Personen har ingen navn registrert i PDL")
@@ -36,6 +33,16 @@ class PdlService(
         }
 
         return navnListe.first()
+    }
+
+    fun hentNavnMedFagsakPersonId(fagsakPersonId: UUID): Navn? {
+        val ident = fagsakPersonService.hentAktivIdent(fagsakPersonId)
+        return hentNavnFraPdl(ident)
+    }
+
+    fun hentNavnMedPersonident(personident: String?): Navn? {
+        if (personident == null) throw PdlException("Personident er null, kan ikke hente navn fra PDL")
+        return hentNavnFraPdl(personident)
     }
 
     fun hentBarnPersonidenter(personident: String): List<String> =
@@ -56,7 +63,6 @@ class PdlService(
                 query = graphqlQuery("/pdl/hent_familie_relasjoner.graphql"),
                 variables = mapOf("ident" to personident),
             )
-
         val data: FamilieRelasjonerResponse = pdlClient.hentFamilieRelasjoner(request = request) ?: return null
 
         return data.hentPerson?.forelderBarnRelasjon

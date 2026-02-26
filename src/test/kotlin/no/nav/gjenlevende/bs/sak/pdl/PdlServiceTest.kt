@@ -27,10 +27,8 @@ class PdlServiceTest {
                             ),
                     ),
             )
-
         val fagsakPersonId = UUID.randomUUID()
-
-        val navn = pdlService.hentNavn(fagsakPersonId)
+        val navn = pdlService.hentNavnMedFagsakPersonId(fagsakPersonId)
 
         assertThat(navn?.fornavn).isEqualTo("Fornavn")
         assertThat(navn?.etternavn).isEqualTo("Etternavn")

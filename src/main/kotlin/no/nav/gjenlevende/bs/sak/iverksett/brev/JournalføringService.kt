@@ -21,6 +21,8 @@ import no.nav.gjenlevende.bs.sak.iverksett.domene.Filtype
 import no.nav.gjenlevende.bs.sak.iverksett.domene.JournalpostRequest
 import no.nav.gjenlevende.bs.sak.iverksett.domene.Sak
 import no.nav.gjenlevende.bs.sak.iverksett.metadata.tilMetadata
+import no.nav.gjenlevende.bs.sak.pdl.Navn
+import no.nav.gjenlevende.bs.sak.pdl.PdlService
 import no.nav.gjenlevende.bs.sak.saf.BrukerIdType
 import org.springframework.stereotype.Service
 import java.util.UUID
@@ -32,6 +34,7 @@ class JournalføringService(
     private val fagsakPersonService: FagsakPersonService,
     private val brevService: BrevService,
     private val brevmottakerService: BrevmottakerService,
+    private val pdlService: PdlService,
 ) {
     fun lagJournalføringRequester(behandlingId: UUID): List<JournalpostRequest> {
         val behandling =
@@ -59,7 +62,7 @@ class JournalføringService(
         val dokarkivBruker = DokarkivBruker(BrukerIdType.FNR, personident)
         val sak =
             Sak(fagsakId = fagsak.eksternId.toString(), sakstype = "FAGSAK", fagsaksystem = Fagsystem.EY)
-        val dokumenter = listOf(mapTilArkivdokument(dokument)) // TODO + evt. vedlegg her?
+        val dokumenter = listOf(mapTilArkivdokument(dokument))
         val journalpostRequester = mutableListOf<JournalpostRequest>()
         require(mottakere.isNotEmpty()) { "Ingen brevmottakere funnet for behandlingId=$behandlingId" }
         mottakere.forEachIndexed { indeks, mottaker ->
@@ -130,12 +133,12 @@ class JournalføringService(
                 },
             navn =
                 when (mottakerType) {
-                    MottakerType.PERSON -> ""
-
-                    // TODO hent navn for personident
+                    MottakerType.PERSON -> pdlService.hentNavnMedPersonident(personident)?.tilFulltNavn() ?: ""
                     MottakerType.ORGANISASJON -> navnHosOrganisasjon ?: ""
                 },
         )
+
+    fun Navn.tilFulltNavn(): String = listOfNotNull(fornavn, mellomnavn, etternavn).joinToString(" ")
 
     private fun mapTilArkivdokument(dokument: Dokument): ArkivDokument {
         val metadata = dokument.dokumenttype.tilMetadata()

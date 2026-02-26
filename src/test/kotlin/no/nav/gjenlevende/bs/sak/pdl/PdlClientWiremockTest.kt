@@ -26,7 +26,6 @@ class PdlClientWiremockTest {
         fun initClass() {
             wireMockServer = WireMockServer(WireMockConfiguration.wireMockConfig().dynamicPort())
             wireMockServer.start()
-
             val texasClient =
                 mockk<TexasClient>().apply {
                     every { hentOboToken(any()) } returns "texas-obo-token-xyz"
@@ -50,9 +49,8 @@ class PdlClientWiremockTest {
     @Test
     fun `hentPersonData returnerer data ved gyldig respons`() {
         stubForGraphql(lagPdlResponseHentPersonData())
-
         val result: HentPersonData? =
-            pdlClient.hentPersonData(
+            pdlClient.hentPersonDataOBOToken(
                 PdlRequest(
                     query = "query {}",
                     variables = mapOf("ident" to "123"),
@@ -119,7 +117,7 @@ class PdlClientWiremockTest {
         )
 
         assertThrows<PdlException> {
-            pdlClient.hentPersonData(
+            pdlClient.hentPersonDataOBOToken(
                 PdlRequest(
                     query = "query {}",
                     variables = emptyMap(),

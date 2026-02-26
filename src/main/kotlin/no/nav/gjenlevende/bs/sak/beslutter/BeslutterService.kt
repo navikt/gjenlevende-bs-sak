@@ -1,6 +1,7 @@
 package no.nav.gjenlevende.bs.sak.beslutter
 
 import no.nav.familie.prosessering.internal.TaskService
+import no.nav.gjenlevende.bs.sak.behandling.BehandlingResultat
 import no.nav.gjenlevende.bs.sak.behandling.BehandlingService
 import no.nav.gjenlevende.bs.sak.behandling.BehandlingStatus
 import no.nav.gjenlevende.bs.sak.behandling.LagBehandleSakOppgaveTask
@@ -14,6 +15,8 @@ import no.nav.gjenlevende.bs.sak.oppgave.OppgaveService
 import no.nav.gjenlevende.bs.sak.oppgave.OppgavetypeEYO
 import no.nav.gjenlevende.bs.sak.task.FerdigstillOppgaveTask
 import no.nav.gjenlevende.bs.sak.task.OpprettOppgaveTask
+import no.nav.gjenlevende.bs.sak.vedtak.VedtakService
+import no.nav.gjenlevende.bs.sak.vedtak.tilBehandlingResultat
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import tools.jackson.databind.ObjectMapper
@@ -29,6 +32,7 @@ class BeslutterService(
     private val taskService: TaskService,
     private val objectMapper: ObjectMapper,
     private val lagBehandleSakOppgaveTask: LagBehandleSakOppgaveTask,
+    private val vedtakService: VedtakService,
 ) {
     @Transactional
     fun sendTilBeslutter(behandlingId: UUID) {
@@ -111,6 +115,15 @@ class BeslutterService(
     }
 
     private fun godkjennVedtak(behandlingId: UUID) {
+        val vedtak = vedtakService.hentVedtak(behandlingId)
+
+        val resultat = (vedtak?.resultatType)?.tilBehandlingResultat() ?: BehandlingResultat.IKKE_SATT
+
+        behandlingService.oppdaterBehandlingResultat(
+            behandlingId = behandlingId,
+            resultat = resultat,
+        )
+
         behandlingService.oppdaterBehandlingStatus(
             behandlingId = behandlingId,
             status = BehandlingStatus.FERDIGSTILT,

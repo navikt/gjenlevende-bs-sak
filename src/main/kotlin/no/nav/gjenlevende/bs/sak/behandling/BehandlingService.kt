@@ -88,9 +88,9 @@ class BehandlingService(
             behandlingRepository.findByIdOrNull(behandlingId)
                 ?: error("Fant ikke behandling med id=$behandlingId")
 
-        if (behandling.status == BehandlingStatus.FERDIGSTILT) {
+        if (behandling.status in listOf(BehandlingStatus.FERDIGSTILT, BehandlingStatus.IVERKSETTER_VEDTAK)) {
             throw Feil(
-                melding = "Behandlingen er allerede ferdigstilt",
+                melding = "Behandlingen kan ikke henlegges med status: ${behandling.status}",
                 httpStatus = HttpStatus.BAD_REQUEST,
             )
         }

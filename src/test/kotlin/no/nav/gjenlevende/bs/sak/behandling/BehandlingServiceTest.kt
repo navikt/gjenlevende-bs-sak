@@ -78,6 +78,30 @@ class BehandlingServiceTest {
             .hasMessageContaining("Behandlingen er ikke redigerbar")
     }
 
+    @Test
+    fun `henleggBehandling kaster feil for status FERDIGSTILT`() {
+        val behandlingId = UUID.randomUUID()
+        every { behandlingRepository.findByIdOrNull(behandlingId) } returns lagBehandling(behandlingId, BehandlingStatus.FERDIGSTILT)
+
+        assertThatThrownBy { behandlingService.henleggBehandling(behandlingId) }
+            .isInstanceOf(Feil::class.java)
+            .hasMessageContaining("Behandlingen kan ikke henlegges")
+            .extracting("httpStatus")
+            .isEqualTo(HttpStatus.BAD_REQUEST)
+    }
+
+    @Test
+    fun `henleggBehandling kaster feil for status IVERKSETTER_VEDTAK`() {
+        val behandlingId = UUID.randomUUID()
+        every { behandlingRepository.findByIdOrNull(behandlingId) } returns lagBehandling(behandlingId, BehandlingStatus.IVERKSETTER_VEDTAK)
+
+        assertThatThrownBy { behandlingService.henleggBehandling(behandlingId) }
+            .isInstanceOf(Feil::class.java)
+            .hasMessageContaining("Behandlingen kan ikke henlegges")
+            .extracting("httpStatus")
+            .isEqualTo(HttpStatus.BAD_REQUEST)
+    }
+
     private fun lagBehandling(
         behandlingId: UUID,
         status: BehandlingStatus,

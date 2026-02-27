@@ -99,7 +99,7 @@ fun VedtakDto.tilVedtak(behandlingId: UUID): Vedtak =
         behandlingId = behandlingId,
         resultatType = this.resultatType,
         begrunnelse = this.begrunnelse,
-        barnetilsynperioder = this.barnetilsynperioder,
+        barnetilsynperioder = this.barnetilsynperioder.sortedBy { it.datoFra },
         saksbehandlerIdent = SikkerhetContext.hentSaksbehandlerEllerSystembruker(),
         opphørFom = this.opphørFom,
         beslutterIdent = this.beslutterIdent,
@@ -109,7 +109,7 @@ fun Vedtak.tilDto(): VedtakDto =
     VedtakDto(
         resultatType = this.resultatType,
         begrunnelse = this.begrunnelse,
-        barnetilsynperioder = this.barnetilsynperioder,
+        barnetilsynperioder = this.barnetilsynperioder.sortedBy { it.datoFra },
         saksbehandlerIdent = this.saksbehandlerIdent,
         opphørFom = this.opphørFom,
         beslutterIdent = this.beslutterIdent,

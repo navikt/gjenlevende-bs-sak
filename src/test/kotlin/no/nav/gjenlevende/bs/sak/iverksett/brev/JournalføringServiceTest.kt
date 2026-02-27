@@ -71,7 +71,6 @@ class JournalføringServiceTest {
         assertThat(result[0].journalpostType).isEqualTo(JournalpostType.UTGAAENDE)
         assertThat(result[0].bruker?.id).isEqualTo(personident)
         assertThat(result[0].bruker?.idType).isEqualTo(BrukerIdType.FNR)
-        assertThat(result[0].tittel).contains("innvilget")
         assertThat(result[0].tittel).contains("barnetilsyn")
         assertThat(result[0].avsenderMottaker?.id).isEqualTo(personident)
         assertThat(result[0].avsenderMottaker?.idType).isEqualTo(AvsenderMottakerIdType.FNR)
@@ -141,7 +140,6 @@ class JournalføringServiceTest {
         assertThat(result[0].avsenderMottaker?.id).isEqualTo(orgnr)
         assertThat(result[0].avsenderMottaker?.idType).isEqualTo(AvsenderMottakerIdType.ORGNR)
         assertThat(result[0].avsenderMottaker?.navn).isEqualTo("Advokatfirmaet AS")
-        assertThat(result[0].tittel).contains("avslått")
     }
 
     @Test

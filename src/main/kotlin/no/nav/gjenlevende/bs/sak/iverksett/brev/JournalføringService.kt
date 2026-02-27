@@ -54,7 +54,7 @@ class JournalføringService(
                 dokument = brevPdf,
                 filtype = Filtype.PDFA,
                 dokumenttype = vedtaksbrevForStønadType(fagsak.stønadstype),
-                tittel = "Vedtak om" + lagStønadtypeTekst(fagsak.stønadstype),
+                tittel = "Vedtak om " + lagStønadtypeTekst(fagsak.stønadstype),
             )
         val metadata = dokument.dokumenttype.tilMetadata()
         val mottakere = brevmottakerService.hentBrevmottakere(behandlingId)

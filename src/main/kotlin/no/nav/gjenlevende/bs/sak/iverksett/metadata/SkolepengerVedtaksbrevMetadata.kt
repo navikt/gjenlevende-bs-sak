@@ -16,6 +16,6 @@ object SkolepengerVedtaksbrevMetadata : Dokumentmetadata {
     override val kanal: String? = null
     override val dokumenttype: Dokumenttype = Dokumenttype.VEDTAKSBREV_SKOLEPENGER
     override val tittel: String? = null
-    override val brevkode: String = "EYO_BREV_SKOLEPENGER_VEDTAK" // todo hør med mattis
+    override val brevkode: String = "EYO_BREV_SKOLEPENGER_VEDTAK"
     override val dokumentKategori: Dokumentkategori = Dokumentkategori.VB
 }

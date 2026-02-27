@@ -21,21 +21,11 @@ import java.util.UUID
 import kotlin.test.Test
 
 class JournalførVedtaksbrevTaskTest {
-    private val behandlingService = mockk<BehandlingService>()
-    private val fagsakRepository = mockk<FagsakRepository>()
-    private val fagsakPersonService = mockk<FagsakPersonService>()
-    private val brevService = mockk<BrevService>()
-    private val brevmottakerService = mockk<BrevmottakerService>()
     private val dokarkivClient = mockk<DokarkivClient>()
     private val objectMapper: ObjectMapper = jacksonObjectMapper()
     private val journalføringService = mockk<JournalføringService>()
     private val journalførVedtaksbrevTask =
         JournalførVedtaksbrevTask(
-            behandlingService = behandlingService,
-            fagsakRepository = fagsakRepository,
-            fagsakPersonService = fagsakPersonService,
-            brevService = brevService,
-            brevmottakerService = brevmottakerService,
             dokarkivClient = dokarkivClient,
             objectMapper = objectMapper,
             journalføringService = journalføringService,

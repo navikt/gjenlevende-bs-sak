@@ -16,7 +16,8 @@ data class Brev(
     val saksbehandler: String? = null,
     val saksbehandlerEnhet: String? = null,
     val beslutter: String? = null,
-    val beslutterEnhet: String? = null,
+    val beslutterEnhetnavn: String? = null,
+    val beslutterEnhetnummer: String? = null,
     @Embedded(onEmpty = Embedded.OnEmpty.USE_EMPTY)
     val sporbar: Sporbar = Sporbar(),
 )

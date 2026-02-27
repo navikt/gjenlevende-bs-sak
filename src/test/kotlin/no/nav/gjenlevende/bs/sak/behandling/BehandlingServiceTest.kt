@@ -6,6 +6,8 @@ import no.nav.familie.prosessering.internal.TaskService
 import no.nav.gjenlevende.bs.sak.endringshistorikk.EndringshistorikkService
 import no.nav.gjenlevende.bs.sak.infrastruktur.exception.Feil
 import no.nav.gjenlevende.bs.sak.oppgave.OppgaveService
+import no.nav.gjenlevende.bs.sak.unleash.FeatureToggle
+import no.nav.gjenlevende.bs.sak.unleash.UnleashService
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus
@@ -20,6 +22,7 @@ class BehandlingServiceTest {
     private val oppgaveService = mockk<OppgaveService>(relaxed = true)
     private val taskService = mockk<TaskService>(relaxed = true)
     private val objectMapper = mockk<ObjectMapper>(relaxed = true)
+    private val unleashService = mockk<UnleashService>(relaxed = true)
     private val behandlingService =
         BehandlingService(
             behandlingRepository = behandlingRepository,
@@ -28,6 +31,7 @@ class BehandlingServiceTest {
             oppgaveService = oppgaveService,
             taskService = taskService,
             objectMapper = objectMapper,
+            unleashService = unleashService,
         )
 
     @Test
@@ -79,8 +83,21 @@ class BehandlingServiceTest {
     }
 
     @Test
+    fun `henleggBehandling kaster feil når feature toggle er av`() {
+        val behandlingId = UUID.randomUUID()
+        every { unleashService.isEnabled(FeatureToggle.HENLEGG_BEHANDLING) } returns false
+
+        assertThatThrownBy { behandlingService.henleggBehandling(behandlingId) }
+            .isInstanceOf(Feil::class.java)
+            .hasMessageContaining("Henlegging av behandling er ikke aktivert")
+            .extracting("httpStatus")
+            .isEqualTo(HttpStatus.BAD_REQUEST)
+    }
+
+    @Test
     fun `henleggBehandling kaster feil for status FERDIGSTILT`() {
         val behandlingId = UUID.randomUUID()
+        every { unleashService.isEnabled(FeatureToggle.HENLEGG_BEHANDLING) } returns true
         every { behandlingRepository.findByIdOrNull(behandlingId) } returns lagBehandling(behandlingId, BehandlingStatus.FERDIGSTILT)
 
         assertThatThrownBy { behandlingService.henleggBehandling(behandlingId) }
@@ -93,6 +110,7 @@ class BehandlingServiceTest {
     @Test
     fun `henleggBehandling kaster feil for status IVERKSETTER_VEDTAK`() {
         val behandlingId = UUID.randomUUID()
+        every { unleashService.isEnabled(FeatureToggle.HENLEGG_BEHANDLING) } returns true
         every { behandlingRepository.findByIdOrNull(behandlingId) } returns lagBehandling(behandlingId, BehandlingStatus.IVERKSETTER_VEDTAK)
 
         assertThatThrownBy { behandlingService.henleggBehandling(behandlingId) }

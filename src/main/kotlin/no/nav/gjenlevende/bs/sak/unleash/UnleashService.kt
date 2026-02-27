@@ -12,6 +12,8 @@ class UnleashService(
 ) {
     private val logger = LoggerFactory.getLogger(javaClass)
 
+    fun isEnabled(toggle: FeatureToggle): Boolean = unleash.isEnabled(toggle.toggleName)
+
     fun hentFeatureToggles(): Map<String, Boolean> {
         val toggleNames = FeatureToggle.hentAlleFeatureToggleNavn()
         logger.info("Henter ${toggleNames.size} feature toggles fra Unleash")

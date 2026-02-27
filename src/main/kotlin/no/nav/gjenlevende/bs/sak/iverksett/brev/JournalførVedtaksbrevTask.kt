@@ -59,7 +59,6 @@ class JournalførVedtaksbrevTask(
         journalføringRequester.forEach { request ->
             val response = dokarkivClient.arkiverDokument(request)
             logger.info("Journalført vedtaksbrev for mottaker ${request.avsenderMottaker?.navn}: $response")
-            // TODO lagre journalpostId og dokumentId fra dokarkivResponse i iverksettResultat
         }
     }
 

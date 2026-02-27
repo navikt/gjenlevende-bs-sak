@@ -73,9 +73,8 @@ class JournalføringService(
                     bruker = dokarkivBruker,
                     tema = metadata.tema,
                     tittel = dokument.tittel ?: metadata.tittel,
-                    kanal = metadata.kanal,
                     journalfoerendeEnhet = vedtaksbrev.beslutterEnhet,
-                    eksternReferanseId = "$behandlingId-vedtaksbrev-mottaker$indeks", // TODO må være unik for hver mottaker, legg til indeks
+                    eksternReferanseId = "$behandlingId-vedtaksbrev-mottaker$indeks",
                     sak = sak,
                     dokumenter = dokumenter,
                 ),
@@ -98,6 +97,10 @@ class JournalføringService(
 
             BehandlingResultat.INNVILGET -> {
                 "Vedtak om innvilget "
+            }
+
+            BehandlingResultat.OPPHØRT -> {
+                "Vedtak om opphørt "
             }
 
             else -> {

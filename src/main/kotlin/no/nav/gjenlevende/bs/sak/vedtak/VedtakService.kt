@@ -26,13 +26,6 @@ class VedtakService(
         behandlingService.validerBehandlingErRedigerbar(behandlingId)
         val vedtak = vedtakRepository.insert(vedtakDto.tilVedtak(behandlingId))
 
-        val behandlingResultat = vedtakDto.resultatType.tilBehandlingResultat()
-
-        behandlingService.oppdaterBehandlingResultat(
-            behandlingId = behandlingId,
-            resultat = behandlingResultat,
-        )
-
         endringshistorikkService.registrerEndring(
             behandlingId = behandlingId,
             endringType = EndringType.VEDTAK_LAGRET,

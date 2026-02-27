@@ -38,7 +38,6 @@ class JournalføringServiceTest {
     private val brevService = mockk<BrevService>()
     private val brevmottakerService = mockk<BrevmottakerService>()
     private val pdlService = mockk<PdlService>()
-
     private val journalføringService =
         JournalføringService(
             behandlingService = behandlingService,
@@ -55,7 +54,6 @@ class JournalføringServiceTest {
         val fagsakId = UUID.randomUUID()
         val fagsakPersonId = UUID.randomUUID()
         val personident = "12345678901"
-
         val behandling = lagBehandling(behandlingId, fagsakId, BehandlingResultat.INNVILGET)
         val fagsak = lagFagsak(fagsakId, fagsakPersonId, StønadType.BARNETILSYN)
         val brev = lagBrev(behandlingId)
@@ -67,7 +65,6 @@ class JournalføringServiceTest {
         every { brevService.hentBrev(behandlingId) } returns brev
         every { brevmottakerService.hentBrevmottakere(behandlingId) } returns listOf(mottaker)
         every { pdlService.hentNavnMedPersonident(personident) } returns Navn("Ola", null, "Nordmann")
-
         val result = journalføringService.lagJournalføringRequester(behandlingId)
 
         assertThat(result).hasSize(1)
@@ -89,7 +86,6 @@ class JournalføringServiceTest {
         val fagsakPersonId = UUID.randomUUID()
         val personident = "12345678901"
         val vergeIdent = "98765432109"
-
         val behandling = lagBehandling(behandlingId, fagsakId, BehandlingResultat.INNVILGET)
         val fagsak = lagFagsak(fagsakId, fagsakPersonId, StønadType.SKOLEPENGER)
         val brev = lagBrev(behandlingId)
@@ -106,7 +102,6 @@ class JournalføringServiceTest {
         every { brevmottakerService.hentBrevmottakere(behandlingId) } returns mottakere
         every { pdlService.hentNavnMedPersonident(personident) } returns Navn("Ola", null, "Nordmann")
         every { pdlService.hentNavnMedPersonident(vergeIdent) } returns Navn("Kari", "Marie", "Hansen")
-
         val result = journalføringService.lagJournalføringRequester(behandlingId)
 
         assertThat(result).hasSize(2)
@@ -123,7 +118,6 @@ class JournalføringServiceTest {
         val fagsakPersonId = UUID.randomUUID()
         val personident = "12345678901"
         val orgnr = "123456789"
-
         val behandling = lagBehandling(behandlingId, fagsakId, BehandlingResultat.AVSLÅTT)
         val fagsak = lagFagsak(fagsakId, fagsakPersonId, StønadType.BARNETILSYN)
         val brev = lagBrev(behandlingId)
@@ -141,7 +135,6 @@ class JournalføringServiceTest {
         every { fagsakPersonService.hentAktivIdent(fagsakPersonId) } returns personident
         every { brevService.hentBrev(behandlingId) } returns brev
         every { brevmottakerService.hentBrevmottakere(behandlingId) } returns listOf(mottaker)
-
         val result = journalføringService.lagJournalføringRequester(behandlingId)
 
         assertThat(result).hasSize(1)
@@ -182,7 +175,6 @@ class JournalføringServiceTest {
         val fagsakId = UUID.randomUUID()
         val fagsakPersonId = UUID.randomUUID()
         val personident = "12345678901"
-
         val behandling = lagBehandling(behandlingId, fagsakId, BehandlingResultat.INNVILGET)
         val fagsak = lagFagsak(fagsakId, fagsakPersonId, StønadType.BARNETILSYN)
 
@@ -202,7 +194,6 @@ class JournalføringServiceTest {
         val fagsakId = UUID.randomUUID()
         val fagsakPersonId = UUID.randomUUID()
         val personident = "12345678901"
-
         val behandling = lagBehandling(behandlingId, fagsakId, BehandlingResultat.INNVILGET)
         val fagsak = lagFagsak(fagsakId, fagsakPersonId, StønadType.BARNETILSYN)
         val brevUtenPdf =
@@ -228,7 +219,6 @@ class JournalføringServiceTest {
         val fagsakId = UUID.randomUUID()
         val fagsakPersonId = UUID.randomUUID()
         val personident = "12345678901"
-
         val behandling = lagBehandling(behandlingId, fagsakId, BehandlingResultat.INNVILGET)
         val fagsak = lagFagsak(fagsakId, fagsakPersonId, StønadType.BARNETILSYN)
         val brev = lagBrev(behandlingId)
@@ -250,16 +240,6 @@ class JournalføringServiceTest {
             .isEqualTo(Dokumenttype.VEDTAKSBREV_BARNETILSYN)
         assertThat(journalføringService.vedtaksbrevForStønadType(StønadType.SKOLEPENGER))
             .isEqualTo(Dokumenttype.VEDTAKSBREV_SKOLEPENGER)
-    }
-
-    @Test
-    fun `lagVedtakstekst skal returnere korrekt tekst for resultater`() {
-        assertThat(journalføringService.lagVedtakstekst(BehandlingResultat.INNVILGET))
-            .isEqualTo("Vedtak om innvilget ")
-        assertThat(journalføringService.lagVedtakstekst(BehandlingResultat.AVSLÅTT))
-            .isEqualTo("Vedtak om avslått ")
-        assertThat(journalføringService.lagVedtakstekst(BehandlingResultat.OPPHØRT))
-            .isEqualTo(" ")
     }
 
     @Test

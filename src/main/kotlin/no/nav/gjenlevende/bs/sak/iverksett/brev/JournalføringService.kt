@@ -57,7 +57,6 @@ class JournalføringService(
                 tittel = lagVedtakstekst(behandling.resultat) + lagStønadtypeTekst(fagsak.stønadstype),
             )
         val metadata = dokument.dokumenttype.tilMetadata()
-        val saksbehandlerEnhet = "4489" // TODO må hente fra db, etter å ha henta fra register
         val mottakere = brevmottakerService.hentBrevmottakere(behandlingId)
         val dokarkivBruker = DokarkivBruker(BrukerIdType.FNR, personident)
         val sak =
@@ -75,7 +74,7 @@ class JournalføringService(
                     tema = metadata.tema,
                     tittel = dokument.tittel ?: metadata.tittel,
                     kanal = metadata.kanal,
-                    journalfoerendeEnhet = saksbehandlerEnhet,
+                    journalfoerendeEnhet = vedtaksbrev.beslutterEnhet,
                     eksternReferanseId = "$behandlingId-vedtaksbrev-mottaker$indeks", // TODO må være unik for hver mottaker, legg til indeks
                     sak = sak,
                     dokumenter = dokumenter,

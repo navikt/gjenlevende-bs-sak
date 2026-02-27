@@ -40,11 +40,6 @@ import java.util.UUID
     beskrivelse = "Journalfører vedtaksbrev.",
 )
 class JournalførVedtaksbrevTask(
-    private val behandlingService: BehandlingService,
-    private val fagsakRepository: FagsakRepository,
-    private val fagsakPersonService: FagsakPersonService,
-    private val brevService: BrevService,
-    private val brevmottakerService: BrevmottakerService,
     private val dokarkivClient: DokarkivClient,
     private val objectMapper: ObjectMapper,
     private val journalføringService: JournalføringService,

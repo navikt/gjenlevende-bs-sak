@@ -38,5 +38,5 @@ object SikkerhetContext {
         error("Finner ikke brukertoken i security context")
     }
 
-    fun erMaskinTilMaskinToken(): Boolean = hentSaksbehandler() == SYSTEM_FORKORTELSE
+    fun erMaskinTilMaskinToken(): Boolean = hentSaksbehandlerEllerSystembruker() == SYSTEM_FORKORTELSE
 }

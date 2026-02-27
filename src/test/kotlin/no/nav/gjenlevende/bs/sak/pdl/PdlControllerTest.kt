@@ -37,13 +37,11 @@ open class PdlControllerTest {
     @Test
     fun `hentNavn returnerer 200 OK med navn når person finnes`() {
         val fagsakPersonId = UUID.randomUUID()
-
         val hentNavnRequest = HentNavnRequest(fagsakPersonId)
 
         every {
-            pdlService.hentNavn(fagsakPersonId)
+            pdlService.hentNavnMedFagsakPersonId(fagsakPersonId)
         } returns Navn("fornavn", null, "etternavn")
-
         val responseJson =
             mockMvc
                 .post("/api/pdl/navn") {
@@ -54,13 +52,12 @@ open class PdlControllerTest {
                     content { contentType(MediaType.APPLICATION_JSON) }
                 }.andReturn()
                 .response.contentAsString
-
         val response = objectMapper.readValue<Navn>(responseJson)
         Assertions.assertThat(response.fornavn).isEqualTo("fornavn")
         Assertions.assertThat(response.etternavn).isEqualTo("etternavn")
 
         verify(exactly = 1) {
-            pdlService.hentNavn(fagsakPersonId)
+            pdlService.hentNavnMedFagsakPersonId(fagsakPersonId)
         }
     }
 
@@ -75,7 +72,7 @@ open class PdlControllerTest {
             }
 
         verify(exactly = 0) {
-            pdlService.hentNavn(any())
+            pdlService.hentNavnMedFagsakPersonId(any())
         }
     }
 }

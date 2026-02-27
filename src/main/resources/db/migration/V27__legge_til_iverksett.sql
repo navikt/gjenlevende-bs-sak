@@ -2,7 +2,6 @@ CREATE TABLE iverksett
 (
     behandling_id          UUID PRIMARY KEY,
     eksternReferanse_id    UUID,
-    beslutterEnhet         TEXT,
     journalpostResultat_id TEXT,
     opprettet_av           VARCHAR      NOT NULL DEFAULT 'VL',
     opprettet_tid          TIMESTAMP(3) NOT NULL DEFAULT LOCALTIMESTAMP,

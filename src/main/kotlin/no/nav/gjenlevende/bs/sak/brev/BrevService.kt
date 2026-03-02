@@ -87,12 +87,13 @@ class BrevService(
         val beslutter = SikkerhetContext.hentSaksbehandlerEllerSystembruker()
         val beslutterInfo = entraProxyClient.hentSaksbehandlerInfo(beslutter)
         val beslutterNavn = "${beslutterInfo.fornavn} ${beslutterInfo.etternavn}"
-        val beslutterEnhet = beslutterInfo.enhet.navn
+        val beslutterEnhetnavn = beslutterInfo.enhet.navn
+        val beslutterEnhetnummer = beslutterInfo.enhet.enhetnummer
         val eksisterendeBrev =
             brevRepository.findByIdOrNull(behandlingId)
                 ?: error("Fant ikke brev for behandlingId=$behandlingId ved oppdatering av beslutter")
-        val oppdatert = eksisterendeBrev.copy(beslutter = beslutterNavn, beslutterEnhet = beslutterEnhet)
-        brevRepository.update(oppdatert)
+        val oppdatertBrev = eksisterendeBrev.copy(beslutter = beslutterNavn, beslutterEnhetnavn = beslutterEnhetnavn, beslutterEnhetnummer = beslutterEnhetnummer)
+        brevRepository.update(oppdatertBrev)
         endringshistorikkService.registrerEndring(
             behandlingId = behandlingId,
             endringType = EndringType.BESLUTTER_GODKJENT,

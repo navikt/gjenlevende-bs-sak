@@ -75,7 +75,7 @@ class JournalføringServiceTest {
         assertThat(result[0].avsenderMottaker?.id).isEqualTo(personident)
         assertThat(result[0].avsenderMottaker?.idType).isEqualTo(AvsenderMottakerIdType.FNR)
         assertThat(result[0].avsenderMottaker?.navn).isEqualTo("Ola Nordmann")
-        assertThat(result[0].eksternReferanseId).isEqualTo("$behandlingId-vedtaksbrev-mottaker0")
+        assertThat(result[0].eksternReferanseId).isEqualTo("$behandlingId-vedtaksbrev-mottaker-0")
     }
 
     @Test
@@ -104,8 +104,8 @@ class JournalføringServiceTest {
         val result = journalføringService.lagJournalføringRequester(behandlingId)
 
         assertThat(result).hasSize(2)
-        assertThat(result[0].eksternReferanseId).isEqualTo("$behandlingId-vedtaksbrev-mottaker0")
-        assertThat(result[1].eksternReferanseId).isEqualTo("$behandlingId-vedtaksbrev-mottaker1")
+        assertThat(result[0].eksternReferanseId).isEqualTo("$behandlingId-vedtaksbrev-mottaker-0")
+        assertThat(result[1].eksternReferanseId).isEqualTo("$behandlingId-vedtaksbrev-mottaker-1")
         assertThat(result[0].avsenderMottaker?.navn).isEqualTo("Ola Nordmann")
         assertThat(result[1].avsenderMottaker?.navn).isEqualTo("Kari Marie Hansen")
     }
@@ -275,7 +275,8 @@ class JournalføringServiceTest {
             behandlingId = behandlingId,
             brevJson = lagBrevRequest(),
             brevPdf = "PDF-innhold".toByteArray(),
-            beslutterEnhet = "4820",
+            beslutterEnhetnavn = "IT avdelingen",
+            beslutterEnhetnummer = "1234",
         )
 
     private fun lagBrevRequest() =

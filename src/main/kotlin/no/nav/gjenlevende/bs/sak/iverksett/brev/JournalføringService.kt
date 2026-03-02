@@ -54,7 +54,7 @@ class JournalføringService(
                 dokument = brevPdf,
                 filtype = Filtype.PDFA,
                 dokumenttype = vedtaksbrevForStønadType(fagsak.stønadstype),
-                tittel = lagVedtakstekst(behandling.resultat) + lagStønadtypeTekst(fagsak.stønadstype),
+                tittel = "Vedtak om " + lagStønadtypeTekst(fagsak.stønadstype),
             )
         val metadata = dokument.dokumenttype.tilMetadata()
         val mottakere = brevmottakerService.hentBrevmottakere(behandlingId)
@@ -73,9 +73,8 @@ class JournalføringService(
                     bruker = dokarkivBruker,
                     tema = metadata.tema,
                     tittel = dokument.tittel ?: metadata.tittel,
-                    kanal = metadata.kanal,
                     journalfoerendeEnhet = vedtaksbrev.beslutterEnhetnummer,
-                    eksternReferanseId = "$behandlingId-vedtaksbrev-mottaker$indeks", // TODO må være unik for hver mottaker, legg til indeks
+                    eksternReferanseId = "$behandlingId-vedtaksbrev-mottaker-$indeks",
                     sak = sak,
                     dokumenter = dokumenter,
                 ),
@@ -88,21 +87,6 @@ class JournalføringService(
         when (stønadType) {
             StønadType.BARNETILSYN -> Dokumenttype.VEDTAKSBREV_BARNETILSYN
             StønadType.SKOLEPENGER -> Dokumenttype.VEDTAKSBREV_SKOLEPENGER
-        }
-
-    fun lagVedtakstekst(behandlingResultat: BehandlingResultat): String =
-        when (behandlingResultat) {
-            BehandlingResultat.AVSLÅTT -> {
-                "Vedtak om avslått "
-            }
-
-            BehandlingResultat.INNVILGET -> {
-                "Vedtak om innvilget "
-            }
-
-            else -> {
-                " "
-            }
         }
 
     fun hentVariantformat(dokument: Dokument): String =

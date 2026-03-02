@@ -21,4 +21,21 @@ class PdlController(
 
         return ResponseEntity.ok(navn)
     }
+
+    @PostMapping("/barn")
+    fun hentBarn(
+        @RequestBody request: HentBarnRequest,
+    ): ResponseEntity<List<HentBarnResponse>> {
+        val barnPersonIdenter = pdlService.hentBarnPersonidenter(request.personIdent)
+
+        val barn =
+            barnPersonIdenter.map { personIdent ->
+                val navn =
+                    pdlService.hentNavnMedPersonident(personIdent)
+                        ?: throw PdlException("Kunne ikke hente navn for barn med ident $personIdent")
+                HentBarnResponse(personIdent = personIdent, navn = navn)
+            }
+
+        return ResponseEntity.ok(barn)
+    }
 }

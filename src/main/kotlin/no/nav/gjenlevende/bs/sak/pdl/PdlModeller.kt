@@ -52,6 +52,15 @@ data class HentNavnRequest(
     val fagsakPersonId: UUID,
 )
 
+data class HentBarnRequest(
+    val personIdent: String,
+)
+
+data class HentBarnResponse(
+    val personIdent: String,
+    val navn: Navn,
+)
+
 data class FamilieRelasjonerResponse(
     val hentPerson: FamilieRelasjoner?,
 )

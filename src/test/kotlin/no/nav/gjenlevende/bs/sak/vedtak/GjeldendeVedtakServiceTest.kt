@@ -369,6 +369,52 @@ class GjeldendeVedtakServiceTest : SpringContextTest() {
         }
 
         @Test
+        fun `skal slå sammen perioder med samme barn uavhengig av rekkefølge`() {
+            val behandling1 =
+                opprettFerdigstiltBehandling(
+                    BehandlingResultat.INNVILGET,
+                    endretTid = LocalDateTime.of(2025, 1, 1, 10, 0),
+                )
+            opprettVedtak(
+                behandling1,
+                ResultatType.INNVILGET,
+                listOf(
+                    lagBarnetilsynperiode(
+                        fra = YearMonth.of(2025, 1),
+                        til = YearMonth.of(2025, 3),
+                        utgifter = BigDecimal(1000),
+                        barn = listOf(barnId1, barnId2),
+                    ),
+                ),
+            )
+
+            val behandling2 =
+                opprettFerdigstiltBehandling(
+                    BehandlingResultat.INNVILGET,
+                    endretTid = LocalDateTime.of(2025, 2, 1, 10, 0),
+                )
+            opprettVedtak(
+                behandling2,
+                ResultatType.INNVILGET,
+                listOf(
+                    lagBarnetilsynperiode(
+                        fra = YearMonth.of(2025, 4),
+                        til = YearMonth.of(2025, 6),
+                        utgifter = BigDecimal(1000),
+                        barn = listOf(barnId2, barnId1),
+                    ),
+                ),
+            )
+
+            val result = gjeldendeVedtakService.hentGjeldendeVedtakFraDato(behandling2.id, YearMonth.of(2025, 1))
+
+            assertThat(result.barnetilsynperioder).hasSize(1)
+            assertThat(result.barnetilsynperioder[0].datoFra).isEqualTo(YearMonth.of(2025, 1))
+            assertThat(result.barnetilsynperioder[0].datoTil).isEqualTo(YearMonth.of(2025, 6))
+            assertThat(result.barnetilsynperioder[0].barn).containsExactlyInAnyOrder(barnId1, barnId2)
+        }
+
+        @Test
         fun `skal slå sammen sammenhengende perioder med like data`() {
             val behandling1 =
                 opprettFerdigstiltBehandling(

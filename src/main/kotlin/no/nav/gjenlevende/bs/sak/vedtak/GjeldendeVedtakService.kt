@@ -109,7 +109,7 @@ class GjeldendeVedtakService(
         gjeldendeData: MånedPeriodeData,
     ): Boolean {
         val erSammenhengende = forrigeMåned.plusMonths(1) == gjeldendeMåned
-        val harLikData = forrigeData == gjeldendeData
+        val harLikData = gjeldendeData.erLik(forrigeData)
         return erSammenhengende && harLikData
     }
 
@@ -133,6 +133,12 @@ private data class MånedPeriodeData(
     val periodetype: PeriodetypeBarnetilsyn,
     val aktivitetstype: AktivitetstypeBarnetilsyn,
 ) {
+    fun erLik(annenData: MånedPeriodeData): Boolean =
+        utgifter == annenData.utgifter &&
+            barn.toSet() == annenData.barn.toSet() &&
+            periodetype == annenData.periodetype &&
+            aktivitetstype == annenData.aktivitetstype
+
     companion object {
         fun ingenStønad() =
             MånedPeriodeData(

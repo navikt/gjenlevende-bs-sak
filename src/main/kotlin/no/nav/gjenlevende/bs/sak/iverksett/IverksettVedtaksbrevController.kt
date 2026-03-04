@@ -15,7 +15,7 @@ import java.util.UUID
 @RestController
 @Tilgangskontroll
 @RequestMapping(path = ["/api/iverksett"])
-@Tag(name = "iverksettVedtaksbrevController", description = "Endepunkt for utvikling") // TODO slett
+@Tag(name = "iverksettVedtaksbrevController", description = "Endepunkt for utvikling")
 class IverksettVedtaksbrevController(
     private val taskService: TaskService,
     private val iverksettVedtaksbrevService: IverksettVedtaksbrevService,

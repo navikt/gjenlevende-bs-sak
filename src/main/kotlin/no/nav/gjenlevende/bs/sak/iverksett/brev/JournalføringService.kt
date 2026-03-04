@@ -1,6 +1,5 @@
 package no.nav.gjenlevende.bs.sak.iverksett.brev
 
-import no.nav.gjenlevende.bs.sak.behandling.BehandlingResultat
 import no.nav.gjenlevende.bs.sak.behandling.BehandlingService
 import no.nav.gjenlevende.bs.sak.brev.BrevService
 import no.nav.gjenlevende.bs.sak.brev.BrevmottakerService
@@ -116,7 +115,7 @@ class JournalføringService(
                 },
             navn =
                 when (mottakerType) {
-                    MottakerType.PERSON -> pdlService.hentNavnMedPersonident(personident)?.tilFulltNavn() ?: ""
+                    MottakerType.PERSON -> pdlService.hentPersonMedPersonIdent(personident)?.navn?.tilFulltNavn() ?: ""
                     MottakerType.ORGANISASJON -> navnHosOrganisasjon ?: ""
                 },
         )

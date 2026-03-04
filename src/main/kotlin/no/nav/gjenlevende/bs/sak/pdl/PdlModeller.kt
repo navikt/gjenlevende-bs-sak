@@ -41,7 +41,7 @@ data class HentPersonData(
 
 data class HentPerson(
     val navn: List<Navn>,
-    val foedselsdato: List<LocalDate>?,
+    val foedselsdato: List<LocalDate>,
 )
 
 data class Person(

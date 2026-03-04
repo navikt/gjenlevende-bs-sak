@@ -1,6 +1,5 @@
 package no.nav.gjenlevende.bs.sak.pdl
 
-import no.nav.gjenlevende.bs.sak.barn.Barn
 import no.nav.gjenlevende.bs.sak.fagsak.FagsakPersonService
 import no.nav.gjenlevende.bs.sak.felles.sikkerhet.SikkerhetContext
 import org.apache.commons.lang3.StringUtils
@@ -15,50 +14,17 @@ class PdlService(
 ) {
     private val logger = LoggerFactory.getLogger(PdlService::class.java)
 
-    fun hentNavnMedFagsakPersonId(fagsakPersonId: UUID): Navn? {
+    fun hentPersonMedFagsakPersonId(fagsakPersonId: UUID): Person? {
         val ident = fagsakPersonService.hentAktivIdent(fagsakPersonId)
-        return hentNavnFraPdl(ident)
+        return hentPersonFraPdl(ident)
     }
 
-    fun hentNavnMedPersonident(personident: String?): Navn? {
+    fun hentPersonMedPersonIdent(personident: String?): Person? {
         if (personident == null) throw PdlException("Personident er null, kan ikke hente navn fra PDL")
-        return hentNavnFraPdl(personident)
+        return hentPersonFraPdl(personident)
     }
 
-    fun hentNavnOgFødselsdatoMedPersonident(personident: String?): Person? {
-        if (personident == null) throw PdlException("Personident er null, kan ikke hente navn fra PDL")
-        return hentNavnOgFødselDatoFraPdl(personident)
-    }
-
-    private fun hentNavnFraPdl(personident: String): Navn? {
-        val request =
-            PdlRequest(
-                query = graphqlQuery("/pdl/hent_navn.graphql"),
-                variables = mapOf("ident" to personident),
-            )
-        val data: HentPersonData =
-            if (SikkerhetContext.erMaskinTilMaskinToken()) {
-                pdlClient.hentPersonDataMaskinToken(
-                    request = request,
-                ) ?: throw PdlException("Fant ingen person i PDL for ident")
-            } else {
-                pdlClient.hentPersonDataOBOToken(
-                    request = request,
-                ) ?: throw PdlException("Fant ingen person i PDL for ident")
-            }
-        val hentPerson =
-            data.hentPerson
-                ?: throw PdlException("Fant ingen person i PDL")
-        val navnListe = hentPerson.navn
-        if (navnListe.isEmpty()) {
-            logger.warn("Personen har ingen navn registrert i PDL")
-            return null
-        }
-
-        return navnListe.first()
-    }
-
-    private fun hentNavnOgFødselDatoFraPdl(personident: String): Person? {
+    private fun hentPersonFraPdl(personident: String): Person? {
         val request =
             PdlRequest(
                 query = graphqlQuery("/pdl/hent_navn_og_foedselsdato.graphql"),

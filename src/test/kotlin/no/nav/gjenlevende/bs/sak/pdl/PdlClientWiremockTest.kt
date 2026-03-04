@@ -15,6 +15,7 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import tools.jackson.module.kotlin.jacksonObjectMapper
+import java.time.LocalDate
 
 class PdlClientWiremockTest {
     companion object {
@@ -100,7 +101,7 @@ class PdlClientWiremockTest {
                                             etternavn = "Etternavn",
                                         ),
                                     ),
-                                foedselsdato = null,
+                                foedselsdato = listOf(LocalDate.now()),
                             ),
                     ),
                 errors = null,

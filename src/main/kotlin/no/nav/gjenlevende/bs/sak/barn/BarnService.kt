@@ -38,7 +38,7 @@ class BarnService(
         val pdlBarn =
             barnPersonIdenter.map { personIdent ->
                 val person =
-                    pdlService.hentNavnOgFødselsdatoMedPersonident(personIdent)
+                    pdlService.hentPersonMedPersonIdent(personIdent)
                         ?: throw PdlException("Kunne ikke hente navn for barn med ident $personIdent")
                 HentBarnResponse(personIdent = personIdent, navn = listOfNotNull(person.navn.fornavn, person.navn.mellomnavn, person.navn.etternavn).joinToString(" "), fødselsdato = person.foedselsdato, hentetTidspunkt = LocalDateTime.now())
             }

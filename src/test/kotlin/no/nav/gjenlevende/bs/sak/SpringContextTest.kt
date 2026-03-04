@@ -3,6 +3,7 @@ package no.nav.gjenlevende.bs.sak
 import com.github.tomakehurst.wiremock.WireMockServer
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.domene.TaskLogg
+import no.nav.gjenlevende.bs.sak.barn.BehandlingBarn
 import no.nav.gjenlevende.bs.sak.behandling.Behandling
 import no.nav.gjenlevende.bs.sak.behandling.årsak.ÅrsakBehandling
 import no.nav.gjenlevende.bs.sak.brev.Brev
@@ -34,6 +35,7 @@ open class SpringContextTest {
     }
 
     private fun resetDatabase() {
+        jdbcAggregateOperations.deleteAll(BehandlingBarn::class.java)
         jdbcAggregateOperations.deleteAll(Vedtak::class.java)
         jdbcAggregateOperations.deleteAll(ÅrsakBehandling::class.java)
         jdbcAggregateOperations.deleteAll(Brev::class.java)

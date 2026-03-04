@@ -31,7 +31,7 @@ class PdlServiceTest {
                                 Navn("Fornavn", null, "Etternavn"),
                                 Navn("Fornavn2", null, "Etternavn2"),
                             ),
-                        foedselsdato = listOf(LocalDate.now()),
+                        foedselsdato = listOf(Foedselsdato(LocalDate.of(1990, 1, 15))),
                     ),
             )
         val fagsakPersonId = UUID.randomUUID()

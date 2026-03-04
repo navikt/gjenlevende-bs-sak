@@ -101,7 +101,7 @@ class PdlClientWiremockTest {
                                             etternavn = "Etternavn",
                                         ),
                                     ),
-                                foedselsdato = listOf(LocalDate.now()),
+                                foedselsdato = listOf(Foedselsdato(LocalDate.of(1990, 1, 15))),
                             ),
                     ),
                 errors = null,

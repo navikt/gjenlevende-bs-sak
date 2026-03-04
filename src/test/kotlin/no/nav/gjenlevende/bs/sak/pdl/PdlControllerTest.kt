@@ -42,7 +42,7 @@ open class PdlControllerTest {
 
         every {
             pdlService.hentPersonMedFagsakPersonId(fagsakPersonId)
-        } returns Person(Navn("fornavn", null, "etternavn"), LocalDate.now())
+        } returns Person(Navn("fornavn", null, "etternavn"), LocalDate.of(1990, 1, 15))
         val responseJson =
             mockMvc
                 .post("/api/pdl/navn") {

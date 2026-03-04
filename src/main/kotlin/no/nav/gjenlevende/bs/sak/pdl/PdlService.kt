@@ -54,7 +54,7 @@ class PdlService(
             return null
         }
 
-        return Person(navnListe.first(), fødselDato.first())
+        return Person(navnListe.first(), fødselDato.first().foedselsdato)
     }
 
     fun hentBarnPersonidenter(personident: String): List<String> =

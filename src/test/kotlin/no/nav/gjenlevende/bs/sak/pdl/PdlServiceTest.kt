@@ -30,6 +30,7 @@ class PdlServiceTest {
                                 Navn("Fornavn", null, "Etternavn"),
                                 Navn("Fornavn2", null, "Etternavn2"),
                             ),
+                        foedselsdato = null,
                     ),
             )
         val fagsakPersonId = UUID.randomUUID()

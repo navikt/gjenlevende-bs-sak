@@ -1,5 +1,6 @@
 package no.nav.gjenlevende.bs.sak.pdl
 
+import java.time.LocalDate
 import java.util.UUID
 
 data class PdlRequest(
@@ -40,6 +41,12 @@ data class HentPersonData(
 
 data class HentPerson(
     val navn: List<Navn>,
+    val foedselsdato: List<LocalDate>?,
+)
+
+data class Person(
+    val navn: Navn,
+    val foedselsdato: LocalDate,
 )
 
 data class Navn(
@@ -50,15 +57,6 @@ data class Navn(
 
 data class HentNavnRequest(
     val fagsakPersonId: UUID,
-)
-
-data class HentBarnRequest(
-    val personIdent: String,
-)
-
-data class HentBarnResponse(
-    val personIdent: String,
-    val navn: Navn,
 )
 
 data class FamilieRelasjonerResponse(

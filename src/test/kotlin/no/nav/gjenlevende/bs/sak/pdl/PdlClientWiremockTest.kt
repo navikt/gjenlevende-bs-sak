@@ -100,6 +100,7 @@ class PdlClientWiremockTest {
                                             etternavn = "Etternavn",
                                         ),
                                     ),
+                                foedselsdato = null,
                             ),
                     ),
                 errors = null,

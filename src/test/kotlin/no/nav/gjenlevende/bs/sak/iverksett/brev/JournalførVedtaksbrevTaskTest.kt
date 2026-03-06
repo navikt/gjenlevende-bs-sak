@@ -10,8 +10,10 @@ import no.nav.gjenlevende.bs.sak.brev.BrevmottakerService
 import no.nav.gjenlevende.bs.sak.fagsak.FagsakPersonService
 import no.nav.gjenlevende.bs.sak.fagsak.FagsakRepository
 import no.nav.gjenlevende.bs.sak.iverksett.DokarkivClient
+import no.nav.gjenlevende.bs.sak.iverksett.domene.ArkiverDokumentResponse
 import no.nav.gjenlevende.bs.sak.iverksett.domene.AvsenderMottaker
 import no.nav.gjenlevende.bs.sak.iverksett.domene.AvsenderMottakerIdType
+import no.nav.gjenlevende.bs.sak.iverksett.domene.DokumentInfoResponse
 import no.nav.gjenlevende.bs.sak.iverksett.domene.JournalpostRequest
 import no.nav.gjenlevende.bs.sak.iverksett.domene.JournalpostType
 import org.assertj.core.api.Assertions.assertThat
@@ -24,11 +26,13 @@ class JournalførVedtaksbrevTaskTest {
     private val dokarkivClient = mockk<DokarkivClient>()
     private val objectMapper: ObjectMapper = jacksonObjectMapper()
     private val journalføringService = mockk<JournalføringService>()
+    private val journalpostForBehandlingService = mockk<JournalpostForBehandlingService>()
     private val journalførVedtaksbrevTask =
         JournalførVedtaksbrevTask(
             dokarkivClient = dokarkivClient,
             objectMapper = objectMapper,
             journalføringService = journalføringService,
+            journalpostForBehandlingService = journalpostForBehandlingService,
         )
 
     @Test
@@ -40,12 +44,15 @@ class JournalførVedtaksbrevTaskTest {
         val journalpostRequest = lagJournalpostRequest(behandlingId, 0)
 
         every { journalføringService.lagJournalføringRequester(behandlingId) } returns listOf(journalpostRequest)
-        every { dokarkivClient.arkiverDokument(journalpostRequest) } returns """{"journalpostId": "123456"}"""
+        every { dokarkivClient.arkiverDokument(journalpostRequest) } returns lagArkiverDokumentResponse("123456")
+        every { journalpostForBehandlingService.lagreJournalpostId(behandlingId, "123456") } returns
+            JournalpostForBehandling(behandlingId = behandlingId, journalpostId = "123456")
 
         journalførVedtaksbrevTask.doTask(task)
 
         verify(exactly = 1) { journalføringService.lagJournalføringRequester(behandlingId) }
         verify(exactly = 1) { dokarkivClient.arkiverDokument(journalpostRequest) }
+        verify(exactly = 1) { journalpostForBehandlingService.lagreJournalpostId(behandlingId, "123456") }
     }
 
     @Test
@@ -58,14 +65,20 @@ class JournalførVedtaksbrevTaskTest {
         val request2 = lagJournalpostRequest(behandlingId, 1)
 
         every { journalføringService.lagJournalføringRequester(behandlingId) } returns listOf(request1, request2)
-        every { dokarkivClient.arkiverDokument(request1) } returns """{"journalpostId": "123456"}"""
-        every { dokarkivClient.arkiverDokument(request2) } returns """{"journalpostId": "123457"}"""
+        every { dokarkivClient.arkiverDokument(request1) } returns lagArkiverDokumentResponse("123456")
+        every { dokarkivClient.arkiverDokument(request2) } returns lagArkiverDokumentResponse("123457")
+        every { journalpostForBehandlingService.lagreJournalpostId(behandlingId, "123456") } returns
+            JournalpostForBehandling(behandlingId = behandlingId, journalpostId = "123456")
+        every { journalpostForBehandlingService.lagreJournalpostId(behandlingId, "123457") } returns
+            JournalpostForBehandling(behandlingId = behandlingId, journalpostId = "123457")
 
         journalførVedtaksbrevTask.doTask(task)
 
         verify(exactly = 1) { journalføringService.lagJournalføringRequester(behandlingId) }
         verify(exactly = 1) { dokarkivClient.arkiverDokument(request1) }
         verify(exactly = 1) { dokarkivClient.arkiverDokument(request2) }
+        verify(exactly = 1) { journalpostForBehandlingService.lagreJournalpostId(behandlingId, "123456") }
+        verify(exactly = 1) { journalpostForBehandlingService.lagreJournalpostId(behandlingId, "123457") }
     }
 
     @Test
@@ -97,4 +110,11 @@ class JournalførVedtaksbrevTaskTest {
         tittel = "Vedtak om innvilget stønad til barnetilsyn",
         eksternReferanseId = "$behandlingId-vedtaksbrev-mottaker$mottakerIndeks",
     )
+
+    private fun lagArkiverDokumentResponse(journalpostId: String) =
+        ArkiverDokumentResponse(
+            dokumenter = listOf(DokumentInfoResponse(dokumentInfoId = "123")),
+            journalpostId = journalpostId,
+            journalpostferdigstilt = true,
+        )
 }

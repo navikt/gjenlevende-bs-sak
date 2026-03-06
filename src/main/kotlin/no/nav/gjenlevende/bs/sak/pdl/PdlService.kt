@@ -48,13 +48,13 @@ class PdlService(
             logger.warn("Personen har ingen navn registrert i PDL")
             return null
         }
-        val fødselDato = hentPerson.foedselsdato
-        if (fødselDato.isNullOrEmpty()) {
+        val fødselsdato = hentPerson.foedselsdato
+        if (fødselsdato.isEmpty()) {
             logger.warn("Personen har ingen fødselsdato registrert i PDL")
             return null
         }
 
-        return Person(navnListe.first(), fødselDato.first().foedselsdato)
+        return Person(navnListe.first(), fødselsdato.first().foedselsdato)
     }
 
     fun hentBarnPersonidenter(personident: String): List<String> =

@@ -4,6 +4,7 @@ import no.nav.gjenlevende.bs.sak.behandling.BehandlingService
 import no.nav.gjenlevende.bs.sak.behandling.BehandlingStatus
 import no.nav.gjenlevende.bs.sak.endringshistorikk.EndringType
 import no.nav.gjenlevende.bs.sak.endringshistorikk.EndringshistorikkService
+import no.nav.gjenlevende.bs.sak.oppgave.AnsvarligSaksbehandlerService
 import org.springframework.stereotype.Service
 import java.util.UUID
 
@@ -12,6 +13,7 @@ class ÅrsakBehandlingService(
     private val årsakBehandlingRepository: ÅrsakBehandlingRepository,
     private val behandlingService: BehandlingService,
     private val endringshistorikkService: EndringshistorikkService,
+    private val ansvarligSaksbehandlerService: AnsvarligSaksbehandlerService,
 ) {
     fun hentÅrsakBehandling(behandlingId: UUID): ÅrsakBehandling? = årsakBehandlingRepository.findById(behandlingId).orElse(null)
 
@@ -20,6 +22,7 @@ class ÅrsakBehandlingService(
         årsakBehandlingRequest: ÅrsakBehandlingRequest,
     ): ÅrsakBehandling {
         behandlingService.validerBehandlingErRedigerbar(behandlingId)
+        ansvarligSaksbehandlerService.validerErAnsvarligSaksbehandler(behandlingId)
         val eksisterendeÅrsak = hentÅrsakBehandling(behandlingId)
 
         if (eksisterendeÅrsak == null) {

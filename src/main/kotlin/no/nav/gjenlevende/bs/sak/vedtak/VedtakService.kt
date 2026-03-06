@@ -4,6 +4,7 @@ import no.nav.gjenlevende.bs.sak.behandling.BehandlingService
 import no.nav.gjenlevende.bs.sak.endringshistorikk.EndringType
 import no.nav.gjenlevende.bs.sak.endringshistorikk.EndringshistorikkService
 import no.nav.gjenlevende.bs.sak.infrastruktur.exception.Feil
+import no.nav.gjenlevende.bs.sak.oppgave.AnsvarligSaksbehandlerService
 import no.nav.gjenlevende.bs.sak.vedtak.BeregningUtils.beregnBarnetilsynperiode
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
@@ -16,6 +17,7 @@ class VedtakService(
     private val vedtakRepository: VedtakRepository,
     private val endringshistorikkService: EndringshistorikkService,
     private val behandlingService: BehandlingService,
+    private val ansvarligSaksbehandlerService: AnsvarligSaksbehandlerService,
 ) {
     fun hentVedtak(behandlingId: UUID): Vedtak? = vedtakRepository.findByBehandlingId(behandlingId)
 
@@ -24,6 +26,7 @@ class VedtakService(
         behandlingId: UUID,
     ): UUID {
         behandlingService.validerBehandlingErRedigerbar(behandlingId)
+        ansvarligSaksbehandlerService.validerErAnsvarligSaksbehandler(behandlingId)
         val vedtak = vedtakRepository.insert(vedtakDto.tilVedtak(behandlingId))
 
         endringshistorikkService.registrerEndring(

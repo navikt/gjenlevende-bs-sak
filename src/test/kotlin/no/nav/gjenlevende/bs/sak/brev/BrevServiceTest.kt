@@ -11,6 +11,8 @@ import no.nav.gjenlevende.bs.sak.brev.domain.InformasjonOmBrukerDto
 import no.nav.gjenlevende.bs.sak.brev.domain.TekstbolkDto
 import no.nav.gjenlevende.bs.sak.endringshistorikk.EndringshistorikkService
 import no.nav.gjenlevende.bs.sak.infrastruktur.exception.Feil
+import no.nav.gjenlevende.bs.sak.infrastruktur.exception.ManglerTilgang
+import no.nav.gjenlevende.bs.sak.oppgave.AnsvarligSaksbehandlerService
 import no.nav.gjenlevende.bs.sak.saksbehandler.EntraProxyClient
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
@@ -25,7 +27,8 @@ class BrevServiceTest {
     private val objectMapper = mockk<ObjectMapper>()
     private val entraProxyClient = mockk<EntraProxyClient>()
     private val endringshistorikkService = mockk<EndringshistorikkService>(relaxed = true)
-    private val brevService = BrevService(brevRepository, behandlingService, objectMapper, entraProxyClient, endringshistorikkService)
+    private val ansvarligSaksbehandlerService = mockk<AnsvarligSaksbehandlerService>(relaxed = true)
+    private val brevService = BrevService(brevRepository, behandlingService, objectMapper, entraProxyClient, endringshistorikkService, ansvarligSaksbehandlerService)
 
     @Test
     fun `mellomlagreBrev insert når brev ikke finnes`() {
@@ -100,6 +103,19 @@ class BrevServiceTest {
         assertThatThrownBy { brevService.mellomlagreBrev(behandlingId, brevRequest) }
             .isInstanceOf(Feil::class.java)
             .hasMessageContaining("Behandlingen er ikke redigerbar")
+    }
+
+    @Test
+    fun `mellomlagreBrev kaster ManglerTilgang når bruker ikke er ansvarlig saksbehandler`() {
+        val behandlingId = UUID.randomUUID()
+        val brevRequest = gyldigBrevRequest()
+
+        every { ansvarligSaksbehandlerService.validerErAnsvarligSaksbehandler(behandlingId) } throws
+            ManglerTilgang("Innlogget saksbehandler er ikke ansvarlig saksbehandler for behandling $behandlingId")
+
+        assertThatThrownBy { brevService.mellomlagreBrev(behandlingId, brevRequest) }
+            .isInstanceOf(ManglerTilgang::class.java)
+            .hasMessageContaining("ikke ansvarlig saksbehandler")
     }
 
     @Test

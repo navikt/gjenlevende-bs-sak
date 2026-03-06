@@ -12,9 +12,11 @@ import no.nav.gjenlevende.bs.sak.behandling.BehandlingResultat
 import no.nav.gjenlevende.bs.sak.behandling.BehandlingStatus
 import no.nav.gjenlevende.bs.sak.felles.sikkerhet.SikkerhetContext
 import no.nav.gjenlevende.bs.sak.felles.sporbar.Sporbar
+import no.nav.gjenlevende.bs.sak.infrastruktur.exception.ManglerTilgang
 import no.nav.gjenlevende.bs.sak.oppgave.dto.SaksbehandlerRolle
 import no.nav.gjenlevende.bs.sak.saksbehandler.EntraProxyClient
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -140,6 +142,52 @@ class AnsvarligSaksbehandlerServiceTest {
         val resultat = service.hentAnsvarligSaksbehandler(behandlingId)
 
         assertThat(resultat.rolle).isEqualTo(SaksbehandlerRolle.ANNEN_SAKSBEHANDLER)
+    }
+
+    @Test
+    fun `validerErAnsvarligSaksbehandler kaster ikke feil når innlogget bruker er ansvarlig`() {
+        val behandlingId = UUID.randomUUID()
+        val gsakOppgaveId = 12345L
+
+        every {
+            oppgaveService.hentOppgaveForBehandling(behandlingId)
+        } returns lagOppgaveEntity(behandlingId = behandlingId, gsakOppgaveId = gsakOppgaveId)
+
+        every { oppgaveClient.hentOppgaveM2M(gsakOppgaveId) } returns lagGosysOppgave(tilordnetRessurs = INNLOGGET_IDENT)
+
+        service.validerErAnsvarligSaksbehandler(behandlingId)
+    }
+
+    @Test
+    fun `validerErAnsvarligSaksbehandler kaster ManglerTilgang når bruker ikke er ansvarlig`() {
+        val behandlingId = UUID.randomUUID()
+        val gsakOppgaveId = 12345L
+
+        every {
+            oppgaveService.hentOppgaveForBehandling(behandlingId)
+        } returns lagOppgaveEntity(behandlingId = behandlingId, gsakOppgaveId = gsakOppgaveId)
+
+        every { oppgaveClient.hentOppgaveM2M(gsakOppgaveId) } returns lagGosysOppgave(tilordnetRessurs = "B654321")
+
+        assertThatThrownBy { service.validerErAnsvarligSaksbehandler(behandlingId) }
+            .isInstanceOf(ManglerTilgang::class.java)
+            .hasMessageContaining("ikke ansvarlig saksbehandler")
+    }
+
+    @Test
+    fun `validerErAnsvarligSaksbehandler kaster ManglerTilgang når tilordnetRessurs er null`() {
+        val behandlingId = UUID.randomUUID()
+        val gsakOppgaveId = 12345L
+
+        every {
+            oppgaveService.hentOppgaveForBehandling(behandlingId)
+        } returns lagOppgaveEntity(behandlingId = behandlingId, gsakOppgaveId = gsakOppgaveId)
+
+        every { oppgaveClient.hentOppgaveM2M(gsakOppgaveId) } returns lagGosysOppgave(tilordnetRessurs = null)
+
+        assertThatThrownBy { service.validerErAnsvarligSaksbehandler(behandlingId) }
+            .isInstanceOf(ManglerTilgang::class.java)
+            .hasMessageContaining("ikke ansvarlig saksbehandler")
     }
 
     companion object {

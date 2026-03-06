@@ -19,7 +19,7 @@ class SøkService(
         if (fagsakPerson == null) {
             return tilSøkeresultat(personident, null, null)
         }
-        val navnPdl = pdlService.hentNavnMedFagsakPersonId(fagsakPerson.id)
+        val navnPdl = pdlService.hentPersonMedFagsakPersonId(fagsakPerson.id)?.navn
 
         return tilSøkeresultat(personident, fagsakPerson, navnPdl)
     }
@@ -31,7 +31,7 @@ class SøkService(
             return tilSøkeresultat("Ukjent", null, null)
         }
         val personident = fagsakPersonService.hentAktivIdent(fagsakPersonId)
-        val navnPdl = pdlService.hentNavnMedFagsakPersonId(fagsakPersonId)
+        val navnPdl = pdlService.hentPersonMedFagsakPersonId(fagsakPersonId)?.navn
 
         return tilSøkeresultat(personident, fagsakPerson, navnPdl)
     }

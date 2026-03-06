@@ -6,6 +6,7 @@ import io.mockk.mockkObject
 import no.nav.gjenlevende.bs.sak.fagsak.FagsakPersonService
 import no.nav.gjenlevende.bs.sak.felles.sikkerhet.SikkerhetContext
 import org.assertj.core.api.Assertions.assertThat
+import java.time.LocalDate
 import java.util.UUID
 import kotlin.test.Test
 
@@ -30,10 +31,11 @@ class PdlServiceTest {
                                 Navn("Fornavn", null, "Etternavn"),
                                 Navn("Fornavn2", null, "Etternavn2"),
                             ),
+                        foedselsdato = listOf(Foedselsdato(LocalDate.of(1990, 1, 15))),
                     ),
             )
         val fagsakPersonId = UUID.randomUUID()
-        val navn = pdlService.hentNavnMedFagsakPersonId(fagsakPersonId)
+        val navn = pdlService.hentPersonMedFagsakPersonId(fagsakPersonId)?.navn
 
         assertThat(navn?.fornavn).isEqualTo("Fornavn")
         assertThat(navn?.etternavn).isEqualTo("Etternavn")

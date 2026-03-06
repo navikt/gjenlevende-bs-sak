@@ -1,22 +1,22 @@
-package no.nav.gjenlevende.bs.sak.behandling
+package no.nav.gjenlevende.bs.sak.barn
 
 import no.nav.gjenlevende.bs.sak.felles.sporbar.Sporbar
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Embedded
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.util.UUID
 
 data class BehandlingBarn(
     @Id
     val id: UUID = UUID.randomUUID(),
     val behandlingId: UUID,
-    @Column("soknad_barn_id")
-    val søknadBarnId: UUID? = null,
-    val personIdent: String? = null,
-    val navn: String? = null,
-    @Column("fodsel_termindato")
-    val fødselTermindato: LocalDate? = null,
+    val personIdent: String,
+    val navn: String,
+    @Column("fodsel_dato")
+    val fødselsdato: LocalDate,
+    val hentetTidspunkt: LocalDateTime,
     @Embedded(onEmpty = Embedded.OnEmpty.USE_EMPTY)
     val sporbar: Sporbar = Sporbar(),
 )

@@ -66,7 +66,7 @@ class JournalføringServiceTest {
         every { fagsakPersonService.hentAktivIdent(fagsakPersonId) } returns personident
         every { brevService.hentBrev(behandlingId) } returns brev
         every { brevmottakerService.hentBrevmottakere(behandlingId) } returns listOf(mottaker)
-        every { pdlService.hentPersonMedPersonIdent(personident) } returns Person(Navn("Ola", null, "Nordmann"), LocalDate.now())
+        every { pdlService.hentPersonMedPersonIdent(personident) } returns Person(Navn("Ola", null, "Nordmann"), LocalDate.of(1990, 1, 15))
         val result = journalføringService.lagJournalføringRequester(behandlingId)
 
         assertThat(result).hasSize(1)
@@ -101,8 +101,8 @@ class JournalføringServiceTest {
         every { fagsakPersonService.hentAktivIdent(fagsakPersonId) } returns personident
         every { brevService.hentBrev(behandlingId) } returns brev
         every { brevmottakerService.hentBrevmottakere(behandlingId) } returns mottakere
-        every { pdlService.hentPersonMedPersonIdent(personident) } returns Person(Navn("Ola", null, "Nordmann"), LocalDate.now())
-        every { pdlService.hentPersonMedPersonIdent(vergeIdent) } returns Person(Navn("Kari", "Marie", "Hansen"), LocalDate.now())
+        every { pdlService.hentPersonMedPersonIdent(personident) } returns Person(Navn("Ola", null, "Nordmann"), LocalDate.of(1990, 1, 15))
+        every { pdlService.hentPersonMedPersonIdent(vergeIdent) } returns Person(Navn("Kari", "Marie", "Hansen"), LocalDate.of(1990, 1, 15))
         val result = journalføringService.lagJournalføringRequester(behandlingId)
 
         assertThat(result).hasSize(2)

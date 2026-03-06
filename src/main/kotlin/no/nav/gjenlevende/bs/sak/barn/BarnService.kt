@@ -28,7 +28,7 @@ class BarnService(
                 HentBarnResponse(
                     personIdent = barn.personIdent,
                     navn = barn.navn,
-                    fødselsdato = barn.fødselDato,
+                    fødselsdato = barn.fødselsdato,
                     hentetTidspunkt = barn.hentetTidspunkt,
                 )
             }
@@ -62,7 +62,7 @@ class BarnService(
                     behandlingId = request.behandlingId,
                     personIdent = barn.personIdent,
                     navn = barn.navn,
-                    fødselDato = barn.fødselsdato,
+                    fødselsdato = barn.fødselsdato,
                     hentetTidspunkt = barn.hentetTidspunkt,
                 )
             }

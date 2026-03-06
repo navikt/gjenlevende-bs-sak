@@ -15,7 +15,7 @@ data class BehandlingBarn(
     val personIdent: String,
     val navn: String,
     @Column("fodsel_dato")
-    val fødselDato: LocalDate,
+    val fødselsdato: LocalDate,
     val hentetTidspunkt: LocalDateTime,
     @Embedded(onEmpty = Embedded.OnEmpty.USE_EMPTY)
     val sporbar: Sporbar = Sporbar(),

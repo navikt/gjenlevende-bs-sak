@@ -11,19 +11,11 @@ import org.springframework.web.bind.annotation.RestController
 class BarnController(
     private val barnService: BarnService,
 ) {
-    @PostMapping("/lagre")
-    fun lagreBarn(
-        @RequestBody request: LagreBarnRequest,
-    ): ResponseEntity<List<BehandlingBarn>> {
-        val barn = barnService.lagreBarn(request)
-        return ResponseEntity.ok(barn)
-    }
-
     @PostMapping("/hent")
     fun hentBarn(
         @RequestBody request: HentBarnRequest,
     ): ResponseEntity<List<HentBarnResponse>> {
-        val barn = barnService.hentTilknyttetBarn(request)
+        val barn = barnService.hentBarn(request)
 
         return ResponseEntity.ok(barn)
     }

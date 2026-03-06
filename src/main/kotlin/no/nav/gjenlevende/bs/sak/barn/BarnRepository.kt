@@ -10,4 +10,6 @@ interface BarnRepository :
     RepositoryInterface<BehandlingBarn, UUID>,
     InsertUpdateRepository<BehandlingBarn> {
     fun findByBehandlingId(behandlingId: UUID): List<BehandlingBarn>
+
+    fun deleteByBehandlingId(behandlingId: UUID)
 }

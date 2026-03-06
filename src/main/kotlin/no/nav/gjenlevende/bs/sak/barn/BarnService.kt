@@ -13,7 +13,7 @@ class BarnService(
     private val behandlingService: BehandlingService,
 ) {
     companion object {
-        private const val CACHE_VALIDITY_HOURS = 24L
+        private const val CACHE_VALIDITY_HOURS = 4L
     }
 
     fun hentBarn(request: HentBarnRequest): List<HentBarnResponse> {

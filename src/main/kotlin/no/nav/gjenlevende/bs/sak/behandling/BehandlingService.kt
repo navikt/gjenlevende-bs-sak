@@ -67,7 +67,7 @@ class BehandlingService(
     fun erBehandlingRedigerbar(behandlingId: UUID): Boolean {
         val behandling = behandlingRepository.findByIdOrNull(behandlingId) ?: return false
 
-        return behandling.status !in listOf(BehandlingStatus.OPPRETTET, BehandlingStatus.UTREDES)
+        return behandling.status in listOf(BehandlingStatus.OPPRETTET, BehandlingStatus.UTREDES)
     }
 
     fun hentBehandling(behandlingId: UUID): Behandling? = behandlingRepository.findByIdOrNull(behandlingId)

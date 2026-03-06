@@ -78,8 +78,6 @@ class BehandlingService(
 
     fun finnSisteIverksatteBehandling(fagsakId: UUID) = behandlingRepository.finnSisteIverksatteBehandling(fagsakId)
 
-    fun finnSisteInnvilgetFerdigstiltBehandling(fagsakId: UUID) = behandlingRepository.finnSisteInnvilgetFerdigstiltBehandling(fagsakId)
-
     fun oppdaterBehandlingStatus(
         behandlingId: UUID,
         status: BehandlingStatus,

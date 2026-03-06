@@ -26,6 +26,7 @@ class BarnService(
         return if (erCacheGyldig || !erBehandlingRedigerbar) {
             cachedBarn.map { barn ->
                 HentBarnResponse(
+                    id = barn.id,
                     personIdent = barn.personIdent,
                     navn = barn.navn,
                     fødselsdato = barn.fødselsdato,
@@ -41,12 +42,13 @@ class BarnService(
         val barnPersonIdenter = pdlService.hentBarnPersonidenter(request.personIdent)
         val hentetTidspunkt = LocalDateTime.now()
 
-        val pdlBarn =
+        val behandlingBarn =
             barnPersonIdenter.map { personIdent ->
                 val person =
                     pdlService.hentPersonMedPersonIdent(personIdent)
                         ?: throw PdlException("Kunne ikke hente navn for barn med ident $personIdent")
-                HentBarnResponse(
+                BehandlingBarn(
+                    behandlingId = request.behandlingId,
                     personIdent = personIdent,
                     navn = listOfNotNull(person.navn.fornavn, person.navn.mellomnavn, person.navn.etternavn).joinToString(" "),
                     fødselsdato = person.foedselsdato,
@@ -55,19 +57,16 @@ class BarnService(
             }
 
         barnRepository.deleteByBehandlingId(request.behandlingId)
-
-        val behandlingBarn =
-            pdlBarn.map { barn ->
-                BehandlingBarn(
-                    behandlingId = request.behandlingId,
-                    personIdent = barn.personIdent,
-                    navn = barn.navn,
-                    fødselsdato = barn.fødselsdato,
-                    hentetTidspunkt = barn.hentetTidspunkt,
-                )
-            }
         barnRepository.insertAll(behandlingBarn)
 
-        return pdlBarn
+        return behandlingBarn.map { barn ->
+            HentBarnResponse(
+                id = barn.id,
+                personIdent = barn.personIdent,
+                navn = barn.navn,
+                fødselsdato = barn.fødselsdato,
+                hentetTidspunkt = barn.hentetTidspunkt,
+            )
+        }
     }
 }

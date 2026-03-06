@@ -10,6 +10,7 @@ data class HentBarnRequest(
 )
 
 data class HentBarnResponse(
+    val id: UUID,
     val personIdent: String,
     val navn: String,
     val fødselsdato: LocalDate,

@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.post
 import tools.jackson.databind.ObjectMapper
 import tools.jackson.module.kotlin.readValue
+import java.time.LocalDate
 import java.util.UUID
 
 @WebMvcTest(
@@ -40,8 +41,8 @@ open class PdlControllerTest {
         val hentNavnRequest = HentNavnRequest(fagsakPersonId)
 
         every {
-            pdlService.hentNavnMedFagsakPersonId(fagsakPersonId)
-        } returns Navn("fornavn", null, "etternavn")
+            pdlService.hentPersonMedFagsakPersonId(fagsakPersonId)
+        } returns Person(Navn("fornavn", null, "etternavn"), LocalDate.of(1990, 1, 15))
         val responseJson =
             mockMvc
                 .post("/api/pdl/navn") {
@@ -57,7 +58,7 @@ open class PdlControllerTest {
         Assertions.assertThat(response.etternavn).isEqualTo("etternavn")
 
         verify(exactly = 1) {
-            pdlService.hentNavnMedFagsakPersonId(fagsakPersonId)
+            pdlService.hentPersonMedFagsakPersonId(fagsakPersonId)
         }
     }
 
@@ -72,7 +73,7 @@ open class PdlControllerTest {
             }
 
         verify(exactly = 0) {
-            pdlService.hentNavnMedFagsakPersonId(any())
+            pdlService.hentPersonMedFagsakPersonId(any())
         }
     }
 }

@@ -24,9 +24,11 @@ import no.nav.gjenlevende.bs.sak.iverksett.domene.Dokumenttype
 import no.nav.gjenlevende.bs.sak.iverksett.domene.JournalpostType
 import no.nav.gjenlevende.bs.sak.pdl.Navn
 import no.nav.gjenlevende.bs.sak.pdl.PdlService
+import no.nav.gjenlevende.bs.sak.pdl.Person
 import no.nav.gjenlevende.bs.sak.saf.BrukerIdType
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
+import java.time.LocalDate
 import java.util.Optional
 import java.util.UUID
 import kotlin.test.Test
@@ -64,7 +66,7 @@ class JournalføringServiceTest {
         every { fagsakPersonService.hentAktivIdent(fagsakPersonId) } returns personident
         every { brevService.hentBrev(behandlingId) } returns brev
         every { brevmottakerService.hentBrevmottakere(behandlingId) } returns listOf(mottaker)
-        every { pdlService.hentNavnMedPersonident(personident) } returns Navn("Ola", null, "Nordmann")
+        every { pdlService.hentPersonMedPersonIdent(personident) } returns Person(Navn("Ola", null, "Nordmann"), LocalDate.of(1990, 1, 15))
         val result = journalføringService.lagJournalføringRequester(behandlingId)
 
         assertThat(result).hasSize(1)
@@ -99,8 +101,8 @@ class JournalføringServiceTest {
         every { fagsakPersonService.hentAktivIdent(fagsakPersonId) } returns personident
         every { brevService.hentBrev(behandlingId) } returns brev
         every { brevmottakerService.hentBrevmottakere(behandlingId) } returns mottakere
-        every { pdlService.hentNavnMedPersonident(personident) } returns Navn("Ola", null, "Nordmann")
-        every { pdlService.hentNavnMedPersonident(vergeIdent) } returns Navn("Kari", "Marie", "Hansen")
+        every { pdlService.hentPersonMedPersonIdent(personident) } returns Person(Navn("Ola", null, "Nordmann"), LocalDate.of(1990, 1, 15))
+        every { pdlService.hentPersonMedPersonIdent(vergeIdent) } returns Person(Navn("Kari", "Marie", "Hansen"), LocalDate.of(1990, 1, 15))
         val result = journalføringService.lagJournalføringRequester(behandlingId)
 
         assertThat(result).hasSize(2)

@@ -4,11 +4,6 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import no.nav.familie.prosessering.domene.Task
-import no.nav.gjenlevende.bs.sak.behandling.BehandlingService
-import no.nav.gjenlevende.bs.sak.brev.BrevService
-import no.nav.gjenlevende.bs.sak.brev.BrevmottakerService
-import no.nav.gjenlevende.bs.sak.fagsak.FagsakPersonService
-import no.nav.gjenlevende.bs.sak.fagsak.FagsakRepository
 import no.nav.gjenlevende.bs.sak.iverksett.DokarkivClient
 import no.nav.gjenlevende.bs.sak.iverksett.domene.ArkiverDokumentResponse
 import no.nav.gjenlevende.bs.sak.iverksett.domene.AvsenderMottaker
@@ -44,14 +39,14 @@ class JournalførVedtaksbrevTaskTest {
         val journalpostRequest = lagJournalpostRequest(behandlingId, 0)
 
         every { journalføringService.lagJournalføringRequester(behandlingId) } returns listOf(journalpostRequest)
-        every { dokarkivClient.arkiverDokument(journalpostRequest) } returns lagArkiverDokumentResponse("123456")
+        every { dokarkivClient.arkiverDokument(journalpostRequest, true) } returns lagArkiverDokumentResponse("123456")
         every { journalpostForBehandlingService.lagreJournalpostId(behandlingId, "123456") } returns
             JournalpostForBehandling(behandlingId = behandlingId, journalpostId = "123456")
 
         journalførVedtaksbrevTask.doTask(task)
 
         verify(exactly = 1) { journalføringService.lagJournalføringRequester(behandlingId) }
-        verify(exactly = 1) { dokarkivClient.arkiverDokument(journalpostRequest) }
+        verify(exactly = 1) { dokarkivClient.arkiverDokument(journalpostRequest, true) }
         verify(exactly = 1) { journalpostForBehandlingService.lagreJournalpostId(behandlingId, "123456") }
     }
 
@@ -65,8 +60,8 @@ class JournalførVedtaksbrevTaskTest {
         val request2 = lagJournalpostRequest(behandlingId, 1)
 
         every { journalføringService.lagJournalføringRequester(behandlingId) } returns listOf(request1, request2)
-        every { dokarkivClient.arkiverDokument(request1) } returns lagArkiverDokumentResponse("123456")
-        every { dokarkivClient.arkiverDokument(request2) } returns lagArkiverDokumentResponse("123457")
+        every { dokarkivClient.arkiverDokument(request1, true) } returns lagArkiverDokumentResponse("123456")
+        every { dokarkivClient.arkiverDokument(request2, true) } returns lagArkiverDokumentResponse("123457")
         every { journalpostForBehandlingService.lagreJournalpostId(behandlingId, "123456") } returns
             JournalpostForBehandling(behandlingId = behandlingId, journalpostId = "123456")
         every { journalpostForBehandlingService.lagreJournalpostId(behandlingId, "123457") } returns
@@ -75,8 +70,8 @@ class JournalførVedtaksbrevTaskTest {
         journalførVedtaksbrevTask.doTask(task)
 
         verify(exactly = 1) { journalføringService.lagJournalføringRequester(behandlingId) }
-        verify(exactly = 1) { dokarkivClient.arkiverDokument(request1) }
-        verify(exactly = 1) { dokarkivClient.arkiverDokument(request2) }
+        verify(exactly = 1) { dokarkivClient.arkiverDokument(request1, true) }
+        verify(exactly = 1) { dokarkivClient.arkiverDokument(request2, true) }
         verify(exactly = 1) { journalpostForBehandlingService.lagreJournalpostId(behandlingId, "123456") }
         verify(exactly = 1) { journalpostForBehandlingService.lagreJournalpostId(behandlingId, "123457") }
     }

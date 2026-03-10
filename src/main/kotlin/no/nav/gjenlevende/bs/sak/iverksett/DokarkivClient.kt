@@ -24,7 +24,10 @@ class DokarkivClient(
             .defaultHeader("Content-Type", "application/json")
             .build()
 
-    fun arkiverDokument(journalpostRequest: JournalpostRequest): ArkiverDokumentResponse {
+    fun arkiverDokument(
+        journalpostRequest: JournalpostRequest,
+        forsoekFerdigstill: Boolean,
+    ): ArkiverDokumentResponse {
         val headers =
             HttpHeaders().apply {
                 setBearerAuth(texasClient.hentMaskinToken(targetAudience = dokarkivScope.toString()))
@@ -34,7 +37,7 @@ class DokarkivClient(
 
         return webClient
             .post()
-            .uri(OPPRETT_JOURNALPOST)
+            .uri { it.path(OPPRETT_JOURNALPOST).queryParam("forsoekFerdigstill", forsoekFerdigstill).build() }
             .headers { it.addAll(headers) }
             .bodyValue(journalpostRequest)
             .retrieve()

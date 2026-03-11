@@ -11,14 +11,14 @@ import org.springframework.web.bind.annotation.RestController
 class PdlController(
     private val pdlService: PdlService,
 ) {
-    @PostMapping("/navn")
-    fun hentNavn(
-        @RequestBody request: HentNavnRequest,
-    ): ResponseEntity<Navn> {
-        val navn =
-            pdlService.hentPersonMedFagsakPersonId(request.fagsakPersonId)?.navn
+    @PostMapping("/person")
+    fun hentPerson(
+        @RequestBody request: HentPersonRequest,
+    ): ResponseEntity<Person> {
+        val person =
+            pdlService.hentPersonMedFagsakPersonId(request.fagsakPersonId)
                 ?: return ResponseEntity.notFound().build()
 
-        return ResponseEntity.ok(navn)
+        return ResponseEntity.ok(person)
     }
 }

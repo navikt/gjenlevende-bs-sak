@@ -59,7 +59,7 @@ data class Navn(
     val etternavn: String,
 )
 
-data class HentNavnRequest(
+data class HentPersonRequest(
     val fagsakPersonId: UUID,
 )
 

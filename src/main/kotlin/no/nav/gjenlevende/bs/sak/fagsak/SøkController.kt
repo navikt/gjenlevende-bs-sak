@@ -7,10 +7,12 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import java.time.LocalDate
 import java.util.UUID
 
 data class Søkeresultat(
     val navn: String,
+    val fødselsdato: LocalDate?,
     val personident: String,
     val fagsakPersonId: UUID?,
     val harTilgang: Boolean,

@@ -36,26 +36,27 @@ open class PdlControllerTest {
     private lateinit var objectMapper: ObjectMapper
 
     @Test
-    fun `hentNavn returnerer 200 OK med navn når person finnes`() {
+    fun `hentPerson returnerer 200 OK med navn når person finnes`() {
         val fagsakPersonId = UUID.randomUUID()
-        val hentNavnRequest = HentNavnRequest(fagsakPersonId)
+        val hentPersonRequest = HentPersonRequest(fagsakPersonId)
 
         every {
             pdlService.hentPersonMedFagsakPersonId(fagsakPersonId)
         } returns Person(Navn("fornavn", null, "etternavn"), LocalDate.of(1990, 1, 15))
         val responseJson =
             mockMvc
-                .post("/api/pdl/navn") {
+                .post("/api/pdl/person") {
                     contentType = MediaType.APPLICATION_JSON
-                    content = objectMapper.writeValueAsString(hentNavnRequest)
+                    content = objectMapper.writeValueAsString(hentPersonRequest)
                 }.andExpect {
                     status { isOk() }
                     content { contentType(MediaType.APPLICATION_JSON) }
                 }.andReturn()
                 .response.contentAsString
-        val response = objectMapper.readValue<Navn>(responseJson)
-        Assertions.assertThat(response.fornavn).isEqualTo("fornavn")
-        Assertions.assertThat(response.etternavn).isEqualTo("etternavn")
+        val response = objectMapper.readValue<Person>(responseJson)
+        Assertions.assertThat(response.navn.fornavn).isEqualTo("fornavn")
+        Assertions.assertThat(response.navn.etternavn).isEqualTo("etternavn")
+        Assertions.assertThat(response.foedselsdato).isEqualTo("1990-01-15")
 
         verify(exactly = 1) {
             pdlService.hentPersonMedFagsakPersonId(fagsakPersonId)
@@ -65,7 +66,7 @@ open class PdlControllerTest {
     @Test
     fun `returnerer 400 ved ugyldig request`() {
         mockMvc
-            .post("/api/pdl/navn") {
+            .post("/api/pdl/person") {
                 contentType = MediaType.APPLICATION_JSON
                 content = "ugyldig request"
             }.andExpect {

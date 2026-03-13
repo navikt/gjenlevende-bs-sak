@@ -115,7 +115,7 @@ fun Vedtak.tilDto(): VedtakDto =
         beslutterIdent = this.beslutterIdent,
     )
 
-data class GjeldendeVedtakResponse(
+data class HistoriskVedtakResponse(
     val barnetilsynperioder: List<Barnetilsynperiode>,
     val fraErFørTidligsteVedtak: Boolean = false,
 )

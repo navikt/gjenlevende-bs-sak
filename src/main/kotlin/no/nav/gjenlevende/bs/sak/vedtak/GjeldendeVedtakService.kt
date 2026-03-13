@@ -16,7 +16,7 @@ class GjeldendeVedtakService(
     fun hentGjeldendeVedtakFraDato(
         behandlingId: UUID,
         fra: YearMonth,
-    ): GjeldendeVedtakResponse {
+    ): HistoriskVedtakResponse {
         val behandling =
             behandlingRepository.findByIdOrNull(behandlingId)
                 ?: throw Feil("Fant ikke behandling med id=$behandlingId")
@@ -35,7 +35,7 @@ class GjeldendeVedtakService(
 
         val sammenslåttPerioder = sammenslåBarnetilsynsperioder(vedtakListe, fra)
 
-        return GjeldendeVedtakResponse(
+        return HistoriskVedtakResponse(
             barnetilsynperioder = sammenslåttPerioder,
             fraErFørTidligsteVedtak = fraErFørTidligsteVedtak,
         )

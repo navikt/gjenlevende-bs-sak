@@ -55,5 +55,5 @@ class VedtakController(
     fun hentVedtakForBehandling(
         @PathVariable behandlingId: UUID,
         @PathVariable fra: YearMonth,
-    ): ResponseEntity<VedtakDto> = ResponseEntity.ok(gjeldendeVedtakService.hentGjeldendeVedtakFraDato(behandlingId, fra))
+    ): ResponseEntity<GjeldendeVedtakResponse> = ResponseEntity.ok(gjeldendeVedtakService.hentGjeldendeVedtakFraDato(behandlingId, fra))
 }

@@ -31,7 +31,7 @@ class GjeldendeVedtakService(
                 .mapNotNull { vedtakRepository.findByBehandlingId(it.id) }
 
         val fraErFørTidligsteVedtak =
-            vedtakListe.flatMap { it.barnetilsynperioder }.all { it.datoFra >= fra }
+            vedtakListe.flatMap { it.barnetilsynperioder }.all { it.datoFra > fra }
 
         val sammenslåttPerioder = sammenslåBarnetilsynsperioder(vedtakListe, fra)
 

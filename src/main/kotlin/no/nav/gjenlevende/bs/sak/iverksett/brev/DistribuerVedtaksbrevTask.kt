@@ -37,12 +37,13 @@ class DistribuerVedtaksbrevTask(
     private fun distribuerVedtaksbrev(behandlingId: UUID) {
         val journalpostIDerSomSkalDistribueres = journalpostForBehandlingService.hentJournalpostIder(behandlingId)
         journalpostIDerSomSkalDistribueres.forEach { journalpostId ->
-            val request = DistribuerJournalpostRequest(
-                journalpostId = journalpostId,
-                bestillendeFagsystem = Fagsystem.EY,
-                dokumentProdApp = "GJENLEVENDE_BS_SAK",
-                distribusjonstype = Distribusjonstype.VEDTAK,
-            )
+            val request =
+                DistribuerJournalpostRequest(
+                    journalpostId = journalpostId,
+                    bestillendeFagsystem = Fagsystem.EY,
+                    dokumentProdApp = "GJENLEVENDE_BS_SAK",
+                    distribusjonstype = Distribusjonstype.VEDTAK,
+                )
             dokarkivClient.distribuerDokument(request)
         }
     }

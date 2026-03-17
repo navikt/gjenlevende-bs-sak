@@ -46,7 +46,9 @@ class IverksettVedtaksbrevController(
     fun distribuerVedtaksbrev(
         @PathVariable behandlingId: UUID,
     ): ResponseEntity<String> {
-        distribuerVedtaksbrevTask.distribuerVedtaksbrev(behandlingId)
+        val task = iverksettVedtaksbrevService.opprettDistribuerVedtaksbrevTask(behandlingId)
+        taskService.save(task)
+
         return ResponseEntity.ok("OK")
     }
 }

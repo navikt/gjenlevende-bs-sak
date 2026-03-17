@@ -1,6 +1,8 @@
 package no.nav.gjenlevende.bs.sak.iverksett
 
 import no.nav.familie.prosessering.domene.Task
+import no.nav.gjenlevende.bs.sak.iverksett.brev.DistribuerVedtaksbrevTask
+import no.nav.gjenlevende.bs.sak.iverksett.brev.DistribuerVedtaksbrevTaskData
 import no.nav.gjenlevende.bs.sak.iverksett.brev.JournalførVedtaksbrevTask
 import org.springframework.stereotype.Service
 import tools.jackson.databind.ObjectMapper
@@ -14,6 +16,13 @@ class IverksettVedtaksbrevService(
         JournalførVedtaksbrevTask.opprettTask(
             objectMapper.writeValueAsString(
                 JournalførVedtaksbrevTask.JournalførVedtaksbrevTaskData(behandlingId),
+            ),
+        )
+
+    fun opprettDistribuerVedtaksbrevTask(behandlingId: UUID): Task =
+        DistribuerVedtaksbrevTask.opprettTask(
+            objectMapper.writeValueAsString(
+                DistribuerVedtaksbrevTask.DistribuerVedtaksbrevTaskData(behandlingId),
             ),
         )
 }

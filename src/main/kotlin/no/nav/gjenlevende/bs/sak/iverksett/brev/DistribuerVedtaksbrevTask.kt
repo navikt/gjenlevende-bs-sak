@@ -13,6 +13,7 @@ import tools.jackson.databind.ObjectMapper
 import tools.jackson.module.kotlin.readValue
 import java.util.UUID
 
+@Service
 @TaskStepBeskrivelse(
     taskStepType = DistribuerVedtaksbrevTask.TYPE,
     maxAntallFeil = DistribuerVedtaksbrevTask.MAX_FORSØK,
@@ -20,7 +21,6 @@ import java.util.UUID
     triggerTidVedFeilISekunder = 15 * 60L,
     beskrivelse = "Distribuerer vedtaksbrev.",
 )
-@Service
 class DistribuerVedtaksbrevTask(
     private val objectMapper: ObjectMapper,
     private val journalpostForBehandlingService: JournalpostForBehandlingService,
@@ -51,9 +51,15 @@ class DistribuerVedtaksbrevTask(
     companion object {
         const val TYPE = "distribuerVedtaksbrev"
         const val MAX_FORSØK = 50
-    }
-}
 
-data class DistribuerVedtaksbrevTaskData(
-    val behandlingId: UUID,
-)
+        fun opprettTask(payload: String): Task =
+            Task(
+                TYPE,
+                payload,
+            )
+    }
+
+    data class DistribuerVedtaksbrevTaskData(
+        val behandlingId: UUID,
+    )
+}

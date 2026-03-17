@@ -34,7 +34,7 @@ class DistribuerVedtaksbrevTask(
         distribuerVedtaksbrev(behandlingId)
     }
 
-    private fun distribuerVedtaksbrev(behandlingId: UUID) {
+    fun distribuerVedtaksbrev(behandlingId: UUID) {
         val journalpostIDerSomSkalDistribueres = journalpostForBehandlingService.hentJournalpostIder(behandlingId)
         journalpostIDerSomSkalDistribueres.forEach { journalpostId ->
             val request =

@@ -4,6 +4,7 @@ import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
 import no.nav.gjenlevende.bs.sak.iverksett.DokarkivClient
+import no.nav.gjenlevende.bs.sak.iverksett.DokdistClient
 import no.nav.gjenlevende.bs.sak.iverksett.domene.DistribuerJournalpostRequest
 import no.nav.gjenlevende.bs.sak.iverksett.domene.Distribusjonstype
 import no.nav.gjenlevende.bs.sak.iverksett.domene.Fagsystem
@@ -24,7 +25,7 @@ import java.util.UUID
 class DistribuerVedtaksbrevTask(
     private val objectMapper: ObjectMapper,
     private val journalpostForBehandlingService: JournalpostForBehandlingService,
-    private val dokarkivClient: DokarkivClient,
+    private val dokdistClient: DokdistClient,
 ) : AsyncTaskStep {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -44,7 +45,7 @@ class DistribuerVedtaksbrevTask(
                     dokumentProdApp = "GJENLEVENDE_BS_SAK",
                     distribusjonstype = Distribusjonstype.VEDTAK,
                 )
-            dokarkivClient.distribuerDokument(request)
+            dokdistClient.distribuerDokument(request)
         }
     }
 

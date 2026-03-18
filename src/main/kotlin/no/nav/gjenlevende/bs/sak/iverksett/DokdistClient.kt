@@ -33,8 +33,9 @@ class DokdistClient(
             }
         webClient
             .post()
-            .uri { it.path(DISTRIBUER_DOKUMENT).build(distribuerJournalpostRequest) }
+            .uri { it.path(DISTRIBUER_DOKUMENT).build() }
             .headers { it.addAll(headers) }
+            .bodyValue(distribuerJournalpostRequest)
             .retrieve()
             .bodyToMono<DistribuerJournalpostResponse>()
             .block()

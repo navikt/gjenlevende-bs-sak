@@ -42,7 +42,7 @@ class DokarkivClient(
             .bodyValue(journalpostRequest)
             .retrieve()
             .bodyToMono<ArkiverDokumentResponse>()
-            .block() ?: error("Ingen response ved arkivering av dokument")
+            .block() ?: error("Ingen respons ved arkivering av dokument")
     }
 
     companion object {

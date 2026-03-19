@@ -38,7 +38,7 @@ class DokdistClient(
             .bodyValue(distribuerJournalpostRequest)
             .retrieve()
             .bodyToMono<DistribuerJournalpostResponse>()
-            .block()
+            .block() ?: error("Ingen respons ved distribusjon av dokument")
     }
 
     companion object {

@@ -34,9 +34,9 @@ data class ManuellAdresse(
     init {
         check(land.length == 2) { "Ugyldig landkode" }
         if (land == "NO") {
-            check(adresseType == AdresseType.norskPostadresse) { "Feil adresse type" }
+            check(adresseType == AdresseType.NORSKPOSTADRESSE) { "Feil adresse type" }
         }
-        if (adresseType == AdresseType.norskPostadresse) {
+        if (adresseType == AdresseType.NORSKPOSTADRESSE) {
             checkNotNull(adresselinje1) { "AdresseLinje1 er påkrevd for norsk postadresse" }
             checkNotNull(postnummer) { "Postnummer er påkrevd for norsk postadresse" }
             checkNotNull(poststed) { "Poststed er påkrevd for norsk postadresse" }
@@ -45,9 +45,6 @@ data class ManuellAdresse(
 }
 
 enum class AdresseType {
-    @Suppress("ktlint:standard:enum-entry-name-case")
-    norskPostadresse,
-
-    @Suppress("ktlint:standard:enum-entry-name-case")
-    utenlandskPostadresse,
+    NORSKPOSTADRESSE,
+    UTENLANDSKPOSTADRESSE,
 }

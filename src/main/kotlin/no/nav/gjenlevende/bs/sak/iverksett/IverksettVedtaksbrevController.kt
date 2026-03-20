@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import no.nav.familie.prosessering.internal.TaskService
 import no.nav.gjenlevende.bs.sak.felles.sikkerhet.Tilgangskontroll
+import no.nav.gjenlevende.bs.sak.iverksett.brev.DistribuerVedtaksbrevTask
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.PathVariable
@@ -19,6 +20,7 @@ import java.util.UUID
 class IverksettVedtaksbrevController(
     private val taskService: TaskService,
     private val iverksettVedtaksbrevService: IverksettVedtaksbrevService,
+    private val distribuerVedtaksbrevTask: DistribuerVedtaksbrevTask,
 ) {
     @PostMapping("/lag-iverksettVedtaksbrevController-task/{behandlingId}")
     @PreAuthorize("hasRole('ATTESTERING')")
@@ -30,6 +32,21 @@ class IverksettVedtaksbrevController(
         @PathVariable behandlingId: UUID,
     ): ResponseEntity<String> {
         val task = iverksettVedtaksbrevService.opprettIverksettVedtaksbrevTask(behandlingId)
+        taskService.save(task)
+
+        return ResponseEntity.ok("OK")
+    }
+
+    @PostMapping("/distribuer-vedtaksbrev/{behandlingId}")
+    @PreAuthorize("hasRole('ATTESTERING')")
+    @Operation(
+        summary = "Distribuerer vedtaksbrev",
+        description = "Testendepunkt for å distribuere vedtaksbrev basert på behandlingId",
+    )
+    fun distribuerVedtaksbrev(
+        @PathVariable behandlingId: UUID,
+    ): ResponseEntity<String> {
+        val task = iverksettVedtaksbrevService.opprettDistribuerVedtaksbrevTask(behandlingId)
         taskService.save(task)
 
         return ResponseEntity.ok("OK")

@@ -4,7 +4,7 @@
 
 ## Hvorfor
 
-<!-- Hvorfor er endringen nødvendig? Lenk til Trello/Jira/issue om relevant. -->
+<!-- Hvorfor er endringen nødvendig? Lenke til issue om relevant. -->
 
 ## Hvordan testet
 

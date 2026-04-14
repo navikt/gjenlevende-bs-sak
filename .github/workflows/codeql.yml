@@ -1,9 +1,13 @@
 name: "CodeQL"
 
-# TODO: Midlertidig workaround for Kotlin 2.3.20 — CodeQL 2.25.1 støtter ikke 2.3.20.
-# Når 2.25.2 er ute (se https://github.com/github/codeql/issues/21484):
-# - Sett tilbake `build-mode: manual`, `languages: java-kotlin`, `tools: linked` (eller dropp).
-# - Legg tilbake JDK 21-setup og "Build with Maven"-steget.
+# TODO: Midlertidig workaround for Kotlin 2.3.20 — CodeQL 2.25.1 støtter ikke 2.3.20,
+# og repoet er rent Kotlin, så `build-mode: none` finner ingen Java å analysere.
+# Vi lar analyze steget feile mykt med continue on error til 2.25.2.
+# Se: https://github.com/github/codeql/issues/21484
+# Når 2.25.2 er ute:
+# - Fjern continue on error.
+# - Sett tilbake `build-mode: manual`, `languages: java-kotlin`.
+# - Legg tilbake JDK 21-setup og "Build with Maven" steget.
 
 on:
     push:
@@ -34,5 +38,6 @@ jobs:
 
             -   name: Perform CodeQL Analysis
                 uses: github/codeql-action/analyze@c10b8064de6f491fea524254123dbe5e09572f13 # ratchet:github/codeql-action/analyze@v3
+                continue-on-error: true
                 with:
                     category: "/language:java"

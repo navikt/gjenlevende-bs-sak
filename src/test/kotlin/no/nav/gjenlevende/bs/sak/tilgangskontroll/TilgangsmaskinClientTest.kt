@@ -81,7 +81,7 @@ class TilgangsmaskinClientTest {
 
             every { tilgangsmaskinWebClient.post() } returns requestHeadersSpec
             every { requestHeadersSpec.uri(any<URI>()) } returns requestHeadersSpec
-            every { requestHeadersSpec.bodyValue(any<List<String>>()) } returns requestHeadersSpec
+            every { requestHeadersSpec.bodyValue(any<Set<String>>()) } returns requestHeadersSpec
             every { requestHeadersSpec.headers(any()) } returns requestHeadersSpec
             every { requestHeadersSpec.retrieve() } returns responseSpec
             every { responseSpec.bodyToMono<BulkTilgangsResponse>() } returns Mono.just(expectedResponse)

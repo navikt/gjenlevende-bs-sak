@@ -40,6 +40,7 @@ jobs:
                     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                 run: |
                     mvn clean compile -DskipTests \
+                      -Dkotlin.compiler.execution.strategy=in-process \
                       --settings .m2/maven-settings.xml \
                       --batch-mode --errors
 

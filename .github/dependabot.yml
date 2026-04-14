@@ -10,10 +10,17 @@ updates:
         cooldown:
             default-days: 4
         open-pull-requests-limit: 10
+        labels:
+            - "dependencies"
+            - "maven"
         groups:
-            all-dependencies:
-                patterns:
-                    - "*"
+            maven-minor-patch:
+                update-types:
+                    - "minor"
+                    - "patch"
+            maven-major:
+                update-types:
+                    - "major"
 
     -   package-ecosystem: github-actions
         directory: "/"
@@ -23,7 +30,14 @@ updates:
             time: "04:00"
         cooldown:
             default-days: 4
+        labels:
+            - "dependencies"
+            - "github-actions"
         groups:
-            workflows:
-                patterns:
-                    - "*"
+            actions-minor-patch:
+                update-types:
+                    - "minor"
+                    - "patch"
+            actions-major:
+                update-types:
+                    - "major"

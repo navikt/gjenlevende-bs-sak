@@ -33,6 +33,7 @@ jobs:
                 with:
                     languages: java-kotlin
                     build-mode: manual
+                    tools: latest
 
             -   name: Build with Maven
                 env:

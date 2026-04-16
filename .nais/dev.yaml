@@ -12,6 +12,8 @@ spec:
         min: 2
         max: 2
     leaderElection: true
+    kafka:
+        pool: nav-dev
     resources:
         requests:
             cpu: 162m

@@ -1,0 +1,55 @@
+package no.nav.gjenlevende.bs.sak.utbetaling
+
+import com.fasterxml.jackson.annotation.JsonFormat
+import java.time.Instant
+import java.time.LocalDate
+import java.util.UUID
+
+// TODO utgangspunkt i historisk. Må endres etter koordinasjon med helved
+data class UtbetalingMelding(
+    val id: UUID,
+    val sakId: String,
+    val behandlingId: String,
+    val personident: String,
+    val stønad: String,
+    @field:JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone = "UTC")
+    val vedtakstidspunkt: Instant,
+    val periodetype: Periodetype = Periodetype.MND,
+    val perioder: List<Periode>,
+    val saksbehandler: String,
+    val beslutter: String,
+    val dryrun: Boolean = true,
+)
+
+data class Periode(
+    @field:JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    val fom: LocalDate,
+    @field:JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    val tom: LocalDate,
+    val beløp: Int,
+)
+
+enum class Periodetype {
+    DAG,
+    UKEDAG,
+    MND,
+    EN_GANG,
+}
+
+data class UtbetalingStatusMelding(
+    val status: StatusType,
+    val error: StatusError? = null,
+)
+
+enum class StatusType {
+    OK,
+    FEILET,
+    MOTTATT,
+    HOS_OPPDRAG,
+}
+
+data class StatusError(
+    val statusCode: Int,
+    val msg: String,
+    val doc: String,
+)

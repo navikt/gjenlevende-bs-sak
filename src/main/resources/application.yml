@@ -34,6 +34,25 @@ spring:
             max-lifetime: 90000
             minimum-idle: 1
 
+    # Kafka konfigurasjon
+    #    TODO lånt fra historisk, sjekk opp
+    kafka:
+        bootstrap-servers: ${KAFKA_BROKERS:localhost:9092}
+        security:
+            protocol: SSL
+        ssl:
+            trust-store-type: JKS
+            trust-store-location: file:${KAFKA_TRUSTSTORE_PATH:}
+            trust-store-password: ${KAFKA_CREDSTORE_PASSWORD:}
+            key-store-type: PKCS12
+            key-store-location: file:${KAFKA_KEYSTORE_PATH:}
+            key-store-password: ${KAFKA_CREDSTORE_PASSWORD:}
+        producer:
+            value-serializer: org.springframework.kafka.support.serializer.JacksonJsonSerializer
+            key-serializer: org.apache.kafka.common.serialization.StringSerializer
+        consumer:
+            group-id: ${spring.application.name}
+
 # Management og health endepunkter
 management:
     endpoint:
@@ -113,6 +132,12 @@ springdoc:
             use-pkce-with-authorization-code-grant: true
             client-id: ${azure.app.client.id}
             scope-separator: ","
+
+app:
+    utbetaling:
+        #        TODO koordinere med helved ang. topic
+        utbetaling-topic: gjenlevende.utbetaling.v1
+        status-topic: helved.status.v1
 
 # Task prosessering konfigurasjon
 prosessering:

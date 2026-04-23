@@ -5,6 +5,7 @@ import no.nav.gjenlevende.bs.sak.endringshistorikk.EndringType
 import no.nav.gjenlevende.bs.sak.endringshistorikk.EndringshistorikkService
 import no.nav.gjenlevende.bs.sak.felles.sikkerhet.SikkerhetContext
 import no.nav.gjenlevende.bs.sak.infrastruktur.exception.Feil
+import no.nav.gjenlevende.bs.sak.oppgave.AnsvarligSaksbehandlerService
 import no.nav.gjenlevende.bs.sak.oppgave.OppgaveService
 import no.nav.gjenlevende.bs.sak.task.FerdigstillOppgaveTask
 import org.springframework.data.repository.findByIdOrNull
@@ -22,6 +23,7 @@ class BehandlingService(
     private val oppgaveService: OppgaveService,
     private val taskService: TaskService,
     private val objectMapper: ObjectMapper,
+    private val ansvarligSaksbehandlerService: AnsvarligSaksbehandlerService,
 ) {
     @Transactional
     fun opprettBehandling(
@@ -92,6 +94,7 @@ class BehandlingService(
 
     @Transactional
     fun henleggBehandling(behandlingId: UUID) {
+        ansvarligSaksbehandlerService.validerErAnsvarligSaksbehandler(behandlingId)
         val behandling =
             behandlingRepository.findByIdOrNull(behandlingId)
                 ?: error("Fant ikke behandling med id=$behandlingId")

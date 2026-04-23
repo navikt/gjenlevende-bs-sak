@@ -11,6 +11,7 @@ import no.nav.gjenlevende.bs.sak.endringshistorikk.EndringType
 import no.nav.gjenlevende.bs.sak.endringshistorikk.EndringshistorikkService
 import no.nav.gjenlevende.bs.sak.felles.sikkerhet.SikkerhetContext
 import no.nav.gjenlevende.bs.sak.infrastruktur.exception.Feil
+import no.nav.gjenlevende.bs.sak.oppgave.AnsvarligSaksbehandlerService
 import no.nav.gjenlevende.bs.sak.oppgave.OppgaveService
 import no.nav.gjenlevende.bs.sak.oppgave.OppgavetypeEYO
 import no.nav.gjenlevende.bs.sak.task.FerdigstillOppgaveTask
@@ -32,10 +33,12 @@ class BeslutterService(
     private val taskService: TaskService,
     private val objectMapper: ObjectMapper,
     private val lagBehandleSakOppgaveTask: LagBehandleSakOppgaveTask,
+    private val ansvarligSaksbehandlerService: AnsvarligSaksbehandlerService,
     private val vedtakService: VedtakService,
 ) {
     @Transactional
     fun sendTilBeslutter(behandlingId: UUID) {
+        ansvarligSaksbehandlerService.validerErAnsvarligSaksbehandler(behandlingId)
         validerKanSendeTilBeslutter(behandlingId)
 
         brevService.oppdaterSaksbehandlerForBrev(behandlingId)
@@ -67,6 +70,8 @@ class BeslutterService(
 
     @Transactional
     fun angreSendTilBeslutter(behandlingId: UUID) {
+        ansvarligSaksbehandlerService.validerErAnsvarligSaksbehandler(behandlingId)
+
         val aktivOppgavetype = oppgaveService.hentAktivOppgavetype(behandlingId)
 
         if (aktivOppgavetype != OppgavetypeEYO.GOD_VED) {
@@ -105,6 +110,7 @@ class BeslutterService(
         behandlingId: UUID,
         beslutteVedtakDto: BeslutteVedtakDto,
     ) {
+        ansvarligSaksbehandlerService.validerErAnsvarligSaksbehandler(behandlingId)
         totrinnskontrollService.validerAtBeslutterIkkeErSammeSomSaksbehandler(behandlingId)
 
         if (beslutteVedtakDto.godkjent) {

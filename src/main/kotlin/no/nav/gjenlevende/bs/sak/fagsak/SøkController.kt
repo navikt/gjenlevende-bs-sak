@@ -15,7 +15,6 @@ data class Søkeresultat(
     val fødselsdato: LocalDate?,
     val personident: String,
     val fagsakPersonId: UUID?,
-    val harTilgang: Boolean,
     val harFagsak: Boolean,
 )
 

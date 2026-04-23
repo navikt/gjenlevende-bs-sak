@@ -49,7 +49,6 @@ class SøkService(
             fødselsdato = person?.foedselsdato,
             personident = personident,
             fagsakPersonId = fagsakPerson?.id,
-            harTilgang = true, // TODO: implementer tilgangskontroll senere
             harFagsak = fagsakPerson != null,
         )
 }

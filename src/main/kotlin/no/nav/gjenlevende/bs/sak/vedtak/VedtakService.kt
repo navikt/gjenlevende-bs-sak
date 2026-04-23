@@ -38,6 +38,7 @@ class VedtakService(
     }
 
     fun slettVedtakHvisFinnes(behandlingId: UUID) {
+        ansvarligSaksbehandlerService.validerErAnsvarligSaksbehandler(behandlingId)
         if (vedtakRepository.findByBehandlingId(behandlingId) != null) {
             vedtakRepository.deleteByBehandlingId(behandlingId)
         }

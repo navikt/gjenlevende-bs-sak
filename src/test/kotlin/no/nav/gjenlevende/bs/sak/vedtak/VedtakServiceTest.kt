@@ -52,4 +52,16 @@ class VedtakServiceTest {
             .isInstanceOf(ManglerTilgang::class.java)
             .hasMessageContaining("ikke ansvarlig saksbehandler")
     }
+
+    @Test
+    fun `slettVedtakHvisFinnes kaster ManglerTilgang når bruker ikke er ansvarlig saksbehandler`() {
+        val behandlingId = UUID.randomUUID()
+
+        every { ansvarligSaksbehandlerService.validerErAnsvarligSaksbehandler(behandlingId) } throws
+            ManglerTilgang("Innlogget saksbehandler er ikke ansvarlig saksbehandler for behandling $behandlingId")
+
+        assertThatThrownBy { vedtakService.slettVedtakHvisFinnes(behandlingId) }
+            .isInstanceOf(ManglerTilgang::class.java)
+            .hasMessageContaining("ikke ansvarlig saksbehandler")
+    }
 }

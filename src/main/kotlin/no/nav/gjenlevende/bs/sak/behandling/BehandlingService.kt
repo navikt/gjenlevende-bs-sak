@@ -28,7 +28,7 @@ class BehandlingService(
         fagsakId: UUID,
         status: BehandlingStatus = BehandlingStatus.OPPRETTET,
     ): Behandling {
-        val forrigeBehandlingId = behandlingRepository.finnSisteIverksatteBehandling(fagsakId)?.id
+        val forrigeBehandlingId = finnSisteIverksatteBehandling(fagsakId)?.id
 
         val behandling =
             Behandling(
@@ -64,11 +64,19 @@ class BehandlingService(
         }
     }
 
+    fun erBehandlingRedigerbar(behandlingId: UUID): Boolean {
+        val behandling = behandlingRepository.findByIdOrNull(behandlingId) ?: return false
+
+        return behandling.status in listOf(BehandlingStatus.OPPRETTET, BehandlingStatus.UTREDES)
+    }
+
     fun hentBehandling(behandlingId: UUID): Behandling? = behandlingRepository.findByIdOrNull(behandlingId)
 
-    fun hentBehandlingerFraFagsak(fagsakId: UUID): List<Behandling>? = behandlingRepository.findAllByFagsakId(fagsakId)
+    fun hentBehandlingerFraFagsak(fagsakId: UUID): List<Behandling> = behandlingRepository.findAllByFagsakId(fagsakId)
 
     fun finnesÅpenBehandling(fagsakId: UUID) = behandlingRepository.existsByFagsakIdAndStatusIsNot(fagsakId, BehandlingStatus.FERDIGSTILT)
+
+    fun finnSisteIverksatteBehandling(fagsakId: UUID) = behandlingRepository.finnSisteIverksatteBehandling(fagsakId)
 
     fun oppdaterBehandlingStatus(
         behandlingId: UUID,

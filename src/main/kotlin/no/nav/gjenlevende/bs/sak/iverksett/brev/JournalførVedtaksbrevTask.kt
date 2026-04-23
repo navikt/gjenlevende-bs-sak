@@ -21,6 +21,7 @@ class JournalførVedtaksbrevTask(
     private val dokarkivClient: DokarkivClient,
     private val objectMapper: ObjectMapper,
     private val journalføringService: JournalføringService,
+    private val journalpostForBehandlingService: JournalpostForBehandlingService,
 ) : AsyncTaskStep {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -30,8 +31,9 @@ class JournalførVedtaksbrevTask(
         val journalføringRequester = journalføringService.lagJournalføringRequester(behandlingId)
 
         journalføringRequester.forEach { request ->
-            val response = dokarkivClient.arkiverDokument(request)
-            logger.info("Journalført vedtaksbrev for mottaker ${request.avsenderMottaker?.navn}: $response")
+            val response = dokarkivClient.arkiverDokument(request, true)
+            journalpostForBehandlingService.lagreJournalpostId(behandlingId, response.journalpostId)
+            logger.info("Journalført vedtaksbrev for mottaker ${request.avsenderMottaker?.navn}: journalpostId=${response.journalpostId}")
         }
     }
 

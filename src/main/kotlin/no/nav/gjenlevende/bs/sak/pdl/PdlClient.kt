@@ -1,5 +1,6 @@
 package no.nav.gjenlevende.bs.sak.pdl
 
+import no.nav.gjenlevende.bs.sak.infrastruktur.exception.ManglerTilgang
 import no.nav.gjenlevende.bs.sak.texas.TexasClient
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -43,7 +44,7 @@ class PdlClient(
             return pdlResponse?.data
         } catch (e: Exception) {
             when (e) {
-                is PdlException -> {
+                is PdlException, is ManglerTilgang -> {
                     throw e
                 }
 
@@ -74,7 +75,7 @@ class PdlClient(
             return pdlResponse?.data
         } catch (e: Exception) {
             when (e) {
-                is PdlException -> {
+                is PdlException, is ManglerTilgang -> {
                     throw e
                 }
 
@@ -102,7 +103,7 @@ class PdlClient(
             return pdlResponse?.data
         } catch (e: Exception) {
             when (e) {
-                is PdlException -> {
+                is PdlException, is ManglerTilgang -> {
                     throw e
                 }
 
@@ -134,13 +135,15 @@ class PdlClient(
         errors: List<PdlError>?,
         operasjon: String,
     ) {
-        if (errors != null && errors.isNotEmpty()) {
-            logger.error("Feil fra PDL ved $operasjon: $errors")
-            val firstError = errors.firstOrNull()
-            throw PdlException(
-                "Feil ved $operasjon: ${firstError?.message ?: "Ukjent feil"}",
-            )
+        if (errors.isNullOrEmpty()) return
+
+        logger.error("Feil fra PDL ved $operasjon: $errors")
+
+        if (errors.any { it.extensions?.code == "unauthorized" }) {
+            throw ManglerTilgang(melding = "Mangler tilgang til opplysningene for denne personen")
         }
+
+        throw PdlException("Feil ved $operasjon: ${errors.first().message}")
     }
 }
 

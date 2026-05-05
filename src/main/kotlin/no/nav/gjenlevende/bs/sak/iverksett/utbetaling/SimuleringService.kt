@@ -1,12 +1,12 @@
 package no.nav.gjenlevende.bs.sak.iverksett.utbetaling
 
 import no.nav.gjenlevende.bs.sak.behandling.Behandling
-import org.springframework.http.ResponseEntity
+import no.nav.gjenlevende.bs.sak.felles.sikkerhet.Tilgangskontroll
 import org.springframework.stereotype.Service
-import org.springframework.web.client.HttpServerErrorException
 import java.time.LocalDateTime
 import java.util.UUID
 
+@Tilgangskontroll
 @Service
 class SimuleringService(
     val utbetalingProducer: UtbetalingProducer,

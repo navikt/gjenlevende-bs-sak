@@ -17,12 +17,14 @@ class SøkService(
     fun søkPerson(personident: String): Søkeresultat {
         val fagsakPerson = fagsakPersonService.finnPerson(setOf(personident))
 
-        if (fagsakPerson == null) {
-            return tilSøkeresultat(personident, null, null)
-        }
-        val person = pdlService.hentPersonMedFagsakPersonId(fagsakPerson.id)
+        val person =
+            if (fagsakPerson == null) {
+                pdlService.hentPersonMedPersonIdent(personident)
+            } else {
+                pdlService.hentPersonMedFagsakPersonId(fagsakPerson.id)
+            }
 
-        return tilSøkeresultat(personident, fagsakPerson, person)
+        return tilSøkeresultat(personident = personident, fagsakPerson = fagsakPerson, person = person)
     }
 
     fun søkMedFagsakPersonId(fagsakPersonId: UUID): Søkeresultat {
@@ -47,7 +49,6 @@ class SøkService(
             fødselsdato = person?.foedselsdato,
             personident = personident,
             fagsakPersonId = fagsakPerson?.id,
-            harTilgang = true, // TODO: implementer tilgangskontroll senere
             harFagsak = fagsakPerson != null,
         )
 }

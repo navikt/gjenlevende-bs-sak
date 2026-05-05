@@ -2,6 +2,7 @@ package no.nav.gjenlevende.bs.sak.oppgave
 
 import no.nav.gjenlevende.bs.sak.behandling.BehandlingRepository
 import no.nav.gjenlevende.bs.sak.felles.sikkerhet.SikkerhetContext
+import no.nav.gjenlevende.bs.sak.infrastruktur.exception.ManglerTilgang
 import no.nav.gjenlevende.bs.sak.oppgave.dto.AnsvarligSaksbehandlerDto
 import no.nav.gjenlevende.bs.sak.oppgave.dto.SaksbehandlerRolle
 import no.nav.gjenlevende.bs.sak.saksbehandler.EntraProxyClient
@@ -21,20 +22,7 @@ class AnsvarligSaksbehandlerService(
 
     fun hentAnsvarligSaksbehandler(behandlingId: UUID): AnsvarligSaksbehandlerDto {
         val innloggetSaksbehandler = SikkerhetContext.hentSaksbehandler()
-
-        val oppgave = oppgaveService.hentOppgaveForBehandling(behandlingId)
-
-        val ansvarligSaksbehandler =
-            if (oppgave != null) {
-                val gosysOppgave = oppgaveClient.hentOppgaveM2M(oppgave.gsakOppgaveId)
-                gosysOppgave.tilordnetRessurs
-            } else {
-                logger.info("Ingen oppgave funnet for behandling=$behandlingId, bruker opprettetAv fra behandling")
-                val behandling =
-                    behandlingRepository.findByIdOrNull(behandlingId)
-                        ?: throw IllegalStateException("Finner ikke behandling med id=$behandlingId")
-                behandling.sporbar.opprettetAv
-            }
+        val ansvarligSaksbehandler = hentAnsvarligSaksbehandlerIdent(behandlingId)
 
         if (ansvarligSaksbehandler.isNullOrBlank()) {
             return AnsvarligSaksbehandlerDto(
@@ -57,5 +45,28 @@ class AnsvarligSaksbehandlerService(
             etternavn = saksbehandlerInfo.etternavn,
             rolle = rolle,
         )
+    }
+
+    fun validerErAnsvarligSaksbehandler(behandlingId: UUID) {
+        val innloggetSaksbehandler = SikkerhetContext.hentSaksbehandler()
+        val ansvarligIdent = hentAnsvarligSaksbehandlerIdent(behandlingId)
+
+        if (ansvarligIdent.isNullOrBlank() || ansvarligIdent != innloggetSaksbehandler) {
+            throw ManglerTilgang("Innlogget saksbehandler $innloggetSaksbehandler er ikke ansvarlig saksbehandler for behandling $behandlingId")
+        }
+    }
+
+    private fun hentAnsvarligSaksbehandlerIdent(behandlingId: UUID): String? {
+        val oppgave = oppgaveService.hentOppgaveForBehandling(behandlingId)
+
+        return if (oppgave != null) {
+            val gosysOppgave = oppgaveClient.hentOppgaveM2M(oppgave.gsakOppgaveId)
+            gosysOppgave.tilordnetRessurs
+        } else {
+            logger.info("Ingen oppgave funnet for behandling=$behandlingId, bruker opprettetAv fra behandling")
+            val behandling = behandlingRepository.findByIdOrNull(behandlingId) ?: throw IllegalStateException("Finner ikke behandling med id=$behandlingId")
+
+            behandling.sporbar.opprettetAv
+        }
     }
 }

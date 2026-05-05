@@ -1,7 +1,7 @@
-package no.nav.gjenlevende.bs.sak.iverksett
+package no.nav.gjenlevende.bs.sak.iverksett.brev
 
-import no.nav.gjenlevende.bs.sak.iverksett.domene.DistribuerJournalpostRequest
-import no.nav.gjenlevende.bs.sak.iverksett.domene.DistribuerJournalpostResponse
+import no.nav.gjenlevende.bs.sak.iverksett.brev.domene.DistribuerJournalpostRequest
+import no.nav.gjenlevende.bs.sak.iverksett.brev.domene.DistribuerJournalpostResponse
 import no.nav.gjenlevende.bs.sak.texas.TexasClient
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders

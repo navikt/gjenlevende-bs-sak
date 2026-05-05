@@ -6,6 +6,7 @@ import no.nav.gjenlevende.bs.sak.brev.domain.BrevRequest
 import no.nav.gjenlevende.bs.sak.endringshistorikk.EndringType
 import no.nav.gjenlevende.bs.sak.endringshistorikk.EndringshistorikkService
 import no.nav.gjenlevende.bs.sak.felles.sikkerhet.SikkerhetContext
+import no.nav.gjenlevende.bs.sak.oppgave.AnsvarligSaksbehandlerService
 import no.nav.gjenlevende.bs.sak.saksbehandler.EntraProxyClient
 import no.nav.gjenlevende.bs.sak.task.BrevTask
 import org.springframework.data.repository.findByIdOrNull
@@ -24,6 +25,7 @@ class BrevService(
     private val objectMapper: ObjectMapper,
     private val entraProxyClient: EntraProxyClient,
     private val endringshistorikkService: EndringshistorikkService,
+    private val ansvarligSaksbehandlerService: AnsvarligSaksbehandlerService,
 ) {
     fun lagBrevPdfTask(behandlingId: UUID): Task =
         BrevTask.opprettTask(
@@ -38,6 +40,7 @@ class BrevService(
         brevRequest: BrevRequest,
     ) {
         behandlingService.validerBehandlingErRedigerbar(behandlingId)
+        ansvarligSaksbehandlerService.validerErAnsvarligSaksbehandler(behandlingId)
         val brev =
             Brev(
                 behandlingId = behandlingId,

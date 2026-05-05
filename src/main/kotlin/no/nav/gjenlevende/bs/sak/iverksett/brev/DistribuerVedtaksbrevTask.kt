@@ -3,11 +3,9 @@ package no.nav.gjenlevende.bs.sak.iverksett.brev
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
-import no.nav.gjenlevende.bs.sak.iverksett.DokarkivClient
-import no.nav.gjenlevende.bs.sak.iverksett.DokdistClient
-import no.nav.gjenlevende.bs.sak.iverksett.domene.DistribuerJournalpostRequest
-import no.nav.gjenlevende.bs.sak.iverksett.domene.Distribusjonstype
-import no.nav.gjenlevende.bs.sak.iverksett.domene.Fagsystem
+import no.nav.gjenlevende.bs.sak.iverksett.brev.domene.DistribuerJournalpostRequest
+import no.nav.gjenlevende.bs.sak.iverksett.brev.domene.Distribusjonstype
+import no.nav.gjenlevende.bs.sak.iverksett.brev.domene.Fagsystem
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import tools.jackson.databind.ObjectMapper

@@ -5,6 +5,8 @@ import io.mockk.mockk
 import no.nav.familie.prosessering.internal.TaskService
 import no.nav.gjenlevende.bs.sak.endringshistorikk.EndringshistorikkService
 import no.nav.gjenlevende.bs.sak.infrastruktur.exception.Feil
+import no.nav.gjenlevende.bs.sak.infrastruktur.exception.ManglerTilgang
+import no.nav.gjenlevende.bs.sak.oppgave.AnsvarligSaksbehandlerService
 import no.nav.gjenlevende.bs.sak.oppgave.OppgaveService
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.springframework.data.repository.findByIdOrNull
@@ -20,6 +22,7 @@ class BehandlingServiceTest {
     private val oppgaveService = mockk<OppgaveService>(relaxed = true)
     private val taskService = mockk<TaskService>(relaxed = true)
     private val objectMapper = mockk<ObjectMapper>(relaxed = true)
+    private val ansvarligSaksbehandlerService = mockk<AnsvarligSaksbehandlerService>(relaxed = true)
     private val behandlingService =
         BehandlingService(
             behandlingRepository = behandlingRepository,
@@ -28,6 +31,7 @@ class BehandlingServiceTest {
             oppgaveService = oppgaveService,
             taskService = taskService,
             objectMapper = objectMapper,
+            ansvarligSaksbehandlerService = ansvarligSaksbehandlerService,
         )
 
     @Test
@@ -100,6 +104,18 @@ class BehandlingServiceTest {
             .hasMessageContaining("Behandlingen kan ikke henlegges")
             .extracting("httpStatus")
             .isEqualTo(HttpStatus.BAD_REQUEST)
+    }
+
+    @Test
+    fun `henleggBehandling kaster ManglerTilgang når bruker ikke er ansvarlig saksbehandler`() {
+        val behandlingId = UUID.randomUUID()
+
+        every { ansvarligSaksbehandlerService.validerErAnsvarligSaksbehandler(behandlingId) } throws
+            ManglerTilgang("Innlogget saksbehandler er ikke ansvarlig saksbehandler for behandling $behandlingId")
+
+        assertThatThrownBy { behandlingService.henleggBehandling(behandlingId) }
+            .isInstanceOf(ManglerTilgang::class.java)
+            .hasMessageContaining("ikke ansvarlig saksbehandler")
     }
 
     private fun lagBehandling(

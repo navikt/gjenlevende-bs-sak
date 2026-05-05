@@ -1,8 +1,6 @@
-package no.nav.gjenlevende.bs.sak.iverksett
+package no.nav.gjenlevende.bs.sak.iverksett.brev
 
 import no.nav.familie.prosessering.domene.Task
-import no.nav.gjenlevende.bs.sak.iverksett.brev.DistribuerVedtaksbrevTask
-import no.nav.gjenlevende.bs.sak.iverksett.brev.JournalførVedtaksbrevTask
 import org.springframework.stereotype.Service
 import tools.jackson.databind.ObjectMapper
 import java.util.UUID

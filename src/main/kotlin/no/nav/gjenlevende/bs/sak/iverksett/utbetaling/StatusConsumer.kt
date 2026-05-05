@@ -2,7 +2,6 @@ package no.nav.gjenlevende.bs.sak.iverksett.utbetaling
 
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.slf4j.LoggerFactory
-import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.stereotype.Service
 import tools.jackson.databind.ObjectMapper
 
@@ -17,11 +16,13 @@ class StatusConsumer(
         log.info("Starter status consumer for topic: ${properties.statusTopic}")
     }
 
+    /*
     @KafkaListener(
         topics = ["\${app.utbetaling.status-topic}"],
         groupId = "gjenlevende-bs-sak.status",
         filter = "helvedStatusFagsystemHeaderFilter",
     )
+     */
     fun mottaStatus(record: ConsumerRecord<String, String>) {
         try {
             val status = objectMapper.readValue(record.value(), UtbetalingStatusMelding::class.java)

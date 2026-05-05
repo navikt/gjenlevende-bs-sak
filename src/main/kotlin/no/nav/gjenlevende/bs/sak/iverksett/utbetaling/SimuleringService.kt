@@ -9,15 +9,12 @@ import java.util.UUID
 
 @Service
 class SimuleringService(
-    val utbetalingProducer: UtbetalingProducer
+    val utbetalingProducer: UtbetalingProducer,
 ) {
-
     fun simuler(behandling: Behandling) {
         val utbetalingMelding = lagUtbetalingMelding(behandling.id)
         utbetalingProducer.sendUtbetaling(behandling.id.toString(), utbetalingMelding)
     }
 
-    fun lagUtbetalingMelding(behandlingId: UUID): UtbetalingMelding {
-        return UtbetalingMelding(UUID.randomUUID(), "sakId", behandlingId.toString(), "12345699999", "GJENLEVENDE_BARNETILSYN", LocalDateTime.now(), Periodetype.MND, listOf(), "Saksbehandler", "beslutter", true)
-    }
+    fun lagUtbetalingMelding(behandlingId: UUID): UtbetalingMelding = UtbetalingMelding(UUID.randomUUID(), "sakId", behandlingId.toString(), "12345699999", "GJENLEVENDE_BARNETILSYN", LocalDateTime.now(), Periodetype.MND, listOf(), "Saksbehandler", "beslutter", true)
 }

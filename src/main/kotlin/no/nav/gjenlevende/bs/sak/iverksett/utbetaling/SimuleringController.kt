@@ -16,7 +16,6 @@ class SimuleringController(
     private val behandlingService: BehandlingService,
     private val simuleringService: SimuleringService,
 ) {
-
     @GetMapping("/{behandlingId}")
     fun simulerForBehandling(
         @PathVariable behandlingId: UUID,
@@ -26,7 +25,4 @@ class SimuleringController(
         simuleringService.simuler(behandling)
         return ResponseEntity.ok("Utbetalingsmelding sendt til simulering")
     }
-
 }
-
-

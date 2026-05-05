@@ -1,4 +1,4 @@
-package no.nav.gjenlevende.bs.sak.utbetaling
+package no.nav.gjenlevende.bs.sak.iverksett.utbetaling
 
 import org.slf4j.LoggerFactory
 import org.springframework.kafka.core.KafkaTemplate
@@ -14,11 +14,11 @@ class UtbetalingProducer(
     private val topic = properties.utbetalingTopic
 
     fun sendUtbetaling(
-        key: String,
+        behandlingIdAsKey: String,
         melding: UtbetalingMelding,
     ) {
         log.info("Sender utbetaling til topic=$topic id=${melding.id} dryrun=${melding.dryrun}")
-        kafkaTemplate.send(topic, key, melding).whenComplete { result, ex ->
+        kafkaTemplate.send(topic, behandlingIdAsKey, melding).whenComplete { result, ex ->
             if (ex != null) {
                 log.error("Feil ved sending av utbetaling id=${melding.id}", ex)
             } else {

@@ -1,8 +1,9 @@
-package no.nav.gjenlevende.bs.sak.utbetaling
+package no.nav.gjenlevende.bs.sak.iverksett.utbetaling
 
 import com.fasterxml.jackson.annotation.JsonFormat
 import java.time.Instant
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.util.UUID
 
 // TODO utgangspunkt i historisk. Må endres etter koordinasjon med helved
@@ -12,8 +13,7 @@ data class UtbetalingMelding(
     val behandlingId: String,
     val personident: String,
     val stønad: String,
-    @field:JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone = "UTC")
-    val vedtakstidspunkt: Instant,
+    val vedtakstidspunkt: LocalDateTime,
     val periodetype: Periodetype = Periodetype.MND,
     val perioder: List<Periode>,
     val saksbehandler: String,

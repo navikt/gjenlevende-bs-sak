@@ -1,4 +1,4 @@
-package no.nav.gjenlevende.bs.sak.utbetaling
+package no.nav.gjenlevende.bs.sak.iverksett.utbetaling
 
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.slf4j.LoggerFactory

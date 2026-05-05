@@ -48,8 +48,8 @@ spring:
             key-store-location: file:${KAFKA_KEYSTORE_PATH:}
             key-store-password: ${KAFKA_CREDSTORE_PASSWORD:}
         producer:
-            value-serializer: org.springframework.kafka.support.serializer.JacksonJsonSerializer
             key-serializer: org.apache.kafka.common.serialization.StringSerializer
+            value-serializer: org.apache.kafka.common.serialization.StringSerializer
         consumer:
             group-id: ${spring.application.name}
 

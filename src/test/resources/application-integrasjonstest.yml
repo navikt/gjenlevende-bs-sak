@@ -70,6 +70,10 @@ UNLEASH_SERVER_API_TOKEN: token
 UNLEASH_SERVER_API_ENV: server-env
 
 # Kafka (dummy-verdier for tester)
+KAFKA_SCHEMA_REGISTRY: http://localhost:8081
+KAFKA_SCHEMA_REGISTRY_USER: test-user
+KAFKA_SCHEMA_REGISTRY_PASSWORD: test-password
+
 app:
     utbetaling:
         utbetaling-topic: test.utbetaling.v1

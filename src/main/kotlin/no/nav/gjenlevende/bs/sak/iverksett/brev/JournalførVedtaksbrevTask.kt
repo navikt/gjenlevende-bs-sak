@@ -3,7 +3,6 @@ package no.nav.gjenlevende.bs.sak.iverksett.brev
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
-import no.nav.gjenlevende.bs.sak.iverksett.DokarkivClient
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import tools.jackson.databind.ObjectMapper

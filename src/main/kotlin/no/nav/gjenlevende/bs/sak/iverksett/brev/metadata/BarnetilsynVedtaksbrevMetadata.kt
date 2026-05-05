@@ -1,10 +1,9 @@
-package no.nav.gjenlevende.bs.sak.iverksett.metadata
+package no.nav.gjenlevende.bs.sak.iverksett.brev.metadata
 
-import no.nav.gjenlevende.bs.sak.iverksett.domene.Dokumentkategori
-import no.nav.gjenlevende.bs.sak.iverksett.domene.Dokumenttype
-import no.nav.gjenlevende.bs.sak.iverksett.domene.Fagsystem
-import no.nav.gjenlevende.bs.sak.iverksett.domene.JournalpostType
-import no.nav.gjenlevende.bs.sak.saf.Arkivtema
+import no.nav.gjenlevende.bs.sak.iverksett.brev.domene.Dokumentkategori
+import no.nav.gjenlevende.bs.sak.iverksett.brev.domene.Dokumenttype
+import no.nav.gjenlevende.bs.sak.iverksett.brev.domene.Fagsystem
+import no.nav.gjenlevende.bs.sak.iverksett.brev.domene.JournalpostType
 import org.springframework.stereotype.Component
 
 @Component

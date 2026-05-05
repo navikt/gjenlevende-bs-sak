@@ -1,4 +1,4 @@
-package no.nav.gjenlevende.bs.sak.iverksett.domene
+package no.nav.gjenlevende.bs.sak.iverksett.brev.domene
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import jakarta.validation.constraints.NotEmpty

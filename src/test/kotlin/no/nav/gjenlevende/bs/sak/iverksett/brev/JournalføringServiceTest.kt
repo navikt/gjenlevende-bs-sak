@@ -19,9 +19,9 @@ import no.nav.gjenlevende.bs.sak.fagsak.FagsakPersonService
 import no.nav.gjenlevende.bs.sak.fagsak.FagsakRepository
 import no.nav.gjenlevende.bs.sak.fagsak.domain.Fagsak
 import no.nav.gjenlevende.bs.sak.fagsak.domain.StønadType
-import no.nav.gjenlevende.bs.sak.iverksett.domene.AvsenderMottakerIdType
-import no.nav.gjenlevende.bs.sak.iverksett.domene.Dokumenttype
-import no.nav.gjenlevende.bs.sak.iverksett.domene.JournalpostType
+import no.nav.gjenlevende.bs.sak.iverksett.brev.domene.AvsenderMottakerIdType
+import no.nav.gjenlevende.bs.sak.iverksett.brev.domene.Dokumenttype
+import no.nav.gjenlevende.bs.sak.iverksett.brev.domene.JournalpostType
 import no.nav.gjenlevende.bs.sak.pdl.Navn
 import no.nav.gjenlevende.bs.sak.pdl.PdlService
 import no.nav.gjenlevende.bs.sak.pdl.Person

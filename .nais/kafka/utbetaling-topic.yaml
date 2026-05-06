@@ -1,7 +1,7 @@
 apiVersion: kafka.nais.io/v1
 kind: Topic
 metadata:
-    name: utbetaling.v1
+    name: utbetaling-bs.v1
     namespace: etterlatte
     labels:
         team: etterlatte

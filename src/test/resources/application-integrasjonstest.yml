@@ -76,6 +76,6 @@ KAFKA_SCHEMA_REGISTRY_PASSWORD: test-password
 
 app:
     utbetaling:
-        utbetaling-topic: test.utbetaling.v1
-        status-topic: test.status.v1
-        simulering-topic: test.simulering.v1
+        utbetaling-topic: test.utbetaling-bs.v1
+        status-topic: test.status-bs.v1
+        simulering-topic: test.simulering-bs.v1

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController
 import java.util.UUID
 
 @RestController
-@RequestMapping(path = ["/api/behandling"])
+@RequestMapping(path = ["/api/simulering"])
 @PreAuthorize("hasRole('SAKSBEHANDLER')")
 class SimuleringController(
     private val behandlingService: BehandlingService,

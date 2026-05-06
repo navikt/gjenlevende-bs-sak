@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service
 import tools.jackson.databind.ObjectMapper
 
 @Component
-@Suppress("SpringJavaInjectionPointsAutowiringInspection") // TODO skeptisk til suppress'en her
 class UtbetalingProducer(
     private val kafkaTemplate: KafkaTemplate<String, String>,
     private val properties: UtbetalingConfigProperties,
@@ -26,6 +25,21 @@ class UtbetalingProducer(
                 log.error("Feil ved sending av utbetaling id=${melding.id}", ex)
             } else {
                 log.info("Utbetaling sendt id=${melding.id} offset=${result.recordMetadata.offset()}")
+            }
+        }
+    }
+
+    fun sendSimulering(
+        simuleringId: String,
+        melding: UtbetalingMelding,
+    ) {
+        val simuleringTopic = properties.simuleringResponseTopic
+        log.info("Sender simulering til topic=$simuleringTopic simuleringId=$simuleringId")
+        kafkaTemplate.send(simuleringTopic, simuleringId, objectMapper.writeValueAsString(melding)).whenComplete { result, ex ->
+            if (ex != null) {
+                log.error("Feil ved sending av simulering simuleringId=$simuleringId", ex)
+            } else {
+                log.info("Simulering sendt simuleringId=$simuleringId offset=${result.recordMetadata.offset()}")
             }
         }
     }

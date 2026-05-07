@@ -43,7 +43,8 @@ class SimuleringController(
 
         return when (simulering.status) {
             SimuleringStatus.VENTER -> ResponseEntity.noContent().build()
-            SimuleringStatus.FERDIG -> ResponseEntity.ok(simulering.respons)
+            SimuleringStatus.FERDIG -> simulering.respons?.let { ResponseEntity.ok(it) }
+                ?: ResponseEntity.internalServerError().build()
             SimuleringStatus.FEILET -> ResponseEntity.internalServerError().build()
         }
     }

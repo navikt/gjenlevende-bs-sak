@@ -42,10 +42,18 @@ class SimuleringController(
                 ?: return ResponseEntity.notFound().build()
 
         return when (simulering.status) {
-            SimuleringStatus.VENTER -> ResponseEntity.noContent().build()
-            SimuleringStatus.FERDIG -> simulering.respons?.let { ResponseEntity.ok(it) }
-                ?: ResponseEntity.internalServerError().build()
-            SimuleringStatus.FEILET -> ResponseEntity.internalServerError().build()
+            SimuleringStatus.VENTER -> {
+                ResponseEntity.noContent().build()
+            }
+
+            SimuleringStatus.FERDIG -> {
+                simulering.respons?.let { ResponseEntity.ok(it) }
+                    ?: ResponseEntity.internalServerError().build()
+            }
+
+            SimuleringStatus.FEILET -> {
+                ResponseEntity.internalServerError().build()
+            }
         }
     }
 

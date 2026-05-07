@@ -78,4 +78,4 @@ app:
     utbetaling:
         utbetaling-topic: test.utbetaling-bs.v1
         status-topic: test.status-bs.v1
-        simulering-topic: test.simulering-bs.v1
+        simulering-response-topic: test.dryrun-bs.v1

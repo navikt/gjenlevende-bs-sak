@@ -135,9 +135,8 @@ springdoc:
 
 app:
     utbetaling:
-        #        TODO koordinere med helved ang. topic
         utbetaling-topic: etterlatte.utbetaling-bs.v1
-        simulering-topic: etterlatte.dryrun-bs.v1
+        simulering-response-topic: helved.dryrun-respons.v1
         status-topic: helved.status.v1
 
 # Task prosessering konfigurasjon

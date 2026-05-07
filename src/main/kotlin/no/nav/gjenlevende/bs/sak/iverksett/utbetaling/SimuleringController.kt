@@ -55,21 +55,6 @@ class SimuleringController(
             perioder =
                 listOf(
                     SimuleringPeriode(
-                        fom = iDag.withDayOfMonth(1),
-                        tom = iDag.withDayOfMonth(iDag.lengthOfMonth()),
-                        utbetalinger =
-                            listOf(
-                                SimuleringUtbetaling(
-                                    fagsystem = "GJENLEVENDE_BS",
-                                    sakId = "mock-sak-123",
-                                    utbetalesTil = 12345678901L,
-                                    stønadstype = "GJENLEVENDE_BARNETILSYN",
-                                    tidligereUtbetalt = 0,
-                                    nyttBeløp = 5000,
-                                ),
-                            ),
-                    ),
-                    SimuleringPeriode(
                         fom = iDag.minusMonths(1).withDayOfMonth(1),
                         tom = iDag.minusMonths(1).withDayOfMonth(iDag.lengthOfMonth()),
                         utbetalinger =
@@ -81,6 +66,21 @@ class SimuleringController(
                                     stønadstype = "GJENLEVENDE_BARNETILSYN",
                                     tidligereUtbetalt = 0,
                                     nyttBeløp = 4000,
+                                ),
+                            ),
+                    ),
+                    SimuleringPeriode(
+                        fom = iDag.withDayOfMonth(1),
+                        tom = iDag.withDayOfMonth(iDag.lengthOfMonth()),
+                        utbetalinger =
+                            listOf(
+                                SimuleringUtbetaling(
+                                    fagsystem = "GJENLEVENDE_BS",
+                                    sakId = "mock-sak-123",
+                                    utbetalesTil = 12345678901L,
+                                    stønadstype = "GJENLEVENDE_BARNETILSYN",
+                                    tidligereUtbetalt = 0,
+                                    nyttBeløp = 5000,
                                 ),
                             ),
                     ),

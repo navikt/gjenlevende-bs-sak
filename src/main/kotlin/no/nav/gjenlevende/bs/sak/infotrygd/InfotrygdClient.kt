@@ -1,5 +1,6 @@
 package no.nav.gjenlevende.bs.sak.infotrygd
 
+import no.nav.gjenlevende.bs.sak.infrastruktur.exception.Feil
 import no.nav.gjenlevende.bs.sak.infotrygd.dto.PersonPerioderResponse
 import no.nav.gjenlevende.bs.sak.infotrygd.dto.PersonidentRequest
 import no.nav.gjenlevende.bs.sak.texas.TexasClient
@@ -7,6 +8,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
@@ -55,7 +57,9 @@ class InfotrygdClient(
             .header("Authorization", "Bearer $oboToken")
             .bodyValue(PersonidentRequest(personident = personident))
             .retrieve()
-            .bodyToMono<PersonPerioderResponse>()
+            .onStatus({ it == HttpStatus.NOT_FOUND }) { _ ->
+                Mono.error(Feil("Person ikke funnet i Infotrygd", HttpStatus.NOT_FOUND))
+            }.bodyToMono<PersonPerioderResponse>()
             .switchIfEmpty(Mono.error(NoSuchElementException("Tom respons fra gjenlevende-bs-infotrygd")))
             .timeout(Duration.ofSeconds(TIMEOUT_SEKUNDER))
             .doOnNext { response ->

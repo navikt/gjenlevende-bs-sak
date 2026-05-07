@@ -5,6 +5,7 @@ import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.stereotype.Component
 import org.springframework.stereotype.Service
 import tools.jackson.databind.ObjectMapper
+import java.util.UUID
 
 @Component
 class UtbetalingProducer(
@@ -30,16 +31,16 @@ class UtbetalingProducer(
     }
 
     fun sendSimulering(
-        simuleringId: String,
+        behandlingId: UUID,
         melding: UtbetalingMelding,
     ) {
         val simuleringTopic = properties.simuleringResponseTopic
-        log.info("Sender simulering til topic=$simuleringTopic simuleringId=$simuleringId")
-        kafkaTemplate.send(simuleringTopic, simuleringId, objectMapper.writeValueAsString(melding)).whenComplete { result, ex ->
+        log.info("Sender simulering til topic=$simuleringTopic simuleringId=$behandlingId")
+        kafkaTemplate.send(simuleringTopic, behandlingId.toString(), objectMapper.writeValueAsString(melding)).whenComplete { result, ex ->
             if (ex != null) {
-                log.error("Feil ved sending av simulering simuleringId=$simuleringId", ex)
+                log.error("Feil ved sending av simulering simuleringId=$behandlingId", ex)
             } else {
-                log.info("Simulering sendt simuleringId=$simuleringId offset=${result.recordMetadata.offset()}")
+                log.info("Simulering sendt simuleringId=$behandlingId offset=${result.recordMetadata.offset()}")
             }
         }
     }

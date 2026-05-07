@@ -24,9 +24,8 @@ class SimuleringController(
     fun simulerForBehandling(
         @PathVariable behandlingId: UUID,
     ): ResponseEntity<String> {
-        val behandling = behandlingService.hentBehandling(behandlingId)
-        requireNotNull(behandling)
-        simuleringService.simuler(behandling)
+        requireNotNull(behandlingService.hentBehandling(behandlingId))
+        simuleringService.simuler(behandlingId)
         return ResponseEntity.ok("OK")
     }
 
@@ -56,7 +55,7 @@ class SimuleringController(
                 listOf(
                     SimuleringPeriode(
                         fom = iDag.minusMonths(1).withDayOfMonth(1),
-                        tom = iDag.minusMonths(1).withDayOfMonth(iDag.lengthOfMonth()),
+                        tom = iDag.minusMonths(1).withDayOfMonth(iDag.minusMonths(1).lengthOfMonth()),
                         utbetalinger =
                             listOf(
                                 SimuleringUtbetaling(

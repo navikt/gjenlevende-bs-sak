@@ -15,16 +15,26 @@ class SimuleringService(
     val simuleringRepository: SimuleringRepository,
 ) {
     @Transactional
-    fun simuler(behandling: Behandling) {
-        val melding = lagUtbetalingMelding(behandling.id)
+    fun simuler(behandlingId: UUID) {
+        val melding = lagUtbetalingMelding(behandlingId)
 
-        simuleringRepository.insert(
-            Simulering(
-                behandlingId = behandling.id,
-                status = SimuleringStatus.VENTER,
-            ),
-        )
-        utbetalingProducer.sendSimulering(behandling.id.toString(), melding)
+        if (simuleringRepository.existsById(behandlingId)) {
+            simuleringRepository.update(
+                Simulering(
+                    behandlingId = behandlingId,
+                    status = SimuleringStatus.VENTER,
+                ),
+            )
+        } else {
+            simuleringRepository.insert(
+                Simulering(
+                    behandlingId = behandlingId,
+                    status = SimuleringStatus.VENTER,
+                ),
+            )
+        }
+
+        utbetalingProducer.sendSimulering(behandlingId, melding)
     }
 
     fun hentSimulering(behandlingId: UUID): Simulering? = simuleringRepository.findById(behandlingId).orElse(null)

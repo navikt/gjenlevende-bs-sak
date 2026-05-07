@@ -30,7 +30,6 @@ data class SimuleringUtbetaling(
 
 @Table("simulering")
 data class Simulering(
-    @Id val id: UUID,
     val behandlingId: UUID,
     val status: SimuleringStatus,
     val respons: SimuleringResponse? = null,

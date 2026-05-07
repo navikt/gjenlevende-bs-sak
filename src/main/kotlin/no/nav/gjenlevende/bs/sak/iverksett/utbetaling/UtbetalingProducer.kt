@@ -19,12 +19,12 @@ class UtbetalingProducer(
         behandlingIdAsKey: String,
         melding: UtbetalingMelding,
     ) {
-        log.info("Sender utbetaling til topic=$topic id=${melding.id} dryrun=${melding.dryrun}")
+        log.info("Sender utbetaling til topic=$topic behandlingId=${melding.behandlingId} dryrun=${melding.dryrun}")
         kafkaTemplate.send(topic, behandlingIdAsKey, objectMapper.writeValueAsString(melding)).whenComplete { result, ex ->
             if (ex != null) {
-                log.error("Feil ved sending av utbetaling id=${melding.id}", ex)
+                log.error("Feil ved sending av utbetaling behandlingId=${melding.behandlingId}", ex)
             } else {
-                log.info("Utbetaling sendt id=${melding.id} offset=${result.recordMetadata.offset()}")
+                log.info("Utbetaling sendt behandlingId=${melding.behandlingId} offset=${result.recordMetadata.offset()}")
             }
         }
     }

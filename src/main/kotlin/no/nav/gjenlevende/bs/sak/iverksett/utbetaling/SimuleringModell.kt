@@ -28,6 +28,59 @@ data class SimuleringUtbetaling(
     val nyttBeløp: Int,
 )
 
+data class SimuleringResultatDto(
+    val perioder: List<SimuleringPeriodeDto>,
+    @field:JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    val fom: LocalDate,
+    @field:JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    val tomSisteUtbetaling: LocalDate,
+    @field:JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    val fomDatoNestePeriode: LocalDate?,
+    val etterbetaling: Int,
+    val feilutbetaling: Int,
+)
+
+data class SimuleringPeriodeDto(
+    @field:JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    val fom: LocalDate,
+    @field:JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    val tom: LocalDate,
+    val nyttBeløp: Int,
+    val tidligereUtbetalt: Int,
+    val resultat: Int,
+    val feilutbetaling: Int,
+)
+
+fun SimuleringResponse.tilResultatDto(dagensDato: LocalDate = LocalDate.now()): SimuleringResultatDto {
+    val nestePeriodeFom = perioder.firstOrNull { !it.fom.isBefore(dagensDato.withDayOfMonth(1)) }?.fom
+
+    val periodeDtoer = perioder.map { periode ->
+        val nyttBeløp = periode.utbetalinger.sumOf { it.nyttBeløp }
+        val tidligereUtbetalt = periode.utbetalinger.sumOf { it.tidligereUtbetalt }
+        val resultat = nyttBeløp - tidligereUtbetalt
+        SimuleringPeriodeDto(
+            fom = periode.fom,
+            tom = periode.tom,
+            nyttBeløp = nyttBeløp,
+            tidligereUtbetalt = tidligereUtbetalt,
+            resultat = resultat,
+            feilutbetaling = maxOf(0, tidligereUtbetalt - nyttBeløp),
+        )
+    }
+
+    val historiskePerioder =
+        if (nestePeriodeFom != null) periodeDtoer.filter { it.fom.isBefore(nestePeriodeFom) } else periodeDtoer
+
+    return SimuleringResultatDto(
+        perioder = periodeDtoer,
+        fom = perioder.minOf { it.fom },
+        tomSisteUtbetaling = historiskePerioder.maxOfOrNull { it.tom } ?: perioder.minOf { it.fom },
+        fomDatoNestePeriode = nestePeriodeFom,
+        etterbetaling = historiskePerioder.filter { it.resultat > 0 }.sumOf { it.resultat },
+        feilutbetaling = historiskePerioder.sumOf { it.feilutbetaling },
+    )
+}
+
 @Table("simulering")
 data class Simulering(
     @Id

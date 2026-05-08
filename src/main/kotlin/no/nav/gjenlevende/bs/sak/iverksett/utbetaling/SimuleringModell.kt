@@ -54,19 +54,20 @@ data class SimuleringPeriodeDto(
 fun SimuleringResponse.tilResultatDto(dagensDato: LocalDate = LocalDate.now()): SimuleringResultatDto {
     val nestePeriodeFom = perioder.firstOrNull { !it.fom.isBefore(dagensDato.withDayOfMonth(1)) }?.fom
 
-    val periodeDtoer = perioder.map { periode ->
-        val nyttBeløp = periode.utbetalinger.sumOf { it.nyttBeløp }
-        val tidligereUtbetalt = periode.utbetalinger.sumOf { it.tidligereUtbetalt }
-        val resultat = nyttBeløp - tidligereUtbetalt
-        SimuleringPeriodeDto(
-            fom = periode.fom,
-            tom = periode.tom,
-            nyttBeløp = nyttBeløp,
-            tidligereUtbetalt = tidligereUtbetalt,
-            resultat = resultat,
-            feilutbetaling = maxOf(0, tidligereUtbetalt - nyttBeløp),
-        )
-    }
+    val periodeDtoer =
+        perioder.map { periode ->
+            val nyttBeløp = periode.utbetalinger.sumOf { it.nyttBeløp }
+            val tidligereUtbetalt = periode.utbetalinger.sumOf { it.tidligereUtbetalt }
+            val resultat = nyttBeløp - tidligereUtbetalt
+            SimuleringPeriodeDto(
+                fom = periode.fom,
+                tom = periode.tom,
+                nyttBeløp = nyttBeløp,
+                tidligereUtbetalt = tidligereUtbetalt,
+                resultat = resultat,
+                feilutbetaling = maxOf(0, tidligereUtbetalt - nyttBeløp),
+            )
+        }
 
     val historiskePerioder =
         if (nestePeriodeFom != null) periodeDtoer.filter { it.fom.isBefore(nestePeriodeFom) } else periodeDtoer

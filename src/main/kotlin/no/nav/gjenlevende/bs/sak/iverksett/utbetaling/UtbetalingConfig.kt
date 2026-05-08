@@ -11,6 +11,6 @@ class UtbetalingConfig
 @ConfigurationProperties(prefix = "app.utbetaling")
 class UtbetalingConfigProperties(
     val utbetalingTopic: String,
-    val simuleringTopic: String,
+    val simuleringResponseTopic: String,
     val statusTopic: String,
 )

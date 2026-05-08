@@ -8,9 +8,8 @@ import java.util.UUID
 
 // TODO utgangspunkt i historisk. Må endres etter koordinasjon med helved
 data class UtbetalingMelding(
-    val id: UUID,
+    val behandlingId: UUID,
     val sakId: String,
-    val behandlingId: String,
     val personident: String,
     val stønad: String,
     val vedtakstidspunkt: LocalDateTime,

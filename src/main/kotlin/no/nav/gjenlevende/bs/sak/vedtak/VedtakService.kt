@@ -5,6 +5,7 @@ import no.nav.gjenlevende.bs.sak.endringshistorikk.EndringType
 import no.nav.gjenlevende.bs.sak.endringshistorikk.EndringshistorikkService
 import no.nav.gjenlevende.bs.sak.infrastruktur.exception.Feil
 import no.nav.gjenlevende.bs.sak.oppgave.AnsvarligSaksbehandlerService
+import no.nav.gjenlevende.bs.sak.tilkjentytelse.TilkjentYtelseService
 import no.nav.gjenlevende.bs.sak.vedtak.BeregningUtils.beregnBarnetilsynperiode
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
@@ -18,6 +19,7 @@ class VedtakService(
     private val endringshistorikkService: EndringshistorikkService,
     private val behandlingService: BehandlingService,
     private val ansvarligSaksbehandlerService: AnsvarligSaksbehandlerService,
+    private val tilkjentYtelseService: TilkjentYtelseService,
 ) {
     fun hentVedtak(behandlingId: UUID): Vedtak? = vedtakRepository.findByBehandlingId(behandlingId)
 
@@ -28,6 +30,7 @@ class VedtakService(
         behandlingService.validerBehandlingErRedigerbar(behandlingId)
         ansvarligSaksbehandlerService.validerErAnsvarligSaksbehandler(behandlingId)
         val vedtak = vedtakRepository.insert(vedtakDto.tilVedtak(behandlingId))
+        tilkjentYtelseService.opprettEllerOppdaterTilkjentYtelse(behandlingId, vedtak)
 
         endringshistorikkService.registrerEndring(
             behandlingId = behandlingId,
@@ -40,6 +43,7 @@ class VedtakService(
     fun slettVedtakHvisFinnes(behandlingId: UUID) {
         ansvarligSaksbehandlerService.validerErAnsvarligSaksbehandler(behandlingId)
         if (vedtakRepository.findByBehandlingId(behandlingId) != null) {
+            tilkjentYtelseService.slettTilkjentYtelseHvisFinnes(behandlingId)
             vedtakRepository.deleteByBehandlingId(behandlingId)
         }
     }

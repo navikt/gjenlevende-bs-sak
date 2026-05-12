@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.WebClientResponseException
 import org.springframework.web.reactive.function.client.bodyToMono
 import reactor.core.publisher.Mono
 import java.net.URI
@@ -58,8 +59,9 @@ class OppgaveClient(
             .timeout(Duration.ofSeconds(TIMEOUT_SEKUNDER))
             .doOnNext { response ->
                 logger.info("Oppgave opprettet med id: ${response.id} ")
-            }.doOnError {
-                logger.error("Feil: klarte ikke opprette oppgave med $oppgaveRequest")
+            }.doOnError { error ->
+                val responseBody = if (error is WebClientResponseException) error.responseBodyAsString else ""
+                logger.error("Feil: klarte ikke opprette oppgave med $oppgaveRequest. Response: $responseBody", error)
             }.block() ?: throw RuntimeException("Klarte ikke opprette oppgave")
     }
 

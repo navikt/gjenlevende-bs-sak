@@ -66,8 +66,7 @@ class InfotrygdClient(
             .onErrorResume(WebClientResponseException.NotFound::class.java) { _ ->
                 logger.info("Person ikke funnet i Infotrygd")
                 Mono.empty()
-            }
-            .timeout(Duration.ofSeconds(TIMEOUT_SEKUNDER))
+            }.timeout(Duration.ofSeconds(TIMEOUT_SEKUNDER))
             .doOnNext { response ->
                 logger.info("Hentet perioder for person: ${response.barnetilsyn.size} barnetilsyn, ${response.skolepenger.size} skolepenger")
             }.doOnError { logger.error("Feilet å hente perioder for person: $it") }

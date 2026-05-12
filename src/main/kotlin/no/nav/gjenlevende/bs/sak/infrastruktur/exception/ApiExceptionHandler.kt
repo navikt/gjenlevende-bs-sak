@@ -28,6 +28,14 @@ class ApiExceptionHandler {
             .body(FeilResponse(melding = e.message ?: "Ugyldig request", status = HttpStatus.BAD_REQUEST.value()))
     }
 
+    @ExceptionHandler(WebClientResponseException.Forbidden::class)
+    fun handleWebClientForbiddenException(e: WebClientResponseException.Forbidden): ResponseEntity<ManglerTilgangResponse> {
+        logger.warn("Mangler tilgang til tjeneste (403)")
+        return ResponseEntity
+            .status(HttpStatus.FORBIDDEN)
+            .body(ManglerTilgangResponse(melding = "Mangler tilgang"))
+    }
+
     @ExceptionHandler(WebClientResponseException::class)
     fun handleWebClientResponseException(e: WebClientResponseException): ResponseEntity<FeilResponse> {
         val feilmelding =

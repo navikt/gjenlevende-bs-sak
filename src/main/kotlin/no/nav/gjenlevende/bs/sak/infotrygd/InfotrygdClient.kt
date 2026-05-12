@@ -2,6 +2,8 @@ package no.nav.gjenlevende.bs.sak.infotrygd
 
 import no.nav.gjenlevende.bs.sak.infotrygd.dto.PersonPerioderResponse
 import no.nav.gjenlevende.bs.sak.infotrygd.dto.PersonidentRequest
+import no.nav.gjenlevende.bs.sak.infrastruktur.exception.Feil
+import no.nav.gjenlevende.bs.sak.infrastruktur.exception.ManglerTilgang
 import no.nav.gjenlevende.bs.sak.texas.TexasClient
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -56,7 +58,10 @@ class InfotrygdClient(
             .header("Authorization", "Bearer $oboToken")
             .bodyValue(PersonidentRequest(personident = personident))
             .retrieve()
-            .onStatus({ it == HttpStatus.NOT_FOUND }) { _ ->
+            .onStatus({ it == HttpStatus.FORBIDDEN }) { _ ->
+                logger.warn("Mangler tilgang til Infotrygd (403)")
+                Mono.error(ManglerTilgang("Mangler tilgang til Infotrygd"))
+            }.onStatus({ it == HttpStatus.NOT_FOUND }) { _ ->
                 logger.info("Person ikke funnet i Infotrygd")
                 Mono.empty()
             }.bodyToMono<PersonPerioderResponse>()
@@ -71,5 +76,5 @@ class InfotrygdClient(
     ): PersonPerioderResponse =
         hentPerioderForPerson(
             personident = personident,
-        ).block() ?: throw RuntimeException("Klarte ikke å hente perioder for person fra gjenlevende-bs-infotrygd")
+        ).block() ?: throw Feil("Person ikke funnet i Infotrygd", HttpStatus.NOT_FOUND)
 }

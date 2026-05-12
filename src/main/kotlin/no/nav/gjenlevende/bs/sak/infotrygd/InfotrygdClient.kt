@@ -3,6 +3,7 @@ package no.nav.gjenlevende.bs.sak.infotrygd
 import no.nav.gjenlevende.bs.sak.infotrygd.dto.PersonPerioderResponse
 import no.nav.gjenlevende.bs.sak.infotrygd.dto.PersonidentRequest
 import no.nav.gjenlevende.bs.sak.infrastruktur.exception.Feil
+import no.nav.gjenlevende.bs.sak.infrastruktur.exception.ManglerTilgang
 import no.nav.gjenlevende.bs.sak.texas.TexasClient
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -11,6 +12,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.WebClientResponseException
 import org.springframework.web.reactive.function.client.bodyToMono
 import reactor.core.publisher.Mono
 import java.time.Duration
@@ -57,11 +59,14 @@ class InfotrygdClient(
             .header("Authorization", "Bearer $oboToken")
             .bodyValue(PersonidentRequest(personident = personident))
             .retrieve()
-            .onStatus({ it == HttpStatus.NOT_FOUND }) { _ ->
-                Mono.error(Feil("Person ikke funnet i Infotrygd", HttpStatus.NOT_FOUND))
+            .onStatus({ it == HttpStatus.FORBIDDEN }) { _ ->
+                logger.warn("Mangler tilgang til Infotrygd (403)")
+                Mono.error(ManglerTilgang("Mangler tilgang til Infotrygd"))
             }.bodyToMono<PersonPerioderResponse>()
-            .switchIfEmpty(Mono.error(NoSuchElementException("Tom respons fra gjenlevende-bs-infotrygd")))
-            .timeout(Duration.ofSeconds(TIMEOUT_SEKUNDER))
+            .onErrorResume(WebClientResponseException.NotFound::class.java) { _ ->
+                logger.info("Person ikke funnet i Infotrygd")
+                Mono.empty()
+            }.timeout(Duration.ofSeconds(TIMEOUT_SEKUNDER))
             .doOnNext { response ->
                 logger.info("Hentet perioder for person: ${response.barnetilsyn.size} barnetilsyn, ${response.skolepenger.size} skolepenger")
             }.doOnError { logger.error("Feilet å hente perioder for person: $it") }
@@ -72,5 +77,5 @@ class InfotrygdClient(
     ): PersonPerioderResponse =
         hentPerioderForPerson(
             personident = personident,
-        ).block() ?: throw RuntimeException("Klarte ikke å hente perioder for person fra gjenlevende-bs-infotrygd")
+        ).block() ?: throw Feil("Person ikke funnet i Infotrygd", HttpStatus.NOT_FOUND)
 }

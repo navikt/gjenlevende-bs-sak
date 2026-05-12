@@ -3,6 +3,7 @@ package no.nav.gjenlevende.bs.sak.behandling
 import no.nav.gjenlevende.bs.sak.endringshistorikk.EndringshistorikkService
 import no.nav.gjenlevende.bs.sak.infrastruktur.exception.Feil
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -30,6 +31,7 @@ data class OpprettBehandlingResponseDto(
 )
 
 @RestController
+@PreAuthorize("hasRole('SAKSBEHANDLER')")
 @RequestMapping(path = ["/api/behandling"])
 class BehandlingController(
     private val behandlingService: BehandlingService,

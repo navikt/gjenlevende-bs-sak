@@ -2,6 +2,7 @@ package no.nav.gjenlevende.bs.sak.iverksett.utbetaling
 
 import no.nav.gjenlevende.bs.sak.behandling.Behandling
 import no.nav.gjenlevende.bs.sak.felles.sikkerhet.Tilgangskontroll
+import no.nav.gjenlevende.bs.sak.tilkjentytelse.TilkjentYtelseService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -13,6 +14,7 @@ import java.util.UUID
 class SimuleringService(
     val utbetalingProducer: UtbetalingProducer,
     val simuleringRepository: SimuleringRepository,
+    val tilkjentYtelseService: TilkjentYtelseService,
 ) {
     @Transactional
     fun simuler(behandlingId: UUID) {
@@ -41,17 +43,19 @@ class SimuleringService(
 
     fun lagUtbetalingMelding(
         behandlingId: UUID,
-    ): UtbetalingMelding =
-        UtbetalingMelding(
+    ): UtbetalingMelding {
+        val andeler = tilkjentYtelseService.hentTilkjentYtelse(behandlingId)?.andelerTilkjentYtelse ?: emptySet()
+        return UtbetalingMelding(
             behandlingId = behandlingId,
             sakId = "sakId",
             personident = "12345699999",
             stønad = "GJENLEVENDE_BARNETILSYN",
             vedtakstidspunkt = LocalDateTime.now(),
             periodetype = Periodetype.MND,
-            perioder = listOf(),
+            perioder = andeler.map { Periode(fom = it.fom, tom = it.tom, beløp = it.beløp) },
             saksbehandler = "Saksbehandler",
             beslutter = "beslutter",
             dryrun = true,
         )
+    }
 }

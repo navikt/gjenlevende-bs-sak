@@ -9,6 +9,7 @@ import no.nav.gjenlevende.bs.sak.behandling.årsak.ÅrsakBehandling
 import no.nav.gjenlevende.bs.sak.brev.Brev
 import no.nav.gjenlevende.bs.sak.fagsak.domain.Fagsak
 import no.nav.gjenlevende.bs.sak.fagsak.domain.FagsakPerson
+import no.nav.gjenlevende.bs.sak.tilkjentytelse.TilkjentYtelse
 import no.nav.gjenlevende.bs.sak.vedtak.Vedtak
 import org.junit.jupiter.api.AfterEach
 import org.springframework.beans.factory.annotation.Autowired
@@ -36,6 +37,7 @@ open class SpringContextTest {
 
     private fun resetDatabase() {
         jdbcAggregateOperations.deleteAll(BehandlingBarn::class.java)
+        jdbcAggregateOperations.deleteAll(TilkjentYtelse::class.java)
         jdbcAggregateOperations.deleteAll(Vedtak::class.java)
         jdbcAggregateOperations.deleteAll(ÅrsakBehandling::class.java)
         jdbcAggregateOperations.deleteAll(Brev::class.java)

@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.WebClientResponseException
 import org.springframework.web.reactive.function.client.bodyToMono
 import reactor.core.publisher.Mono
 import java.time.Duration
@@ -61,10 +62,11 @@ class InfotrygdClient(
             .onStatus({ it == HttpStatus.FORBIDDEN }) { _ ->
                 logger.warn("Mangler tilgang til Infotrygd (403)")
                 Mono.error(ManglerTilgang("Mangler tilgang til Infotrygd"))
-            }.onStatus({ it == HttpStatus.NOT_FOUND }) { _ ->
+            }.bodyToMono<PersonPerioderResponse>()
+            .onErrorResume(WebClientResponseException.NotFound::class.java) { _ ->
                 logger.info("Person ikke funnet i Infotrygd")
                 Mono.empty()
-            }.bodyToMono<PersonPerioderResponse>()
+            }
             .timeout(Duration.ofSeconds(TIMEOUT_SEKUNDER))
             .doOnNext { response ->
                 logger.info("Hentet perioder for person: ${response.barnetilsyn.size} barnetilsyn, ${response.skolepenger.size} skolepenger")

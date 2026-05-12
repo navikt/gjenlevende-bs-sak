@@ -60,11 +60,6 @@ class InfotrygdClient(
                 logger.info("Person ikke funnet i Infotrygd")
                 Mono.empty()
             }.bodyToMono<PersonPerioderResponse>()
-            .switchIfEmpty(
-                Mono.fromRunnable {
-                    logger.info("Tom respons fra gjenlevende-bs-infotrygd")
-                },
-            )
             .timeout(Duration.ofSeconds(TIMEOUT_SEKUNDER))
             .doOnNext { response ->
                 logger.info("Hentet perioder for person: ${response.barnetilsyn.size} barnetilsyn, ${response.skolepenger.size} skolepenger")

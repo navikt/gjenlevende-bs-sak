@@ -15,11 +15,12 @@ spec:
     kafka:
         pool: nav-dev
     resources:
+        limits:
+            memory: 1024Mi
         requests:
             cpu: 162m
-            memory: 448Mi
-        limits:
             memory: 512Mi
+
     env:
         -   name: SPRING_PROFILES_ACTIVE
             value: dev

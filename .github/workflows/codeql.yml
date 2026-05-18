@@ -1,13 +1,14 @@
 name: "CodeQL"
 
-# TODO: Midlertidig workaround for Kotlin 2.3.20 — CodeQL 2.25.1 støtter ikke 2.3.20,
-# og repoet er rent Kotlin, så `build-mode: none` finner ingen Java å analysere.
-# Vi lar analyze steget feile mykt med continue on error til 2.25.2.
-# Se: https://github.com/github/codeql/issues/21484
-# Når 2.25.2 er ute:
-# - Fjern continue on error.
-# - Sett tilbake `build-mode: manual`, `languages: java-kotlin`.
-# - Legg tilbake JDK 21-setup og "Build with Maven" steget.
+# Repoet er rent Kotlin (ingen Java-filer). `build-mode: none` (buildless)
+# støtter kun Java, så CodeQL fant ingen kode å analysere. Kotlin må bygges.
+# Derfor: `build-mode: manual` + faktisk Maven-bygg, slik som vanlig build.yaml.
+#
+# CodeQL 2.25.4 støtter offisielt Kotlin opp til 2.3.20, men pom.xml bruker
+# 2.3.21. Forskjellen er kun en patch-versjon (kompilator-plugin-API endres
+# normalt ikke i patch-utgivelser), så vi setter
+# CODEQL_EXTRACTOR_KOTLIN_OVERRIDE_VERSION_CHECK=true for å la extractoren
+# kjøre likevel. Kan fjernes når CodeQL offisielt støtter Kotlin 2.3.21+.
 
 on:
     push:
@@ -24,20 +25,34 @@ jobs:
         permissions:
             actions: read
             contents: read
+            packages: read
             security-events: write
 
         steps:
             -   name: Checkout repository
                 uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # ratchet:actions/checkout@v4
 
+            -   name: Set up JDK 25
+                uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # ratchet:actions/setup-java@v4
+                with:
+                    distribution: 'temurin'
+                    java-version: '25'
+                    cache: 'maven'
+
             -   name: Initialize CodeQL
                 uses: github/codeql-action/init@68bde559dea0fdcac2102bfdf6230c5f70eb485e # ratchet:github/codeql-action/init@v3
                 with:
-                    languages: java
-                    build-mode: none
+                    languages: java-kotlin
+                    build-mode: manual
+
+            -   name: Build with Maven
+                env:
+                    GITHUB_USERNAME: x-access-token
+                    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                    CODEQL_EXTRACTOR_KOTLIN_OVERRIDE_VERSION_CHECK: true
+                run: mvn -B --no-transfer-progress test-compile --settings .m2/maven-settings.xml --file pom.xml
 
             -   name: Perform CodeQL Analysis
                 uses: github/codeql-action/analyze@68bde559dea0fdcac2102bfdf6230c5f70eb485e # ratchet:github/codeql-action/analyze@v3
-                continue-on-error: true
                 with:
-                    category: "/language:java"
+                    category: "/language:java-kotlin"

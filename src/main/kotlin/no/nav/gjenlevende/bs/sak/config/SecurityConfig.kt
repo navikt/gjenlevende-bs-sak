@@ -17,15 +17,15 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
 @Profile("!local-mock")
-open class SecurityConfig(
+class SecurityConfig(
     private val jwtAuthenticationConverter: AzureJwtAuthenticationConverter,
 ) {
     @Bean
-    open fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
+    fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http
             .cors { it.configurationSource(corsConfigurationSource()) }
-            .authorizeHttpRequests { auth ->
-                auth
+            .authorizeHttpRequests {
+                it
                     .requestMatchers(
                         "/internal/**",
                         "/actuator/**",
@@ -37,20 +37,15 @@ open class SecurityConfig(
                     .anyRequest()
                     .authenticated()
             }.oauth2ResourceServer { oauth2 ->
-                oauth2.jwt { jwt ->
-                    jwt.jwtAuthenticationConverter(jwtAuthenticationConverter)
-                }
-            }.sessionManagement { session ->
-                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            }.csrf { csrf ->
-                csrf.ignoringRequestMatchers("/**")
-            }
+                oauth2.jwt { it.jwtAuthenticationConverter(jwtAuthenticationConverter) }
+            }.sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
+            .csrf { it.ignoringRequestMatchers("/**") }
 
         return http.build()
     }
 
     @Bean
-    open fun corsConfigurationSource(): CorsConfigurationSource {
+    fun corsConfigurationSource(): CorsConfigurationSource {
         val configuration = CorsConfiguration()
 
         configuration.allowedOrigins =

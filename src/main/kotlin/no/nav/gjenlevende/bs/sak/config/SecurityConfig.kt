@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Profile
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
+import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
@@ -39,7 +40,11 @@ open class SecurityConfig(
                 oauth2.jwt { jwt ->
                     jwt.jwtAuthenticationConverter(jwtAuthenticationConverter)
                 }
-            }.csrf { it.disable() }
+            }.sessionManagement { session ->
+                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            }.csrf { csrf ->
+                csrf.ignoringRequestMatchers("/**")
+            }
 
         return http.build()
     }

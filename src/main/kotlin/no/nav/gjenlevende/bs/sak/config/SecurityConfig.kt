@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Profile
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
+import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
@@ -16,15 +17,15 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
 @Profile("!local-mock")
-open class SecurityConfig(
+class SecurityConfig(
     private val jwtAuthenticationConverter: AzureJwtAuthenticationConverter,
 ) {
     @Bean
-    open fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
+    fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http
             .cors { it.configurationSource(corsConfigurationSource()) }
-            .authorizeHttpRequests { auth ->
-                auth
+            .authorizeHttpRequests {
+                it
                     .requestMatchers(
                         "/internal/**",
                         "/actuator/**",
@@ -36,16 +37,15 @@ open class SecurityConfig(
                     .anyRequest()
                     .authenticated()
             }.oauth2ResourceServer { oauth2 ->
-                oauth2.jwt { jwt ->
-                    jwt.jwtAuthenticationConverter(jwtAuthenticationConverter)
-                }
-            }.csrf { it.disable() }
+                oauth2.jwt { it.jwtAuthenticationConverter(jwtAuthenticationConverter) }
+            }.sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
+            .csrf { it.ignoringRequestMatchers("/**") }
 
         return http.build()
     }
 
     @Bean
-    open fun corsConfigurationSource(): CorsConfigurationSource {
+    fun corsConfigurationSource(): CorsConfigurationSource {
         val configuration = CorsConfiguration()
 
         configuration.allowedOrigins =

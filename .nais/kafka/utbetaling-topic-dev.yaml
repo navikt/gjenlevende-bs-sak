@@ -15,9 +15,12 @@ spec:
         retentionBytes: -1
         retentionHours: 720
     acl:
-        - team: etterlatte
-          application: gjenlevende-bs-sak
-          access: readwrite
-       # - team: helved
-       #   application: utbetaling
-       #   access: read
+        -   team: etterlatte
+            application: gjenlevende-bs-sak
+            access: readwrite
+        -   team: helved
+            application: peisschtappern
+            access: read
+        -   team: helved
+            application: abetal
+            access: read

@@ -17,7 +17,7 @@ jobs:
       - uses: nais/deploy/actions/deploy@a7f8690f9b367fcbf5348a0a1e21d44f1aae50eb # ratchet:nais/deploy/actions/deploy@v2
         env:
           CLUSTER: dev-gcp
-          RESOURCE: .nais/kafka/utbetaling-topic.yaml
+          RESOURCE: .nais/kafka/utbetaling-topic-dev.yaml
   deploy-topics-prod:
     name: Deploy Kafka topics to prod-gcp
     runs-on: ubuntu-latest

@@ -145,8 +145,8 @@ class OppgaveClient(
         oppgaveId: Long,
         body: Map<String, Any>,
         token: String = texasClient.hentMaskinToken(oppgaveScope.toString()),
-    ): OppgaveDto {
-        return oppgaveWebClient
+    ): OppgaveDto =
+        oppgaveWebClient
             .patch()
             .uri("$API_BASE_URL/$oppgaveId")
             .header("Authorization", "Bearer $token")
@@ -161,7 +161,6 @@ class OppgaveClient(
             }.doOnError {
                 logger.error("Feil: klarte ikke oppdatere oppgave med id=$oppgaveId")
             }.block() ?: throw RuntimeException("Klarte ikke oppdatere oppgave med id=$oppgaveId")
-    }
 }
 
 data class LagOppgaveRequest(

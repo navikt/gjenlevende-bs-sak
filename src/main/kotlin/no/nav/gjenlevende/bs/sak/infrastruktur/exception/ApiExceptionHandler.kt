@@ -30,7 +30,7 @@ class ApiExceptionHandler {
 
     @ExceptionHandler(WebClientResponseException.Forbidden::class)
     fun handleWebClientForbiddenException(e: WebClientResponseException.Forbidden): ResponseEntity<ManglerTilgangResponse> {
-        logger.warn("Mangler tilgang til tjeneste (403)")
+        logger.warn("Mangler tilgang til tjeneste (403), ${e.message}", e)
         return ResponseEntity
             .status(HttpStatus.FORBIDDEN)
             .body(ManglerTilgangResponse(melding = "Mangler tilgang"))

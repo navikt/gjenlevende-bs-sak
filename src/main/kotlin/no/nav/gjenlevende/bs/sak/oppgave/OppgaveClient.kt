@@ -92,6 +92,7 @@ class OppgaveClient(
         versjon: Int,
     ): Long {
         logger.info("Fordeler oppgave med id=$oppgaveId til saksbehandler=$saksbehandler")
+        val oboToken = texasClient.hentOboToken(oppgaveScope.toString())
         val oppdatertOppgave =
             oppdaterOppgave(
                 oppgaveId = oppgaveId,
@@ -101,6 +102,7 @@ class OppgaveClient(
                         "tilordnetRessurs" to saksbehandler,
                         "versjon" to versjon,
                     ),
+                token = oboToken,
             )
         return oppdatertOppgave.id ?: throw RuntimeException("Oppdatert oppgave mangler id")
     }
@@ -142,13 +144,12 @@ class OppgaveClient(
     private fun oppdaterOppgave(
         oppgaveId: Long,
         body: Map<String, Any>,
-    ): OppgaveDto {
-        val maskinToken = texasClient.hentMaskinToken(oppgaveScope.toString())
-
-        return oppgaveWebClient
+        token: String = texasClient.hentMaskinToken(oppgaveScope.toString()),
+    ): OppgaveDto =
+        oppgaveWebClient
             .patch()
             .uri("$API_BASE_URL/$oppgaveId")
-            .header("Authorization", "Bearer $maskinToken")
+            .header("Authorization", "Bearer $token")
             .header("X-Correlation-ID", MDC.get("callId") ?: "${UUID.randomUUID()}")
             .bodyValue(body)
             .retrieve()
@@ -160,7 +161,6 @@ class OppgaveClient(
             }.doOnError {
                 logger.error("Feil: klarte ikke oppdatere oppgave med id=$oppgaveId")
             }.block() ?: throw RuntimeException("Klarte ikke oppdatere oppgave med id=$oppgaveId")
-    }
 }
 
 data class LagOppgaveRequest(

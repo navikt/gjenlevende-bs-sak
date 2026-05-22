@@ -27,6 +27,11 @@ class SafService(
             ?.flatMap { journalpost -> journalpost.dokumenter?.map { tilDokumentInfoDto(it, journalpost) } ?: emptyList() } ?: emptyList()
     }
 
+    fun hentDokument(
+        journalpostId: String,
+        dokumentInfoId: String,
+    ): ByteArray = safClient.hentDokument(journalpostId, dokumentInfoId)
+
     private fun tilDokumentInfoDto(
         dokumentInfo: DokumentInfo,
         journalpost: Journalpost,

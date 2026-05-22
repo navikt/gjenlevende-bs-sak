@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
+import org.springframework.web.reactive.function.client.WebClientResponseException
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.UUID
@@ -29,20 +30,22 @@ class OppgaveService(
 ) {
     private val logger = LoggerFactory.getLogger(OppgaveService::class.java)
 
+    companion object {
+        // Fallback-enhet (NAV Arbeid og ytelser) brukes når saksbehandlers enhet ikke er gyldig for oppgaven
+        private const val FALLBACK_ENHET = "2970"
+    }
+
     fun opprettBehandleSakOppgave(
         behandling: Behandling,
         saksbehandler: String,
         tildeltEnhetsnr: String,
     ) {
         logger.info("Skal opprette behandle sak oppgave for behandling=${behandling.id} saksbehandler=$saksbehandler")
-
         val fagsak = fagsakRepository.findByIdOrNull(behandling.fagsakId) ?: throw IllegalStateException("Finner ikke fagsak med id=${behandling.fagsakId}")
         val fagsakPerson = fagsakPersonRepository.findByIdOrNull(fagsak.fagsakPersonId) ?: throw IllegalStateException("Finner ikke fagsakPerson med id=${fagsak.fagsakPersonId}")
         val personident: Personident = fagsakPerson.aktivIdent()
-
         val oppgaveRequest = lagOpprettBehandleSakOppgaveRequest(personident, fagsak, behandling, saksbehandler, tildeltEnhetsnr)
-
-        val oppgave = oppgaveClient.opprettOppgaveM2M(oppgaveRequest = oppgaveRequest)
+        val oppgave = opprettOppgaveMedFallback(oppgaveRequest)
 
         oppgaveRepository.insert(
             Oppgave(
@@ -60,21 +63,18 @@ class OppgaveService(
         saksbehandler: String,
     ): Long {
         logger.info("Fordeler oppgave for behandling=$behandlingId til saksbehandler=$saksbehandler")
-
         val oppgave =
             hentOppgaveForBehandling(behandlingId)
                 ?: throw Feil(
                     melding = "Finner ikke oppgave for behandling=$behandlingId",
                     httpStatus = HttpStatus.NOT_FOUND,
                 )
-
         val gosysOppgave = oppgaveClient.hentOppgaveM2M(oppgave.gsakOppgaveId)
 
         if (gosysOppgave.tilordnetRessurs == saksbehandler) {
             logger.info("Oppgave allerede tildelt saksbehandler=$saksbehandler")
             return gosysOppgave.id ?: throw IllegalStateException("Oppgave mangler id")
         }
-
         val versjon = gosysOppgave.versjon ?: throw IllegalStateException("Oppgave mangler versjon")
 
         return oppgaveClient.fordelOppgave(
@@ -86,12 +86,10 @@ class OppgaveService(
 
     fun opprettGodkjennVedtakOppgave(behandlingId: UUID) {
         logger.info("Oppretter godkjenn vedtak oppgave for behandling=$behandlingId")
-
         val fagsak = hentFagsakForBehandling(behandlingId)
         val fagsakPerson = fagsakPersonRepository.findByIdOrNull(fagsak.fagsakPersonId) ?: throw IllegalStateException("Finner ikke fagsakPerson")
         val personident = fagsakPerson.aktivIdent()
         val gosysOppgave = hentGosysOppgave(behandlingId)
-
         val oppgaveRequest =
             LagOppgaveRequest(
                 personident = personident.ident,
@@ -107,7 +105,6 @@ class OppgaveService(
                 behandlesAvApplikasjon = "gjenlevende-bs-sak",
                 tildeltEnhetsnr = gosysOppgave.tildeltEnhetsnr ?: throw IllegalStateException("Oppgave mangler tildeltEnhetsnr"),
             )
-
         val oppgave = oppgaveClient.opprettOppgaveM2M(oppgaveRequest)
 
         oppgaveRepository.insert(
@@ -124,12 +121,10 @@ class OppgaveService(
         tilordnetSaksbehandler: String,
     ) {
         logger.info("Oppretter behandle underkjent vedtak oppgave for behandling=$behandlingId")
-
         val fagsak = hentFagsakForBehandling(behandlingId)
         val fagsakPerson = fagsakPersonRepository.findByIdOrNull(fagsak.fagsakPersonId) ?: throw IllegalStateException("Finner ikke fagsakPerson")
         val personident = fagsakPerson.aktivIdent()
         val gosysOppgave = hentGosysOppgave(behandlingId)
-
         val oppgaveRequest =
             LagOppgaveRequest(
                 personident = personident.ident,
@@ -145,7 +140,6 @@ class OppgaveService(
                 behandlesAvApplikasjon = "gjenlevende-bs-sak",
                 tildeltEnhetsnr = gosysOppgave.tildeltEnhetsnr ?: throw IllegalStateException("Oppgave mangler tildeltEnhetsnr"),
             )
-
         val oppgave = oppgaveClient.opprettOppgaveM2M(oppgaveRequest)
 
         oppgaveRepository.insert(
@@ -168,13 +162,11 @@ class OppgaveService(
         oppgavetype: OppgavetypeEYO,
     ) {
         logger.info("Ferdigstiller oppgave av type=${oppgavetype.name} for behandling=$behandlingId")
-
         val oppgave =
             oppgaveRepository.findByBehandlingIdAndType(
                 behandlingId = behandlingId,
                 type = oppgavetype.name,
             ) ?: throw IllegalStateException("Finner ikke oppgave av type=${oppgavetype.name} for behandling=$behandlingId")
-
         val gosysOppgave = oppgaveClient.hentOppgaveM2M(oppgave.gsakOppgaveId)
         val versjon = gosysOppgave.versjon ?: throw IllegalStateException("Oppgave mangler versjon")
 
@@ -190,6 +182,32 @@ class OppgaveService(
                 ?: throw IllegalStateException("Finner ikke oppgave for behandling=$behandlingId")
         return OppgavetypeEYO.valueOf(oppgave.type)
     }
+
+    private fun opprettOppgaveMedFallback(oppgaveRequest: LagOppgaveRequest): OppgaveDto =
+        try {
+            oppgaveClient.opprettOppgaveM2M(oppgaveRequest)
+        } catch (e: Exception) {
+            when {
+//                finnerIkkeGyldigArbeidsfordeling(e) -> {
+//                    logger.warn("Fant ingen gyldig arbeidsfordeling for oppgaven, prøver med fallback-enhet $FALLBACK_ENHET")
+//                    oppgaveClient.opprettOppgaveM2M(oppgaveRequest.copy(tildeltEnhetsnr = FALLBACK_ENHET))
+//                }
+                navIdentHarIkkeTilgangTilEnheten(e) -> {
+                    logger.warn("Saksbehandler har ikke tilgang til enheten, oppretter oppgave uten tilordnet ressurs")
+                    oppgaveClient.opprettOppgaveM2M(oppgaveRequest.copy(tilordnetRessurs = null))
+                }
+
+                else -> {
+                    throw e
+                }
+            }
+        }
+
+//    private fun finnerIkkeGyldigArbeidsfordeling(e: Exception): Boolean =
+//        e.responseBodyAsString()?.contains("Fant ingen gyldig arbeidsfordeling for oppgaven") == true
+    private fun navIdentHarIkkeTilgangTilEnheten(e: Exception): Boolean = e.responseBodyAsString()?.contains("navIdent har ikke tilgang til enheten") == true
+
+    private fun Exception.responseBodyAsString(): String? = if (this is WebClientResponseException) this.responseBodyAsString else this.message
 
     private fun hentGosysOppgave(behandlingId: UUID): OppgaveDto {
         val oppgave =

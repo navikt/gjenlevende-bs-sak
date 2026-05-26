@@ -10,8 +10,10 @@ import no.nav.gjenlevende.bs.sak.fagsak.FagsakRepository
 import no.nav.gjenlevende.bs.sak.fagsak.domain.Fagsak
 import no.nav.gjenlevende.bs.sak.fagsak.domain.FagsakPerson
 import no.nav.gjenlevende.bs.sak.fagsak.domain.Personident
+import no.nav.gjenlevende.bs.sak.infrastruktur.exception.Feil
 import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -61,7 +63,10 @@ class OppgaveService(
 
         val oppgave =
             hentOppgaveForBehandling(behandlingId)
-                ?: throw IllegalStateException("Finner ikke oppgave for behandling=$behandlingId")
+                ?: throw Feil(
+                    melding = "Finner ikke oppgave for behandling=$behandlingId",
+                    httpStatus = HttpStatus.NOT_FOUND,
+                )
 
         val gosysOppgave = oppgaveClient.hentOppgaveM2M(oppgave.gsakOppgaveId)
 

@@ -8,12 +8,14 @@ import java.net.URI
 
 @Configuration
 open class SafConfig(
-    @Value("\${SAF_URL}") safUri: URI,
+    @Value("\${SAF_URL}") safBaseUri: URI,
     @Value("\${SAF_SCOPE}") val safScope: String,
 ) {
+    val safBaseUri: URI = safBaseUri
+
     val safUri: URI =
         UriComponentsBuilder
-            .fromUri(safUri)
+            .fromUri(safBaseUri)
             .pathSegment(PATH_GRAPHQL)
             .build()
             .toUri()

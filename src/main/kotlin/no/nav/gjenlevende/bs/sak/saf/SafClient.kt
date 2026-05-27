@@ -8,6 +8,8 @@ import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
+import reactor.core.publisher.Mono
+import java.time.Duration
 import java.util.UUID
 
 @Service
@@ -22,6 +24,12 @@ class SafClient(
             .builder()
             .baseUrl(safConfig.safUri.toString())
             .defaultHeader("Content-Type", "application/json")
+            .build()
+
+    private val safRestWebClient =
+        WebClient
+            .builder()
+            .baseUrl(safConfig.safBaseUri.toString())
             .build()
 
     fun hentSafJournalpostBrukerData(
@@ -64,6 +72,27 @@ class SafClient(
         }
     }
 
+    fun hentDokument(
+        journalpostId: String,
+        dokumentInfoId: String,
+    ): ByteArray {
+        logger.info("Henter dokument fra SAF: journalpostId=$journalpostId, dokumentInfoId=$dokumentInfoId")
+
+        return safRestWebClient
+            .get()
+            .uri("/rest/hentdokument/$journalpostId/$dokumentInfoId/ARKIV")
+            .header("Authorization", "Bearer ${texasClient.hentOboToken(safConfig.safScope)}")
+            .header(NAV_CALL_ID, UUID.randomUUID().toString())
+            .accept(MediaType.APPLICATION_PDF)
+            .retrieve()
+            .bodyToMono<ByteArray>()
+            .switchIfEmpty(Mono.error(NoSuchElementException("Tomt svar fra SAF for journalpostId=$journalpostId")))
+            .timeout(Duration.ofSeconds(TIMEOUT_SEKUNDER))
+            .doOnNext { logger.info("Hentet dokument fra SAF: journalpostId=$journalpostId") }
+            .doOnError { logger.error("Feil ved henting av dokument fra SAF: journalpostId=$journalpostId: $it") }
+            .block() ?: throw RuntimeException("Klarte ikke hente dokument med journalpostId=$journalpostId")
+    }
+
     private fun håndterSafErrrors(
         errors: List<SafError>?,
         operasjon: String,
@@ -87,5 +116,6 @@ class SafClient(
 
     companion object {
         private const val NAV_CALL_ID = "Nav-Callid"
+        private const val TIMEOUT_SEKUNDER = 10L
     }
 }

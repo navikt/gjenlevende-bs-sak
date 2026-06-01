@@ -5,25 +5,67 @@ updates:
         directory: "/"
         schedule:
             interval: weekly
-            day: "sunday"
-            time: "04:00"
+            day: "monday"
+            time: "06:00"
+            timezone: "Europe/Oslo"
         cooldown:
-            default-days: 4
+            default-days: 5
         open-pull-requests-limit: 10
         groups:
-            all-dependencies:
+            spring-boot:
+                patterns:
+                    - "org.springframework*"
+                update-types:
+                    - "minor"
+                    - "patch"
+            kotlin:
+                patterns:
+                    - "org.jetbrains.kotlin*"
+                    - "tools.jackson.module*"
+                update-types:
+                    - "minor"
+                    - "patch"
+            nav-intern:
+                patterns:
+                    - "no.nav*"
+            test-avhengigheter:
+                patterns:
+                    - "org.wiremock*"
+                    - "org.testcontainers*"
+                    - "com.ninja-squad*"
+                    - "io.mockk*"
+                update-types:
+                    - "minor"
+                    - "patch"
+            logging:
+                patterns:
+                    - "net.logstash*"
+                    - "org.slf4j*"
+                    - "ch.qos.logback*"
+                update-types:
+                    - "minor"
+                    - "patch"
+            andre-avhengigheter:
                 patterns:
                     - "*"
+                update-types:
+                    - "minor"
+                    - "patch"
 
     -   package-ecosystem: github-actions
         directory: "/"
         schedule:
             interval: weekly
-            day: "sunday"
-            time: "04:00"
+            day: "monday"
+            time: "06:00"
+            timezone: "Europe/Oslo"
         cooldown:
-            default-days: 4
+            default-days: 5
+        open-pull-requests-limit: 5
         groups:
-            workflows:
+            github-actions:
                 patterns:
                     - "*"
+                update-types:
+                    - "minor"
+                    - "patch"

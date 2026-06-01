@@ -43,9 +43,9 @@
         <ktlint.version>1.8.0</ktlint.version>
         <springdoc.version>3.0.3</springdoc.version>
         <flyway.version>11.15.0</flyway.version>
-        <unleash.version>12.2.1</unleash.version>
+        <unleash.version>12.2.2</unleash.version>
         <mockk.version>1.14.9</mockk.version>
-        <prosessering.version>2.20260511102627_928cb38</prosessering.version>
+        <prosessering.version>2.20260526102747_ed05f71</prosessering.version>
 
     </properties>
     <dependencies>

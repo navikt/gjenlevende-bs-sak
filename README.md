@@ -1,176 +1,103 @@
-# Gjenlevende-BS-Sak
+# gjenlevende-bs-sak
 
-Saksbehandler-app som tar for seg barnetilsyn og skolepenger for etterlatte/gjenlevende.
+Monorepo for saksbehandling av **barnetilsyn og skolepenger** for etterlatte/gjenlevende.
 
-## Forutsetninger
+## Innhold
 
-- **Docker Desktop** må være installert og kjøre
-- **IntelliJ IDEA** (anbefalt)
-- **nais CLI** (kun for dev-profil)
+| App | Katalog | Teknologi | Nais-app | Cluster |
+|-----|---------|-----------|----------|---------|
+| **Sak** (backend) | [`apps/sak`](apps/sak) | Kotlin / Spring Boot / Maven / PostgreSQL | `gjenlevende-bs-sak` | `dev-gcp` |
+| **Frontend** | [`apps/frontend`](apps/frontend) | TypeScript / React Router 7 / Express / Node | `gjenlevende-bs-sak-frontend` | `dev-gcp` |
+| **Infotrygd** | [`apps/infotrygd`](apps/infotrygd) | Kotlin / Spring Boot / Maven / Oracle | `gjenlevende-bs-infotrygd` | `dev-fss` |
 
----
+Appene er selvstendige og har hver sin build- og deploy-pipeline. Det finnes ingen felles
+parent-pom eller workspace — hver app bygges fra sin egen katalog.
 
-## Lokal kjøring
-
-Applikasjonen har to lokale utviklingsprofiler:
-
-| Profil | Bruk | Fordeler |
-|--------|------|----------|
-| **Mock** (anbefalt) | Daglig utvikling | Ingen secrets, fullt offline, rask oppstart |
-| **Dev** | Testing mot ekte dev-tjenester | Ekte data fra PDL, SAF, etc. |
-
----
-
-### Mock-profil (Anbefalt for daglig utvikling)
-
-Denne profilen krever **ingen secrets** og fungerer fullt offline.
-
-#### 1. Start mock-miljøet
-```bash
-./start-mock.sh
 ```
-Dette starter følgende Docker-containere:
-- PostgreSQL (persistent database)
-- mock-oauth2-server (for token-validering)
-- WireMock (mocker alle eksterne tjenester)
-
-#### 2. Kjør applikasjonen
-Kjør **ApplicationLocalMock** fra IntelliJ (ingen miljøvariabel-konfigurasjon nødvendig).
-
-#### 3. Test med mock-token
-```bash
-# Hent token
-TOKEN=$(curl -s -X POST http://localhost:8089/default/token \
-  -d 'grant_type=client_credentials&client_id=test&client_secret=test' | jq -r '.access_token')
-
-# Test API
-curl -H "Authorization: Bearer $TOKEN" http://localhost:8082/internal/health
+.
+├── .github/
+│   ├── dependabot.yml            # Samlet Dependabot for alle tre appene
+│   └── workflows/                # Én build- og én deploy-workflow per app
+└── apps/
+    ├── sak/                      # Backend
+    ├── frontend/                 # Saksbehandlerflate
+    └── infotrygd/                # Integrasjon mot Infotrygd (dev-fss)
 ```
 
-#### 4. Stopp tjenestene
-```bash
-docker compose --profile mock down      # Behold data
-docker compose --profile mock down -v   # Slett data
-```
+## Kom i gang
 
----
+Alle kommandoer kjøres **fra app-katalogen**, ikke fra rota.
 
-### Dev-profil (For testing mot ekte tjenester)
-
-Bruk denne kun når du må teste mot ekte dev-tjenester (PDL, SAF, Tilgangsmaskin, etc.).
-
-#### 1. Logg på Nais
+### Sak (backend)
 
 ```bash
-nais login
+cd apps/sak
+./start-mock.sh          # Docker: PostgreSQL, mock-oauth2-server, WireMock
 ```
 
-> **Husk:** Du må ha Nais device installert og kjørende!
+Kjør deretter `ApplicationLocalMock` fra IntelliJ. Se [apps/sak/README.md](apps/sak/README.md)
+for dev-profil mot ekte tjenester, Swagger og databasehåndtering.
 
-#### 2. Bytt til riktig Kubernetes-kontekst
+### Frontend
 
 ```bash
-kubectl config use-context dev-gcp
+cd apps/frontend
+npm ci
+sh hent-og-lagre-miljovariabler.sh   # Krever pålogget naisdevice
+npm run dev                          # http://localhost:8080
 ```
 
-> ⚠️ **ADVARSEL:** Du **MÅ** bruke `dev-gcp` - scriptet fungerer **IKKE** med `prod-gcp`!
->
-> Verifiser at du er i riktig kontekst:
-> ```bash
-> kubectl config current-context
-> ```
-> Skal vise: `dev-gcp`
+Se [apps/frontend/README.md](apps/frontend/README.md) for oppsett av `@navikt`-pakker fra
+GitHub Package Registry og hvordan du peker frontend mot lokal backend.
 
-#### 3. Sett namespace til etterlatte
+### Infotrygd
 
 ```bash
-kubectl config set-context --current --namespace=etterlatte
+cd apps/infotrygd
+mvn verify --settings .m2/maven-settings.xml
 ```
 
-#### 4. Finn riktig Azure-hemmelighet
+Se [apps/infotrygd/README.md](apps/infotrygd/README.md).
 
-```bash
-kubectl get secrets | grep gjenlevende-bs-sak
-```
+## Bygg og deploy
 
-Du vil se noe lignende dette:
-```
-azure-gjenlevende-bs-sak-1a2345bc-1337-1      Opaque   7      2d
-```
+Workflowene er sti-filtrerte, så en endring i én app trigger kun den appens pipeline.
 
-> **VIKTIG:** Kopier navnet på hemmeligheten som starter med `azure-gjenlevende-bs-sak-` og har en roterende ID (f.eks. `azure-gjenlevende-bs-sak-1a2345bc-1337-1`).
+| Workflow | Trigger |
+|----------|---------|
+| `sak-build.yaml` | PR som endrer `apps/sak/**` |
+| `sak-deploy-dev.yaml` | Push til `main` som endrer `apps/sak/**` |
+| `sak-deploy-topics.yaml` | Manuell (`workflow_dispatch`) |
+| `frontend-build.yaml` | PR som endrer `apps/frontend/**` |
+| `frontend-deploy-dev.yaml` | Push til `main` som endrer `apps/frontend/**` |
+| `infotrygd-build.yaml` | PR som endrer `apps/infotrygd/**` |
+| `infotrygd-deploy-dev.yaml` | Push til `main` som endrer `apps/infotrygd/**` |
+| `codeql.yml` | Push/PR mot `main` og ukentlig |
 
-#### 5. Oppdater hent-og-lagre-miljøvariabler.sh
+Docker-images bygges med `nais/docker-build-push` og skilles med `image_suffix`:
 
-Åpne filen `hent-og-lagre-miljøvariabler.sh` og finn linje 11. Erstatt hemmelighetsnavnet med det du kopierte:
+| App | Image |
+|-----|-------|
+| Sak | `.../etterlatte/gjenlevende-bs-sak` |
+| Frontend | `.../etterlatte/gjenlevende-bs-sak-frontend` |
+| Infotrygd | `.../etterlatte/gjenlevende-bs-sak-infotrygd` |
 
-```bash
-GJENLEVENDE_BS_SAK_LOKAL_SECRETS=$(get_secrets azure-gjenlevende-bs-sak-WHATEVER)
-```
+## Avhengigheter
 
-#### 6. Kjør scriptet for å hente hemmeligheter
+Dependabot er konfigurert i [`.github/dependabot.yml`](.github/dependabot.yml) med ett
+oppdateringssett per app. PR-er merkes med `sak`, `frontend` eller `infotrygd` slik at det
+er tydelig hvilken app som berøres.
 
-```bash
-./hent-og-lagre-miljovariabler.sh
-```
+| Økosystem | Katalog | Gruppering |
+|-----------|---------|------------|
+| maven | `/apps/sak` | Spring Boot, Kotlin, no.nav, test, logging, øvrige |
+| maven | `/apps/infotrygd` | Alle i én gruppe |
+| npm | `/apps/frontend` | Minor+patch i én gruppe, major i én gruppe |
+| github-actions | `/` | Minor+patch i én gruppe, major i én gruppe |
 
-Dette oppretter en skjult `.env.local`-fil i repository-mappen.
+Alle kjører ukentlig mandag kl. 06:00 (Europe/Oslo) med fem dagers cooldown.
+npm-oppdateringer henter `@navikt`-pakker via `READER_TOKEN`.
 
-#### 7. Start dev-miljøet
+## Lisens
 
-```bash
-./start-dev.sh
-```
-
-Dette starter PostgreSQL og Texas (token-proxy) i Docker.
-
-#### 8. Konfigurer IntelliJ med miljøvariabler
-
-Dette er viktig - følg stegene nøye:
-
-1. Finn **ApplicationLocalDev** i prosjekt-treet (`src/test/kotlin/.../ApplicationLocalDev.kt`)
-2. Klikk på den **grønne play-knappen** ▶️ ved siden av `fun main()`
-3. Velg **Modify Run Configuration...**
-4. I vinduet som åpnes, se på høyre side under **Build and run**
-5. Klikk på **Modify options** (eller "More options")
-6. Velg **Environment variables**
-7. Et nytt felt for miljøvariabler vises
-8. Klikk på **mappe-ikonet** 📁 til høyre for feltet
-9. En fil-utforsker åpnes - naviger til repository-mappen
-10. Filen `.env.local` er **skjult**. På Mac: trykk `Shift + Cmd + .` for å vise skjulte filer
-11. Velg `.env.local` og klikk **OK**
-12. Klikk **Apply** og deretter **OK**
-
-#### 9. Kjør applikasjonen
-
-Kjør **ApplicationLocalDev** fra IntelliJ (trykk ▶️ eller `Ctrl+R` / `Cmd+R`).
-
-#### 10. Stopp tjenestene
-
-```bash
-docker compose --profile dev down       # Behold data
-docker compose --profile dev down -v    # Slett data
-```
-
----
-
-## Database
-
-Begge profiler bruker en **persistent PostgreSQL**-database via Docker-volume.
-- Data overlever omstart av applikasjonen
-- Slett data: `docker compose --profile <mock|dev> down -v`
-- Se data i Docker Desktop under "gjenlevende-bs-sak"-gruppen
-
----
-
-## Swagger
-
-**Mock-profil (lokalt):**
-- http://localhost:8082/swagger-ui/index.html
-- Hent token og lim inn i "Authorize"
-
-**Dev-profil (lokalt):**
-- http://localhost:8082/swagger-ui/index.html
-
-**Ingress (deployed):**
-- https://gjenlevende-bs-sak.intern.dev.nav.no/swagger-ui/index.html
+[MIT](LICENSE)

@@ -1,9 +1,16 @@
-target/
-.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
+### macOS ###
+.DS_Store
 
-### STS ###
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### VS Code ###
+.vscode/
+
+### Eclipse / STS ###
 .apt_generated
 .classpath
 .factorypath
@@ -12,25 +19,20 @@ target/
 .springBeans
 .sts4-cache
 
-### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
+### Maven (apps/sak, apps/infotrygd) ###
+target/
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
 
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
+### Node (apps/frontend) ###
+node_modules/
+dist/
 build/
+.react-router/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
-### VS Code ###
-.vscode/
-
-### Local environment ###
-.env.local
+### Lokale miljøvariabler ###
 .env
+.env.local
